@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/common";
+
+const THUMB_HEIGHT = 32; // Fixed compact short pill thumb
+const TRACK_PADDING = 6; // Padding from top/bottom borders
 
 export default function CustomDropdown({
   options = [],
@@ -23,6 +26,12 @@ export default function CustomDropdown({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const scrollContainerRef = useRef(null);
+  const [hasScroll, setHasScroll] = useState(false);
+  const [thumbTop, setThumbTop] = useState(0);
+  const isDraggingRef = useRef(false);
+  const startYRef = useRef(0);
+  const startScrollTopRef = useRef(0);
 
   const selectedOption = options.find((option) => {
     const optionValue = option?.value ?? option;
@@ -30,6 +39,73 @@ export default function CustomDropdown({
   });
 
   const displayLabel = selectedOption?.label ?? selectedOption ?? placeholder;
+
+  const updateScrollState = useCallback(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    const canScroll = scrollHeight > clientHeight + 2;
+    setHasScroll(canScroll);
+
+    if (canScroll) {
+      const availableScrollDistance = scrollHeight - clientHeight;
+      const availableTrackDistance = clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
+      const scrollRatio = Math.max(0, Math.min(1, scrollTop / availableScrollDistance));
+      setThumbTop(scrollRatio * availableTrackDistance);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const timeout = setTimeout(() => {
+      updateScrollState();
+    }, 20);
+    return () => clearTimeout(timeout);
+  }, [isOpen, options, updateScrollState]);
+
+  const handleThumbPointerDown = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    isDraggingRef.current = true;
+    startYRef.current = e.clientY;
+    startScrollTopRef.current = scrollContainerRef.current?.scrollTop || 0;
+
+    const handlePointerMove = (moveEvent) => {
+      if (!isDraggingRef.current || !scrollContainerRef.current) return;
+      const deltaY = moveEvent.clientY - startYRef.current;
+      const el = scrollContainerRef.current;
+      const availableScrollDistance = el.scrollHeight - el.clientHeight;
+      const availableTrackDistance = el.clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
+      if (availableTrackDistance > 0) {
+        const scrollDelta = (deltaY / availableTrackDistance) * availableScrollDistance;
+        el.scrollTop = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, startScrollTopRef.current + scrollDelta));
+      }
+    };
+
+    const handlePointerUp = () => {
+      isDraggingRef.current = false;
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+  };
+
+  const handleTrackPointerDown = (e) => {
+    e.stopPropagation();
+    if (!scrollContainerRef.current) return;
+    const trackRect = e.currentTarget.getBoundingClientRect();
+    const clickY = e.clientY - trackRect.top - TRACK_PADDING - THUMB_HEIGHT / 2;
+    const el = scrollContainerRef.current;
+    const availableScrollDistance = el.scrollHeight - el.clientHeight;
+    const availableTrackDistance = el.clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
+    if (availableTrackDistance > 0) {
+      const clampedClickY = Math.max(0, Math.min(clickY, availableTrackDistance));
+      el.scrollTop = (clampedClickY / availableTrackDistance) * availableScrollDistance;
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -75,10 +151,11 @@ export default function CustomDropdown({
         onClick={() => setIsOpen((previousState) => !previousState)}
         className={cn(
           "flex h-11 w-full items-center justify-between",
-          "rounded-lg border border-[#E7D9B8]",
-          "bg-white px-3 text-left",
-          "text-sm font-medium text-[#2E2E2E]",
-          "transition hover:border-[#CE9F2D]",
+          "rounded-lg border border-[#CE9F2D]",
+          "bg-white px-3.5 sm:px-4 text-left",
+          "text-sm font-semibold text-[#1B1D60]",
+          "shadow-2xs transition-all duration-200",
+          "hover:border-[#CE9F2D] hover:shadow-xs",
           "focus:outline-none",
           "disabled:cursor-not-allowed",
           "disabled:bg-gray-100 disabled:opacity-50",
@@ -88,13 +165,20 @@ export default function CustomDropdown({
         aria-haspopup="listbox"
         aria-label={ariaLabel || label || placeholder}
       >
-        <span className="truncate">{displayLabel}</span>
+        <div className="flex items-center gap-2.5 min-w-0 flex-1 truncate pr-2">
+          {selectedOption?.icon && (
+            <span className="shrink-0 flex items-center text-[var(--customer-gold-dark)]">
+              {selectedOption.icon}
+            </span>
+          )}
+          <span className="truncate">{displayLabel}</span>
+        </div>
 
         <ChevronDown
           size={18}
           className={cn(
             "shrink-0 text-[#CE9F2D]",
-            "transition-transform duration-300",
+            "transition-transform duration-200",
             isOpen && "rotate-180",
           )}
         />
@@ -107,13 +191,16 @@ export default function CustomDropdown({
             "absolute left-0 top-[calc(100%+6px)]",
             "z-30 w-full overflow-hidden",
             "rounded-lg",
-            "border border-[#E7D9B8]",
-            "bg-white",
-
+            "border border-[#CE9F2D]",
+            "bg-white shadow-lg",
             optionsClassName,
           )}
         >
-          <div className="max-h-60 overflow-y-auto[scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+          <div
+            ref={scrollContainerRef}
+            onScroll={updateScrollState}
+            className="max-h-[220px] overflow-y-auto no-scrollbar"
+          >
             {isLoading ? (
               <>
                 {[1, 2, 3].map((i) => (
@@ -139,7 +226,7 @@ export default function CustomDropdown({
                     onClick={() => handleSelect(optionValue)}
                     className={cn(
                       "block w-full",
-                      "px-4 py-2.5",
+                      "px-3.5 pr-4 py-2.5",
                       "text-left text-[13px]",
                       "font-semibold",
                       "transition-all",
@@ -148,15 +235,24 @@ export default function CustomDropdown({
                       "first:hover:border-t-transparent last:hover:border-b-transparent",
                       isSelected
                         ? "bg-[#F8F1E2] text-[#1B1D60]"
-                        : "text-[#2E2E2E]",
+                        : "text-[#2E2E2E] hover:text-[#1B1D60]",
                       optionClassName,
                     )}
                   >
-                    {renderOption
-                      ? renderOption(option, {
-                          isSelected,
-                        })
-                      : optionLabel}
+                    {renderOption ? (
+                      renderOption(option, {
+                        isSelected,
+                      })
+                    ) : (
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {option?.icon && (
+                          <span className="shrink-0 flex items-center text-[var(--customer-gold-dark)]">
+                            {option.icon}
+                          </span>
+                        )}
+                        <span className="truncate">{optionLabel}</span>
+                      </div>
+                    )}
                   </button>
                 );
               })
@@ -166,6 +262,26 @@ export default function CustomDropdown({
               </p>
             )}
           </div>
+
+          {hasScroll && (
+            <div
+              onPointerDown={handleTrackPointerDown}
+              className="absolute right-0.5 top-0 bottom-0 w-[14px] z-20 flex justify-center cursor-pointer select-none"
+              style={{
+                paddingTop: `${TRACK_PADDING}px`,
+                paddingBottom: `${TRACK_PADDING}px`,
+              }}
+            >
+              <div
+                onPointerDown={handleThumbPointerDown}
+                className="w-[4.5px] rounded-full bg-[#CE9F2D] hover:bg-[#A96F14] transition-colors cursor-grab active:cursor-grabbing"
+                style={{
+                  height: `${THUMB_HEIGHT}px`,
+                  transform: `translateY(${thumbTop}px)`,
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
 

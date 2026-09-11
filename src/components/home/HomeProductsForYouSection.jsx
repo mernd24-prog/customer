@@ -119,6 +119,31 @@ export default function HomeProductsForYouSection({
             : fallback
   );
 
+  if (loading && !products.length) {
+    return (
+      <SectionContainer
+        title={title}
+        subtitle={description}
+        actionHref="/products"
+        actionStyle="icon"
+        mobileActionStyle="none"
+        className="mb-8"
+        disablePadding={true}
+      >
+        <SkeletonLoader
+          preset="PRODUCT_CARD"
+          count={limit}
+          containerClass="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          wrapperClass="customer-card min-w-0 p-3"
+        />
+      </SectionContainer>
+    );
+  }
+
+  if (!products.length) {
+    return null;
+  }
+
   return (
     <SectionContainer
       title={title}
@@ -130,35 +155,24 @@ export default function HomeProductsForYouSection({
       disablePadding={true}
     >
       <div>
-        {loading && !products.length ? (
-          <SkeletonLoader
-            preset="PRODUCT_CARD"
-            count={limit}
-            containerClass="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-            wrapperClass="customer-card min-w-0 p-3"
-          />
-        ) : products.length > 0 ? (
-          <>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-              {products.map((product) => (
-                <ProductCard
-                  key={getProductId(product)}
-                  product={product}
-                  onAddToCart={addToCart}
-                  onWishlist={toggleWishlist}
-                  isWishlisted={isWishlisted(product)}
-                />
-              ))}
-            </div>
-            {page < totalPages && (
-              <div ref={sentinelRef} className="h-10 mt-8 flex items-center justify-center">
-                {isLoadingMore && (
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                )}
-              </div>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          {products.map((product) => (
+            <ProductCard
+              key={getProductId(product)}
+              product={product}
+              onAddToCart={addToCart}
+              onWishlist={toggleWishlist}
+              isWishlisted={isWishlisted(product)}
+            />
+          ))}
+        </div>
+        {page < totalPages && (
+          <div ref={sentinelRef} className="h-10 mt-8 flex items-center justify-center">
+            {isLoadingMore && (
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
             )}
-          </>
-        ) : null}
+          </div>
+        )}
       </div>
     </SectionContainer>
   );

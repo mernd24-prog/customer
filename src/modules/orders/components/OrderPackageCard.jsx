@@ -74,11 +74,12 @@ export function OrderPackageCard({
     const shipment = group?.shipments?.[0] || {};
     const expectedDelivery = group?.expectedDeliveryAt;
     const items = group?.items || [];
-    
+
     const groupItemTimelineEvents = items.flatMap((i) => i?.timeline || []);
-    const parentTimelineEvents = itemProps.orderTimeline || itemProps.timeline || [];
+    const parentTimelineEvents =
+      itemProps.orderTimeline || itemProps.timeline || [];
     const shipmentEvents = shipment.trackingEvents || [];
-    
+
     const events = [
       ...shipmentEvents,
       ...groupItemTimelineEvents,
@@ -99,7 +100,12 @@ export function OrderPackageCard({
         i?.deliveryStatus,
         i?.cancellation_status,
       ]),
-      ...events.flatMap((e) => [e?.status, e?.to_status, e?.toStatus, e?.reason]),
+      ...events.flatMap((e) => [
+        e?.status,
+        e?.to_status,
+        e?.toStatus,
+        e?.reason,
+      ]),
     ].filter(Boolean);
 
     const currentRank = Math.max(
@@ -133,7 +139,8 @@ export function OrderPackageCard({
       0,
     );
     const isFullyCancelled =
-      orderedGroupQuantity > 0 && cancelledGroupQuantity >= orderedGroupQuantity;
+      orderedGroupQuantity > 0 &&
+      cancelledGroupQuantity >= orderedGroupQuantity;
 
     const hasCancellationEvent = items.some(
       (gi) =>
@@ -164,7 +171,7 @@ export function OrderPackageCard({
         items.some((i) => i?.effective_status === "cancellation_approved")
         ? "cancellation_approved"
         : groupCancellation?.status === "manual_review" ||
-          groupCancellation?.status === "requested"
+            groupCancellation?.status === "requested"
           ? "cancellation_requested"
           : groupCancellation?.status ||
             items.find((i) => i?.cancellation_status)?.cancellation_status ||
@@ -178,7 +185,8 @@ export function OrderPackageCard({
             "cancellation_approved"
       : group?.status || "confirmed";
 
-    const isPartiallyCancelled = cancelledGroupQuantity > 0 && !isFullyCancelled;
+    const isPartiallyCancelled =
+      cancelledGroupQuantity > 0 && !isFullyCancelled;
     const returnedGroupQuantity = items.reduce(
       (sum, item) => sum + getReturnedQuantityForItem(returns, item),
       0,
@@ -221,7 +229,8 @@ export function OrderPackageCard({
 
     const packageDocuments = (itemProps.downloadableDocuments || []).filter(
       (doc) => {
-        const isTaxOrReceipt = doc.type === "tax_invoice" || doc.type === "order_receipt";
+        const isTaxOrReceipt =
+          doc.type === "tax_invoice" || doc.type === "order_receipt";
         if (isTaxOrReceipt && !isDelivered) {
           return false;
         }
@@ -240,7 +249,9 @@ export function OrderPackageCard({
             doc.invoice?.metadata?.items ||
             doc.invoice?.metadata?.lineItems ||
             []
-          ).map((i) => String(i.orderItemId || i.order_item_id || i.id || i._id));
+          ).map((i) =>
+            String(i.orderItemId || i.order_item_id || i.id || i._id),
+          );
           if (coveredItemIds.length > 0) {
             return packageItemIds.some((id) => coveredItemIds.includes(id));
           } else {
@@ -317,15 +328,16 @@ export function OrderPackageCard({
           <span
             className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
               resolvedCancellationStatus === "cancellation_approved"
-                ? "bg-[#E6F4EA] text-[#0D652D]"
+                ? "bg-[#bae0c5] text-[#0D652D]"
                 : isCancelled ||
-                  group.status === "cancelled" ||
-                  group.status === "cancellation_requested"
-                  ? "bg-[#FCE8E8] text-[#991B1B]"
+                    group.status === "cancelled" ||
+                    group.status === "cancellation_requested"
+                  ? "bg-[#e1b8b8] text-[#991B1B]"
                   : isReturned || group.status === "returned"
-                    ? "bg-[#FFF9EA] text-[#B88200]"
-                    : group.status === "delivered" || group.status === "fulfilled"
-                      ? "bg-[#E6F4EA] text-[#0D652D]"
+                    ? "bg-[#e1cfa4] text-[#7e735a]"
+                    : group.status === "delivered" ||
+                        group.status === "fulfilled"
+                      ? "bg-[#bdeaca] text-[#0D652D]"
                       : "bg-[#F0F1FF] text-[#201B78]"
             }`}
           >
@@ -472,123 +484,131 @@ export function OrderPackageCard({
           />
         </div>
 
-        {hasPackageReview && (itemProps.invoicesLoading || packageDocuments.length > 0) && (
-          <div className="mt-4 border-t border-[#ede4cf] pt-4 flex flex-col gap-3">
-            <h4 className="font-bold text-[#1B1D60] flex items-center gap-2 text-sm">
-              <FileText size={16} className="text-[#3E4093]" /> Package
-              Documents
-            </h4>
-            <div className="flex flex-col gap-2">
-              {itemProps.invoicesLoading ? (
-                [1, 2].map((i) => (
-                  <div
-                    key={`skeleton-${i}`}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
-                  >
-                    <div className="min-w-0 flex items-center gap-1.5">
-                      <div className="w-4 h-4 rounded bg-[#E7D9B8] shrink-0" />
-                      <div className="h-4 bg-[#E7D9B8] rounded w-24" />
-                    </div>
-                    <div className="h-7 w-20 bg-[#E7D9B8] rounded shrink-0" />
-                  </div>
-                ))
-              ) : (
-                packageDocuments.map((document) => (
-                <div
-                  key={`${document.title}-${document.id}`}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80]"
-                >
-                  <div className="min-w-0 flex items-center gap-1.5">
-                    <FileText size={15} className="text-[#3E4093] shrink-0" />
-                    <span className="font-semibold text-[13px] text-[#2E2E2E] truncate">
-                      {document.title}
-                    </span>
-                  </div>
-                  {document.pending ? (
-                    <span className="rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D] shrink-0">
-                      Pending
-                    </span>
-                  ) : (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      loading={
-                        itemProps.downloadingId === document.downloadPath
-                      }
-                      onClick={() =>
-                        itemProps.handleDownload(
-                          document.downloadPath,
-                          document.filename,
-                        )
-                      }
-                      className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
+        {hasPackageReview &&
+          (itemProps.invoicesLoading || packageDocuments.length > 0) && (
+            <div className="mt-4 border-t border-[#ede4cf] pt-4 flex flex-col gap-3">
+              <h4 className="font-bold text-[#1B1D60] flex items-center gap-2 text-sm">
+                <FileText size={16} className="text-[#3E4093]" /> Package
+                Documents
+              </h4>
+              <div className="flex flex-col gap-2">
+                {itemProps.invoicesLoading
+                  ? [1, 2].map((i) => (
+                      <div
+                        key={`skeleton-${i}`}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
+                      >
+                        <div className="min-w-0 flex items-center gap-1.5">
+                          <div className="w-4 h-4 rounded bg-[#E7D9B8] shrink-0" />
+                          <div className="h-4 bg-[#E7D9B8] rounded w-24" />
+                        </div>
+                        <div className="h-7 w-20 bg-[#E7D9B8] rounded shrink-0" />
+                      </div>
+                    ))
+                  : packageDocuments.map((document) => (
+                      <div
+                        key={`${document.title}-${document.id}`}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80]"
+                      >
+                        <div className="min-w-0 flex items-center gap-1.5">
+                          <FileText
+                            size={15}
+                            className="text-[#3E4093] shrink-0"
+                          />
+                          <span className="font-semibold text-[13px] text-[#2E2E2E] truncate">
+                            {document.title}
+                          </span>
+                        </div>
+                        {document.pending ? (
+                          <span className="rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D] shrink-0">
+                            Pending
+                          </span>
+                        ) : (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            loading={
+                              itemProps.downloadingId === document.downloadPath
+                            }
+                            onClick={() =>
+                              itemProps.handleDownload(
+                                document.downloadPath,
+                                document.filename,
+                              )
+                            }
+                            className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
+                          >
+                            <Download size={12} /> Download
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+              </div>
+            </div>
+          )}
+      </div>
+
+      {!hasPackageReview &&
+        (itemProps.invoicesLoading || packageDocuments.length > 0) && (
+          <div className="col-span-full border-t border-[#E7D9B8] p-3 sm:p-4 bg-[#FFFDF8] rounded-b-xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 w-full">
+              {itemProps.invoicesLoading
+                ? [1, 2].map((i) => (
+                    <div
+                      key={`skeleton-${i}`}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
                     >
-                      <Download size={12} /> Download
-                    </Button>
-                  )}
-                </div>
-              )))}
+                      <div className="min-w-0 flex items-center gap-2 flex-1">
+                        <div className="w-4 h-4 rounded bg-[#E7D9B8] shrink-0" />
+                        <div className="h-4 bg-[#E7D9B8] rounded w-24" />
+                      </div>
+                      <div className="h-7 w-20 bg-[#E7D9B8] rounded shrink-0" />
+                    </div>
+                  ))
+                : packageDocuments.map((document) => (
+                    <div
+                      key={`${document.title}-${document.id}`}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-all hover:border-[#CE9F2D80]"
+                    >
+                      <div className="min-w-0 flex items-center gap-2 flex-1">
+                        <FileText
+                          size={15}
+                          className="text-[#3E4093] shrink-0"
+                        />
+                        <span
+                          title={document.title}
+                          className="font-semibold text-[13px] text-[#2E2E2E] truncate"
+                        >
+                          {document.title}
+                        </span>
+                      </div>
+                      {document.pending ? (
+                        <span className="rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D] shrink-0">
+                          Pending
+                        </span>
+                      ) : (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          loading={
+                            itemProps.downloadingId === document.downloadPath
+                          }
+                          onClick={() =>
+                            itemProps.handleDownload(
+                              document.downloadPath,
+                              document.filename,
+                            )
+                          }
+                          className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0 gap-1.5"
+                        >
+                          <Download size={12} /> Download
+                        </Button>
+                      )}
+                    </div>
+                  ))}
             </div>
           </div>
         )}
-      </div>
-
-      {!hasPackageReview && (itemProps.invoicesLoading || packageDocuments.length > 0) && (
-        <div className="col-span-full border-t border-[#E7D9B8] p-3 sm:p-4 bg-[#FFFDF8] rounded-b-xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 w-full">
-            {itemProps.invoicesLoading ? (
-              [1, 2].map((i) => (
-                <div
-                  key={`skeleton-${i}`}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
-                >
-                  <div className="min-w-0 flex items-center gap-2 flex-1">
-                    <div className="w-4 h-4 rounded bg-[#E7D9B8] shrink-0" />
-                    <div className="h-4 bg-[#E7D9B8] rounded w-24" />
-                  </div>
-                  <div className="h-7 w-20 bg-[#E7D9B8] rounded shrink-0" />
-                </div>
-              ))
-            ) : (
-              packageDocuments.map((document) => (
-              <div
-                key={`${document.title}-${document.id}`}
-                className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-all hover:border-[#CE9F2D80]"
-              >
-                <div className="min-w-0 flex items-center gap-2 flex-1">
-                  <FileText size={15} className="text-[#3E4093] shrink-0" />
-                  <span
-                    title={document.title}
-                    className="font-semibold text-[13px] text-[#2E2E2E] truncate"
-                  >
-                    {document.title}
-                  </span>
-                </div>
-                {document.pending ? (
-                  <span className="rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D] shrink-0">
-                    Pending
-                  </span>
-                ) : (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    loading={itemProps.downloadingId === document.downloadPath}
-                    onClick={() =>
-                      itemProps.handleDownload(
-                        document.downloadPath,
-                        document.filename,
-                      )
-                    }
-                    className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0 gap-1.5"
-                  >
-                    <Download size={12} /> Download
-                  </Button>
-                )}
-              </div>
-            )))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

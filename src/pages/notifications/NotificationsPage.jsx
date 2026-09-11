@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Bell,
+  BellRing,
   Check,
   ChevronDown,
   FileText,
@@ -18,7 +19,8 @@ import ApiState from "../../components/ui/ApiState";
 import Breadcrumbs from "../../modules/common/components/Breadcrumbs";
 import NeedHelpPanel from "../../modules/support/components/NeedHelpPanel";
 import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout";
-import CustomDropdown from "../../components/ui/CustomDropdown";
+import FilterDropdown from "../../components/ui/FilterDropdown";
+import { AllOrdersIcon } from "../../components/ui/icons";
 import {
   fetchNotifications,
   markAsRead,
@@ -68,6 +70,7 @@ const getTypeConfig = (notif) => {
     body.includes("shipment")
   ) {
     return {
+      type: "shipments",
       icon: Truck,
       iconColor: "text-[#3E4093]",
       iconBg: "bg-[#3E4093]/10",
@@ -86,6 +89,7 @@ const getTypeConfig = (notif) => {
     body.includes("invoice")
   ) {
     return {
+      type: "invoices",
       icon: FileText,
       iconColor: "text-[#3E4093]",
       iconBg: "bg-[#3E4093]/10",
@@ -100,6 +104,7 @@ const getTypeConfig = (notif) => {
     title.includes("coupon")
   ) {
     return {
+      type: "offers",
       icon: Tag,
       iconColor: "text-[#CE9F2D]",
       iconBg: "bg-[#CE9F2D]/10",
@@ -113,16 +118,40 @@ const getTypeConfig = (notif) => {
     title.includes("security")
   ) {
     return {
+      type: "account",
       icon: User,
       iconColor: "text-[#3E4093]",
       iconBg: "bg-[#3E4093]/10",
     };
   }
   return {
+    type: "orders",
     icon: Package,
     iconColor: "text-[#3E4093]",
     iconBg: "bg-[#3E4093]/10",
   };
+};
+
+const getNotificationFilterIcon = (value) => {
+  const iconClass = "shrink-0 text-[var(--customer-gold-dark)]";
+  switch (value) {
+    case "all":
+      return <AllOrdersIcon size={16} className={iconClass} />;
+    case "unread":
+      return <BellRing size={16} className={iconClass} />;
+    case "orders":
+      return <Package size={16} className={iconClass} />;
+    case "shipments":
+      return <Truck size={16} className={iconClass} />;
+    case "invoices":
+      return <FileText size={16} className={iconClass} />;
+    case "offers":
+      return <Tag size={16} className={iconClass} />;
+    case "account":
+      return <User size={16} className={iconClass} />;
+    default:
+      return <AllOrdersIcon size={16} className={iconClass} />;
+  }
 };
 
 const NotificationCard = ({ notif, onClick }) => {
@@ -296,15 +325,46 @@ export function NotificationsPage() {
     };
   }, [notifications]);
 
-  const filterOptions = [
-    { label: `All (${counts.all})`, value: "all" },
-    { label: `Unread (${counts.unread})`, value: "unread" },
-    { label: `Orders (${counts.orders})`, value: "orders" },
-    { label: `Shipments (${counts.shipments})`, value: "shipments" },
-    { label: `Invoices (${counts.invoices})`, value: "invoices" },
-    { label: `Offers (${counts.offers})`, value: "offers" },
-    { label: `Account (${counts.account})`, value: "account" },
-  ];
+  const filterOptions = useMemo(
+    () => [
+      {
+        label: `All (${counts.all})`,
+        value: "all",
+        icon: getNotificationFilterIcon("all"),
+      },
+      {
+        label: `Unread (${counts.unread})`,
+        value: "unread",
+        icon: getNotificationFilterIcon("unread"),
+      },
+      {
+        label: `Orders (${counts.orders})`,
+        value: "orders",
+        icon: getNotificationFilterIcon("orders"),
+      },
+      {
+        label: `Shipments (${counts.shipments})`,
+        value: "shipments",
+        icon: getNotificationFilterIcon("shipments"),
+      },
+      {
+        label: `Invoices (${counts.invoices})`,
+        value: "invoices",
+        icon: getNotificationFilterIcon("invoices"),
+      },
+      {
+        label: `Offers (${counts.offers})`,
+        value: "offers",
+        icon: getNotificationFilterIcon("offers"),
+      },
+      {
+        label: `Account (${counts.account})`,
+        value: "account",
+        icon: getNotificationFilterIcon("account"),
+      },
+    ],
+    [counts],
+  );
 
   const filteredNotifications = useMemo(() => {
     if (activeFilter === "all") return notifications;
@@ -510,15 +570,11 @@ export function NotificationsPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="w-[180px]">
-              <CustomDropdown
-                options={filterOptions}
-                value={activeFilter}
-                onChange={(val) => setActiveFilter(val)}
-                className="w-full"
-                buttonClassName="h-10 !rounded-lg !border-[#CE9F2D] !text-[#1B1D60] font-semibold bg-white"
-              />
-            </div>
+            <FilterDropdown
+              options={filterOptions}
+              value={activeFilter}
+              onChange={(val) => setActiveFilter(val)}
+            />
           </div>
         </div>
 

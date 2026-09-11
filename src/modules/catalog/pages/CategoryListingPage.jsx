@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Grid2X2 } from "lucide-react";
+import { Grid2X2, ArrowRight } from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
+import { EmptyState } from "../../../components/ui/feedback";
 import CUSTOMER_ROUTES from "../../../constants/routes";
 import { fetchCategories } from "../../../features/catalog/catalogSlice";
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
@@ -323,11 +324,21 @@ export default function CategoryListingPage() {
                   )}
                 </>
               ) : (
-                <div className="rounded-[12px] border border-border bg-cream p-6 text-center">
-                  <p className="text-sm font-semibold text-ink">
-                    No Categories Available Right Now.
-                  </p>
-                </div>
+                <EmptyState
+                  imageSrc="/image/png/NoProductFound.png"
+                  title="No Categories Found"
+                  description="We couldn't find any categories available at the moment. Please check back later or explore our products."
+                >
+                  <div className="flex flex-wrap items-center justify-center gap-3.5">
+                    <Link
+                      to="/products"
+                      className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-full bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] text-white font-bold text-sm shadow-sm hover:from-[#3E4093] hover:to-[#1B1D60] hover:shadow-md transition-all duration-200"
+                    >
+                      <span>Explore Products</span>
+                      <ArrowRight size={16} />
+                    </Link>
+                  </div>
+                </EmptyState>
               )}
             </section>
           </div>

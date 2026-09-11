@@ -7,8 +7,29 @@ import {
   disputeReturnQc,
   fetchMyReturns,
 } from "../slices/returnsSlice";
+import FilterDropdown from "../../../components/ui/FilterDropdown";
 import { notify } from "../../../utils/notify";
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  CalendarClock,
+  AlertTriangle,
+  Send,
+  Truck,
+  RefreshCw,
+  Inbox,
+  ShieldCheck,
+  AlertOctagon,
+  AlertCircle,
+  CreditCard,
+  RotateCcw,
+  PackagePlus,
+  PackageCheck,
+  Lock,
+} from "lucide-react";
+import { AllOrdersIcon } from "../../../components/ui/icons";
 import ReturnItemCard from "../components/ReturnItemCard";
 import ReturnTrackingCard from "../components/ReturnTrackingCard";
 import { RETURNS_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
@@ -151,69 +172,62 @@ const getExpectedDate = (ret) => {
   }
 };
 
-/* ─── Custom dropdown component ───────────────────────────────────────── */
-function StatusDropdown({ value, onChange }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+const getReturnStatusIcon = (status, size = 15) => {
+  const iconClass = "shrink-0 text-[var(--customer-gold-dark)]";
+  switch (status) {
+    case "all":
+      return <AllOrdersIcon size={size} className={iconClass} />;
+    case "requested":
+      return <Clock size={size} className={iconClass} />;
+    case "approved":
+      return <CheckCircle2 size={size} className={iconClass} />;
+    case "rejected":
+      return <XCircle size={size} className={iconClass} />;
+    case "reverse_pickup_scheduled":
+      return <CalendarClock size={size} className={iconClass} />;
+    case "pickup_failed":
+      return <AlertTriangle size={size} className={iconClass} />;
+    case "manual_ship_back":
+      return <Send size={size} className={iconClass} />;
+    case "shipped_back":
+    case "in_reverse_transit":
+      return <Truck size={size} className={iconClass} />;
+    case "received":
+      return <Inbox size={size} className={iconClass} />;
+    case "qc_passed":
+      return <ShieldCheck size={size} className={iconClass} />;
+    case "qc_failed":
+      return <AlertOctagon size={size} className={iconClass} />;
+    case "qc_completed":
+      return <CheckCircle2 size={size} className={iconClass} />;
+    case "qc_failure_upheld":
+      return <AlertCircle size={size} className={iconClass} />;
+    case "refund_pending":
+      return <Clock size={size} className={iconClass} />;
+    case "refund_failed":
+      return <XCircle size={size} className={iconClass} />;
+    case "partially_refunded":
+      return <RotateCcw size={size} className={iconClass} />;
+    case "refunded":
+      return <CheckCircle2 size={size} className={iconClass} />;
+    case "replacement_requested":
+      return <RefreshCw size={size} className={iconClass} />;
+    case "replacement_pending":
+      return <Clock size={size} className={iconClass} />;
+    case "replacement_created":
+      return <PackagePlus size={size} className={iconClass} />;
+    case "replacement_shipped":
+      return <Truck size={size} className={iconClass} />;
+    case "replacement_delivered":
+    case "replaced":
+      return <PackageCheck size={size} className={iconClass} />;
+    case "closed":
+      return <Lock size={size} className={iconClass} />;
+    default:
+      return <AllOrdersIcon size={size} className={iconClass} />;
+  }
+};
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const activeLabel =
-    STATUS_FILTERS.find((f) => f.value === value)?.label || "All Returns";
-
-  return (
-    <div ref={ref} className="relative w-full sm:w-[260px] lg:w-[300px]">
-      <button
-        type="button"
-        onClick={() => setOpen((p) => !p)}
-        className="flex w-full items-center justify-between gap-2 rounded-[10px] border border-[#CE9F2D66] bg-white px-4 py-3 text-left font-sans text-[13px] font-semibold text-[#1B1D60] shadow-sm transition-all duration-200 hover:border-[#CE9F2D] focus:outline-none sm:text-[14px] lg:py-3.5 lg:text-[16px]"
-      >
-        <span className="truncate">{activeLabel}</span>
-        <ChevronDown
-          size={18}
-          className={`shrink-0 text-[#CE9F2D] transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-
-      {open && (
-        <ul className="absolute left-0 right-0 z-10 mt-1.5 max-h-64 overflow-y-auto rounded-[10px] border border-[#CE9F2D66] bg-white py-1 shadow-lg [scrollbar-width:thin] [scrollbar-color:#CE9F2D_transparent]">
-          {STATUS_FILTERS.map((opt) => {
-            const isActive = value === opt.value;
-            return (
-              <li key={opt.value}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onChange(opt.value);
-                    setOpen(false);
-                  }}
-                  className={`flex w-full items-center gap-2 px-4 py-2.5 text-left font-sans text-[12px] font-medium transition-colors sm:text-[13px] lg:text-[14px] ${
-                    isActive
-                      ? "bg-[#FFEFC8]/60 text-[#1B1D60]"
-                      : "text-[#454545] hover:bg-[#F9F5EB]"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-2 w-2 shrink-0 rounded-full ${
-                      isActive ? "bg-[#CE9F2D]" : "bg-[#D4D4D4]"
-                    }`}
-                  />
-                  {opt.label}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 /* ─── Main page ───────────────────────────────────────────────────────── */
 function ReturnsRefundsPage() {
@@ -233,6 +247,16 @@ function ReturnsRefundsPage() {
     toggleTracking,
     submitQcDispute
   } = useReturnsRefunds();
+
+  const returnFilterOptions = useMemo(
+    () =>
+      STATUS_FILTERS.map((opt) => ({
+        value: opt.value,
+        label: opt.label,
+        icon: getReturnStatusIcon(opt.value, 16),
+      })),
+    [],
+  );
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -495,7 +519,8 @@ function ReturnsRefundsPage() {
                 </span>
               )}
             </p>
-            <StatusDropdown
+            <FilterDropdown
+              options={returnFilterOptions}
               value={statusFilter}
               onChange={handleStatusFilterChange}
             />

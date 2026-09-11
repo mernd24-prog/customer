@@ -6,8 +6,18 @@ import { FaShoppingCart } from "react-icons/fa";
 import { BsCreditCardFill } from "react-icons/bs";
 import { PiStarThin, PiStarFill } from "react-icons/pi";
 import ShowMoreText from "../../../utils/showMore";
-import { Search, Truck, X, Package } from "lucide-react";
-import CustomDropdown from "../../../components/ui/CustomDropdown";
+import {
+  Search,
+  Truck,
+  X,
+  Package,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  AlertCircle,
+} from "lucide-react";
+import FilterDropdown from "../../../components/ui/FilterDropdown";
+import { AllOrdersIcon } from "../../../components/ui/icons";
 import Pagination from "../../products/components/Pagination";
 
 import ApiState from "../../../components/ui/ApiState";
@@ -48,6 +58,26 @@ import {
   getOrderItemId,
 } from "../../../utils/pages/orderUtils";
 
+
+const getStatusIcon = (value) => {
+  const iconClass = "shrink-0 text-[var(--customer-gold-dark)]";
+  switch (value) {
+    case "all":
+      return <AllOrdersIcon size={16} className={iconClass} />;
+    case "on_the_way":
+      return <Truck size={16} className={iconClass} />;
+    case "delivered":
+      return <CheckCircle2 size={16} className={iconClass} />;
+    case "cancelled":
+      return <XCircle size={16} className={iconClass} />;
+    case "returned":
+      return <RotateCcw size={16} className={iconClass} />;
+    case "payment_failed":
+      return <AlertCircle size={16} className={iconClass} />;
+    default:
+      return <AllOrdersIcon size={16} className={iconClass} />;
+  }
+};
 
 const orderHelpItems = items.map((item) => ({
   icon: item.icon,
@@ -155,29 +185,30 @@ export default function OrderListPage() {
                       )}
                     </label>
 
-                    <div className="w-full sm:w-auto shrink-0 flex justify-end">
-                      <CustomDropdown
-                        className="w-full sm:w-[190px]"
-                        buttonClassName="h-11 w-full rounded-lg border border-[#E4DDCF] bg-white px-4 text-sm font-bold text-[#1F2430] shadow-2xs transition-all hover:border-[#D6A323]/60 focus:outline-none"
-                        options={[
-                          { value: "all", label: "All Orders" },
-                          ...availableStatusFilters.map((f) => ({
-                            value: f.value,
-                            label: f.label,
-                          })),
-                        ]}
-                        value={
-                          statusFilters && statusFilters.length === 1
-                            ? statusFilters[0]
-                            : "all"
-                        }
-                        onChange={(v) => {
-                          if (v === "all") setStatusFilters([]);
-                          else setStatusFilters([v]);
-                        }}
-                        placeholder="Status"
-                      />
-                    </div>
+                    <FilterDropdown
+                      options={[
+                        {
+                          value: "all",
+                          label: "All Orders",
+                          icon: getStatusIcon("all"),
+                        },
+                        ...availableStatusFilters.map((f) => ({
+                          value: f.value,
+                          label: f.label,
+                          icon: getStatusIcon(f.value),
+                        })),
+                      ]}
+                      value={
+                        statusFilters && statusFilters.length === 1
+                          ? statusFilters[0]
+                          : "all"
+                      }
+                      onChange={(v) => {
+                        if (v === "all") setStatusFilters([]);
+                        else setStatusFilters([v]);
+                      }}
+                      placeholder="Status"
+                    />
                   </div>
                 </div>
               )}

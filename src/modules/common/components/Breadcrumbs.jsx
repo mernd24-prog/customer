@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { cn } from "../../../utils/common";
 import { IoIosArrowForward } from "react-icons/io";
 import { getShowMoreText } from "../../../utils/showMore";
+import { HomeIcon } from "../../../components/ui/icons";
 
 export default function Breadcrumbs({
   items = [],
@@ -15,7 +16,16 @@ export default function Breadcrumbs({
   truncateMode = "characters",
   truncateLimit = 30,
   rightContent,
+  homeIconSize,
 }) {
+  const isCompact =
+    linkClassName.includes("text-xs") ||
+    linkClassName.includes("text-[12px]") ||
+    linkClassName.includes("text-[13px]");
+
+  const defaultHomeSize = isCompact ? 16 : 19;
+  const resolvedHomeSize = homeIconSize || defaultHomeSize;
+
   return (
     <>
       <nav
@@ -27,6 +37,11 @@ export default function Breadcrumbs({
       >
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
+          const isHome =
+            (index === 0 &&
+              (String(item?.label || "").toLowerCase() === "home" ||
+                item?.href === "/")) ||
+            item?.isHome;
 
           // Truncate only the last breadcrumb
           const { preview, isTruncated } = getShowMoreText(item.label, {
@@ -47,21 +62,39 @@ export default function Breadcrumbs({
                   to={item.href}
                   title={item.label}
                   className={cn(
-                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D]",
+                    "inline-flex items-center gap-1.5 font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D]",
                     linkClassName,
                   )}
                 >
-                  {item.label}
+                  {isHome && (
+                    <HomeIcon
+                      className="shrink-0 text-[#201B78] transition-colors"
+                      size={resolvedHomeSize}
+                    />
+                  )}
+                  {item.icon && !isHome && (
+                    <span className="shrink-0">{item.icon}</span>
+                  )}
+                  <span>{item.label}</span>
                 </Link>
               ) : (
                 <span
                   title={item.label}
                   className={cn(
-                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#8A6500]",
+                    "inline-flex items-center gap-1.5 font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#8A6500]",
                     currentClassName,
                   )}
                 >
-                  {displayLabel}
+                  {isHome && (
+                    <HomeIcon
+                      className="shrink-0 text-[#201B78]"
+                      size={resolvedHomeSize}
+                    />
+                  )}
+                  {item.icon && !isHome && (
+                    <span className="shrink-0">{item.icon}</span>
+                  )}
+                  <span>{displayLabel}</span>
                 </span>
               )}
 

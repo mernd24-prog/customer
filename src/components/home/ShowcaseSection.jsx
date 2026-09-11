@@ -26,6 +26,10 @@ export default function ShowcaseSection({
     skeletonVariant === "new-arrivals" ? "NEW_ARRIVAL_CARD" : "TOP_DEAL_CARD";
   const skeletonWrapperClass = "min-w-0 h-full";
 
+  if (!loading && !asArray(items).length) {
+    return null;
+  }
+
   return (
     <SectionContainer
       title={title}

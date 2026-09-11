@@ -1,10 +1,11 @@
-import { SolidLargeButton } from "../ui/button/static";
-import defaultBannerImage from "/image/png/bannerFestival.png";
+import { Link } from "react-router-dom";
+import defaultBannerImage from "/image/png/bannerDeals.png";
 
 export default function ShoppingMadeEasyBanner({ className = "" }) {
   return (
-    <section
-      className={`mt-8 md:mt-16 relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[420px] min-[375px]:h-[440px] min-[425px]:h-[460px] md:h-[520px] lg:h-[450px] xl:h-[600px] w-screen items-center overflow-hidden ${className}`}
+    <Link
+      to="/deals"
+      className={`group mt-8 md:mt-12 flex w-full aspect-[16/9] sm:aspect-[2/1] md:aspect-[2.5/1] lg:aspect-[3/1] items-center overflow-hidden rounded-xl cursor-pointer block ${className}`}
       style={{
         backgroundImage: `url("${defaultBannerImage}")`,
         backgroundSize: "cover",
@@ -12,26 +13,49 @@ export default function ShoppingMadeEasyBanner({ className = "" }) {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="flex h-full w-full items-center justify-end px-6 md:px-12 lg:px-20 xl:px-[96px] 2xl:px-[180px]">
-        <div className="w-full max-w-[320px] min-[375px]:max-w-[360px] md:max-w-[480px] lg:max-w-[580px] flex flex-col items-end text-right">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold text-[#1B1D60] leading-tight drop-shadow-sm">
-            Navratri Special Deal
-          </h2>
-
-          <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg font-semibold text-[#2E2E2E] max-w-[480px]">
-            Celebrate the vibrant spirit of Navratri with exquisite festive
-            wear, traditional outfits, dandiya accessories, and special festive
-            offers.
-          </p>
-
-          <SolidLargeButton
-            to="/deals"
-            className="mt-5 sm:mt-6 h-[44px] sm:h-[48px] lg:h-[52px] rounded-xl px-6 lg:px-8 font-bold text-white bg-[#1B1D60] hover:bg-[#282C75] shadow-lg transition-all"
+      <div className="flex h-full w-full items-center justify-end pr-4 sm:pr-8 md:pr-12 lg:pr-20 xl:pr-32">
+        <div className="flex flex-col items-center select-none max-w-[250px] sm:max-w-[350px] md:max-w-[450px]">
+          <div className="flex items-center" style={{ fontFamily: "'Anton', 'Oswald', Impact, sans-serif" }}>
+            <span
+              className="flex items-center text-[62px] sm:text-[78px] md:text-[94px] lg:text-[104px] xl:text-[118px] leading-none font-black text-[#FFDF00] tracking-[-0.01em]"
+              style={{
+                WebkitTextStroke: "1.2px #6B4226",
+              }}
+            >
+              50-80
+            </span>
+            <div className="flex flex-col justify-end ml-1.5 sm:ml-2 md:ml-3 self-stretch pb-1 sm:pb-1.5 md:pb-2">
+              <span
+                className="text-[36px] sm:text-[45px] md:text-[54px] lg:text-[62px] xl:text-[72px] leading-none font-black text-[#FFDF00] tracking-[-0.01em] -mb-1"
+                style={{
+                  WebkitTextStroke: "1px #6B4226",
+                }}
+              >
+                %
+              </span>
+              <span
+                className="text-[20px] sm:text-[25px] md:text-[30px] lg:text-[34px] xl:text-[40px] leading-none font-black text-[#FFDF00] tracking-[-0.01em]"
+                style={{
+                  WebkitTextStroke: "0.9px #6B4226",
+                }}
+              >
+                OFF
+              </span>
+            </div>
+          </div>
+          <h2
+            className="text-white text-[18px] sm:text-[22px] md:text-[26px] lg:text-[30px] xl:text-[34px] font-extrabold mt-2.5 md:mt-3.5 text-center leading-[1.18] tracking-tight transition-transform duration-300 group-hover:scale-[1.02]"
+            style={{
+              fontFamily: "'Poppins', 'Montserrat', 'Inter', system-ui, -apple-system, sans-serif",
+              textShadow: "0 2px 8px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.6)",
+            }}
           >
-            Explore Navratri Collection
-          </SolidLargeButton>
+            Irresistible Brands,
+            <br />
+            Best Prices
+          </h2>
         </div>
       </div>
-    </section>
+    </Link>
   );
 }
