@@ -29,10 +29,10 @@ export default function SectionContainer({
     <section className={`${className || "bg-white"}`} style={style}>
       {hasHeader && (
         <header
-          className={`text-[var(--customer-ink)] ${headerbgColor || "bg-transparent"}`}
+          className={`text-[var(--customer-ink)] ${headerbgColor || "bg-transparent"} mb-3 sm:mb-4`}
         >
           <div
-            className={`flex flex-col gap-2 mt-0 lg:mt-1 mb-1 sm:gap-4 sm:flex-row sm:items-center sm:justify-between ${!disablePadding ? "px-4 sm:px-6 lg:px-8" : ""} ${headerClassName}`}
+            className={`flex flex-col gap-2 mt-0 lg:mt-1 sm:gap-4 sm:flex-row sm:items-center sm:justify-between ${!disablePadding ? "px-4 sm:px-6 lg:px-8" : ""} ${headerClassName}`}
           >
             <div className="min-w-0 flex items-center justify-between w-full sm:w-auto">
               <div>
