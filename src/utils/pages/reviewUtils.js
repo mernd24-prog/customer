@@ -53,6 +53,12 @@ export function getProductDisplay(product) {
     (typeof p?.category === "string" ? p.category : "") ||
     p?.subcategory?.name ||
     "";
+  const brand =
+    p?.brand?.name ||
+    (typeof p?.brand === "string" ? p.brand : "") ||
+    p?.brandName ||
+    p?.sellerName ||
+    "";
 
   const price = getProductPrice(p) ?? p?.salePrice ?? "";
   const mrp = getProductMrp(p) ?? p?.originalPrice ?? "";
@@ -63,9 +69,17 @@ export function getProductDisplay(product) {
       : p?.discount || "";
 
   const image = getProductImage(p) || getImageFallbackSrc(title, category);
+  const id = p?._id || p?.id || p?.productId || "";
+  const slug = p?.slug || p?.handle || p?.seoSlug || "";
+  const publicCode = p?.publicCode || p?.public_code || "";
 
   return {
+    id,
+    _id: id,
+    slug,
+    publicCode,
     title,
+    brand,
     category,
     price,
     mrp,

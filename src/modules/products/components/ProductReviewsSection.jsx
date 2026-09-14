@@ -48,24 +48,6 @@ function StarInput({ value, onChange, size = 24 }) {
   );
 }
 
-function RatingPill({ rating, className = "" }) {
-  const numRating = Number(rating);
-  const bgColor =
-    numRating > 3
-      ? "bg-[#388e3c]"
-      : numRating === 0
-        ? "bg-[#9e9e9e]"
-        : "bg-[#CE9F2D]";
-
-  return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] sm:text-xs font-bold text-white shadow-xs ${bgColor} ${className}`}
-    >
-      <IoIosStar className="text-xs" /> {rating}
-    </span>
-  );
-}
-
 function getUserDisplayName(user = {}) {
   const first = user.profile?.firstName || user.firstName || "";
   const last = user.profile?.lastName || user.lastName || "";
@@ -89,7 +71,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       })
     : "";
 
-  const rating = Number(review.rating || 0).toFixed(1);
+  const roundedRating = Math.round(Number(review.rating || 0));
   const isOwn =
     currentUserId &&
     (String(review.buyerId) === String(currentUserId) ||
@@ -121,50 +103,24 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const media = Array.isArray(review.media)
     ? review.media.map(getImageUrlFromValue).filter(Boolean)
     : [];
-  const buyerImage = review.buyerImage || review.buyerAvatarUrl || "";
 
   return (
     <article className="py-3.5 border-b border-[#E7D9B8]/50 last:border-b-0">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <span className="size-8 shrink-0 overflow-hidden rounded-full border border-[#CE9F2D]/30 bg-[#FAF6EE]">
-            <img
-              loading="lazy"
-              width="400"
-              height="400"
-              src={buyerImage || "/image/png/person.png"}
-              alt={name}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = "/image/png/person.png";
-              }}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="inline-flex items-center gap-0.5 text-[#CE9F2D] text-[17px] sm:text-[19px]">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <IoIosStar
+              key={star}
+              className={
+                star <= roundedRating
+                  ? "fill-[#CE9F2D] text-[#CE9F2D]"
+                  : "fill-[#D1D5DB] text-[#D1D5DB]"
+              }
             />
-          </span>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-bold text-[#1B1D60]">
-                {name}
-              </span>
-              {isOwn && (
-                <span className="rounded-md bg-[#CE9F2D]/15 px-2 py-0.5 text-[10px] font-bold text-[#A96F14]">
-                  Your Review
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-        <span className="text-[11px] sm:text-xs font-medium text-[#737373] shrink-0">
-          {dateStr || review.date}
+          ))}
         </span>
-      </div>
-
-      <div className="mt-2 text-xs sm:text-sm leading-[1.6]">
-        <RatingPill
-          rating={rating}
-          className="mr-2 align-middle relative -top-[1.5px]"
-        />
         {review.title && (
-          <span className="font-bold text-[#1F2430] inline">
+          <span className="text-sm sm:text-base font-bold text-[#1F2430]">
             {review.title}
           </span>
         )}
@@ -210,22 +166,32 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </div>
       )}
 
-      <div className="mt-2.5 flex items-center justify-between">
+      <div className="mt-3 flex items-center justify-between gap-4">
+        <p className="text-sm font-medium text-[#1F2430]/80">
+          {name}
+          {(dateStr || review.date) && (
+            <span className="font-normal text-[#737373]">
+              {" "}
+              | {dateStr || review.date}
+            </span>
+          )}
+        </p>
+
         <button
           type="button"
           onClick={() => onHelpful?.(reviewId)}
           disabled={!reviewId || isOwn}
-          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold border transition disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
             alreadyVoted
-              ? "bg-[#CE9F2D]/15 border-[#CE9F2D]/40 text-[#1B1D60]"
-              : "border-[#E7D9B8] bg-[#FAF6EE] text-[#6F7480] hover:border-[#CE9F2D] hover:text-[#1B1D60]"
+              ? "border-[#CE9F2D] bg-[#CE9F2D]/15 text-[#1B1D60]"
+              : "border-[#E7D9B8] text-[#6F7480] hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#1B1D60]"
           }`}
         >
           <ThumbsUp
-            size={11}
+            size={14}
             className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
           />
-          Helpful ({helpfulVotes})
+          <span>{helpfulVotes}</span>
         </button>
       </div>
 

@@ -23,9 +23,7 @@ export default function ImageVariantPicker({
 
   return (
     <div className="w-full">
-      <p className="mb-3 text-lg font-semibold capitalize text-ink">
-        Style:
-      </p>
+      <p className="mb-3 text-lg font-semibold capitalize text-ink">Style:</p>
 
       <div className="flex w-fit flex-wrap gap-3">
         {variants.map((variant, index) => {
@@ -41,9 +39,7 @@ export default function ImageVariantPicker({
             getImageUrlFromValue(variant.image) ||
             "";
 
-          const stock = Number(
-            variant.availableStock ?? variant.stock ?? 0
-          );
+          const stock = Number(variant.availableStock ?? variant.stock ?? 0);
           const isOutOfStock =
             stock === 0 ||
             variant.inStock === false ||
@@ -75,7 +71,7 @@ export default function ImageVariantPicker({
                     applyImageFallback(
                       event,
                       variant.title || `Style ${index + 1}`,
-                      "product"
+                      "product",
                     )
                   }
                 />

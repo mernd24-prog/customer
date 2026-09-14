@@ -158,7 +158,7 @@ export default function HomeProductsForYouSection({
       disablePadding={true}
     >
       <div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 my-4 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {products.map((product) => (
             <ProductCard
               key={getProductId(product)}
@@ -170,7 +170,10 @@ export default function HomeProductsForYouSection({
           ))}
         </div>
         {page < totalPages && (
-          <div ref={sentinelRef} className="h-10 mt-8 flex items-center justify-center">
+          <div
+            ref={sentinelRef}
+            className="h-10 mt-8 flex items-center justify-center"
+          >
             {isLoadingMore && (
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
             )}

@@ -44,9 +44,10 @@ function StarRow({ rating, size = 14 }) {
 }
 
 function RatingBar({ star, count, total }) {
-  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+  const pct = total ? Math.round((count / total) * 100) : 0;
+
   return (
-    <div className="grid grid-cols-[32px_1fr_40px] items-center gap-2 text-xs font-semibold text-muted">
+    <div className="grid grid-cols-[38px_1fr_30px] items-center gap-2 text-xs font-semibold text-muted">
       <span>{star} ★</span>
       <div className="h-2 overflow-hidden rounded-full bg-cream">
         <span
@@ -61,41 +62,68 @@ function RatingBar({ star, count, total }) {
 }
 
 function ProductReviewSidebar({ product, productId }) {
+  const navigate = useNavigate();
+  const targetProduct = product?.rawProduct || product || { id: productId };
+  const rawId = targetProduct?.id || targetProduct?._id || productId;
+  const productPath = getProductPublicPath(
+    targetProduct?.slug || rawId ? targetProduct : { id: productId },
+  );
+
+  const handleBack = (e) => {
+    e.preventDefault();
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate(productPath);
+    }
+  };
+
   return (
-    <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+80px)] lg:self-start">
+    <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+24px)] lg:self-start">
       <Link
-        to={getProductPublicPath(product || { id: productId })}
-        className="mb-4 inline-flex items-center gap-1 text-xs font-bold uppercase text-gold-dark"
+        to={productPath}
+        onClick={handleBack}
+        className="mb-3.5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#CE9F2D] hover:text-[#1B1D60] transition-colors group cursor-pointer"
       >
-        <ChevronLeft size={16} />
+        <ChevronLeft size={16} className="transition-transform group-hover:-translate-x-1" />
         Back to Product
       </Link>
 
-      <img
-        loading="lazy"
-        width="400"
-        height="400"
-        src={product.image}
-        alt={product.title}
-        className="aspect-[8/8] max-w-[800px] w-full rounded-[4px] bg-[var(--customer-cream)] object-contain"
-      />
+      <Link
+        to={productPath}
+        className="block overflow-hidden rounded-[8px] border border-border bg-white transition hover:border-gold/70"
+        aria-label={`Back to ${product.title}`}
+      >
+        <img
+          loading="lazy"
+          width="520"
+          height="620"
+          src={product.image}
+          alt={product.title}
+          className="aspect-[4/5] w-full bg-[var(--customer-cream)] object-cover"
+        />
+      </Link>
 
-      <div className="mt-4">
-        <h1 className="text-sm  font-bold  uppercase text-[var(--customer-ink)]">
+      <div className="mt-5 space-y-2">
+        {product.brand && (
+          <p className="text-xs font-extrabold uppercase text-[var(--customer-gold-dark)]">
+            {product.brand}
+          </p>
+        )}
+
+        <h1 className="text-base font-bold uppercase leading-snug text-[var(--customer-ink)]">
           {product.title}
         </h1>
 
-        <p className="mt-1 text-sm text-[var(--customer-muted)]">
-          {product.category}
-        </p>
-
-        <p className="mt-5  text-sm font-bold text-[var(--customer-ink)]">
-          Rs. {product.price}
-          <span className="ml-2 font-medium text-[var(--customer-muted)] line-through">
-            Rs. {product.mrp}
-          </span>
+        <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 pt-2 text-sm font-bold text-[var(--customer-ink)]">
+          <span>Rs. {product.price}</span>
+          {product.mrp && (
+            <span className="font-medium text-[var(--customer-muted)] line-through">
+              Rs. {product.mrp}
+            </span>
+          )}
           {product.discount && (
-            <span className="ml-2  font-bold text-[var(--customer-gold-dark)]">
+            <span className="font-bold text-[var(--customer-gold-dark)]">
               ({product.discount})
             </span>
           )}
@@ -171,7 +199,7 @@ function ReviewsHeader({ total, sort, onSort }) {
   ];
 
   return (
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
       <h3 className="text-sm font-bold text-ink">
         Customer Reviews
         {total > 0 && (
@@ -237,38 +265,27 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     : review.date || "";
 
   return (
-    <article className="border-b border-border py-5 last:border-b-0">
-      <div className="mb-3 flex items-center gap-2">
-        <img
-          loading="lazy"
-          width="400"
-          height="400"
-          src={review.buyerImage || "/image/png/person.png"}
-          alt={name}
-          className="size-10 rounded-full object-cover"
-        />
-
-        <span className="text-base font-bold text-black/70">{name}</span>
-
-        {isOwn && (
-          <span className="rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-bold text-gold-dark">
-            Your Review
-          </span>
-        )}
-      </div>
-
+    <article className="border-b border-border pb-4 pt-1 last:border-b-0">
       <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span className="inline-flex   items-center gap-1 rounded-full  bg-gold px-2 py-0.5 text-[11px] font-bold text-white">
-          {Number(review.rating || 0).toFixed(1)} ★
+        <span className="inline-flex items-center gap-0.5 text-gold">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              size={18}
+              className={
+                star <= Math.round(Number(review.rating || 0))
+                  ? "fill-gold text-gold"
+                  : "fill-border text-border"
+              }
+            />
+          ))}
         </span>
 
         {review.title && (
-          <span className="text-lg  font-semibold  text-ink">
+          <span className="text-base sm:text-lg font-bold text-ink">
             {review.title}
           </span>
         )}
-
-        <span className="text-sm text-muted">{dateStr}</span>
       </div>
 
       {text && <p className="text-sm leading-relaxed text-ink">{text}</p>}
@@ -295,22 +312,31 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => onHelpful(reviewId)}
-        disabled={!reviewId || isOwn}
-        className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-          alreadyVoted
-            ? "bg-gold/10 text-gold-dark"
-            : "text-muted hover:bg-surface-soft hover:text-ink"
-        }`}
-      >
-        <ThumbsUp
-          size={12}
-          className={alreadyVoted ? "fill-gold text-gold" : ""}
-        />
-        Helpful ({helpfulVotes})
-      </button>
+      <div className="mt-4 flex items-center justify-between gap-4">
+        <p className="text-sm sm:text-base font-medium text-black/70">
+          {name}
+          {dateStr && (
+            <span className="font-normal text-muted"> | {dateStr}</span>
+          )}
+        </p>
+
+        <button
+          type="button"
+          onClick={() => onHelpful(reviewId)}
+          disabled={!reviewId || isOwn}
+          className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+            alreadyVoted
+              ? "border-gold bg-gold/15 text-ink"
+              : "border-border text-muted hover:border-gold hover:bg-cream/60 hover:text-ink"
+          }`}
+        >
+          <ThumbsUp
+            size={14}
+            className={alreadyVoted ? "fill-gold text-gold" : ""}
+          />
+          <span>{helpfulVotes}</span>
+        </button>
+      </div>
 
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
@@ -588,7 +614,7 @@ export default function ReviewDetailsPage() {
           }
           metaDescription={`Read customer reviews and ratings for ${product?.title || "this product"}.`}
         />
-        <div className="mx-auto grid max-w-[1180px] gap-8 px-4 py-8 lg:grid-cols-[280px_1fr]">
+        <div className="mx-auto grid max-w-[1240px] gap-8 px-4 py-8 lg:grid-cols-[340px_1fr] xl:grid-cols-[360px_1fr]">
           <ProductReviewSidebar product={product} productId={productId} />
 
           <section className="min-w-0">
@@ -600,7 +626,7 @@ export default function ReviewDetailsPage() {
               onFilter={handleFilter}
             />
 
-            <div className="py-5">
+            <div className="py-4">
               <ReviewsHeader total={total} sort={sort} onSort={handleSort} />
 
               <ReviewList

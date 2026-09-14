@@ -236,19 +236,19 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-3.5 sm:gap-4">
-                  <div className="flex min-w-0 flex-col gap-2">
+                <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
+                  <div className="flex min-w-0 flex-col gap-3 sm:gap-3.5">
                     {brand && (
                       <Link
                         to={`/brands/${encodeURIComponent(brand)}`}
-                        className="w-fit text-xl sm:text-2xl font-extrabold tracking-tight text-[#1B1D60] hover:text-[#CE9F2D] transition-colors leading-tight"
+                        className="w-fit text-xl sm:text-2xl font-extrabold tracking-tight text-[#1B1D60] hover:text-[#CE9F2D] transition-colors leading-tight mb-0.5"
                       >
                         {brand}
                       </Link>
                     )}
 
                     <h1
-                      className={`break-words block leading-snug ${
+                      className={`break-words block leading-relaxed ${
                         brand
                           ? "text-sm sm:text-base font-medium text-[#595E6B]"
                           : "text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px]"
@@ -263,7 +263,7 @@ export default function ProductDetailPage() {
                     </h1>
 
                     {Number(product.rating || 0) > 0 && (
-                      <div className="flex items-center">
+                      <div className="flex items-center pt-0.5">
                         <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
                           {Number(product.rating || 0).toFixed(1)}
                         </span>
@@ -294,12 +294,14 @@ export default function ProductDetailPage() {
                       </div>
                     )}
 
-                    <ProductStockStatus
-                      inStock={inStock}
-                      selectedVariant={selectedVariant}
-                      product={product}
-                      availableStock={availableStock}
-                    />
+                    <div className="pt-0.5">
+                      <ProductStockStatus
+                        inStock={inStock}
+                        selectedVariant={selectedVariant}
+                        product={product}
+                        availableStock={availableStock}
+                      />
+                    </div>
                   </div>
 
                   <ProductPriceBlock

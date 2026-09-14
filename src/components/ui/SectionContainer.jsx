@@ -47,17 +47,20 @@ export default function SectionContainer({
                   </p>
                 )}
               </div>
-              
+
               {/* Mobile-only header action if icon */}
-              {hasAction && actionHref && actionStyle === "icon" && finalMobileActionStyle === "icon" && (
-                <Link
-                  to={actionHref}
-                  className="sm:hidden flex w-8 h-8 rounded-[100px] bg-[#3E4093] text-white items-center justify-center hover:bg-[#2A2B66] transition-colors outline-none focus:outline-none"
-                  aria-label={`Go to ${title}`}
-                >
-                  <ArrowRight className="w-4 h-4" strokeWidth={2} />
-                </Link>
-              )}
+              {hasAction &&
+                actionHref &&
+                actionStyle === "icon" &&
+                finalMobileActionStyle === "icon" && (
+                  <Link
+                    to={actionHref}
+                    className="sm:hidden flex w-8 h-8 rounded-[100px] bg-[#3E4093] text-white items-center justify-center hover:bg-[#2A2B66] transition-colors outline-none focus:outline-none"
+                    aria-label={`Go to ${title}`}
+                  >
+                    <ArrowRight className="w-4 h-4" strokeWidth={2} />
+                  </Link>
+                )}
             </div>
 
             {hasAction && (actionHref || onAction) ? (
@@ -76,7 +79,7 @@ export default function SectionContainer({
                   rightIcon={
                     <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
                   }
-                  className="self-start my-2 sm:self-center md:inline-flex hidden"  
+                  className="self-start my-2 sm:self-center md:inline-flex hidden"
                   aria-label={`${actionLabel} ${title || ""}`}
                 >
                   {actionLabel}
