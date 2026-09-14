@@ -628,7 +628,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
                   key={`category-skeleton-${index}`}
                   className="flex-1 flex flex-col items-center justify-center px-1 sm:px-2 lg:px-3 min-w-[62px] sm:min-w-[88px] lg:min-w-[105px] animate-pulse"
                 >
-                  <div className="h-[28px] w-[32px] sm:h-[42px] sm:w-[46px] lg:h-[46px] lg:w-[52px] rounded-lg bg-[#EAD8B5]/60 flex items-center justify-center" />
+                  <div className="h-[44px] w-[48px] sm:h-[56px] sm:w-[60px] lg:h-[64px] lg:w-[68px] rounded-lg bg-[#EAD8B5]/60 flex items-center justify-center" />
                   <div
                     className="mt-3 sm:mt-4 lg:mt-4.5 h-2.5 sm:h-3 lg:h-3.5 rounded-full bg-[#EAD8B5]/75"
                     style={{ width: `${w}px`, maxWidth: "85%" }}
@@ -757,7 +757,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
                         : "hover:bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]"
                     }`}
                   >
-                    <div className="flex h-[28px] w-[32px] sm:h-[42px] sm:w-[46px] lg:h-[46px] lg:w-[52px] items-center justify-center transition-transform duration-200 group-hover:scale-105">
+                    <div className="flex h-[44px] w-[48px] sm:h-[56px] sm:w-[60px] lg:h-[64px] lg:w-[68px] items-center justify-center transition-transform duration-200 group-hover:scale-105">
                       {item?.iconUrl || item?.img || item?.imageUrl || item?.image ? (
                         <ImageSkeleton
                           src={item?.iconUrl || item?.img || item?.imageUrl || item?.image}
@@ -766,7 +766,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-[#2D347D]">
-                          <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8" />
+                          <ShoppingBag className="w-8 h-8 sm:w-10 sm:h-10" />
                         </div>
                       )}
                     </div>
