@@ -79,9 +79,9 @@ export default function ContactUs() {
 
   return (
     <section className=" py-16 px-4">
-      <Seo 
-        title="Contact Us - Sam Global" 
-        metaDescription="Get in touch with Sam Global for support, inquiries, or feedback." 
+      <Seo
+        title="Contact Us - Sam Global"
+        metaDescription="Get in touch with Sam Global for support, inquiries, or feedback."
       />
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-8">
@@ -97,12 +97,12 @@ export default function ContactUs() {
                 {
                   icon: Mail,
                   title: "Email",
-                  value: "support@samglobal.com",
+                  value: "info@samglobal1.com",
                 },
                 {
                   icon: Phone,
                   title: "Phone",
-                  value: "+91 98765 43210",
+                  value: "+91 99154 29897",
                 },
                 {
                   icon: Clock3,
@@ -112,11 +112,12 @@ export default function ContactUs() {
                 {
                   icon: MapPin,
                   title: "Office",
-                  value: "Sam Global Marketplace Pvt Ltd\nBhubaneswar\nOdisha",
+                  value:
+                    "202, KINGSTON1 OMAXE ROYAL RESIDENCY, PAKHOWAL ROAD, Lalton Kalan, Ludhiana, Ludhiana punjab 142022",
                 },
               ].map((item, index) => (
                 <div key={index} className="flex gap-4 group">
-                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center group-hover:bg-[#d4a12f] duration-300">
+                  <div className="p-4 w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center group-hover:bg-[#d4a12f] duration-300">
                     <item.icon className="text-[#d4a12f] group-hover:text-white" />
                   </div>
 
@@ -140,7 +141,10 @@ export default function ContactUs() {
             </h2>
 
             {submitted && (
-              <BaseModal onClose={() => setSubmitted(false)} maxWidth="max-w-md">
+              <BaseModal
+                onClose={() => setSubmitted(false)}
+                maxWidth="max-w-md"
+              >
                 <div className="p-6 md:p-10 relative">
                   <div className="flex flex-col items-center text-center mt-2">
                     <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6">

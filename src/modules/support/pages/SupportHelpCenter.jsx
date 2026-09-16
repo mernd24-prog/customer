@@ -166,7 +166,7 @@ export default function SupportHelpCenter() {
                 {quickActions.map((topic, index) => (
                   <Link
                     key={`${topic.title}-${index}`}
-                    to={topic.path || "/contact"}
+                    to={topic.path || "/contact-us"}
                     onClick={() => setIsQuickActionsOpen(false)}
                     className="flex w-full items-center gap-3 border-b border-[#04258626] p-2 text-[#2E2E2E] last:border-b-0"
                   >
@@ -226,7 +226,9 @@ export default function SupportHelpCenter() {
                         </span>
                       </div>
                       <p className="mt-1 text-xs text-gray-200 leading-relaxed max-w-xl">
-                        Have a question about your order, returns, or store policies? Ask our AI assistant for instant, grounded answers.
+                        Have a question about your order, returns, or store
+                        policies? Ask our AI assistant for instant, grounded
+                        answers.
                       </p>
                     </div>
                   </div>
@@ -256,7 +258,7 @@ export default function SupportHelpCenter() {
                     {quickActions.map((topic, index) => (
                       <Link
                         key={`${topic.title}-${index}`}
-                        to={topic.path || "/contact"}
+                        to={topic.path || "/contact-us"}
                         className="group flex min-w-0 flex-col items-center text-center"
                       >
                         <div className="flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#F5C72E] transition-transform duration-200 group-hover:scale-105">

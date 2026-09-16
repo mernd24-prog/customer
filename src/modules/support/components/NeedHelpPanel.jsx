@@ -156,7 +156,7 @@ export default function NeedHelpPanel({
                 </button>
               ) : (
                 <Link
-                  to={item.path || "/contact"}
+                  to={item.path || "/contact-us"}
                   className="flex min-w-0 items-center gap-3 py-5"
                 >
                   {content}

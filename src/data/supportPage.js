@@ -3,13 +3,13 @@ import { Phone, Mail, Ticket } from "lucide-react";
 export const SUPPORT_CONTACT_ITEMS = [
   {
     icon: Phone,
-    title: "+91 1234567890",
+    title: "+91 99154 29897",
     description: "Call Us",
     path: "/contact-us",
   },
   {
     icon: Mail,
-    title: "support@samglobal.com",
+    title: "info@samglobal1.com",
     description: "Email Support",
     path: "/contact-us",
   },

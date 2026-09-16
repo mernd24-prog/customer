@@ -1,6 +1,5 @@
 import BaseModal from "./BaseModal";
 import Button from "../buttons/Button";
-import { SendHorizonal } from "lucide-react";
 
 export default function ConfirmModal({
   open,

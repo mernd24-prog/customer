@@ -66,7 +66,7 @@ export function mapCards(items = []) {
       title: item.title,
       description: item.description,
       image: getTopicImage(item.title),
-      path: item.path || "/contact",
+      path: item.path || "/contact-us",
     }));
 }
 

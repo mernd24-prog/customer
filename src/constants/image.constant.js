@@ -107,8 +107,8 @@ export const bannerData = [
 
 export const bannerConfig = {
   qr: "/image/png/qr-code.png",
-  phone: "+91 98765 43210",
-  email: "support@samglobal.com",
+  phone: "+91 99154 29897",
+  email: "info@samglobal1.com",
   website: "www.samglobal.com",
   gradient:
     "linear-gradient(270deg, var(--customer-navy) 5.77%, var(--customer-navy-dark) 100%)",
