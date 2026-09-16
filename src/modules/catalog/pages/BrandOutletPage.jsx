@@ -52,6 +52,9 @@ export default function BrandOutletPage() {
   const brands = useMemo(() => {
     let list = Array.isArray(brandList) ? [...brandList] : [];
 
+    // Filter only brands with productCount === 1
+    list = list.filter((b) => getBrandProductCount(b) >= 1);
+
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       list = list.filter((b) => getBrandName(b).toLowerCase().includes(q));
@@ -157,11 +160,11 @@ export default function BrandOutletPage() {
                   <div className={brandGridClass}>
                     {paginatedBrands.map((brand) => (
                       <BrandCard
-                        key={brand.routeKey}
-                        name={brand.displayName}
-                        image={brand.displayLogo}
+                        key={getBrandRouteKey(brand)}
+                        name={getBrandName(brand)}
+                        image={getBrandLogo(brand)}
                         subtitle=""
-                        href={CUSTOMER_ROUTES.brand(brand.routeKey)}
+                        href={CUSTOMER_ROUTES.brand(getBrandRouteKey(brand))}
                         className="
                         min-h-0 items-center
                         rounded-[12px]

@@ -421,14 +421,19 @@ export const Navbar = ({ icons: propIcons }) => {
   );
 };
 
-export const CategoryBar = ({ headerData, compact = false, loading = false }) => {
+export const CategoryBar = ({
+  headerData,
+  compact = false,
+  loading = false,
+}) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const globalCategories = useSelector(
     (state) => state.catalog.globalCategories,
   );
   const catalogLoading = useSelector(
-    (state) => state.catalog?.loading || state.catalog?.discoveryNavigationLoading,
+    (state) =>
+      state.catalog?.loading || state.catalog?.discoveryNavigationLoading,
   );
 
   const [categoriesList, setCategoriesList] = useState([]);
@@ -588,8 +593,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
   );
 
   const isLoading =
-    loading ||
-    (!categories.length && (catalogLoading || !headerData));
+    loading || (!categories.length && (catalogLoading || !headerData));
 
   if (isLoading || !categories.length) {
     if (compact) {
@@ -617,9 +621,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
     }
 
     return (
-      <header
-        className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[150px]"
-      >
+      <header className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[140px]">
         <div className="customer-container mx-auto w-full relative z-20 flex items-stretch px-2 sm:px-4">
           <div className="w-full overflow-x-auto hide-scrollbar flex items-stretch">
             <div className="mx-auto flex w-full min-w-max xl:min-w-0 items-stretch justify-between gap-1 sm:gap-1.5 lg:gap-2.5 py-3 sm:pt-4 sm:pb-2.5 lg:pt-4.5 lg:pb-3">
@@ -704,16 +706,6 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
             </div>
           </div>
         </div>
-        {/* {activeMenu && (
-          <div
-            id="compact-category-mega-menu "
-            className="absolute left-0 top-full z-[9999] w-full"
-            onMouseEnter={keepCategoryMenuOpen}
-            onMouseLeave={handleCategoryMouseLeave}
-          >
-            <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
-          </div>
-        )} */}
       </nav>
     );
   }
@@ -722,7 +714,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
   return (
     <header
       ref={categoryBarRef}
-      className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[150px]"
+      className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[140px]"
     >
       <div className="customer-container mx-auto w-full relative z-20 flex items-stretch px-2 sm:px-4">
         <div className="w-full overflow-x-auto hide-scrollbar flex items-stretch">
@@ -757,12 +749,20 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
                         : "hover:bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]"
                     }`}
                   >
-                    <div className="flex h-[44px] w-[48px] sm:h-[56px] sm:w-[60px] lg:h-[64px] lg:w-[68px] items-center justify-center transition-transform duration-200 group-hover:scale-105">
-                      {item?.iconUrl || item?.img || item?.imageUrl || item?.image ? (
+                    <div className="flex h-[38px] w-[44px] items-center justify-center transition-transform duration-200 sm:h-[52px] sm:w-[58px] lg:h-[74px] lg:w-[74px]">
+                      {item?.iconUrl ||
+                      item?.img ||
+                      item?.imageUrl ||
+                      item?.image ? (
                         <ImageSkeleton
-                          src={item?.iconUrl || item?.img || item?.imageUrl || item?.image}
+                          src={
+                            item?.iconUrl ||
+                            item?.img ||
+                            item?.imageUrl ||
+                            item?.image
+                          }
                           alt={categoryTitle}
-                          imageClassName="object-contain max-h-full max-w-full"
+                          imageClassName="h-full w-full object-contain"
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-[#2D347D]">
@@ -772,7 +772,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
                     </div>
 
                     <span
-                      className={`mt-3 sm:mt-4 lg:mt-4.5 text-center text-[11px] sm:text-[13px] md:text-[14px] lg:text-[15px] whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
+                      className={`mt-3 sm:mt-2 text-center text-[11px] sm:text-[13px] md:text-[14px] lg:text-[15px] whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
                         isActive
                           ? "font-bold text-[#1E204A]"
                           : "font-semibold text-[#2D2D2D] group-hover:text-[#1E204A]"
@@ -799,16 +799,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
           </div>
         </div>
       </div>
-      {/* {activeMenu && !isPinned && (
-        <div
-          id="category-mega-menu"
-          className="absolute left-0 top-full z-[9999] w-full"
-          onMouseEnter={keepCategoryMenuOpen}
-          onMouseLeave={handleCategoryMouseLeave}
-        >
-          <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
-        </div>
-      )} */}
+
       <nav
         aria-label="Sticky Category Navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}

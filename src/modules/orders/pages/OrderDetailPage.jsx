@@ -122,19 +122,22 @@ export default function OrderDetailPage({ orderId }) {
                     </Button>
                   )}
 
-                  {status !== "pending_payment" && status !== "payment_failed" && canCancelOrder(order) && hasCancellableQuantity && (
-                    <Button
-                      variant="secondary"
-                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-3 rounded-[10px] border border-[#CE9F2D] bg-white px-5 py-2.5 transition-colors hover:bg-[#FFF9EA] active:bg-[#F2E5C5]"
-                      onClick={openCancellation}
-                    >
-                      <XCircle size={16} className="text-[#CE9F2D]" />
-                      <div className="w-[1px] h-4 bg-[#CE9F2D]/30" />
-                      <span className="text-sm font-semibold text-[#1B1D60]">
-                        {selectedOrderItem ? "Cancel Item" : "Cancel Order"}
-                      </span>
-                    </Button>
-                  )}
+                  {status !== "pending_payment" &&
+                    status !== "payment_failed" &&
+                    canCancelOrder(order) &&
+                    hasCancellableQuantity && (
+                      <Button
+                        variant="secondary"
+                        className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-3 rounded-[10px] border border-[#CE9F2D] bg-white px-5 py-2.5 transition-colors hover:bg-[#FFF9EA] active:bg-[#F2E5C5]"
+                        onClick={openCancellation}
+                      >
+                        <XCircle size={16} className="text-[#CE9F2D]" />
+                        <div className="w-[1px] h-4 bg-[#CE9F2D]/30" />
+                        <span className="text-sm font-semibold text-[#1B1D60]">
+                          {selectedOrderItem ? "Cancel Item" : "Cancel Order"}
+                        </span>
+                      </Button>
+                    )}
 
                   {Boolean(selectedOrderItem) && selectedItemCanReturn && (
                     <Link
@@ -279,9 +282,13 @@ export default function OrderDetailPage({ orderId }) {
                         if (visibleOrderItems.length <= 1) {
                           return false;
                         }
-                        const isDelivered = ["delivered", "completed", "partially_delivered"].includes(String(status).toLowerCase());
+                        const isDelivered = [
+                          "delivered",
+                          "completed",
+                          "partially_delivered",
+                        ].includes(String(status).toLowerCase());
                         if (doc.type === "order_receipt" && !isDelivered) {
-                           return false;
+                          return false;
                         }
                         return (
                           doc.type === "platform_fee" ||

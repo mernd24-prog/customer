@@ -28,7 +28,11 @@ export default function BaseModal({
       }}
     >
       <div
-        className={cn("customer-card relative w-full shadow-[var(--customer-shadow-strong)]", maxWidth, className)}
+        className={cn(
+          "customer-card relative w-full shadow-[var(--customer-shadow-strong)]",
+          maxWidth,
+          className,
+        )}
         onClick={(event) => event.stopPropagation()}
       >
         {children}
@@ -36,7 +40,7 @@ export default function BaseModal({
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white text-xl font-bold leading-none text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)]"
+            className="absolute right-4 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white text-xl font-bold leading-none text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)]"
             aria-label="Close"
           >
             ×
