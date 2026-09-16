@@ -7,7 +7,8 @@ import {
 } from "../../../modules/products/controllers/actions";
 import { applyImageFallback } from "../../../utils/ecommerce";
 import useDealsPageController from "../controllers/useDealsPageController";
-import bannerImage from "/image/png/ShoppingBanner.png";
+
+const bannerImage = "/image/png/ShoppingBanner.png";
 
 const SORT_OPTIONS = [
   { value: "ending_soon", label: "Ending Soon" },

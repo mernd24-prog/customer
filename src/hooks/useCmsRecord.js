@@ -1,9 +1,7 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { fetchCmsPageBySlug } from "../features/cms/cmsSlice";
-
-const requestedCmsKeys = new Set();
 
 const cmsRecordKey = (item) =>
   item?.slug ||
@@ -21,6 +19,9 @@ export function useCmsRecord(cmsKey) {
   const current = useSelector((state) => state.cms.current);
   const loading = useSelector((state) => state.cms.loading);
 
+
+  const fetchedRef = useRef(false);
+
   const page = useMemo(() => {
     if (!cmsKey) return null;
     if (entities[cmsKey]) return entities[cmsKey];
@@ -31,8 +32,8 @@ export function useCmsRecord(cmsKey) {
   }, [cmsKey, current, entities, list]);
 
   useEffect(() => {
-    if (!cmsKey || page || requestedCmsKeys.has(cmsKey)) return;
-    requestedCmsKeys.add(cmsKey);
+    if (!cmsKey || page || fetchedRef.current) return;
+    fetchedRef.current = true;
     dispatch(fetchCmsPageBySlug({ slug: cmsKey })).catch(() => {});
   }, [cmsKey, dispatch, page]);
 

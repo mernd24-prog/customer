@@ -221,6 +221,7 @@ export default function AppRoutes() {
           <Route path="/become-a-seller" element={<BecomeASeller />} />
 
           <Route path="/seller-policies" element={<SellerPolicy />} />
+          <Route path="/seller-policy" element={<SellerPolicy />} />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>

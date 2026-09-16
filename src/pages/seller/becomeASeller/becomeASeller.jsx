@@ -17,6 +17,8 @@ import {
   WalletCards,
 } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
+import { useCmsRecord } from "../../../hooks/useCmsRecord";
+import NotFoundPage from "../../NotFoundPage";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -34,128 +36,16 @@ const STORY_SWIPER_BREAKPOINTS = {
 
 export const SELLER_LOGIN_URL = "http://45.195.90.183:3000/login";
 
-const experiences = [
-  {
-    quote:
-      "Sam Global gave our handcrafted home collection the reach it deserved. The dashboard is simple, payments are transparent, and we can focus on making great products.",
-    name: "Aarav Mehta",
-    role: "Founder, House of Aara",
-    category: "Home & Living",
-    result: "3.2× growth in 8 months",
-    photo:
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=720&q=85",
-    initials: "AM",
-    color: "from-[#3E4093] to-[#6f67c8]",
-  },
-  {
-    quote:
-      "From uploading our first catalogue to shipping nationwide, the team made every step feel manageable. The seller tools help us make better decisions every week.",
-    name: "Nisha Kapoor",
-    role: "Owner, Nivara Studio",
-    category: "Fashion",
-    result: "18,000+ orders delivered",
-    photo:
-      "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=720&q=85",
-    initials: "NK",
-    color: "from-[#c58a18] to-[#e7bd62]",
-  },
-  {
-    quote:
-      "Reliable payouts and responsive support gave us the confidence to scale. We started with six products and now manage a catalogue of more than two hundred.",
-    name: "Kabir Shah",
-    role: "Director, K&S Essentials",
-    category: "Beauty & Wellness",
-    result: "200+ products listed",
-    photo:
-      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=720&q=85",
-    initials: "KS",
-    color: "from-[#167c68] to-[#45ad96]",
-  },
-  {
-    quote:
-      "The marketplace helped our family-run brand find customers far beyond our city. Order management is smooth and the growth insights are genuinely useful.",
-    name: "Riya Malhotra",
-    role: "Co-founder, Terra Crafts",
-    category: "Handmade",
-    result: "42 cities reached",
-    photo:
-      "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=720&q=85",
-    initials: "RM",
-    color: "from-[#9c4f68] to-[#d58ca4]",
-  },
-  {
-    quote:
-      "Sam Global made online selling feel approachable from day one. Today our small electronics store serves customers across the country with confidence.",
-    name: "Dev Arora",
-    role: "Owner, Volt Avenue",
-    category: "Electronics",
-    result: "4.8 average rating",
-    photo:
-      "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=720&q=85",
-    initials: "DA",
-    color: "from-[#285f91] to-[#66a0cf]",
-  },
+const benefitIcons = [
+  CircleDollarSign,
+  Truck,
+  BarChart3,
+  ShieldCheck,
+  Headphones,
+  Sparkles,
 ];
 
-const benefits = [
-  {
-    icon: CircleDollarSign,
-    title: "Transparent earnings",
-    text: "Clear fees, dependable payment cycles, and a simple view of every transaction.",
-  },
-  {
-    icon: Truck,
-    title: "Nationwide reach",
-    text: "Reach customers across India with logistics designed for growing businesses.",
-  },
-  {
-    icon: BarChart3,
-    title: "Insights that help",
-    text: "Understand product performance and spot opportunities with actionable analytics.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Seller-first protection",
-    text: "Secure payments and thoughtful safeguards keep your business protected.",
-  },
-  {
-    icon: Headphones,
-    title: "Support when needed",
-    text: "Get practical assistance through onboarding, fulfilment, and everyday selling.",
-  },
-  {
-    icon: Sparkles,
-    title: "Tools built to grow",
-    text: "Manage listings, orders, inventory, and promotions from one clean workspace.",
-  },
-];
-
-const steps = [
-  {
-    icon: UserRoundPlus,
-    number: "01",
-    title: "Create your account",
-    text: "Register your business and share a few basic details to get started.",
-  },
-  {
-    icon: Store,
-    number: "02",
-    title: "Build your storefront",
-    text: "Add your products, pricing, inventory, and the story behind your brand.",
-  },
-  {
-    icon: PackageCheck,
-    number: "03",
-    title: "Receive & ship orders",
-    text: "Manage new orders from your seller dashboard and prepare them for delivery.",
-  },
-  {
-    icon: WalletCards,
-    number: "04",
-    title: "Get paid & grow",
-    text: "Track payouts, learn from performance insights, and scale with confidence.",
-  },
-];
+const stepIcons = [UserRoundPlus, Store, PackageCheck, WalletCards];
 
 function SectionHeading({ eyebrow, title, text, light = false }) {
   return (
@@ -186,6 +76,42 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
 }
 
 export default function BecomeASeller() {
+  const { page, loading } = useCmsRecord("become-a-seller");
+
+  if (!page) {
+    if (loading) return null;
+    return <NotFoundPage />;
+  }
+
+  // Map CMS data or use static fallbacks
+  const heroTitle = page?.title || "";
+  const [titleLine1, titleLine2] = heroTitle.split("\n");
+  const heroDesc = page?.excerpt || "";
+  const heroImg = page?.image?.url || "";
+  
+  const cmsExperiences = page?.sections?.[0]?.points?.map(point => ({
+    quote: point.description,
+    name: point.title,
+    role: point.metadata?.role || point.image?.caption || "",
+    category: point.metadata?.category || point.image?.title || "",
+    result: point.cta?.label || "",
+    photo: point.image?.url || "",
+    initials: point.title?.substring(0, 2).toUpperCase() || "",
+  })) || [];
+
+  const mappedBenefits = page?.sections?.[1]?.points?.map((cmsPoint, i) => ({
+    icon: benefitIcons[i % benefitIcons.length],
+    title: cmsPoint.title || "",
+    text: cmsPoint.description || ""
+  })) || [];
+
+  const mappedSteps = page?.sections?.[2]?.points?.map((cmsPoint, i) => ({
+    icon: stepIcons[i % stepIcons.length],
+    number: `0${i + 1}`,
+    title: cmsPoint.title || "",
+    text: cmsPoint.description || ""
+  })) || [];
+
   return (
     <div className="full-banner overflow-hidden bg-white">
       <Seo
@@ -195,7 +121,7 @@ export default function BecomeASeller() {
 
       <section className="relative isolate overflow-hidden bg-[#17145f] text-white">
         <img loading="lazy" width="400" height="400"
-          src="/image/png/sellerBanner.png"
+          src={heroImg}
           alt="Sam Global Seller Growing His Online Business"
           className="absolute inset-0 -z-20 h-full w-full object-cover  object-top "
         />
@@ -208,12 +134,11 @@ export default function BecomeASeller() {
               Your Next Chapter Starts Here
             </div>
             <h1 className="banner-heading font-bold ">
-              Your Products Deserve a
-              <span className="block text-[#efc75f]">Bigger Marketplace.</span>
+              {titleLine1}
+              {titleLine2 && <span className="block text-[#efc75f]">{titleLine2}</span>}
             </h1>
             <p className="mt-6 max-w-xl text-base  text-white/75 sm:text-lg">
-              Join Sam Global and turn your ambition into a business customers
-              can discover, trust, and love—across India.
+              {heroDesc}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
@@ -282,8 +207,8 @@ export default function BecomeASeller() {
               slidesPerView={1}
               breakpoints={STORY_SWIPER_BREAKPOINTS}
             >
-              {experiences.map((story) => (
-                <SwiperSlide key={story.name} className="!h-auto pb-12">
+              {cmsExperiences.map((story, i) => (
+                <SwiperSlide key={story.name || i} className="!h-auto pb-12">
                   <article className="group h-full rounded-[22px] bg-white p-3 pb-6   sm:p-4 sm:pb-7">
                     <div className="relative">
                       <div className="overflow-hidden  rounded-xl  bg-[#e8e5df]">
@@ -326,9 +251,9 @@ export default function BecomeASeller() {
             text="A marketplace should do more than host your products. It should help your business move forward."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {benefits.map(({ icon: Icon, title, text }) => (
+            {mappedBenefits.map(({ icon: Icon, title, text }, i) => (
               <article
-                key={title}
+                key={title || i}
                 className="group rounded-2xl border border-[#e4ddcf] bg-white p-7   hover:border-[#d6a323]/60 "
               >
                 <div
@@ -356,7 +281,7 @@ export default function BecomeASeller() {
           />
           <div className="relative mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             <div className="absolute left-[12%] right-[12%] top-12 hidden border-t border-dashed border-white/25 lg:block" />
-            {steps.map(({ icon: Icon, number, title, text }) => (
+            {mappedSteps.map(({ icon: Icon, number, title, text }) => (
               <article
                 key={number}
                 className="relative rounded-2xl border border-white/10 bg-white/[0.07] p-6 text-white backdrop-blur-sm"

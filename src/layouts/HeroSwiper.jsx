@@ -2,7 +2,6 @@ import { memo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Tag } from "lucide-react";
-import { bannerData } from "../constants/image.constant";
 import Label from "../components/ui/label/Label";
 import {
   OutlineLightButton,
@@ -16,7 +15,10 @@ const SWIPER_MODULES = [Autoplay, Pagination];
 const AUTOPLAY_CONFIG = { delay: 3000, disableOnInteraction: false };
 const PAGINATION_CONFIG = { clickable: true };
 
-const HeroSwiper = memo(({ content }) => {
+const HeroSwiper = memo(({ slides }) => {
+  const slideList = Array.isArray(slides) ? slides : [];
+  if (slideList.length === 0) return null;
+
   return (
     <Swiper
       key="hero-swiper"
@@ -29,29 +31,27 @@ const HeroSwiper = memo(({ content }) => {
       modules={SWIPER_MODULES}
       className="seller-experience-swiper h-full w-full"
     >
-      {bannerData.map((slide, index) => {
-        const item = content[index] || content[0];
+      {slideList.map((slide, index) => (
+        <SwiperSlide
+          key={slide.id ?? index}
+          className="relative overflow-hidden bg-[#1B1D60]"
+        >
+          <img
+            src={slide.image}
+            alt={slide.title || "Banner Background"}
+            width="1664"
+            height="650"
+            className="absolute right-0 top-0 z-0 h-full w-auto object-cover object-right"
+            fetchpriority={index === 0 ? "high" : "auto"}
+            loading={index === 0 ? "eager" : "lazy"}
+          />
 
-        return (
-          <SwiperSlide
-            key={slide.id}
-            className="relative overflow-hidden bg-[#1B1D60]"
-          >
-            <img
-              src={slide.image}
-              alt="Banner Background"
-              width="1664"
-              height="650"
-              className="absolute right-0 top-0 z-0 h-full w-auto object-cover object-right"
-              fetchpriority={index === 0 ? "high" : "auto"}
-              loading={index === 0 ? "eager" : "lazy"}
-            />
+          <div className="pointer-events-none absolute inset-y-0 left-0 right-1/4 z-10 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/95 to-transparent" />
 
-            <div className="pointer-events-none absolute inset-y-0 left-0 right-1/4 z-10 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/95 to-transparent" />
-
-            <div className="customer-container relative z-20 flex h-full flex-col items-center justify-between gap-6 pb-8 pt-12 sm:pb-8 sm:pt-16 md:pb-10 md:pt-20 lg:flex-row lg:py-0">
-              <div className="flex flex-1 flex-col items-center space-y-4 pt-4 text-center text-white md:space-y-6 lg:items-start lg:pt-0 lg:text-left">
-                <div className="flex flex-col items-center gap-2 md:gap-4 lg:items-start lg:gap-6">
+          <div className="customer-container relative z-20 flex h-full flex-col items-center justify-between gap-6 pb-8 pt-12 sm:pb-8 sm:pt-16 md:pb-10 md:pt-20 lg:flex-row lg:py-0">
+            <div className="flex flex-1 flex-col items-center space-y-4 pt-4 text-center text-white md:space-y-6 lg:items-start lg:pt-0 lg:text-left">
+              <div className="flex flex-col items-center gap-2 md:gap-4 lg:items-start lg:gap-6">
+                {slide.badge && (
                   <Label
                     variant="seasonSale"
                     className="max-w-[290px] px-2 py-1 text-[10px] leading-4 text-center min-[375px]:max-w-[330px] min-[375px]:text-[11px] sm:max-w-fit sm:text-[12px] lg:text-[14px]"
@@ -62,36 +62,44 @@ const HeroSwiper = memo(({ content }) => {
                       />
                     }
                   >
-                    {item.badge}
+                    {slide.badge}
                   </Label>
-                  <h2 className="banner-heading mt-4 md:mt-0 max-w-[681px] lg:max-w-[800px] font-bold">
-                    {item.title} <br />{" "}
-                    <span className="text-[#CE9F2D]">{item.highlight}</span>
-                  </h2>
-                </div>
+                )}
+                <h2 className="banner-heading mt-4 md:mt-0 max-w-[681px] lg:max-w-[800px] font-bold">
+                  {slide.title} {slide.highlight && <br />}{" "}
+                  {slide.highlight && (
+                    <span className="text-[#CE9F2D]">{slide.highlight}</span>
+                  )}
+                </h2>
+              </div>
+              {slide.description && (
                 <p className="max-w-xl lg:max-w-2xl font-medium text-center text-sm md:text-base xl:text-lg text-white/80 lg:text-left">
-                  {item.description}
+                  {slide.description}
                 </p>
-                <div className="flex flex-wrap items-center justify-center gap-3 pt-1 md:pt-3 lg:justify-start">
+              )}
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-1 md:pt-3 lg:justify-start">
+                {slide.primaryButton && (
                   <SolidLargeButton
-                    to={item.primaryLink}
+                    to={slide.primaryLink || "/products"}
                     className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]"
                   >
-                    {item.primaryButton}
+                    {slide.primaryButton}
                   </SolidLargeButton>
+                )}
+                {slide.secondaryButton && (
                   <OutlineLightButton
-                    to={item.secondaryLink}
+                    to={slide.secondaryLink || "/categories"}
                     className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]"
                   >
-                    {item.secondaryButton}
+                    {slide.secondaryButton}
                   </OutlineLightButton>
-                </div>
+                )}
               </div>
-              <div className="hidden flex-1 lg:block" />
             </div>
-          </SwiperSlide>
-        );
-      })}
+            <div className="hidden flex-1 lg:block" />
+          </div>
+        </SwiperSlide>
+      ))}
     </Swiper>
   );
 });
