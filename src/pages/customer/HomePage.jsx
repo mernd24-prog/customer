@@ -14,7 +14,7 @@ import Banner from "../../layouts/HeroBanner";
 import { CategoryBar } from "../../layouts/Header";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import LazySection from "../../components/ui/LazySection";
-import { mothersDayData } from "../../data/special";
+import { useCmsRecord } from "../../hooks/useCmsRecord";
 
 const ShoppingMadeEasyBanner = React.lazy(
   () => import("../../components/home/ShoppingBanner"),
@@ -22,8 +22,8 @@ const ShoppingMadeEasyBanner = React.lazy(
 const FeaturedProductsSection = React.lazy(
   () => import("../../components/home/FeaturedProductsSection"),
 );
-const MothersDaySwiper = React.lazy(
-  () => import("../../components/home/MothersDayCarousel"),
+const PromoCampaignCarousel = React.lazy(
+  () => import("../../components/home/PromoCampaignCarousel"),
 );
 const HomeProductsForYouSection = React.lazy(
   () => import("../../components/home/HomeProductsForYouSection"),
@@ -96,6 +96,8 @@ export function HomePage() {
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const cmsList = useSelector((s) => s.cms.list);
   const cmsPages = Array.isArray(cmsList) ? cmsList : [];
+  const { page: promoCampaignPage } = useCmsRecord("promo-campaign-carousel");
+  const { page: shoppingBannerPage } = useCmsRecord("shopping-banner");
   const products = homeProducts;
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
@@ -165,12 +167,14 @@ export function HomePage() {
         <FeaturedCollectionsSection />
       </LazySection> */}
 
-      <LazySection minHeight="380px">
-        <MothersDaySwiper data={mothersDayData} />
-      </LazySection>
+      {promoCampaignPage ? (
+        <LazySection minHeight="380px">
+          <PromoCampaignCarousel data={promoCampaignPage} />
+        </LazySection>
+      ) : null}
 
       <LazySection minHeight="150px">
-        <ShoppingMadeEasyBanner />
+        <ShoppingMadeEasyBanner data={shoppingBannerPage} />
       </LazySection>
 
 
