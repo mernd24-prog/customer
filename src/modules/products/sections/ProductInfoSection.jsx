@@ -65,7 +65,7 @@ function InfoTabs({ tabs, activeTab, onChange }) {
   );
 }
 
-function InfoCard({ title, children, roundedClass = "rounded-[8px]" }) {
+function InfoCard({ title, children, roundedClass = "rounded-xl" }) {
   return (
     <div
       className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}

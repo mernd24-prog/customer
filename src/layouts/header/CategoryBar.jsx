@@ -27,11 +27,16 @@ import {
 import { CompactCategoryBar } from "./CompactCategoryBar";
 import { StickyNavStrip } from "./StickyNavStrip";
 
-export const CategoryBar = ({ headerData, compact = false, loading = false }) => {
+export const CategoryBar = ({
+  headerData,
+  compact = false,
+  loading = false,
+}) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const catalogLoading = useSelector(
-    (state) => state.catalog?.loading || state.catalog?.discoveryNavigationLoading,
+    (state) =>
+      state.catalog?.loading || state.catalog?.discoveryNavigationLoading,
   );
   const catalogCategoryList =
     useSelector(
@@ -206,8 +211,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
   );
 
   const isLoading =
-    loading ||
-    (!categories.length && (catalogLoading || !headerData));
+    loading || (!categories.length && (catalogLoading || !headerData));
 
   if (isLoading || !categories.length) {
     if (compact) {
@@ -235,9 +239,7 @@ export const CategoryBar = ({ headerData, compact = false, loading = false }) =>
     }
 
     return (
-      <header
-        className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[150px]"
-      >
+      <header className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[140px]">
         <div className="customer-container mx-auto w-full relative z-20 flex items-stretch px-2 sm:px-4">
           <div className="w-full overflow-x-auto hide-scrollbar flex items-stretch">
             <div className="mx-auto flex w-full min-w-max xl:min-w-0 items-stretch justify-between gap-1 sm:gap-1.5 lg:gap-2.5 py-3 sm:pt-4 sm:pb-2.5 lg:pt-4.5 lg:pb-3">
