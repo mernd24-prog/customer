@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
-import NotFoundPage from "../../NotFoundPage";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -46,6 +45,33 @@ const benefitIcons = [
 ];
 
 const stepIcons = [UserRoundPlus, Store, PackageCheck, WalletCards];
+
+const FALLBACK_SELLER_PAGE = {
+  title: "Grow Your Business\nWith Sam Global",
+  excerpt: "Reach more customers, manage orders easily, and grow with reliable support.",
+  image: { url: "/image/png/fallback/sellerBanner.webp" },
+  sections: [
+    { points: [
+      { title: "Aarav Mehta", description: "Sam Global gave our handcrafted home collection the reach it deserved.", image: { url: "/image/png/fallback/become-a-seller/SellerStory.avif", caption: "Founder, House of Aara" }, cta: { label: "3.2x growth in 8 months" } },
+      { title: "Nisha Kapoor", description: "The seller tools help us make better decisions every week.", image: { url: "/image/png/fallback/become-a-seller/SellerStory1.webp", caption: "Owner, Nivara Studio" }, cta: { label: "18,000+ orders delivered" } },
+      { title: "Kabir Shah", description: "Reliable payouts gave us the confidence to scale.", image: { url: "/image/png/fallback/become-a-seller/SellerStory2.webp", caption: "Director, K&S Essentials" }, cta: { label: "200+ products listed" } },
+      { title: "Riya Malhotra", description: "The marketplace helped our family-run brand find customers beyond our city.", image: { url: "/image/png/fallback/become-a-seller/SellerStory3.webp", caption: "Co-founder, Terra Crafts" }, cta: { label: "42 cities reached" } },
+      { title: "Dev Arora", description: "Sam Global made online selling feel approachable from day one.", image: { url: "/image/png/fallback/become-a-seller/SellerStory4.webp", caption: "Owner, Volt Avenue" }, cta: { label: "4.8 average rating" } },
+      { title: "Meera Iyer", description: "Simple tools and dependable support let us focus on our customers.", image: { url: "/image/png/fallback/become-a-seller/SellerStory5.webp", caption: "Founder, Studio Meera" }, cta: { label: "2.5x monthly growth" } },
+    ] },
+    { title: "Why sell with us", description: "Everything you need to build a thriving online business.", points: [
+      { title: "Transparent earnings", description: "Clear fees and dependable payment cycles." },
+      { title: "Nationwide reach", description: "Reach customers across India." },
+      { title: "Insights that help", description: "Understand product performance." },
+    ] },
+    { title: "Start selling", description: "Set up your storefront in a few simple steps.", points: [
+      { title: "Create your account", description: "Register your business and share basic details." },
+      { title: "Build your storefront", description: "Add products, pricing, and inventory." },
+      { title: "Receive and ship orders", description: "Manage orders from your seller dashboard." },
+      { title: "Get paid and grow", description: "Track payouts and performance insights." },
+    ] },
+  ],
+};
 function SectionHeading({ eyebrow, title, text, light = false }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
@@ -77,18 +103,15 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
 export default function BecomeASeller() {
   const { page, loading } = useCmsRecord("become-a-seller");
 
-  if (!page) {
-    if (loading) return null;
-    return <NotFoundPage />;
-  }
+  const cmsPage = page || FALLBACK_SELLER_PAGE;
 
   // Map CMS data or use static fallbacks
-  const heroTitle = page?.title || "";
+  const heroTitle = cmsPage?.title || "";
   const [titleLine1, titleLine2] = heroTitle.split("\n");
-  const heroDesc = page?.excerpt || "";
-  const heroImg = page?.image?.url || "";
+  const heroDesc = cmsPage?.excerpt || "";
+  const heroImg = cmsPage?.image?.url || "";
   
-  const cmsExperiences = page?.sections?.[0]?.points?.map(point => ({
+  const cmsExperiences = cmsPage?.sections?.[0]?.points?.map(point => ({
     quote: point.description,
     name: point.title,
     role: point.metadata?.role || point.image?.caption || "",
@@ -98,13 +121,13 @@ export default function BecomeASeller() {
     initials: point.title?.substring(0, 2).toUpperCase() || "",
   })) || [];
 
-  const mappedBenefits = page?.sections?.[1]?.points?.map((cmsPoint, i) => ({
+  const mappedBenefits = cmsPage?.sections?.[1]?.points?.map((cmsPoint, i) => ({
     icon: benefitIcons[i % benefitIcons.length],
     title: cmsPoint.title || "",
     text: cmsPoint.description || ""
   })) || [];
 
-  const mappedSteps = page?.sections?.[2]?.points?.map((cmsPoint, i) => ({
+  const mappedSteps = cmsPage?.sections?.[2]?.points?.map((cmsPoint, i) => ({
     icon: stepIcons[i % stepIcons.length],
     number: `0${i + 1}`,
     title: cmsPoint.title || "",

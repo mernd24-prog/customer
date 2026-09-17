@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
-import NotFoundPage from "../../NotFoundPage";
 
 const highlightIcons = [
   ShieldCheck,
@@ -30,6 +29,32 @@ const responsibilityIcons = [PackageCheck, ClipboardList, Box, Headphones];
 
 const complianceIcons = [ShieldCheck, BarChart3, TriangleAlert];
 
+const FALLBACK_POLICY = {
+  title: "Seller Policy",
+  excerpt: "Seller Guidelines",
+  description: "Our Seller Policy defines the standards and responsibilities that create a trusted experience for sellers and customers.",
+  image: { url: "/image/png/fallback/sellerPolicy.webp" },
+  cta: { label: "Become a Seller", url: "/become-a-seller" },
+  sections: [
+    { type: "policy-highlights", title: "Everything You Need To Sell Confidently", description: "Our marketplace policies protect sellers and strengthen customer confidence.", points: [
+      { title: "Genuine Products", description: "Sell only authentic and legally sourced products." },
+      { title: "Accurate Listings", description: "Provide correct titles, images, pricing and specifications." },
+      { title: "Timely Shipping", description: "Dispatch orders within the promised timeline." },
+    ] },
+    { type: "seller-responsibilities", title: "Your Commitment Matters", description: "Follow these responsibilities to provide a trusted shopping experience.", points: [
+      { title: "List Authentic Products", description: "Upload only original products with complete details." },
+      { title: "Maintain Accurate Listings", description: "Keep pricing, stock and information updated." },
+      { title: "Process Orders Quickly", description: "Accept, pack and dispatch every order on time." },
+      { title: "Support Customers", description: "Respond professionally to customer queries and returns." },
+    ] },
+    { type: "account-compliance", title: "Maintain a Healthy Seller Account", description: "We monitor seller performance to ensure reliable service.", points: [
+      { title: "Good Standing", description: "Maintain accurate listings, timely shipping, and quality service." },
+      { title: "Performance Review", description: "Accounts are reviewed using fulfillment and satisfaction data." },
+      { title: "Policy Violations", description: "Repeated violations can lead to account restrictions." },
+    ] },
+  ],
+};
+
 export default function SellerPolicy() {
   const { page: policyRecord, loading: loading1 } =
     useCmsRecord("seller-policy");
@@ -38,34 +63,30 @@ export default function SellerPolicy() {
   const page = policyRecord || policiesRecord;
   const loading = loading1 || loading2;
 
-  // If backend has returned no data, do not show static data
-  if (!page) {
-    if (loading) return null;
-    return <NotFoundPage />;
-  }
+  const cmsPage = page || FALLBACK_POLICY;
 
   // Hero section mappings from dynamic CMS data
-  const heroTitle = page?.title || "";
-  const badgeText = page?.excerpt || page?.category || "";
+  const heroTitle = cmsPage?.title || "";
+  const badgeText = cmsPage?.excerpt || cmsPage?.category || "";
   const heroDesc =
-    page?.description ||
-    (page?.body ? page.body.replace(/<[^>]+>/g, "").trim() : "");
-  const heroImg = page?.image?.url || page?.heroImage || page?.coverImage || "";
-  const primaryCtaLabel = page?.cta?.label || "Become a Seller";
-  const primaryCtaUrl = page?.cta?.url || "/become-a-seller";
+    cmsPage?.description ||
+    (cmsPage?.body ? cmsPage.body.replace(/<[^>]+>/g, "").trim() : "");
+  const heroImg = cmsPage?.image?.url || cmsPage?.heroImage || cmsPage?.coverImage || "";
+  const primaryCtaLabel = cmsPage?.cta?.label || "Become a Seller";
+  const primaryCtaUrl = cmsPage?.cta?.url || "/become-a-seller";
   const secondaryCtaLabel = "Contact Support";
   const secondaryCtaUrl = "/contact-us";
 
   // Section 1: Policy Guidelines / Highlights
   const section1 =
-    page?.sections?.find(
+    cmsPage?.sections?.find(
       (s) =>
         s.type === "policy-guidelines" ||
         s.type === "policy-highlights" ||
         s.title?.toLowerCase().includes("confidently") ||
         s.title?.toLowerCase().includes("guidelines") ||
         s.title?.toLowerCase().includes("highlights"),
-    ) || page?.sections?.[0];
+    ) || cmsPage?.sections?.[0];
 
   const highlightBadge =
     section1?.cta?.label ||
@@ -84,13 +105,13 @@ export default function SellerPolicy() {
 
   // Section 2: Seller Responsibilities
   const section2 =
-    page?.sections?.find(
+    cmsPage?.sections?.find(
       (s) =>
         s.type === "seller-responsibilities" ||
         s.type === "responsibilities" ||
         s.title?.toLowerCase().includes("commitment") ||
         s.title?.toLowerCase().includes("responsibilities"),
-    ) || page?.sections?.[1];
+    ) || cmsPage?.sections?.[1];
 
   const respBadge =
     section2?.cta?.label ||
@@ -108,14 +129,14 @@ export default function SellerPolicy() {
     : [];
 
   const section3 =
-    page?.sections?.find(
+    cmsPage?.sections?.find(
       (s) =>
         s.type === "account-compliance" ||
         s.type === "compliance" ||
         s.title?.toLowerCase().includes("compliance") ||
         s.title?.toLowerCase().includes("healthy") ||
         s.title?.toLowerCase().includes("account"),
-    ) || page?.sections?.[2];
+    ) || cmsPage?.sections?.[2];
 
   const compBadge =
     section3?.cta?.label ||
@@ -139,13 +160,13 @@ export default function SellerPolicy() {
     >
       <Seo
         title={
-          page?.seo?.metaTitle ||
+          cmsPage?.seo?.metaTitle ||
           (heroTitle
             ? `${heroTitle} - Sam Global`
             : "Seller Policy - Sam Global")
         }
         metaDescription={
-          page?.seo?.metaDescription ||
+          cmsPage?.seo?.metaDescription ||
           heroDesc ||
           "Read our Seller Policy to understand the guidelines, responsibilities, and standards for selling on our platform."
         }

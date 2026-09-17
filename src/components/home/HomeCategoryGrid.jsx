@@ -14,6 +14,39 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+const FALLBACK_CATEGORIES = [
+  {
+    id: "fallback-electronics",
+    categoryKey: "electronics",
+    displayName: "Electronics",
+    displayImage: "/image/webp/cat.webp",
+  },
+  {
+    id: "fallback-fashion",
+    categoryKey: "fashion",
+    displayName: "Fashion",
+    displayImage: "/image/png/Fashion.png",
+  },
+  {
+    id: "fallback-beauty-personal-care",
+    categoryKey: "beauty-personal-care",
+    displayName: "Beauty & Personal Care",
+    displayImage: "/image/png/coOrdSet.png",
+  },
+  {
+    id: "fallback-home-appliances",
+    categoryKey: "home-appliances",
+    displayName: "Home Appliances",
+    displayImage: "/image/webp/cat1.webp",
+  },
+  {
+    id: "fallback-home",
+    categoryKey: "home",
+    displayName: "Home",
+    displayImage: "/image/webp/home-decor.webp",
+  },
+];
+
 export default function HomeCategoryGrid({
   categories = [],
   loading = false,
@@ -33,7 +66,7 @@ export default function HomeCategoryGrid({
   // Dynamic categories list from backend (Filter ONLY root top-level parent categories, exclude subcategories)
   const displayCategories = useMemo(() => {
     const rawList = Array.isArray(categories) ? categories : [];
-    if (!rawList.length) return [];
+    if (!rawList.length) return FALLBACK_CATEGORIES;
 
     let rootList = getRootCategories(rawList);
     rootList = rootList.filter(
@@ -44,7 +77,7 @@ export default function HomeCategoryGrid({
       return rootList;
     }
 
-    return rawList.filter((c) => {
+    const visibleCategories = rawList.filter((c) => {
       if (!c || c.isDashboardVisible === false || c.active === false)
         return false;
       const hasParent = Boolean(c.parentKey || c.parentId || c.parent);
@@ -52,6 +85,8 @@ export default function HomeCategoryGrid({
         c.level === 0 || c.level === "0" || c.level === undefined;
       return !hasParent || isLevel0;
     });
+
+    return visibleCategories.length ? visibleCategories : FALLBACK_CATEGORIES;
   }, [categories]);
 
   if (loading) {
@@ -75,10 +110,6 @@ export default function HomeCategoryGrid({
         </div>
       </SectionContainer>
     );
-  }
-
-  if (!displayCategories.length) {
-    return null;
   }
 
   return (

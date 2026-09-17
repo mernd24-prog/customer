@@ -23,7 +23,6 @@ import { SkeletonLoader } from "../../../components/ui/skeleton";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { useAuthModal } from "../../auth/context/AuthModalContext";
 import { useSelector } from "react-redux";
-import NotFoundPage from "../../../pages/NotFoundPage";
 
 const DEFAULT_BREADCRUMBS = [
   { label: "Home", href: "/" },
@@ -122,10 +121,6 @@ export default function SupportHelpCenter() {
   }, [loadSupportQueries, isSignedIn, selectedSupportCategory]);
 
   // Form state and submission are now isolated in RaiseTicketModal
-
-  if (!loading && !page) {
-    return <NotFoundPage />;
-  }
 
   if (isPageLoading) {
     return (

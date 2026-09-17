@@ -31,16 +31,14 @@ export const SUPPORT_BREADCRUMBS = [
 ];
 
 export const SUPPORT_TOPIC_IMAGE_BY_TITLE = {
-  order: "/image/png/track-order.png",
-  track: "/image/png/track-order.png",
-  return: "/image/png/return-refund.png",
-  refund: "/image/png/return-refund.png",
-  payment: "/image/png/payment-issues.png",
-  paying: "/image/png/payment-issues.png",
-  seller: "/image/png/seller-support.png",
-  reward: "/image/png/rewards-help.png",
-  account: "/image/png/account-security.png",
-  security: "/image/png/account-security.png",
+  order: "/image/png/fallback/Help&Support/Track-order.png",
+  track: "/image/png/fallback/Help&Support/Track-order.png",
+  return: "/image/png/fallback/Help&Support/Return-refund.png",
+  refund: "/image/png/fallback/Help&Support/Return-refund.png",
+  payment: "/image/png/fallback/Help&Support/payment-issues.png",
+  paying: "/image/png/fallback/Help&Support/payment-issues.png",
+  account: "/image/png/fallback/Help&Support/account-security.png",
+  security: "/image/png/fallback/Help&Support/account-security.png",
 };
 
 export const SUPPORT_FALLBACK_FAQS = [
@@ -79,27 +77,27 @@ export const SUPPORT_FALLBACK_FAQS = [
 export const SUPPORT_FALLBACK_TOPICS = [
   {
     title: "Track Order",
-    image: "/image/png/Track-order.png",
+    image: "/image/png/fallback/Help&Support/Track-order.png",
     path: "/orders",
   },
   {
     title: "Return & Refund",
-    image: "/image/png/Return-refund.png",
+    image: "/image/png/fallback/Help&Support/Return-refund.png",
     path: "/returns-refunds",
   },
   {
     title: "Payment Issues",
-    image: "/image/png/Payment-issues.png",
+    image: "/image/png/fallback/Help&Support/payment-issues.png",
     path: "/payments",
   },
   {
     title: "Rewards Help",
-    image: "/image/png/Rewards-help.png",
+    image: "/image/png/fallback/Help&Support/account-security.png",
     path: "#",
   },
   {
     title: "Account Security",
-    image: "/image/png/Account-security.png",
+    image: "/image/png/fallback/Help&Support/account-security.png",
     path: "/account/profile",
   },
 ];
