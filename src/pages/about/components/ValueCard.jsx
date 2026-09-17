@@ -1,14 +1,20 @@
 export default function ValueCard({ data }) {
   const card = data;
+  const imageUrl =
+    typeof card?.image === "string" ? card.image : card?.image?.url;
+  const imageAlt =
+    typeof card?.image === "object" ? card.image?.alt : card?.title;
 
   return (
     <article className="w-full md:w-[26rem] xl:w-[30rem]">
       <div className="bg-band flex w-full flex-col items-center justify-center gap-4 rounded-t-xl p-4 text-center md:p-8 xl:p-10">
-        <img loading="lazy" width="400" height="400"
-          src={card?.image?.url}
-          alt={card?.title}
-          className="h-14 w-14 object-contain md:h-18 md:w-18"
-        />
+        {imageUrl && (
+          <img loading="lazy" width="400" height="400"
+            src={imageUrl}
+            alt={imageAlt || card?.title || ""}
+            className="h-14 w-14 object-contain md:h-18 md:w-18"
+          />
+        )}
 
         <h3 className=" py-2 text-lg md:text-2xl font-semibold">
           {card?.title}

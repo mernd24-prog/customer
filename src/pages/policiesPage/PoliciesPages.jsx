@@ -5,6 +5,7 @@ import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
+import { getCmsFallbackPage, withCmsFallback } from "../../constants/cmsFallbacks";
 
 import PolicyHeader from "../../components/policy/PolicyHeader";
 import PolicySection from "../../components/policy/PolicySection";
@@ -22,7 +23,10 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
   const cmsSlug = slugOverride || slug || "";
 
   const { page: cmsPolicy, loading, error } = useCmsRecord(cmsSlug);
-  const policy = getPolicyPayload(cmsPolicy) || fallbackData;
+  const policy =
+    getPolicyPayload(withCmsFallback(cmsPolicy, cmsSlug)) ||
+    fallbackData ||
+    getCmsFallbackPage(cmsSlug);
 
   const title = policy?.title || "";
   const description = policy?.description || "";
@@ -74,7 +78,7 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
 
         <ApiState
           loading={loading && !policy}
-          error={error}
+          error={policy ? null : error}
           empty={!loading && !policy}
           emptyTitle="Policy Not Found"
           emptyText="The requested policy document could not be found."

@@ -42,6 +42,7 @@ const ShowcaseSection = React.lazy(
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 import { getProductListFromResponse } from "../../utils/ecommerce";
 import { getCategoryListFromResponse } from "../../utils/pages/categoryUtils";
+import { FALLBACK_CATEGORIES } from "../../constants/cmsFallbacks";
 
 const buildNewArrivalItems = (products) => {
   if (!products.length) return [];
@@ -98,6 +99,10 @@ export function HomePage() {
   const [categoryRequestComplete, setCategoryRequestComplete] = useState(
     categories.length > 0,
   );
+  const effectiveCategories =
+    categories.length > 0 || !categoryRequestComplete
+      ? categories
+      : FALLBACK_CATEGORIES;
   const [homeProducts, setHomeProducts] = useState([]);
   const [homeLoading, setHomeLoading] = useState(true);
   const hasFetchedRef = useRef(false);
@@ -175,7 +180,7 @@ export function HomePage() {
       />
 
       <HomeCategoryGrid
-        categories={categories}
+        categories={effectiveCategories}
         loading={!categoryRequestComplete && !categories.length}
         title="Time for a Spring Refresh"
         subtitle=""

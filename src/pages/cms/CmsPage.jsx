@@ -8,6 +8,7 @@ import BrandButton from "../../components/ui/buttons/Button";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { fetchCmsPageBySlug } from "../../features/cms/cmsSlice";
 import { isNotFoundApiError } from "../../utils/apiErrors";
+import { withCmsFallback } from "../../constants/cmsFallbacks";
 
 function CmsContent({ body }) {
   if (!body) return null;
@@ -60,7 +61,7 @@ export default function CmsPage({ slugOverride = "" }) {
       candidates.find((item) => cmsRecordKey(getCmsPayload(item)) === slug) ||
       null;
 
-    return getCmsPayload(matchedPage);
+    return withCmsFallback(getCmsPayload(matchedPage), slug);
   }, [currentPage, entities, list, slug]);
 
   useEffect(() => {
@@ -208,9 +209,10 @@ export default function CmsPage({ slugOverride = "" }) {
                         key={`${point?.title || "point"}-${idx}`}
                         className="flex gap-3"
                       >
-                        {point?.image ? (
+                        {point?.image?.url ||
+                        typeof point?.image === "string" ? (
                           <img loading="lazy" width="400" height="400"
-                            src={point.image}
+                            src={point?.image?.url || point.image}
                             alt={point?.title || "point"}
                             className="h-12 w-12 rounded object-cover"
                           />
