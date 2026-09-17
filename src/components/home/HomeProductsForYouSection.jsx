@@ -57,7 +57,7 @@ export default function HomeProductsForYouSection({
     if (hasFetchedRef.current) return;
     setLocalLoading(true);
     hasFetchedRef.current = true;
-    dispatch(fetchProducts({ limit, page: 1, sort: "newest" }))
+    dispatch(fetchProducts({ limit, page: 1, sort: "newest", view: "cards" }))
       .unwrap()
       .then((result) => {
         setLocalProducts(getProductListFromResponse(result));
@@ -77,7 +77,7 @@ export default function HomeProductsForYouSection({
     setIsLoadingMore(true);
     const nextPage = page + 1;
 
-    dispatch(fetchProducts({ limit, page: nextPage, sort: "newest" }))
+    dispatch(fetchProducts({ limit, page: nextPage, sort: "newest", view: "cards" }))
       .unwrap()
       .then((result) => {
         const newProducts = getProductListFromResponse(result);

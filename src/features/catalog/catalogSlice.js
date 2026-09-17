@@ -39,7 +39,7 @@ const isGlobalDiscoveryRequest = (action = {}) => {
     action.meta?.arg ||
     {};
   const contextKeys = Object.keys(request).filter(
-    (key) => !["page", "limit", "sort", "sortBy", "sortDir"].includes(key),
+    (key) => !["page", "limit", "sort", "sortBy", "sortDir", "view"].includes(key),
   );
   return contextKeys.length === 0;
 };
@@ -48,7 +48,9 @@ const syncDiscoveryCategories = (state, action) => {
   if (!isGlobalDiscoveryRequest(action)) return;
   const categories = productFacetCategories(action);
   const brands = productFacetBrands(action);
-  state.globalCategories = categories;
+  if (!state.globalCategories?.length) {
+    state.globalCategories = categories;
+  }
   state.globalBrands = brands;
   state.discoveryNavigationLoading = false;
   state.discoveryNavigationLoaded = true;

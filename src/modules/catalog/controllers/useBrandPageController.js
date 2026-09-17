@@ -184,7 +184,7 @@ export default function useBrandPageController() {
 
   const loadProducts = useCallback(
     async ({ page = 1, append = false } = {}) => {
-      const params = getParams(page);
+      const params = { ...getParams(page), view: "cards" };
       if (append) setIsLoadingMore(true);
       const result = await dispatch(fetchProducts(params)).unwrap();
       const data = result?.data || {};
@@ -212,8 +212,15 @@ export default function useBrandPageController() {
         totalPages: Number(meta.totalPages || meta.pages || 1),
         total: Number(meta.total || meta.count || 0),
       });
-      setProductFacets(result?.meta?.facets || result?.meta?.filters || {});
       setFacetsContextKey(ctxKey);
+      if (!append) {
+        dispatch(fetchProducts({ ...getParams(1), page: 1, limit: 1, view: "facets" }))
+          .unwrap()
+          .then((facetResult) => {
+            setProductFacets(facetResult?.meta?.facets || facetResult?.meta?.filters || {});
+          })
+          .catch(() => {});
+      }
       setItems((prev) => (append ? [...prev, ...list] : list));
       setFirstLoadDone(true);
       setIsLoadingMore(false);

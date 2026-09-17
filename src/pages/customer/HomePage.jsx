@@ -8,6 +8,10 @@ import {
 } from "../../features/recommendation/recommendationSlice";
 import { fetchProducts } from "../../modules/products/slices/productSlice";
 import { fetchCmsPages } from "../../features/cms/cmsSlice";
+import {
+  fetchCategories,
+  setGlobalCategories,
+} from "../../features/catalog/catalogSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
@@ -37,6 +41,7 @@ const ShowcaseSection = React.lazy(
 
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 import { getProductListFromResponse } from "../../utils/ecommerce";
+import { getCategoryListFromResponse } from "../../utils/pages/categoryUtils";
 
 const buildNewArrivalItems = (products) => {
   if (!products.length) return [];
@@ -90,6 +95,9 @@ export function HomePage() {
   const dispatch = useDispatch();
   const categoryList = useSelector((s) => s.catalog.globalCategories);
   const categories = Array.isArray(categoryList) ? categoryList : [];
+  const [categoryRequestComplete, setCategoryRequestComplete] = useState(
+    categories.length > 0,
+  );
   const [homeProducts, setHomeProducts] = useState([]);
   const [homeLoading, setHomeLoading] = useState(true);
   const hasFetchedRef = useRef(false);
@@ -111,6 +119,14 @@ export function HomePage() {
     hasFetchedRef.current = true;
 
     setHomeLoading(true);
+    dispatch(fetchCategories({ navigation: true }))
+      .unwrap()
+      .then((result) => {
+        const list = getCategoryListFromResponse(result?.data || result);
+        dispatch(setGlobalCategories(list));
+      })
+      .catch(() => {})
+      .finally(() => setCategoryRequestComplete(true));
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 10 })).catch(() => {});
@@ -154,11 +170,13 @@ export function HomePage() {
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
       <Banner />
-      <CategoryBar loading={homeLoading && !categories.length} />
+      <CategoryBar
+        loading={!categoryRequestComplete && !categories.length}
+      />
 
       <HomeCategoryGrid
         categories={categories}
-        loading={homeLoading}
+        loading={!categoryRequestComplete && !categories.length}
         title="Time for a Spring Refresh"
         subtitle=""
       />

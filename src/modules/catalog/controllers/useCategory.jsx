@@ -225,7 +225,7 @@ export default function useCategory() {
 
   const loadProducts = useCallback(
     async ({ page = 1, append = false } = {}) => {
-      const params = getParams(page);
+      const params = { ...getParams(page), view: "cards" };
       const loadKey = JSON.stringify({ params, append });
       if (!append && inFlightProductLoadKeyRef.current === loadKey) return [];
       if (!append) inFlightProductLoadKeyRef.current = loadKey;
@@ -253,8 +253,16 @@ export default function useCategory() {
           totalPages: Number(m.totalPages || m.pages || 1),
           total: Number(m.total || m.count || list.length || 0),
         });
-        setProductFacets(m.facets || m.filters || {});
         setFacetsContextKey(ctxKey);
+        if (!append) {
+          dispatch(fetchProducts({ ...getParams(1), page: 1, limit: 1, view: "facets" }))
+            .unwrap()
+            .then((facetResult) => {
+              if (requestSequence !== requestSequenceRef.current) return;
+              setProductFacets(facetResult?.meta?.facets || facetResult?.meta?.filters || {});
+            })
+            .catch(() => {});
+        }
 
         setItems((prev) => (append ? [...prev, ...list] : list));
         setFirstLoadDone(true);

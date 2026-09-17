@@ -267,7 +267,7 @@ export function useProductsPageController() {
   // Fetch products whenever search params change
   useEffect(() => {
     const seq = ++requestSequenceRef.current;
-    const params = { ...getParams(), page: 1, limit: pageSize };
+    const params = { ...getParams(), page: 1, limit: pageSize, view: "cards" };
     setIsLoadingMore(true);
 
     const timer = setTimeout(() => {
@@ -291,9 +291,19 @@ export function useProductsPageController() {
           setPageInfo(getPagination(payload, sorted));
 
           if (newContextKey !== facetsContextKey) {
-            const facets = payload?.data?.facets || payload?.facets || {};
-            setProductFacets(facets);
             setFacetsContextKey(newContextKey);
+            dispatch(fetchProducts({ ...getParams(), page: 1, limit: 1, view: "facets" }))
+              .unwrap()
+              .then((facetPayload) => {
+                if (seq !== requestSequenceRef.current) return;
+                setProductFacets(
+                  facetPayload?.meta?.facets ||
+                    facetPayload?.data?.facets ||
+                    facetPayload?.facets ||
+                    {},
+                );
+              })
+              .catch(() => {});
           }
         })
         .catch(() => {
@@ -310,7 +320,7 @@ export function useProductsPageController() {
     if (isLoadingMore || !firstLoadDone || currentPage >= totalPages) return;
     const seq = requestSequenceRef.current;
     const nextPage = currentPage + 1;
-    const params = { ...getParams(), page: nextPage, limit: pageSize };
+    const params = { ...getParams(), page: nextPage, limit: pageSize, view: "cards" };
     setIsLoadingMore(true);
 
     dispatch(fetchProducts(params))

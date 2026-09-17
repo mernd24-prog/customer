@@ -217,7 +217,7 @@ export function useProductDetailController(
     if (!productRequestIdentifier) return;
     dispatch(fetchProductById({ productId: productRequestIdentifier }));
     if (!productState.list?.length) {
-      dispatch(fetchProducts({ limit: 10, page: 1 })).catch(() => {});
+      dispatch(fetchProducts({ limit: 10, page: 1, view: "cards" })).catch(() => {});
     }
     sideEffectsRanFor.current = null;
     setDeliveryResult(null);

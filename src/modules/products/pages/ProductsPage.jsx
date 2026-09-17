@@ -68,7 +68,10 @@ export default function ProductsPage() {
         (productState.loading && !products.length) ||
         (!firstLoadDone && !products.length)
       }
-      refreshing={productState.loading && products.length > 0 && !isLoadingMore}
+      // Facets load in the background through the same Redux thunk. Do not
+      // replace the populated grid (and unmount its infinite-scroll sentinel)
+      // while that independent request is running.
+      refreshing={false}
       error={products.length === 0 && firstLoadDone ? productState.error : null}
       empty={!products.length && !productState.loading && firstLoadDone}
       emptyTitle={isSearchMode ? "No results found" : "No Products Found"}

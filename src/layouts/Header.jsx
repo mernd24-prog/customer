@@ -34,7 +34,6 @@ import { logout } from "../modules/auth/slices/authSlice";
 import { notify } from "../utils/notify";
 import { fetchMe } from "../features/user/userSlice";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
-import { fetchProducts } from "../modules/products/slices/productSlice";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -595,7 +594,7 @@ export const CategoryBar = ({
   const isLoading =
     loading || (!categories.length && (catalogLoading || !headerData));
 
-  if (isLoading || !categories.length) {
+  if (isLoading) {
     if (compact) {
       return (
         <nav
@@ -643,6 +642,8 @@ export const CategoryBar = ({
       </header>
     );
   }
+
+  if (!categories.length) return null;
 
   /* ── Compact mode: text-only bar for non-homepage pages ──────────── */
   if (compact) {
@@ -870,22 +871,6 @@ export const CategoryBar = ({
 export const Header = () => {
   const headerRef = useRef(null);
   const dispatch = useDispatch();
-
-  const discoveryNavigationLoaded = useSelector((state) =>
-    Boolean(state.catalog.discoveryNavigationLoaded),
-  );
-  const discoveryNavigationLoading = useSelector((state) =>
-    Boolean(state.catalog.discoveryNavigationLoading),
-  );
-
-  useEffect(() => {
-    if (discoveryNavigationLoaded || discoveryNavigationLoading)
-      return undefined;
-    const fallbackTimer = window.setTimeout(() => {
-      dispatch(fetchProducts({ page: 1, limit: 1 })).catch(() => {});
-    }, 250);
-    return () => window.clearTimeout(fallbackTimer);
-  }, [dispatch, discoveryNavigationLoaded, discoveryNavigationLoading]);
 
   useEffect(() => {
     const updateHeaderHeight = () => {

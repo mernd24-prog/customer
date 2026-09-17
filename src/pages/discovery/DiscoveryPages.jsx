@@ -71,7 +71,7 @@ export function RecentlyUploadedPage() {
   const { list, loading, error } = useSelector((s) => s.product);
   const products = Array.isArray(list) ? list : [];
   useEffect(() => {
-    dispatch(fetchProducts({ newArrival: "true", sort: "newest", page: 1, limit: 48 })).catch(
+    dispatch(fetchProducts({ newArrival: "true", sort: "newest", page: 1, limit: 48, view: "cards" })).catch(
       () => {},
     );
   }, [dispatch]);
@@ -93,7 +93,7 @@ export function NewArrivalsPage() {
   const { list, loading, error } = useSelector((s) => s.product);
   const products = Array.isArray(list) ? list : [];
   useEffect(() => {
-    dispatch(fetchProducts({ newArrival: "true", sort: "newest", page: 1, limit: 48 })).catch(
+    dispatch(fetchProducts({ newArrival: "true", sort: "newest", page: 1, limit: 48, view: "cards" })).catch(
       () => {},
     );
   }, [dispatch]);
@@ -124,7 +124,7 @@ export function RelatedProductsPage() {
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 48 })).catch(() => {});
     } else {
-      dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48 })).catch(
+      dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48, view: "cards" })).catch(
         () => {},
       );
     }
@@ -153,7 +153,7 @@ export function TrendingNowPage() {
   const error = recState.error || prodState.error;
   useEffect(() => {
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
-    dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48 })).catch(
+    dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48, view: "cards" })).catch(
       () => {},
     );
   }, [dispatch]);

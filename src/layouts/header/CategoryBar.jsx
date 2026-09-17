@@ -58,7 +58,7 @@ export const CategoryBar = ({
   // Fetch if we don't have categories yet
   useEffect(() => {
     if (categoriesList.length === 0) {
-      dispatch(fetchCategories())
+      dispatch(fetchCategories({ navigation: true }))
         .unwrap()
         .then((result) => {
           const data = result?.data || result;
@@ -68,6 +68,24 @@ export const CategoryBar = ({
           );
           if (actualCategories.length > 0) {
             setCategoriesList(actualCategories);
+          }
+
+          const hydrateTree = () => {
+            dispatch(fetchCategories({ navigation: false, maxDepth: 3 }))
+              .unwrap()
+              .then((treeResult) => {
+                const treeData = treeResult?.data || treeResult;
+                const tree = getCategoryListFromResponse(treeData).filter(
+                  (item) => item && (item.categoryKey || item.parentKey),
+                );
+                if (tree.length) setCategoriesList(tree);
+              })
+              .catch(() => {});
+          };
+          if (typeof window.requestIdleCallback === "function") {
+            window.requestIdleCallback(hydrateTree, { timeout: 1500 });
+          } else {
+            window.setTimeout(hydrateTree, 250);
           }
         })
         .catch(() => {});
@@ -213,7 +231,7 @@ export const CategoryBar = ({
   const isLoading =
     loading || (!categories.length && (catalogLoading || !headerData));
 
-  if (isLoading || !categories.length) {
+  if (isLoading) {
     if (compact) {
       return (
         <nav
@@ -261,6 +279,8 @@ export const CategoryBar = ({
       </header>
     );
   }
+
+  if (!categories.length) return null;
 
   // ── Compact mode: fixed text-only bar ──────────────────────────────────
   if (compact) {
