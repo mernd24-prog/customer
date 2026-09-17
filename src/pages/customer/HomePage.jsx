@@ -190,11 +190,9 @@ export function HomePage() {
         <FeaturedCollectionsSection />
       </LazySection> */}
 
-      {promoCampaignPage ? (
-        <LazySection minHeight="380px">
-          <PromoCampaignCarousel data={promoCampaignPage} />
-        </LazySection>
-      ) : null}
+      <LazySection minHeight="380px">
+        <PromoCampaignCarousel data={promoCampaignPage} />
+      </LazySection>
 
       <LazySection minHeight="150px">
         <ShoppingMadeEasyBanner data={shoppingBannerPage} />

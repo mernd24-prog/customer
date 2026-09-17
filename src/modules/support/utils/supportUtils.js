@@ -1,5 +1,16 @@
+import {
+  SUPPORT_CONTACT_ITEMS,
+  SUPPORT_FALLBACK_FAQS,
+  SUPPORT_FALLBACK_TOPICS,
+  SUPPORT_TOPIC_IMAGE_BY_TITLE,
+} from "../../../data/supportPage";
+
 export function getTopicImage(title = "") {
-  return "";
+  const normalizedTitle = normalizeKey(title);
+  const key = Object.keys(SUPPORT_TOPIC_IMAGE_BY_TITLE).find((name) =>
+    normalizedTitle.includes(name),
+  );
+  return key ? SUPPORT_TOPIC_IMAGE_BY_TITLE[key] : "";
 }
 
 export function parseBodySections(body = "") {
@@ -78,7 +89,11 @@ export function normalizeHelpTopics(page) {
     return mapCards(points);
   }
   const rootPoints = Array.isArray(page?.points) ? page.points : [];
-  return mapCards(rootPoints.filter((item) => !item?.description)).slice(0, 8);
+  const fallback = mapCards(SUPPORT_FALLBACK_TOPICS);
+  return (mapCards(rootPoints.filter((item) => !item?.description)).length
+    ? mapCards(rootPoints.filter((item) => !item?.description))
+    : fallback
+  ).slice(0, 8);
 }
 
 export function normalizeCommonQuestions(page) {
@@ -100,10 +115,12 @@ export function normalizeCommonQuestions(page) {
   const questionPoints = rootPoints.filter((item) => item?.description);
   const bodySections = parseBodySections(page?.body);
 
-  return mapCards(questionPoints.length ? questionPoints : bodySections).slice(
+  return mapCards(questionPoints.length ? questionPoints : bodySections).length
+    ? mapCards(questionPoints.length ? questionPoints : bodySections).slice(
     0,
     10,
-  );
+    )
+    : mapCards(SUPPORT_FALLBACK_FAQS);
 }
 
 export function normalizeContactSupport(page, defaultIcons = {}) {
@@ -114,7 +131,7 @@ export function normalizeContactSupport(page, defaultIcons = {}) {
   ]);
   const points = Array.isArray(section?.points) ? section.points : [];
 
-  if (!points.length) return [];
+  if (!points.length) return SUPPORT_CONTACT_ITEMS;
 
   return points
     .filter((item) => item?.title)

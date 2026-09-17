@@ -1,10 +1,17 @@
 import { Link } from "react-router-dom";
 
+const FALLBACK_BANNER = {
+  image: "/image/png/fallback/bannerDeals.png",
+  title: "Irresistible Brands,\nBest Prices",
+  description: "50-80",
+  cta: { url: "/deals" },
+};
+
 export default function ShoppingMadeEasyBanner({
-  data = null,
+  data = FALLBACK_BANNER,
   className = "",
 }) {
-  if (!data) return null;
+  data = data || FALLBACK_BANNER;
     const section =
     data?.sections?.[0] ||
     data?.metadata?.data?.sections?.[0] ||

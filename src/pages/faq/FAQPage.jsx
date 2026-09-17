@@ -7,10 +7,24 @@ import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 
+const FALLBACK_FAQ_PAGE = {
+  title: "Frequently Asked Questions",
+  description: "Helpful answers for shopping, orders, delivery, and payments.",
+  sections: [
+    { type: "faq-category", title: "Orders", points: [
+      { title: "How do I track my order?", description: "Open My Orders to view the latest delivery status." },
+      { title: "How do I cancel an order?", description: "You can cancel an eligible order from My Orders before it is shipped." },
+    ] },
+    { type: "faq-category", title: "Returns", points: [
+      { title: "When will I receive my refund?", description: "Refunds are processed after the returned item is received and inspected." },
+    ] },
+  ],
+};
+
 export default function FAQPage() {
   const { page: faqPage, loading, error } = useCmsRecord("faq-details");
 
-  const faqCmsData = faqPage || {};
+  const faqCmsData = faqPage || FALLBACK_FAQ_PAGE;
 
   const faqs = useMemo(() => {
     const sections =
@@ -35,7 +49,7 @@ export default function FAQPage() {
       <ApiState
         loading={loading && !faqPage}
         error={error}
-        empty={!loading && !faqPage}
+        empty={false}
         emptyTitle="FAQ Not Found"
         emptyText="Check back later for answers to frequently asked questions."
       >
