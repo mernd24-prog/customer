@@ -1,13 +1,5 @@
-import { SUPPORT_TOPIC_IMAGE_BY_TITLE } from "../../../data/supportPage";
-
 export function getTopicImage(title = "") {
-  const normalized = title.toLowerCase();
-
-  const match = Object.entries(SUPPORT_TOPIC_IMAGE_BY_TITLE).find(([key]) =>
-    normalized.includes(key),
-  );
-
-  return match?.[1] || "/image/png/default-topic.png";
+  return "";
 }
 
 export function parseBodySections(body = "") {

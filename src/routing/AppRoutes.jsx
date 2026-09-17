@@ -275,6 +275,7 @@ export default function AppRoutes() {
 
             <Route path="/categories/brand" element={<BrandOutletPage />} />
             <Route path="/categories" element={<CategoryListingPage />} />
+            <Route path="/category" element={<CategoryListingPage />} />
             <Route
               path="/categories/brand/:brandSlug"
               element={<BrandPage />}

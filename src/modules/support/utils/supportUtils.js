@@ -1,12 +1,5 @@
-import { SUPPORT_TOPIC_IMAGE_BY_TITLE } from "../../../data/supportPage";
-
 export function getTopicImage(title = "") {
-  const normalized = title.toLowerCase();
-
-  const match = Object.entries(SUPPORT_TOPIC_IMAGE_BY_TITLE).find(([key]) =>
-    normalized.includes(key),
-  );
-  return match?.[1] || "/image/png/default-topic.png";
+  return "";
 }
 
 export function parseBodySections(body = "") {
@@ -62,16 +55,23 @@ export function getSection(page, names) {
 export function mapCards(items = []) {
   return items
     .filter((item) => item?.title)
-    .map((item) => ({
-      title: item.title,
-      description: item.description,
-      image: getTopicImage(item.title),
-      path: item.path || "/contact",
-    }));
+    .map((item) => {
+      const rawImage =
+        (typeof item.image === "object" ? item.image?.url : item.image) || "";
+      const rawPath =
+        item.cta?.url || item.path || item.link || item.url || "/contact";
+
+      return {
+        title: item.title,
+        description: item.description || item.cta?.label || "",
+        image: rawImage || getTopicImage(item.title),
+        path: typeof rawPath === "string" ? rawPath.trim() : "/contact",
+      };
+    });
 }
 
 export function normalizeHelpTopics(page) {
-  const section = getSection(page, ["All Help Topics"]);
+  const section = getSection(page, ["All Help Topics", "all-help-topics", "Help Topics"]);
   const points = Array.isArray(section?.points) ? section.points : [];
 
   if (points.length) {
@@ -82,7 +82,13 @@ export function normalizeHelpTopics(page) {
 }
 
 export function normalizeCommonQuestions(page) {
-  const section = getSection(page, ["Common Question", "Common Questions"]);
+  const section = getSection(page, [
+    "Common Question",
+    "Common Questions",
+    "common-questions",
+    "faq",
+    "faqs",
+  ]);
 
   const points = Array.isArray(section?.points) ? section.points : [];
 
@@ -91,15 +97,55 @@ export function normalizeCommonQuestions(page) {
   }
 
   const rootPoints = Array.isArray(page?.points) ? page.points : [];
-
   const questionPoints = rootPoints.filter((item) => item?.description);
-
   const bodySections = parseBodySections(page?.body);
 
   return mapCards(questionPoints.length ? questionPoints : bodySections).slice(
     0,
-    6,
+    10,
   );
+}
+
+export function normalizeContactSupport(page, defaultIcons = {}) {
+  const section = getSection(page, [
+    "Contact Support",
+    "contact-support",
+    "contact",
+  ]);
+  const points = Array.isArray(section?.points) ? section.points : [];
+
+  if (!points.length) return [];
+
+  return points
+    .filter((item) => item?.title)
+    .map((item) => {
+      const titleLower = (item.title || "").toLowerCase();
+      const descLower = (item.description || item.cta?.label || "").toLowerCase();
+
+      let icon = defaultIcons.Ticket;
+      if (
+        titleLower.includes("+") ||
+        titleLower.includes("call") ||
+        descLower.includes("call") ||
+        /^\+?[0-9\s-]+$/.test(item.title.trim())
+      ) {
+        icon = defaultIcons.Phone;
+      } else if (
+        titleLower.includes("@") ||
+        titleLower.includes("email") ||
+        titleLower.includes("mail") ||
+        descLower.includes("email")
+      ) {
+        icon = defaultIcons.Mail;
+      }
+
+      return {
+        icon,
+        title: item.title,
+        description: item.description || item.cta?.label || "",
+        path: item.cta?.url || item.path || "/contact-us",
+      };
+    });
 }
 
 export function formatSupportCategory(category = "") {

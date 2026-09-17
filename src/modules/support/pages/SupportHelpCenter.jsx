@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, Bot, Sparkles, MessageCircle } from "lucide-react";
+import {
+  ChevronDown,
+  Sparkles,
+  MessageSquare,
+  ArrowUpRight,
+  Phone,
+  Mail,
+  Ticket,
+} from "lucide-react";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 
 import Seo from "../../../components/ui/Seo";
@@ -15,12 +23,12 @@ import { SkeletonLoader } from "../../../components/ui/skeleton";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { useAuthModal } from "../../auth/context/AuthModalContext";
 import { useSelector } from "react-redux";
-import {
-  SUPPORT_CONTACT_ITEMS,
-  SUPPORT_BREADCRUMBS,
-  SUPPORT_FALLBACK_FAQS,
-  SUPPORT_FALLBACK_TOPICS,
-} from "../../../data/supportPage";
+import NotFoundPage from "../../../pages/NotFoundPage";
+
+const DEFAULT_BREADCRUMBS = [
+  { label: "Home", href: "/" },
+  { label: "Help & Support" },
+];
 
 const CUSTOMER_SUPPORT_CATEGORIES = [
   { value: "ORDER_ISSUE", label: "Order Issue" },
@@ -35,6 +43,7 @@ const CUSTOMER_SUPPORT_CATEGORIES = [
 import {
   normalizeHelpTopics,
   normalizeCommonQuestions,
+  normalizeContactSupport,
   normalizeSupportQueries,
 } from "../utils/supportUtils";
 
@@ -83,13 +92,26 @@ export default function SupportHelpCenter() {
 
   const commonQuestions = useMemo(() => normalizeCommonQuestions(page), [page]);
 
+  const contactItems = useMemo(
+    () => normalizeContactSupport(page, { Phone, Mail, Ticket }),
+    [page]
+  );
+
+  const breadcrumbs = useMemo(() => {
+    if (Array.isArray(page?.seo?.breadcrumbs) && page.seo.breadcrumbs.length > 0) {
+      return page.seo.breadcrumbs.map((b) => ({
+        label: b.label,
+        href: b.url || b.href,
+      }));
+    }
+    return DEFAULT_BREADCRUMBS;
+  }, [page]);
+
   const isPageLoading = loading && !page;
 
-  const faqData =
-    commonQuestions.length > 0 ? commonQuestions : SUPPORT_FALLBACK_FAQS;
-
-  const quickActions =
-    topics.length > 0 ? topics.slice(0, 6) : SUPPORT_FALLBACK_TOPICS;
+  const faqData = commonQuestions;
+  const quickActions = topics;
+  const contactSupportData = contactItems;
 
   const isSignedIn = Boolean(user);
 
@@ -101,6 +123,10 @@ export default function SupportHelpCenter() {
 
   // Form state and submission are now isolated in RaiseTicketModal
 
+  if (!loading && !page) {
+    return <NotFoundPage />;
+  }
+
   if (isPageLoading) {
     return (
       <>
@@ -110,12 +136,12 @@ export default function SupportHelpCenter() {
         />
 
         <main className="main-container p-0 sm:px-6 sm:py-6 lg:px-0 lg:py-8">
-          <Breadcrumbs items={SUPPORT_BREADCRUMBS} />
-          <div className="mb-7 mt-4 sm:mt-5">
+          <Breadcrumbs items={breadcrumbs} />
+          {/* <div className="mb-7 mt-4 sm:mt-5">
             <h1 className="text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
               {pageTitle || "Help & Support"}
             </h1>
-          </div>
+          </div> */}
 
           <ApiState
             loading={isPageLoading}
@@ -138,12 +164,12 @@ export default function SupportHelpCenter() {
       />
 
       <main className="main-container  sm:px-6 sm:py-6 lg:px-0 lg:py-8">
-        <Breadcrumbs items={SUPPORT_BREADCRUMBS} />
-        <div className="mb-7 mt-4 sm:mt-5">
+        <Breadcrumbs items={breadcrumbs} />
+        {/* <div className="mb-7 mt-4 sm:mt-5">
           <h1 className="text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
-            Help & Support
+            {pageTitle || "Help & Support"}
           </h1>
-        </div>
+        </div> */}
         {quickActions.length > 0 && (
           <section className="relative mb-5 md:hidden">
             <button
@@ -209,23 +235,23 @@ export default function SupportHelpCenter() {
           mainContent={
             <div className="min-w-0 space-y-5">
               {/* AI Support Assistant Banner */}
-              <section className="relative overflow-hidden rounded-[14px] border border-[#CE9F2D]/30 bg-gradient-to-r from-[#1B1D60] via-[#242777] to-[#1B1D60] p-5 text-white shadow-md">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-start gap-3.5">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#CE9F2D] ring-2 ring-white/20">
-                      <Bot size={24} />
+              <section className="mt-5 relative overflow-hidden rounded-xl border border-[#1B1D60]/10 bg-[#17145F] p-5 sm:p-6 text-white shadow-sm">
+                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                  <div className="flex items-start gap-3.5 sm:gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[#efc75f] backdrop-blur-sm">
+                      <Sparkles size={20} className="text-[#efc75f]" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <h2 className="text-base font-bold tracking-tight text-white">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                        <h2 className="text-base sm:text-lg font-bold tracking-tight text-white">
                           Instant AI Help Assistant
                         </h2>
-                        <span className="flex items-center gap-1 rounded-full bg-[#CE9F2D] px-2 py-0.5 text-[10px] font-bold text-[#1B1D60]">
-                          <Sparkles size={11} />
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-sm">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                           24/7 Live
                         </span>
                       </div>
-                      <p className="mt-1 text-xs text-gray-200 leading-relaxed max-w-xl">
+                      <p className="mt-1 text-xs sm:text-[13px] leading-relaxed text-white/75 max-w-xl">
                         Have a question about your order, returns, or store policies? Ask our AI assistant for instant, grounded answers.
                       </p>
                     </div>
@@ -236,9 +262,9 @@ export default function SupportHelpCenter() {
                     onClick={() => {
                       window.dispatchEvent(new CustomEvent("open-ai-chat"));
                     }}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-[#B88B22] hover:scale-105"
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#B88B22] active:bg-[#A3781A] shadow-xs cursor-pointer"
                   >
-                    <MessageCircle size={15} />
+                    <MessageSquare size={16} />
                     <span>Ask AI Now</span>
                   </button>
                 </div>
@@ -280,82 +306,92 @@ export default function SupportHelpCenter() {
               )}
 
               {/* FAQ */}
-              <section className="overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white">
-                <div className="bg-[#F7EED8] px-5 py-3">
-                  <h2 className="text-[18px] font-bold text-[#2E2E2E]">
-                    Frequently Asked Questions
-                  </h2>
-                </div>
+              {faqData.length > 0 && (
+                <section className="overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white">
+                  <div className="bg-[#F7EED8] px-5 py-3">
+                    <h2 className="text-[18px] font-bold text-[#2E2E2E]">
+                      Frequently Asked Questions
+                    </h2>
+                  </div>
 
-                <div className="px-5">
-                  {faqData.slice(0, 6).map((faq, index) => {
-                    const isOpen = openFaqIndex === index;
+                  <div className="px-5">
+                    {faqData.slice(0, 10).map((faq, index) => {
+                      const isOpen = openFaqIndex === index;
 
-                    return (
-                      <div
-                        key={`${faq.title || faq.question}-${index}`}
-                        className="border-b border-[#EFE5D2] last:border-b-0"
-                      >
-                        <button
-                          type="button"
-                          onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                          className="flex w-full items-center justify-between gap-4 py-4 text-left focus:outline-none"
-                        >
-                          <span className="text-[15px] font-medium text-[#2E2E2E] sm:text-[18px] lg:text-[17px]">
-                            {faq.title || faq.question}
-                          </span>
-
-                          <ChevronDown
-                            size={16}
-                            className={`shrink-0 text-[#25247B] transition-transform duration-300 ${
-                              isOpen ? "rotate-180" : ""
-                            }`}
-                          />
-                        </button>
-
+                      return (
                         <div
-                          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                            isOpen
-                              ? "max-h-96 pb-4 opacity-100"
-                              : "max-h-0 opacity-0"
-                          }`}
+                          key={`${faq.title || faq.question}-${index}`}
+                          className="border-b border-[#EFE5D2] last:border-b-0"
                         >
-                          <p className="pr-6 text-[13px] leading-5 text-[#666666]">
-                            {faq.description || faq.answer}
-                          </p>
+                          <button
+                            type="button"
+                            onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                            className="flex w-full items-center justify-between gap-4 py-4 text-left focus:outline-none"
+                          >
+                            <span className="text-[15px] font-medium text-[#2E2E2E] sm:text-[18px] lg:text-[17px]">
+                              {faq.title || faq.question}
+                            </span>
+
+                            <ChevronDown
+                              size={16}
+                              className={`shrink-0 text-[#25247B] transition-transform duration-300 ${
+                                isOpen ? "rotate-180" : ""
+                              }`}
+                            />
+                          </button>
+
+                          <div
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                              isOpen
+                                ? "max-h-96 pb-4 opacity-100"
+                                : "max-h-0 opacity-0"
+                            }`}
+                          >
+                            <p className="pr-6 text-[13px] leading-5 text-[#666666]">
+                              {faq.description || faq.answer}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
             </div>
           }
           sidebarContent={
             <div className="min-w-0 self-start space-y-5">
               {/* SAME ROW AS QUICK ACTIONS */}
-              <NeedHelpPanel
-                title="Contact Support"
-                expandedIndex={helpPanelExpandedIndex}
-                onExpandedIndexChange={setHelpPanelExpandedIndex}
-                items={SUPPORT_CONTACT_ITEMS.map((item) => {
-                  if (item.title === "Raise a Ticket") {
-                    return {
-                      ...item,
-                      onClick: () => {
-                        if (!user) {
-                          openAuthModal();
-                        } else {
-                          handleOpenRaiseTicketModal();
-                        }
-                      },
-                    };
-                  }
-                  return item;
-                })}
-                headerStyle="colored"
-              />
+              {contactSupportData.length > 0 && (
+                <NeedHelpPanel
+                  title="Contact Support"
+                  expandedIndex={helpPanelExpandedIndex}
+                  onExpandedIndexChange={setHelpPanelExpandedIndex}
+                  items={contactSupportData.map((item) => {
+                    const titleLower = (item.title || "").toLowerCase();
+                    const pathLower = (item.path || "").toLowerCase();
+                    const isTicket =
+                      titleLower.includes("ticket") ||
+                      pathLower.includes("ticket") ||
+                      item.description?.toLowerCase().includes("ticket");
 
+                    if (isTicket) {
+                      return {
+                        ...item,
+                        onClick: () => {
+                          if (!user) {
+                            openAuthModal();
+                          } else {
+                            handleOpenRaiseTicketModal();
+                          }
+                        },
+                      };
+                    }
+                    return item;
+                  })}
+                  headerStyle="colored"
+                />
+              )}
               {/* RECENT TICKETS */}
               <section className="rounded-xl border border-[#E7D9B8] bg-white">
                 <div className="flex items-center justify-between gap-3 rounded-t-[11px] bg-[#F7EED8] px-5 py-4">

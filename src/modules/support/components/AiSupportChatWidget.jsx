@@ -7,7 +7,6 @@ import {
   Send,
   RotateCcw,
   Ticket,
-  Bot,
   User,
   ExternalLink,
   ChevronDown,
@@ -23,18 +22,18 @@ import { useSupportController } from "../controllers/useSupportController";
 import { useAuthModal } from "../../auth/context/AuthModalContext";
 
 const QUICK_PROMPTS = [
-  "📦 Where is my recent order?",
-  "🔄 Return & Refund Policy",
-  "💳 Payment Options & Issues",
-  "⏱️ Shipping & Delivery Timelines",
-  "🛡️ Warranty & Service Centers",
-  "❌ How to cancel an order?",
+  "Where is my recent order?",
+  "Return & refund policy",
+  "Payment options & methods",
+  "Shipping & delivery times",
+  "Warranty & service centers",
+  "How to cancel an order?",
 ];
 
 const INITIAL_GREETING = {
   id: "welcome-msg",
   role: "assistant",
-  text: "Hello! 👋 I'm your **SAM-GLOBAL AI Support Assistant**.\n\nAsk me anything about your orders, returns, payments, or store policies!",
+  text: "Hello! Welcome to **SAM-GLOBAL Support**.\n\nAsk me anything about your orders, returns, payments, delivery, or store policies.",
   found: true,
   createdAt: new Date().toISOString(),
 };
@@ -275,8 +274,8 @@ export default function AiSupportChatWidget() {
           {/* Header */}
           <div className="flex items-center justify-between bg-gradient-to-r from-[#1B1D60] to-[#252877] px-4 py-3.5 text-white shadow-md">
             <div className="flex items-center gap-3">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-[#CE9F2D] ring-2 ring-white/20">
-                <Bot size={22} />
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-[#efc75f] ring-2 ring-white/20">
+                <Sparkles size={20} className="text-[#efc75f]" />
                 <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-[#1B1D60]" />
               </div>
               <div>
@@ -334,7 +333,7 @@ export default function AiSupportChatWidget() {
                       : "bg-[#F5C72E]/20 text-[#1B1D60] border border-[#CE9F2D]/40"
                   }`}
                 >
-                  {msg.role === "user" ? <User size={14} /> : <Bot size={15} />}
+                  {msg.role === "user" ? <User size={14} /> : <Sparkles size={14} className="text-[#946A0B]" />}
                 </div>
 
                 {/* Message Bubble */}
@@ -411,7 +410,7 @@ export default function AiSupportChatWidget() {
             {isTyping && (
               <div className="flex gap-2.5 items-start">
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F5C72E]/20 text-[#1B1D60] border border-[#CE9F2D]/40">
-                  <Bot size={15} />
+                  <Sparkles size={14} className="text-[#946A0B]" />
                 </div>
                 <div className="rounded-2xl rounded-tl-none border border-slate-200 bg-white px-4 py-3 shadow-sm max-w-[82%]">
                   <div className="flex items-center gap-2">
