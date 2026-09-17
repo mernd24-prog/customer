@@ -49,6 +49,8 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   "/support",
   "/faq",
   "/contact-us",
+  "/categories",
+  "/category",
 ];
 
 export default function AppLayout() {

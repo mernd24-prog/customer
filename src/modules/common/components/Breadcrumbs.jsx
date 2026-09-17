@@ -17,6 +17,9 @@ export default function Breadcrumbs({
   truncateLimit = 30,
   rightContent,
   homeIconSize,
+  homeIconClassName = "",
+  isDark = false,
+  dark = false,
 }) {
   const isCompact =
     linkClassName.includes("text-xs") ||
@@ -25,6 +28,26 @@ export default function Breadcrumbs({
 
   const defaultHomeSize = isCompact ? 16 : 19;
   const resolvedHomeSize = homeIconSize || defaultHomeSize;
+
+  const isDarkBg =
+    Boolean(isDark || dark) ||
+    linkClassName.includes("text-white") ||
+    linkClassName.includes("text-slate-100") ||
+    linkClassName.includes("text-slate-200") ||
+    linkClassName.includes("text-gray-100") ||
+    linkClassName.includes("text-gray-200") ||
+    linkClassName.includes("text-neutral-100") ||
+    linkClassName.includes("text-zinc-100") ||
+    className.includes("text-white") ||
+    className.includes("dark");
+
+  const resolvedHomeIconClass = cn(
+    "shrink-0 transition-colors",
+    isDarkBg
+      ? "text-white group-hover:text-[#CE9F2D]"
+      : "text-[#201B78] group-hover:text-[#CE9F2D]",
+    homeIconClassName,
+  );
 
   return (
     <>
@@ -62,13 +85,13 @@ export default function Breadcrumbs({
                   to={item.href}
                   title={item.label}
                   className={cn(
-                    "inline-flex items-center gap-1.5 font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D]",
+                    "group inline-flex items-center gap-1.5 font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D]",
                     linkClassName,
                   )}
                 >
                   {isHome && (
                     <HomeIcon
-                      className="shrink-0 text-[#201B78] transition-colors"
+                      className={resolvedHomeIconClass}
                       size={resolvedHomeSize}
                     />
                   )}
@@ -87,7 +110,11 @@ export default function Breadcrumbs({
                 >
                   {isHome && (
                     <HomeIcon
-                      className="shrink-0 text-[#201B78]"
+                      className={cn(
+                        "shrink-0",
+                        isDarkBg ? "text-white" : "text-[#201B78]",
+                        homeIconClassName,
+                      )}
                       size={resolvedHomeSize}
                     />
                   )}
@@ -100,7 +127,10 @@ export default function Breadcrumbs({
 
               {!isLast && (
                 <IoIosArrowForward
-                  className={cn("text-[#2E2E2E]", separatorClassName)}
+                  className={cn(
+                    isDarkBg ? "text-white/70" : "text-[#2E2E2E]",
+                    separatorClassName,
+                  )}
                   aria-hidden="true"
                 />
               )}
@@ -109,14 +139,14 @@ export default function Breadcrumbs({
         })}
       </nav>
 
-      {heading && (
+      {/* {heading && (
         <div className="flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:justify-between">
           <h1 className="pb-3 pt-1 text-h2 font-black text-[#3F4095] lg:pb-6 lg:pt-2">
             {heading}
           </h1>
           {rightContent}
         </div>
-      )}
+      )} */}
     </>
   );
 }

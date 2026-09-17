@@ -26,22 +26,15 @@ const highlightIcons = [
   FileCheck2,
 ];
 
-const responsibilityIcons = [
-  PackageCheck,
-  ClipboardList,
-  Box,
-  Headphones,
-];
+const responsibilityIcons = [PackageCheck, ClipboardList, Box, Headphones];
 
-const complianceIcons = [
-  ShieldCheck,
-  BarChart3,
-  TriangleAlert,
-];
+const complianceIcons = [ShieldCheck, BarChart3, TriangleAlert];
 
 export default function SellerPolicy() {
-  const { page: policyRecord, loading: loading1 } = useCmsRecord("seller-policy");
-  const { page: policiesRecord, loading: loading2 } = useCmsRecord("seller-policies");
+  const { page: policyRecord, loading: loading1 } =
+    useCmsRecord("seller-policy");
+  const { page: policiesRecord, loading: loading2 } =
+    useCmsRecord("seller-policies");
   const page = policyRecord || policiesRecord;
   const loading = loading1 || loading2;
 
@@ -57,11 +50,7 @@ export default function SellerPolicy() {
   const heroDesc =
     page?.description ||
     (page?.body ? page.body.replace(/<[^>]+>/g, "").trim() : "");
-  const heroImg =
-    page?.image?.url ||
-    page?.heroImage ||
-    page?.coverImage ||
-    "";
+  const heroImg = page?.image?.url || page?.heroImage || page?.coverImage || "";
   const primaryCtaLabel = page?.cta?.label || "Become a Seller";
   const primaryCtaUrl = page?.cta?.url || "/become-a-seller";
   const secondaryCtaLabel = "Contact Support";
@@ -75,7 +64,7 @@ export default function SellerPolicy() {
         s.type === "policy-highlights" ||
         s.title?.toLowerCase().includes("confidently") ||
         s.title?.toLowerCase().includes("guidelines") ||
-        s.title?.toLowerCase().includes("highlights")
+        s.title?.toLowerCase().includes("highlights"),
     ) || page?.sections?.[0];
 
   const highlightBadge =
@@ -100,7 +89,7 @@ export default function SellerPolicy() {
         s.type === "seller-responsibilities" ||
         s.type === "responsibilities" ||
         s.title?.toLowerCase().includes("commitment") ||
-        s.title?.toLowerCase().includes("responsibilities")
+        s.title?.toLowerCase().includes("responsibilities"),
     ) || page?.sections?.[1];
 
   const respBadge =
@@ -125,7 +114,7 @@ export default function SellerPolicy() {
         s.type === "compliance" ||
         s.title?.toLowerCase().includes("compliance") ||
         s.title?.toLowerCase().includes("healthy") ||
-        s.title?.toLowerCase().includes("account")
+        s.title?.toLowerCase().includes("account"),
     ) || page?.sections?.[2];
 
   const compBadge =
@@ -149,7 +138,12 @@ export default function SellerPolicy() {
       style={{ marginLeft: "calc(-50vw + 50%)" }}
     >
       <Seo
-        title={page?.seo?.metaTitle || (heroTitle ? `${heroTitle} - Sam Global` : "Seller Policy - Sam Global")}
+        title={
+          page?.seo?.metaTitle ||
+          (heroTitle
+            ? `${heroTitle} - Sam Global`
+            : "Seller Policy - Sam Global")
+        }
         metaDescription={
           page?.seo?.metaDescription ||
           heroDesc ||

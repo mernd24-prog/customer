@@ -46,7 +46,6 @@ const benefitIcons = [
 ];
 
 const stepIcons = [UserRoundPlus, Store, PackageCheck, WalletCards];
-
 function SectionHeading({ eyebrow, title, text, light = false }) {
   return (
     <div className="mx-auto max-w-2xl text-center">

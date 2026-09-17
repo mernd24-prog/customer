@@ -15,12 +15,16 @@ import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import Button from "../../../components/ui/buttons/Button";
 import { useAuthModal } from "../../auth/context/AuthModalContext";
 import { useSelector } from "react-redux";
-import { SUPPORT_BREADCRUMBS } from "../../../data/supportPage";
 import { supportService } from "../services/supportService";
 import {
   formatSupportDate,
   normalizeSupportQueries,
 } from "../utils/supportUtils";
+
+const SUPPORT_BREADCRUMBS = [
+  { label: "Home", href: "/" },
+  { label: "Help & Support", href: "/support" },
+];
 
 const statusLabel = (status = "") =>
   String(status || "pending")
