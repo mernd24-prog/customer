@@ -1,16 +1,9 @@
 export default function InfiniteLoopSwiper({ item, index }) {
-  const imageUrl =
-    typeof item?.image === "string" ? item.image : item?.image?.url;
-  const imageAlt =
-    typeof item?.image === "object" ? item.image?.alt : item?.title;
-
-  if (!imageUrl) return null;
-
   return (
     <div key={`${item?.title}-${index}`} className="flex-shrink-0">
       <img width="400" height="400"
-        src={imageUrl}
-        alt={imageAlt || item?.title || ""}
+        src={item?.image?.url}
+        alt={item?.title}
         loading="lazy"
         decoding="async"
         className="h-8 md:h-12 lg:h-18 w-full object-contain"

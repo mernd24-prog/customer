@@ -217,10 +217,6 @@ export default function AppRoutes() {
             path="/terms-of-use"
             element={<PolicyPage slugOverride="terms-of-use" />}
           />
-          <Route
-            path="/privacy-policy"
-            element={<PolicyPage slugOverride="privacy-policy" />}
-          />
 
           <Route path="/become-a-seller" element={<BecomeASeller />} />
 

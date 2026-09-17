@@ -2,7 +2,6 @@ import { useEffect, useRef, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { fetchCmsPageBySlug } from "../features/cms/cmsSlice";
-import { withCmsFallback } from "../constants/cmsFallbacks";
 
 const cmsRecordKey = (item) =>
   item?.slug ||
@@ -23,7 +22,7 @@ export function useCmsRecord(cmsKey) {
 
   const fetchedRef = useRef(false);
 
-  const rawPage = useMemo(() => {
+  const page = useMemo(() => {
     if (!cmsKey) return null;
     if (entities[cmsKey]) return entities[cmsKey];
     if (cmsRecordKey(current) === cmsKey) return current;
@@ -32,16 +31,11 @@ export function useCmsRecord(cmsKey) {
       : null;
   }, [cmsKey, current, entities, list]);
 
-  const page = useMemo(
-    () => (cmsKey ? withCmsFallback(rawPage, cmsKey) : rawPage),
-    [cmsKey, rawPage],
-  );
-
   useEffect(() => {
-    if (!cmsKey || rawPage || fetchedRef.current) return;
+    if (!cmsKey || page || fetchedRef.current) return;
     fetchedRef.current = true;
     dispatch(fetchCmsPageBySlug({ slug: cmsKey })).catch(() => {});
-  }, [cmsKey, dispatch, rawPage]);
+  }, [cmsKey, dispatch, page]);
 
   return { page, loading };
 }

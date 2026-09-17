@@ -13,11 +13,7 @@ export default function CategoryCard({
   className = "",
   index = 0,
 }) {
-  const imageUrl =
-    typeof image === "string"
-      ? image
-      : image?.url || image?.src || image?.imageUrl || "";
-  const cardImage = imageUrl || getImageFallbackSrc(title, "category");
+  const cardImage = image || getImageFallbackSrc(title, "category");
 
   const cardContent = (
     <article
