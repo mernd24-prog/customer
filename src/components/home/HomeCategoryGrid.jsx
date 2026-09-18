@@ -1,51 +1,17 @@
 import { useMemo, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, Pagination } from "swiper/modules";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import CategoryCard from "./CategoryCard";
 import SectionContainer from "../ui/SectionContainer";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { SkeletonLoader } from "../../components/ui/skeleton";
 import { getRootCategories } from "../../utils/pages/categoryUtils";
 import { cn } from "../../utils/common";
-import { Link } from "react-router-dom";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
-const FALLBACK_CATEGORIES = [
-  {
-    id: "fallback-electronics",
-    categoryKey: "electronics",
-    displayName: "Electronics",
-    displayImage: "/image/webp/cat.webp",
-  },
-  {
-    id: "fallback-fashion",
-    categoryKey: "fashion",
-    displayName: "Fashion",
-    displayImage: "/image/png/Fashion.png",
-  },
-  {
-    id: "fallback-beauty-personal-care",
-    categoryKey: "beauty-personal-care",
-    displayName: "Beauty & Personal Care",
-    displayImage: "/image/png/coOrdSet.png",
-  },
-  {
-    id: "fallback-home-appliances",
-    categoryKey: "home-appliances",
-    displayName: "Home Appliances",
-    displayImage: "/image/webp/cat1.webp",
-  },
-  {
-    id: "fallback-home",
-    categoryKey: "home",
-    displayName: "Home",
-    displayImage: "/image/webp/home-decor.webp",
-  },
-];
 
 export default function HomeCategoryGrid({
   categories = [],
@@ -60,15 +26,17 @@ export default function HomeCategoryGrid({
   const [activeId, setActiveId] = useState(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
-  // Dynamic categories list from backend (Filter ONLY root top-level parent categories, exclude subcategories)
   const displayCategories = useMemo(() => {
     const rawList = Array.isArray(categories) ? categories : [];
-    if (!rawList.length) return FALLBACK_CATEGORIES;
+
+    if (!rawList.length) return [];
 
     let rootList = getRootCategories(rawList);
+
     rootList = rootList.filter(
       (c) => c?.isDashboardVisible !== false && c?.active !== false,
     );
@@ -78,15 +46,19 @@ export default function HomeCategoryGrid({
     }
 
     const visibleCategories = rawList.filter((c) => {
-      if (!c || c.isDashboardVisible === false || c.active === false)
+      if (!c || c.isDashboardVisible === false || c.active === false) {
         return false;
+      }
+
       const hasParent = Boolean(c.parentKey || c.parentId || c.parent);
+
       const isLevel0 =
         c.level === 0 || c.level === "0" || c.level === undefined;
+
       return !hasParent || isLevel0;
     });
 
-    return visibleCategories.length ? visibleCategories : FALLBACK_CATEGORIES;
+    return visibleCategories;
   }, [categories]);
 
   if (loading) {
@@ -100,17 +72,39 @@ export default function HomeCategoryGrid({
         className="pt-2 pb-8 sm:pt-4 sm:pb-8 lg:pb-10"
         disablePadding={true}
       >
-        <div className="relative mt-2 rounded-[24px] bg-transparent p-3.5 sm:p-4.5 border-0 shadow-none overflow-hidden">
+        <div
+          className="
+            relative
+            mt-2
+            overflow-hidden
+            rounded-[24px]
+            border-0
+            bg-transparent
+            p-3.5
+            sm:p-4.5
+            shadow-none
+          "
+        >
           <SkeletonLoader
             preset="CATEGORY_CARD"
             count={5}
-            containerClass="flex overflow-hidden gap-3.5 sm:gap-4.5 w-full"
-            wrapperClass="w-[calc(100%/1.6-12px)] sm:w-[calc(100%/2.5-16px)] md:w-[calc(100%/3.5-20px)] lg:w-[calc(100%/4.5-24px)] flex-none h-full"
+            containerClass="flex w-full gap-2 overflow-hidden sm:gap-4.5"
+            wrapperClass="
+              w-[calc(100%/1.45-7px)]
+              min-[360px]:w-[calc(100%/1.65-8px)]
+              sm:w-[calc(100%/2.5-16px)]
+              md:w-[calc(100%/3.5-20px)]
+              lg:w-[calc(100%/4.5-24px)]
+              flex-none
+              h-full
+            "
           />
         </div>
       </SectionContainer>
     );
   }
+
+  if (!displayCategories.length) return null;
 
   return (
     <SectionContainer
@@ -121,22 +115,41 @@ export default function HomeCategoryGrid({
       actionStyle="icon"
       disablePadding={true}
     >
-      {/* Background container block */}
-      <div className="relative group/carousel rounded-3xl my-4">
-        {/* Left Navigation Arrow */}
+      <div className="relative group/carousel rounded-3xl my-2 sm:my-4">
+        {/* Previous Button */}
         <button
           ref={prevRef}
           type="button"
           aria-label="Previous categories"
           className={cn(
-            "hidden sm:flex absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-30 h-12 w-12 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-black/5 items-center justify-center text-gray-800 transition-all hover:bg-white hover:scale-105 active:scale-95 focus:outline-none",
+            `
+              hidden sm:flex
+              absolute
+              left-2 lg:left-4
+              top-1/2
+              -translate-y-1/2
+              z-30
+              h-12 w-12
+              rounded-full
+              bg-white/90
+              backdrop-blur-md
+              shadow-xl
+              border border-black/5
+              items-center justify-center
+              text-gray-800
+              transition-all
+              hover:bg-white
+              hover:scale-105
+              active:scale-95
+              focus:outline-none
+            `,
             isBeginning && "opacity-0 pointer-events-none",
           )}
         >
           <ChevronLeft className="h-6 w-6 stroke-[2]" />
         </button>
 
-        {/* Swiper Slider */}
+        {/* Categories Slider */}
         <Swiper
           modules={[Navigation, Autoplay, Pagination]}
           autoplay={{
@@ -161,82 +174,138 @@ export default function HomeCategoryGrid({
             nextEl: nextRef.current,
           }}
           breakpoints={{
-            320: { slidesPerView: 1.6, spaceBetween: 12 },
-            480: { slidesPerView: 2.2, spaceBetween: 14 },
-            640: { slidesPerView: 2.8, spaceBetween: 14 },
-            768: { slidesPerView: 3.6, spaceBetween: 16 },
-            1024: { slidesPerView: 4.4, spaceBetween: 16 },
-            1280: { slidesPerView: 5, spaceBetween: 18 },
+            320: {
+              slidesPerView: 1.45,
+              spaceBetween: 6,
+            },
+            360: {
+              slidesPerView: 1.65,
+              spaceBetween: 8,
+            },
+            480: {
+              slidesPerView: 2.2,
+              spaceBetween: 10,
+            },
+            640: {
+              slidesPerView: 2.8,
+              spaceBetween: 14,
+            },
+            768: {
+              slidesPerView: 3.6,
+              spaceBetween: 16,
+            },
+            1024: {
+              slidesPerView: 4.4,
+              spaceBetween: 16,
+            },
+            1280: {
+              slidesPerView: 5,
+              spaceBetween: 18,
+            },
           }}
           pagination={{
             el: ".category-custom-pagination",
             clickable: true,
           }}
-          className="category-grid-swiper w-full !pt-1 !pb-0 !px-0.5"
-        >
-          {displayCategories.map((item, idx) => {
-            const itemTitle =
-              item.displayName ||
-              item.title ||
-              item.name ||
-              "Featured Collection";
-            const itemImage =
-              item.displayImage ||
-              item.bannerUrl ||
-              item.imageUrl ||
-              item.image ||
-              item.thumbnail;
-            const categorySlug = item.categoryKey || item.slug || item.routeKey;
+          className="
+            category-grid-swiper
+            w-full
+            !px-0.5
+            !pt-1
+            !pb-0
+            sm:!px-0.5
 
-            return (
-              <SwiperSlide
-                key={
-                  item.id
-                    ? item.id
-                    : item.categoryKey
-                      ? item.categoryKey
-                      : `idx-${idx}`
+            [&_.swiper-pagination-bullet]:!m-0
+[&_.swiper-pagination-bullet]:!h-[3px]
+[&_.swiper-pagination-bullet]:!w-[5px]
+[&_.swiper-pagination-bullet]:!rounded-full
+
+[&_.swiper-pagination-bullet-active]:!h-[3px]
+[&_.swiper-pagination-bullet-active]:!w-[10px]
+          "
+        >
+          {displayCategories.map((category) => (
+            <SwiperSlide key={category.id || category._id || category.key}>
+              <CategoryCard
+                category={category}
+                activeId={activeId}
+                setActiveId={setActiveId}
+                badge={badge}
+                ctaLabel={ctaLabel}
+                href={
+                  category?.slug
+                    ? `${CUSTOMER_ROUTES.CATEGORIES}/${category.slug}`
+                    : CUSTOMER_ROUTES.CATEGORIES
                 }
-                className="h-auto"
-              >
-                <CategoryCard
-                  index={idx}
-                  categoryItem={item}
-                  image={itemImage}
-                  title={itemTitle}
-                  stylesCount={
-                    item.stylesCount ||
-                    item.productCountLabel ||
-                    item.countLabel
-                  }
-                  href={
-                    categorySlug
-                      ? CUSTOMER_ROUTES.category(categorySlug)
-                      : undefined
-                  }
-                  badge={item.badge || badge}
-                  ctaLabel={ctaLabel}
-                  active={activeId === item.id}
-                  onClick={() => setActiveId(item.id)}
-                />
-              </SwiperSlide>
-            );
-          })}
+              />
+            </SwiperSlide>
+          ))}
         </Swiper>
 
-        {/* Right Navigation Arrow */}
+        {/* Next Button */}
         <button
           ref={nextRef}
           type="button"
           aria-label="Next categories"
           className={cn(
-            "hidden sm:flex absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-30 h-12 w-12 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-black/5 items-center justify-center text-gray-800 transition-all hover:bg-white hover:scale-105 active:scale-95 focus:outline-none",
+            `
+              hidden sm:flex
+              absolute
+              right-2 lg:right-4
+              top-1/2
+              -translate-y-1/2
+              z-30
+              h-12 w-12
+              rounded-full
+              bg-white/90
+              backdrop-blur-md
+              shadow-xl
+              border border-black/5
+              items-center justify-center
+              text-gray-800
+              transition-all
+              hover:bg-white
+              hover:scale-105
+              active:scale-95
+              focus:outline-none
+            `,
             isEnd && "opacity-0 pointer-events-none",
           )}
         >
           <ChevronRight className="h-6 w-6 stroke-[2]" />
         </button>
-        <div className="category-custom-pagination flex justify-center w-full mt-6 gap-2"></div>
+
+        {/* Pagination */}
+        <div
+  className="
+    category-custom-pagination
+    !static
+    !relative
+    !flex
+    w-full
+    items-center
+    justify-center
+    !gap-[4px]
+    mt-3
+    pb-2
+    sm:mt-5
+    sm:!gap-2
+    sm:pb-0
+
+    max-sm:!gap-[4px]
+    max-sm:mt-2
+    max-sm:mb-2
+    max-sm:py-2
+
+    max-sm:[&_.swiper-pagination-bullet]:!m-0
+    max-sm:[&_.swiper-pagination-bullet]:!h-[4px]
+    max-sm:[&_.swiper-pagination-bullet]:!w-[6px]
+    max-sm:[&_.swiper-pagination-bullet]:!rounded-full
+
+    max-sm:[&_.swiper-pagination-bullet-active]:!h-[4px]
+    max-sm:[&_.swiper-pagination-bullet-active]:!w-[11px]
+  "
+/>
       </div>
     </SectionContainer>
   );

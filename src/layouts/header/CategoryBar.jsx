@@ -27,22 +27,6 @@ import {
 import { CompactCategoryBar } from "./CompactCategoryBar";
 import { StickyNavStrip } from "./StickyNavStrip";
 
-const FALLBACK_HEADER_CATEGORIES = [
-  "Electronics",
-  "Fashion",
-  "Beauty & Personal Care",
-  "Home Appliances",
-  "Home",
-  "Furniture",
-  "Food & Beverages",
-  "Sports & Fitness",
-  "Books & Media",
-  "Toys & Baby Products",
-].map((name) => ({
-  name,
-  categoryKey: name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-"),
-}));
-
 export const CategoryBar = ({
   headerData,
   compact = false,
@@ -236,7 +220,7 @@ export const CategoryBar = ({
       }));
     }
 
-    return result.length ? result : FALLBACK_HEADER_CATEGORIES;
+    return result;
   }, [catalogTree, headerData]);
 
   const visibleCategories = useMemo(

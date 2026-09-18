@@ -1,13 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IoChevronForward, IoChevronBack } from "react-icons/io5";
-
-const FALLBACK_CARDS = [
-  ["/image/png/fallback/chaniya-choli1.webp", "Festive Fashion"],
-  ["/image/png/fallback/chaniya-choli2.webp", "Celebrate In Style"],
-  ["/image/png/fallback/chaniya-choli3.webp", "New Season Looks"],
-  ["/image/png/fallback/chaniya-choli4.webp", "Traditional Edit"],
-].map(([image, title]) => ({ image, title, link: "/products" }));
+import { FALLBACK_PROMO_CARDS } from "../../data/fallbackCmsData";
 
 /**
  * Normalizes CMS page / section data or direct array of items into carousel card objects.
@@ -73,7 +67,7 @@ function normalizeCards(data) {
 
 export default function PromoCampaignCarousel({ data = null, className = "" }) {
   const cmsCards = normalizeCards(data);
-  const cards = cmsCards.length ? cmsCards : FALLBACK_CARDS;
+  const cards = cmsCards.length ? cmsCards : FALLBACK_PROMO_CARDS;
   const scrollRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);

@@ -174,12 +174,14 @@ export function HomePage() {
         loading={!categoryRequestComplete && !categories.length}
       />
 
-      <HomeCategoryGrid
-        categories={categories}
-        loading={!categoryRequestComplete && !categories.length}
-        title="Time for a Spring Refresh"
-        subtitle=""
-      />
+      {categories.length > 0 && (
+        <HomeCategoryGrid
+          categories={categories}
+          loading={!categoryRequestComplete && !categories.length}
+          title="Time for a Spring Refresh"
+          subtitle=""
+        />
+      )}
       {/* 
       <LazySection minHeight="280px">
         <FeaturedCollectionsSection />
@@ -194,14 +196,14 @@ export function HomePage() {
       </LazySection>
 
 
-      {!loading && !featuredProducts.length ? null : (
+      {featuredProducts.length > 0 && (
         <LazySection minHeight="450px">
           <FeaturedProductsSection
             title="Featured Products"
             actionLabel="View All Products"
             actionHref="/products"
             products={featuredProducts}
-            loading={loading}
+            loading={false}
           />
         </LazySection>
       )}
@@ -226,16 +228,18 @@ export function HomePage() {
         </section>
       </LazySection> */}
 
-      <LazySection minHeight="400px">
-        <div className="">
-          <HomeProductsForYouSection
-            title="Explore Our Collection"
-            actionLabel="Browse All Products"
-            limit={10}
-            fallbackProducts={homeProducts}
-          />
-        </div>
-      </LazySection>
+      {(products.length > 0 || trendingProducts.length > 0) && (
+        <LazySection minHeight="400px">
+          <div className="">
+            <HomeProductsForYouSection
+              title="Explore Our Collection"
+              actionLabel="Browse All Products"
+              limit={10}
+              fallbackProducts={homeProducts}
+            />
+          </div>
+        </LazySection>
+      )}
     </AppErrorBoundary>
   );
 }

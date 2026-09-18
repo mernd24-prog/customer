@@ -1,43 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { useCmsRecord } from "../hooks/useCmsRecord";
+import { FALLBACK_HERO_SLIDES } from "../data/fallbackCmsData";
 import HeroSwiper from "./HeroSwiper";
-
-const FALLBACK_SLIDES = [
-  {
-    id: "static-hero-1",
-    image: "/image/png/fallback/HeroImg1.webp",
-    badge: "END OF SEASON SALE | UP TO 50% OFF",
-    title: "Shop Smarter Across",
-    highlight: "Every Category",
-    description: "Discover fashion, electronics, beauty, home essentials, gifts, and more from trusted sellers.",
-    primaryButton: "Shop Now",
-    primaryLink: "/products",
-    secondaryButton: "Explore Categories",
-    secondaryLink: "/categories",
-  },
-  {
-    id: "static-hero-2",
-    image: "/image/png/fallback/HeroImg2.jpg",
-    badge: "NEW ARRIVALS",
-    title: "Upgrade Your Daily",
-    highlight: "Lifestyle Essentials",
-    primaryButton: "Shop Now",
-    primaryLink: "/products",
-    secondaryButton: "Explore Categories",
-    secondaryLink: "/categories",
-  },
-  {
-    id: "static-hero-3",
-    image: "/image/png/fallback/HeroImg3.jpg",
-    badge: "LIMITED TIME OFFERS | SAVE UP TO 50%",
-    title: "Upgrade Your Lifestyle",
-    highlight: "With Smart Tech",
-    primaryButton: "Shop Now",
-    primaryLink: "/products",
-    secondaryButton: "Explore Categories",
-    secondaryLink: "/categories",
-  },
-];
 
 function mapCmsToSlides(cmsPage) {
   if (!cmsPage) return null;
@@ -104,7 +68,7 @@ const HeroBanner = memo(() => {
     [heroBannerPage],
   );
 
-  const slides = cmsSlides?.length ? cmsSlides : FALLBACK_SLIDES;
+  const slides = cmsSlides?.length ? cmsSlides : FALLBACK_HERO_SLIDES;
 
   return (
     <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] w-screen items-center overflow-hidden bg-[#1B1D60] sm:h-[520px] md:h-[620px] lg:h-[650px]">

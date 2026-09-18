@@ -594,46 +594,122 @@ export default function ProductCard({
       </Link>
 
       {showActions && (
-        <div className="mt-auto flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 pb-2.5 sm:pb-3 pt-1">
-          <PillButton
-            disabled={!isInStock}
-            onClick={handleAddToCart}
-            rightIcon={
-              <ShoppingCart
-                size={15}
-                strokeWidth={2.4}
-                className="shrink-0 hidden xs:inline-block sm:inline-block"
-              />
-            }
-            className={cn(
-              "w-full flex-1 gap-1 sm:gap-2 text-[10px] sm:text-[14px] md:text-[15px] font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-2 sm:px-4 py-1.5 sm:py-2.5 h-8 sm:h-10",
-              !isInStock && "cursor-not-allowed opacity-60",
-            )}
-          >
-            <span className="truncate">Add to Cart</span>
-          </PillButton>
-          <IconCircleButton
-            title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-            aria-label={
-              isWishlisted
-                ? `Remove ${title} from wishlist`
-                : `Add ${title} to wishlist`
-            }
-            onClick={handleWishlist}
-            className={cn(
-              "h-8 w-8 min-w-[32px] sm:h-10 sm:w-10 shrink-0 p-0 flex items-center justify-center border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60]",
-              isWishlisted && "border-[#1B1D60]",
-            )}
-          >
-            <Heart
-              size={17}
-              className="sm:w-[19px] sm:h-[19px]"
-              fill={isWishlisted ? "#1B1D60" : "none"}
-              stroke={isWishlisted ? "#1B1D60" : "#1B1D60"}
-            />
-          </IconCircleButton>
-        </div>
+  <div
+    className="
+      mt-auto
+      flex
+      w-full
+      min-w-0
+      items-center
+      gap-0.5
+      px-1
+      pb-1.5
+      pt-0.5
+
+      min-[360px]:gap-1.5
+      min-[360px]:px-2.5
+      min-[360px]:pb-2.5
+      min-[360px]:pt-1
+
+      sm:gap-3
+      sm:px-4
+      sm:pb-3
+    "
+  >
+    <PillButton
+      disabled={!isInStock}
+      onClick={handleAddToCart}
+      rightIcon={
+        <ShoppingCart
+          size={12}
+          strokeWidth={2.4}
+          className="
+            shrink-0
+            min-[360px]:h-[13px]
+            min-[360px]:w-[13px]
+            sm:h-[15px]
+            sm:w-[15px]
+          "
+        />
+      }
+      className={cn(
+        `
+          min-w-0
+          flex-1
+          h-7
+          min-w-0
+          gap-0.5
+          px-1
+          text-[8px]
+          leading-none
+          font-semibold
+          whitespace-nowrap
+
+          min-[360px]:h-8
+          min-[360px]:gap-1
+          min-[360px]:px-2
+          min-[360px]:text-[10px]
+
+          sm:h-10
+          sm:gap-2
+          sm:px-4
+          sm:text-[14px]
+        `,
+        !isInStock && "cursor-not-allowed opacity-60",
       )}
+    >
+      <span className="truncate">Add to Cart</span>
+    </PillButton>
+
+    <IconCircleButton
+      title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+      aria-label={
+        isWishlisted
+          ? `Remove ${title} from wishlist`
+          : `Add ${title} to wishlist`
+      }
+      onClick={handleWishlist}
+      className={cn(
+        `
+          shrink-0
+          flex
+          items-center
+          justify-center
+          p-0
+
+          h-7
+          w-7
+          min-w-7
+
+          border-[#1B1D60]
+          text-[#1B1D60]
+          hover:border-[#1B1D60]
+
+          min-[360px]:h-8
+          min-[360px]:w-8
+          min-[360px]:min-w-8
+
+          sm:h-10
+          sm:w-10
+          sm:min-w-10
+        `,
+        isWishlisted && "border-[#1B1D60]",
+      )}
+    >
+      <Heart
+        size={13}
+        className="
+          min-[360px]:h-[15px]
+          min-[360px]:w-[15px]
+          sm:h-[19px]
+          sm:w-[19px]
+        "
+        fill={isWishlisted ? "#1B1D60" : "none"}
+        stroke={isWishlisted ? "#1B1D60" : "#1B1D60"}
+      />
+    </IconCircleButton>
+  </div>
+)}
     </article>
   );
 }
