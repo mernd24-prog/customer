@@ -240,7 +240,7 @@ export default function ReviewMediaLightbox({
                 )}
               </div>
 
-              <div className="flex items-center gap-3 shrink-0 text-gray-500">
+              {/* <div className="flex items-center gap-3 shrink-0 text-gray-500">
                 <button
                   type="button"
                   onClick={() => onHelpful && reviewId && onHelpful(reviewId)}
@@ -261,7 +261,7 @@ export default function ReviewMediaLightbox({
                   <ThumbsDown size={14} />
                   <span>0</span>
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         )}

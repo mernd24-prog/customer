@@ -591,8 +591,7 @@ export const CategoryBar = ({
     [categories],
   );
 
-  const isLoading =
-    loading || (!categories.length && (catalogLoading || !headerData));
+  const isLoading = false;
 
   if (isLoading) {
     if (compact) {
