@@ -7,11 +7,23 @@ import ApiState from "../../../components/ui/ApiState";
 import { fetchWallet } from "../../../features/wallet/walletSlice";
 import { formatMoney } from "../../../utils/ecommerce";
 import { WALLET_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
+import Breadcrumbs from "../../../modules/common/components/Breadcrumbs";
 
 export function WalletPage() {
   const dispatch = useDispatch();
   const walletState = useSelector((s) => s.wallet);
   const wallet = walletState.current;
+
+  const breadcrumbItems = [
+    {
+      label: "Home",
+      href: "/",
+      isHome: true,
+    },
+    {
+      label: "Wallet",
+    },
+  ];
 
   useEffect(() => {
     dispatch(fetchWallet());
@@ -20,8 +32,14 @@ export function WalletPage() {
   return (
     <>
       <Seo title="My Wallet | Sam Global" />
-      <div className="w-container py-8">
-        <h1 className="mb-6 text-2xl font-bold text-ink">My Wallet</h1>
+
+      <div className="mt-4 mx-auto w-full max-w-[1740px] lg:px-8 pb-4 sm:pb-9">
+        <Breadcrumbs
+          items={breadcrumbItems}
+          className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+          heading={null}
+        />
+
         <ApiState
           loading={walletState.loading && !wallet}
           error={walletState.error}
@@ -33,7 +51,6 @@ export function WalletPage() {
         >
           {wallet && (
             <div className="relative overflow-hidden rounded-[var(--customer-radius)] border border-[#CE9F2D]/60 bg-gradient-to-br from-[#FFFDF8] via-[#FFF9E6] to-[#FFF1C9] p-6 sm:p-7 transition-shadow">
-              {/* Subtle ambient gold glow */}
               <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-[#FFC82E]/25 blur-2xl pointer-events-none" />
 
               <div className="relative z-10 mb-2 flex items-center justify-between">
@@ -41,6 +58,7 @@ export function WalletPage() {
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#CE9F2D]/15 text-[#CE9F2D] border border-[#CE9F2D]/30">
                     <Wallet size={18} />
                   </div>
+
                   <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#8C620D]">
                     Available Balance
                   </span>
@@ -59,6 +77,7 @@ export function WalletPage() {
               {wallet.lockedBalance > 0 && (
                 <div className="relative z-10 mt-3.5 inline-flex items-center gap-1.5 rounded-lg bg-[#D6A323]/15 px-3 py-1.5 text-xs font-semibold text-[#8C620D] border border-[#CE9F2D]/30">
                   <Lock size={13} className="text-[#8C620D]" />
+
                   <span>
                     Locked:{" "}
                     <strong className="font-bold text-ink">

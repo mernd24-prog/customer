@@ -12,13 +12,14 @@ import {
   Tag,
   Truck,
   User,
+  Search,
+  X,
 } from "lucide-react";
 
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
 import Breadcrumbs from "../../modules/common/components/Breadcrumbs";
 import NeedHelpPanel from "../../modules/support/components/NeedHelpPanel";
-import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout";
 import FilterDropdown from "../../components/ui/FilterDropdown";
 import { AllOrdersIcon } from "../../components/ui/icons";
 import {
@@ -280,11 +281,14 @@ export function NotificationsPage() {
 
   const [page, setPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState("all");
-  const limit = 6;
+  const [query, setQuery] = useState("");
+  const [pageSize, setPageSize] = useState(6);
+  const limit = pageSize;
 
   useEffect(() => {
-    dispatch(fetchNotifications({ params: { page: 1, limit } }));
-  }, [dispatch]);
+    setPage(1);
+    dispatch(fetchNotifications({ params: { page: 1, limit: pageSize } }));
+  }, [dispatch, pageSize]);
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -367,23 +371,42 @@ export function NotificationsPage() {
   );
 
   const filteredNotifications = useMemo(() => {
-    if (activeFilter === "all") return notifications;
-    if (activeFilter === "unread")
-      return notifications.filter((n) => !n.read && !n.isRead);
-    return notifications.filter((n) => getTypeConfig(n).type === activeFilter);
-  }, [notifications, activeFilter]);
+    let result = notifications;
+
+    if (activeFilter === "unread") {
+      result = result.filter((n) => !n.read && !n.isRead);
+    } else if (activeFilter !== "all") {
+      result = result.filter((n) => getTypeConfig(n).type === activeFilter);
+    }
+
+    const search = query.trim().toLowerCase();
+
+    if (search) {
+      result = result.filter((n) => {
+        const title = n.title || n.subject || "";
+        const message = n.template || n.message || n.body || "";
+        const type = getTypeConfig(n).type || "";
+
+        return `${title} ${message} ${type}`.toLowerCase().includes(search);
+      });
+    }
+
+    return result;
+  }, [notifications, activeFilter, query]);
 
   const handleLoadMore = () => {
     if (notifState.loading) return;
     const nextPage = page + 1;
     setPage(nextPage);
-    dispatch(fetchNotifications({ params: { page: nextPage, limit } }));
+    dispatch(
+      fetchNotifications({ params: { page: nextPage, limit: pageSize } }),
+    );
   };
 
   const handleShowLess = () => {
     if (notifState.loading) return;
     setPage(1);
-    dispatch(fetchNotifications({ params: { page: 1, limit } }));
+    dispatch(fetchNotifications({ params: { page: 1, limit: pageSize } }));
   };
 
   const handleClearAll = () => {
@@ -548,114 +571,127 @@ export function NotificationsPage() {
     <>
       <Seo title="Notifications | Sam Global" />
 
-      <main className="main-container p-0 sm:px-6 sm:py-6 lg:px-0 lg:py-8">
-        <Breadcrumbs
-          items={breadcrumbItems}
-          heading={null}
-          className="mb-3 text-[#2E2E2E]"
-          linkClassName="text-[#2E2E2E] text-xs"
-          currentClassName="text-[#CE9F2D] text-xs"
-        />
+      {/* <main className="main-container p-0 sm:px-6 sm:py-3 lg:px-0 lg:py-4"> */}
+      <section className="bg-white">
+        <div className=" mt-4 mx-auto w-full max-w-[1740px] lg:px-8 pb-4 sm:pb-9 ">
+          <Breadcrumbs
+            items={breadcrumbItems}
+            className="mb-2 flex flex-wrap items-center gap-[10px]  sm:gap-[12px] lg:gap-[15px]"
+            heading={null}
+          />
 
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-[#EAEFF5] pb-5">
-          <div className="flex items-center gap-3">
-            <h1 className="text-[24px] sm:text-[28px] font-bold leading-tight text-[#3E4093]">
-              Notifications
-            </h1>
-            {unreadCount > 0 && (
-              <span className="flex items-center justify-center px-2.5 py-0.5 rounded-full bg-[#3E4093] text-white text-[13px] font-bold">
-                {unreadCount} New
-              </span>
-            )}
-          </div>
+          <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7 lg:mt-4">
+            <div className="min-w-0 rounded-xl bg-white">
+              <div className="mb-4 flex flex-col gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                  <label className="relative block w-full sm:max-w-[640px]">
+                    <Search
+                      size={16}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9E886A]"
+                    />
+                    <input
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="Search notifications"
+                      className="h-11 w-full rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/40 pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-all focus:outline-none focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
+                    />
+                    {Boolean(query) && (
+                      <button
+                        type="button"
+                        onClick={() => setQuery("")}
+                        aria-label="Clear search"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#6F7480] hover:text-[#1F2430] transition"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </label>
 
-          <div className="flex items-center gap-4">
-            <FilterDropdown
-              options={filterOptions}
-              value={activeFilter}
-              onChange={(val) => setActiveFilter(val)}
-            />
+                  <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <FilterDropdown
+                      options={[
+                        { value: 4, label: "4 per page" },
+                        { value: 6, label: "6 per page" },
+                        { value: 8, label: "8 per page" },
+                        { value: 12, label: "12 per page" },
+                        { value: 20, label: "20 per page" },
+                      ]}
+                      value={pageSize}
+                      onChange={(v) => setPageSize(Number(v))}
+                      placeholder="Per page"
+                      className="w-full sm:w-[150px]"
+                    />
+
+                    <FilterDropdown
+                      options={filterOptions}
+                      value={activeFilter}
+                      onChange={(val) => {
+                        setActiveFilter(val);
+                        setPage(1);
+                      }}
+                      placeholder="Filter"
+                      className="w-full sm:w-[170px]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <ApiState
+                loading={notifState.loading && !notifications.length}
+                error={notifState.error}
+                empty={!filteredNotifications.length && !notifState.loading}
+                emptyTitle="No notifications"
+                emptyText={
+                  query || activeFilter !== "all"
+                    ? "Try adjusting your search or filters."
+                    : "You're all caught up! Notifications will appear here."
+                }
+                skeletonLayout={SKELETON_PRESETS.NOTIFICATIONS_PAGE_SKELETON}
+                skeletonContainerClass="bg-transparent"
+              >
+                <div className="flex flex-col gap-2.5">
+                  {filteredNotifications.map((notif, index) => (
+                    <NotificationCard
+                      key={notif._id || notif.id || index}
+                      notif={notif}
+                      onClick={() => handleNotificationClick(notif)}
+                    />
+                  ))}
+
+                  {totalPages > 1 && (
+                    <div className="flex justify-center py-4">
+                      <button
+                        type="button"
+                        onClick={
+                          page >= totalPages ? handleShowLess : handleLoadMore
+                        }
+                        disabled={notifState.loading}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[#D9DDE8] bg-white px-5 py-2 text-[13px] font-semibold text-[#1B1D60] shadow-sm transition hover:bg-[#F3F3F7] disabled:opacity-50"
+                      >
+                        {notifState.loading
+                          ? "Loading..."
+                          : page >= totalPages
+                            ? "Show Less"
+                            : "Load More"}
+                        {!notifState.loading && (
+                          <ChevronDown
+                            size={14}
+                            strokeWidth={2.5}
+                            className={`transition-transform duration-200 ${
+                              page >= totalPages ? "rotate-180" : ""
+                            }`}
+                          />
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </ApiState>
+            </div>
           </div>
         </div>
-
-        <StickySidebarLayout
-          sidebarPosition="right"
-          containerClass="flex flex-col xl:flex-row gap-6 lg:gap-8"
-          sidebarClass="w-full xl:w-[320px]"
-          mainContent={
-            <ApiState
-              loading={notifState.loading && !notifications.length}
-              error={notifState.error}
-              empty={!filteredNotifications.length && !notifState.loading}
-              emptyTitle="No notifications"
-              emptyText="You're all caught up! Notifications will appear here."
-              skeletonLayout={SKELETON_PRESETS.NOTIFICATIONS_PAGE_SKELETON}
-              skeletonContainerClass="bg-transparent"
-            >
-              <div className="flex flex-col gap-2.5">
-                {filteredNotifications.map((notif, index) => (
-                  <NotificationCard
-                    key={notif._id || notif.id || index}
-                    notif={notif}
-                    onClick={() => handleNotificationClick(notif)}
-                  />
-                ))}
-
-                {totalPages > 1 && (
-                  <div className="flex justify-center py-4">
-                    <button
-                      type="button"
-                      onClick={
-                        page >= totalPages ? handleShowLess : handleLoadMore
-                      }
-                      disabled={notifState.loading}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-[#D9DDE8] bg-white px-5 py-2 text-[13px] font-semibold text-[#1B1D60] shadow-sm transition hover:bg-[#F3F3F7] disabled:opacity-50"
-                    >
-                      {notifState.loading
-                        ? "Loading..."
-                        : page >= totalPages
-                          ? "Show Less"
-                          : "Load More"}
-                      {!notifState.loading && (
-                        <ChevronDown
-                          size={14}
-                          strokeWidth={2.5}
-                          className={`transition-transform duration-200 ${
-                            page >= totalPages ? "rotate-180" : ""
-                          }`}
-                        />
-                      )}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </ApiState>
-          }
-          sidebarContent={
-            <div className="min-w-0 self-start xl:h-fit">
-              <NeedHelpPanel
-                title="Need Help ?"
-                items={[
-                  {
-                    icon: Bell,
-                    title: "Notification Settings",
-                    description: "Manage how you get notified",
-                    path: "/notification-preferences",
-                  },
-                  {
-                    icon: Headphones,
-                    title: "Contact Support",
-                    description: "Get help with your orders",
-                    path: "/support",
-                  },
-                ]}
-                headerStyle="colored"
-                sticky={false}
-              />
-            </div>
-          }
-        />
-      </main>
+      </section>
+      {/* </main> */}
     </>
   );
 }

@@ -490,14 +490,13 @@ function ReturnsRefundsPage() {
   return (
     <AppErrorBoundary>
       <Seo title="Returns & Refunds | Sam Global" />
-      <div className="py-6 sm:py-8">
-        <Breadcrumbs
-          items={breadcrumbItems}
-        />
-        <h1 className="lg:mb-4 lg:mt-5 text-[24px] sm:text-[28px] lg:text-[32px] font-bold text-[#3E4093] ">
-          Returns & Refunds
-        </h1>
-
+      
+        <div className=" mt-4 mx-auto w-full max-w-[1740px] lg:px-8 pb-4 sm:pb-9 ">
+          <Breadcrumbs
+            items={breadcrumbItems}
+            className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+            heading="My Order"
+          />
         <ApiState
           loading={state.loading && !returns.length}
           error={state.error}

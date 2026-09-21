@@ -58,7 +58,6 @@ import {
   getOrderItemId,
 } from "../../../utils/pages/orderUtils";
 
-
 const getStatusIcon = (value) => {
   const iconClass = "shrink-0 text-[var(--customer-gold-dark)]";
   switch (value) {
@@ -109,7 +108,9 @@ export default function OrderListPage() {
 
   const dispatch = useDispatch();
 
-  const [locallyReviewedProducts, setLocallyReviewedProducts] = useState(new Set());
+  const [locallyReviewedProducts, setLocallyReviewedProducts] = useState(
+    new Set(),
+  );
 
   const [reviewModalState, setReviewModalState] = useState({
     isOpen: false,
@@ -122,12 +123,20 @@ export default function OrderListPage() {
   useEffect(() => {
     if (orderItemsList?.length > 0) {
       const productIdsToFetch = new Set();
-      
+
       orderItemsList.forEach(({ order, item }) => {
-        const s = String(resolveOrderItemDisplayStatus(item, getOrderStatus(order), order?.shipments || [], [], order?.cancellations || [])).toLowerCase();
+        const s = String(
+          resolveOrderItemDisplayStatus(
+            item,
+            getOrderStatus(order),
+            order?.shipments || [],
+            [],
+            order?.cancellations || [],
+          ),
+        ).toLowerCase();
         const canReview = ["delivered", "completed"].includes(s); // simplifcation
         const isUnreviewed = !item.has_reviewed && !item.is_reviewed;
-        
+
         if (canReview && isUnreviewed) {
           const productId = getReviewProductId(item);
           if (productId && !locallyReviewedProducts.has(productId)) {
@@ -137,7 +146,7 @@ export default function OrderListPage() {
       });
 
       productIdsToFetch.forEach((productId) => {
-         dispatch(fetchMyProductReview({ productId }));
+        dispatch(fetchMyProductReview({ productId }));
       });
     }
   }, [orderItemsList, dispatch, locallyReviewedProducts]);
@@ -150,13 +159,14 @@ export default function OrderListPage() {
     <>
       <Seo title="My Orders | Sam Global" />
 
-      <section className=" bg-white  py-5 sm:py-8 lg:py-10">
-        <div className="mx-auto w-full max-w-[1740px] px-4 sm:px-6 lg:px-8">
+      <section className="pb-4 sm:pb-6">
+        <div className=" mt-4 mx-auto w-full max-w-[1740px] lg:px-8 pb-4 sm:pb-9 ">
           <Breadcrumbs
             items={ORDER_BREADCRUMBS}
             className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
             heading="My Order"
           />
+
           <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7 lg:mt-4">
             <div className="min-w-0 rounded-xl bg-white">
               {!(state.loading && !totalOrders && !orderItemsList.length) && (
@@ -188,6 +198,18 @@ export default function OrderListPage() {
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                       <FilterDropdown
                         options={[
+                          { value: 4, label: "4 per page" },
+                          { value: 8, label: "8 per page" },
+                          { value: 12, label: "12 per page" },
+                          { value: 20, label: "20 per page" },
+                        ]}
+                        value={pageSize}
+                        onChange={(v) => setPageSize(Number(v))}
+                        placeholder="Per page"
+                        className="w-full sm:w-[150px]"
+                      />
+                      <FilterDropdown
+                        options={[
                           {
                             value: "all",
                             label: "All Orders",
@@ -209,19 +231,6 @@ export default function OrderListPage() {
                           else setStatusFilters([v]);
                         }}
                         placeholder="Status"
-                      />
-
-                      <FilterDropdown
-                        options={[
-                          { value: 4, label: "4 per page" },
-                          { value: 8, label: "8 per page" },
-                          { value: 12, label: "12 per page" },
-                          { value: 20, label: "20 per page" },
-                        ]}
-                        value={pageSize}
-                        onChange={(v) => setPageSize(Number(v))}
-                        placeholder="Per page"
-                        className="w-full sm:w-[150px]"
                       />
                     </div>
                   </div>
@@ -284,15 +293,26 @@ export default function OrderListPage() {
           initialRating={reviewModalState.initialRating}
           getProductTitle={getProductTitle}
           onClose={() =>
-            setReviewModalState({ isOpen: false, item: null, order: null, initialRating: 0 })
+            setReviewModalState({
+              isOpen: false,
+              item: null,
+              order: null,
+              initialRating: 0,
+            })
           }
           onSubmitted={(res) => {
-            setReviewModalState({ isOpen: false, item: null, order: null, initialRating: 0 });
+            setReviewModalState({
+              isOpen: false,
+              item: null,
+              order: null,
+              initialRating: 0,
+            });
             dispatch(fetchMyOrders({ page: currentPage, limit: pageSize }));
-            
-            const pId = res?.productId || getReviewProductId(reviewModalState.item);
+
+            const pId =
+              res?.productId || getReviewProductId(reviewModalState.item);
             if (pId) {
-              setLocallyReviewedProducts(prev => new Set([...prev, pId]));
+              setLocallyReviewedProducts((prev) => new Set([...prev, pId]));
             }
           }}
         />

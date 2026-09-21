@@ -392,95 +392,125 @@ export default function ProductInfoSection({
         )}
 
       {activeInfoTab === "seller" && (
-        <InfoCard title="Seller Information">
-          {product.seller || product.sellerName ? (
-            <div className="px-4 py-4 sm:px-6">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 text-sm">
-                <div>
-                  <span className="text-xs font-medium text-muted block mb-1">
-                    Store Name
-                  </span>
-                  <p className="font-semibold text-ink">
-                    {product.seller?.name ||
-                      product.seller?.storeName ||
-                      product.sellerName ||
-                      "Seller"}
-                  </p>
-                </div>
+  <InfoCard title="Seller Information">
+    {product.seller || product.sellerName ? (
+      <div className="overflow-hidden">
+        {/* Seller Details */}
+        <div className="grid grid-cols-1 sm:grid-cols-3">
+          {/* Store Name */}
+          <div className="px-5 py-5 sm:px-6 sm:border-r border-border/70">
+            <span className="mb-1.5 block text-xs font-medium text-muted">
+              Store Name
+            </span>
 
-                <div>
-                  <span className="text-xs font-medium text-muted block mb-1">
-                    Rating
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <div className="inline-flex items-center gap-1 rounded-[4px] bg-[#CE9F2D] px-2 py-0.5 text-white">
-                      <Star size={12} className="fill-white text-white" />
-                      <span className="text-xs font-bold leading-none">
-                        {Number(
-                          product.seller?.rating ??
-                            product.seller?.averageRating ??
-                            product.sellerRating ??
-                            0,
-                        ).toFixed(1)}
-                      </span>
-                    </div>
-                    <span className="text-xs font-medium text-[#2E2E2E]">
-                      (
-                      {product.seller?.reviewCount ??
-                        product.seller?.reviewsCount ??
-                        product.seller?.ratingsCount ??
-                        0}
-                      )
-                    </span>
-                  </div>
-                </div>
+            <p className="text-sm font-semibold text-ink">
+              {product.seller?.name ||
+                product.seller?.storeName ||
+                product.sellerName ||
+                "Seller"}
+            </p>
+          </div>
 
-                <div>
-                  <span className="text-xs font-medium text-muted block mb-1">
-                    Joined SamGlobal
-                  </span>
-                  <p className="font-semibold text-ink">
-                    {(() => {
-                      const joinedDate =
-                        product.seller?.joinAt ||
-                        product.seller?.createdAt ||
-                        product.joinAt ||
-                        product.sellerCreatedAt ||
-                        product.createdAt;
-                      if (!joinedDate) return "N/A";
-                      const date = new Date(joinedDate);
-                      if (Number.isNaN(date.getTime())) return "N/A";
-                      return date.toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      });
-                    })()}
-                  </p>
-                </div>
-              </div>
+          {/* Rating */}
+          <div className="px-5 py-5 sm:px-6 sm:border-r border-border/70">
+            <span className="mb-1.5 block text-xs font-medium text-muted">
+              Seller Rating
+            </span>
 
-              {/* Trusted Seller Guarantee Line */}
-              <div className="border-t border-border/80 pt-3.5 mt-4 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                <div className="flex items-center gap-1.5 font-bold text-[#1E8A38]">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#EBF6EE] text-[#1E8A38]">
-                    <ShieldCheck size={13} strokeWidth={2.5} />
-                  </div>
-                  <span>Trusted & Verified Seller</span>
-                </div>
-                <span className="text-muted/60 hidden sm:inline">•</span>
-                <span className="text-muted text-xs sm:text-sm">
-                  100% Genuine Products & Quality Assured on Sam Global
+            <div className="flex items-center gap-2">
+              <div className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-2.5 py-1 text-white">
+                <Star
+                  size={12}
+                  className="fill-white text-white"
+                />
+
+                <span className="text-xs font-bold leading-none">
+                  {Number(
+                    product.seller?.rating ??
+                      product.seller?.averageRating ??
+                      product.sellerRating ??
+                      0,
+                  ).toFixed(1)}
                 </span>
               </div>
+
+              <span className="text-xs text-muted">
+                {product.seller?.reviewCount ??
+                  product.seller?.reviewsCount ??
+                  product.seller?.ratingsCount ??
+                  0}{" "}
+                ratings
+              </span>
             </div>
-          ) : (
-            <div className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
-              Seller Information Is Not Available.
+          </div>
+
+          {/* Joined Date */}
+          <div className="px-5 py-5 sm:px-6">
+            <span className="mb-1.5 block text-xs font-medium text-muted">
+              Joined SamGlobal
+            </span>
+
+            <p className="text-sm font-semibold text-ink">
+              {(() => {
+                const joinedDate =
+                  product.seller?.joinAt ||
+                  product.seller?.createdAt ||
+                  product.joinAt ||
+                  product.sellerCreatedAt ||
+                  product.createdAt;
+
+                if (!joinedDate) return "N/A";
+
+                const date = new Date(joinedDate);
+
+                if (Number.isNaN(date.getTime())) return "N/A";
+
+                return date.toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                });
+              })()}
+            </p>
+          </div>
+        </div>
+
+        {/* Trusted Seller Section */}
+        <div className="border-t border-border/70 bg-[#FAFCFA] px-5 py-3.5 sm:px-6">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            {/* Trusted Badge */}
+            <div className="flex items-center gap-2">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E9F7EC] text-[#1E8A38]">
+                <ShieldCheck
+                  size={14}
+                  strokeWidth={2.5}
+                />
+              </div>
+
+              <span className="text-sm font-semibold text-[#1E8A38]">
+                Trusted & Verified Seller
+              </span>
             </div>
-          )}
-        </InfoCard>
-      )}
+
+            {/* Divider */}
+            <span className="hidden text-[#C7C7C7] sm:inline">
+              •
+            </span>
+
+            {/* Guarantee */}
+            <span className="text-xs text-muted sm:text-sm">
+              100% Genuine Products & Quality Assured on SamGlobal
+            </span>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div className="px-5 py-5 text-sm text-black/90">
+        Seller Information Is Not Available.
+      </div>
+    )}
+  </InfoCard>
+)}
 
       {isModalOpen &&
         createPortal(
