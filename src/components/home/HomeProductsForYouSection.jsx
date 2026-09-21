@@ -30,7 +30,6 @@ export default function HomeProductsForYouSection({
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const hasFetchedRef = useRef(false);
-  const sentinelRef = useRef(null);
 
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
@@ -96,38 +95,26 @@ export default function HomeProductsForYouSection({
       .finally(() => setIsLoadingMore(false));
   }, [dispatch, limit, page, totalPages, isLoadingMore]);
 
-  useEffect(() => {
-    const node = sentinelRef.current;
-    if (!node || page >= totalPages) return undefined;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          loadNextPage();
-        }
-      },
-      { rootMargin: "600px 0px" },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [page, totalPages, loadNextPage]);
-
-  const products = localProducts.length
+  const rawProducts = localProducts.length
     ? localProducts
     : reduxProducts.length
-      ? reduxProducts
+      ? reduxProducts.slice(0, limit)
       : trending.length
-        ? trending
+        ? trending.slice(0, limit)
         : recommendations.length
-          ? recommendations
-          : fallback;
+          ? recommendations.slice(0, limit)
+          : fallback.slice(0, limit);
+
+  const products = rawProducts;
 
   if (loading && !products.length) {
     return (
       <SectionContainer
         title={title}
         subtitle={description}
-        actionHref="/products"
+        actionHref={actionHref}
+        actionLabel={actionLabel}
         actionStyle="icon"
         mobileActionStyle="none"
         className="mb-8"
@@ -151,7 +138,8 @@ export default function HomeProductsForYouSection({
     <SectionContainer
       title={title}
       subtitle={description}
-      actionHref="/products"
+      actionHref={actionHref}
+      actionLabel={actionLabel}
       actionStyle="icon"
       mobileActionStyle="none"
       className="mb-8"
@@ -170,13 +158,22 @@ export default function HomeProductsForYouSection({
           ))}
         </div>
         {page < totalPages && (
-          <div
-            ref={sentinelRef}
-            className="h-10 mt-8 flex items-center justify-center"
-          >
-            {isLoadingMore && (
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            )}
+          <div className="mt-8 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={loadNextPage}
+              disabled={isLoadingMore}
+              className="inline-flex h-[42px] px-6 items-center justify-center gap-2 rounded-[10px] border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isLoadingMore ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <span>Load More</span>
+              )}
+            </button>
           </div>
         )}
       </div>

@@ -111,7 +111,7 @@ export default function useBrandPageController() {
     setItems([]);
     setFirstLoadDone(false);
 
-    dispatch(fetchBrands({ limit: 100 }))
+    dispatch(fetchBrands({ limit: 200, cache: true }))
       .then((action) => {
         const data = action?.payload?.data;
         const list = Array.isArray(data)

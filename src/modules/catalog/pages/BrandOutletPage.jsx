@@ -22,7 +22,7 @@ import {
 } from "../../../utils/pages/brandUtils";
 import { scrollToTop } from "../../../utils/common";
 
-const PAGE_SIZE_OPTIONS = [12, 20, 36, 48];
+const PAGE_SIZE_OPTIONS = [4, 8, 12, 20];
 
 export default function BrandOutletPage() {
   const dispatch = useDispatch();
@@ -30,36 +30,43 @@ export default function BrandOutletPage() {
   const [brandList, setBrandList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [serverTotal, setServerTotal] = useState(0);
+  const [serverTotalPages, setServerTotalPages] = useState(1);
   const [viewMode] = useState("grid");
 
   const page = Math.max(1, Number(searchParams.get("page") || 1));
-  const limit = Math.max(1, Number(searchParams.get("limit") || 12));
+  const limit = Math.max(1, Number(searchParams.get("limit") || 4));
   const sort = searchParams.get("sort") || "name-asc";
   const search = searchParams.get("q") || "";
 
   useEffect(() => {
-    dispatch(fetchBrands({ limit: 500 }))
+    setLoading(true);
+    setError("");
+    dispatch(fetchBrands({ limit, page }))
       .unwrap()
       .then((res) => {
         setBrandList(listFromPayload(res));
+        // Extract pagination metadata from API response
+        const meta = res?.meta || res?.data?.meta || {};
+        const total = Number(meta?.total || meta?.count || meta?.totalItems || 0);
+        const pages = Number(meta?.totalPages || meta?.pages || Math.ceil(total / limit) || 1);
+        setServerTotal(total);
+        setServerTotalPages(Math.max(1, pages));
       })
       .catch((err) => {
         setError(err?.message || "Failed to load brands.");
       })
       .finally(() => setLoading(false));
-  }, [dispatch]);
+  }, [dispatch, limit, page]);
 
   const brands = useMemo(() => {
     let list = Array.isArray(brandList) ? [...brandList] : [];
-
-    // Filter only brands with productCount === 1
+    // Filter only brands with at least 1 product
     list = list.filter((b) => getBrandProductCount(b) >= 1);
-
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       list = list.filter((b) => getBrandName(b).toLowerCase().includes(q));
     }
-
     if (sort === "name-asc") {
       list.sort((a, b) => getBrandName(a).localeCompare(getBrandName(b)));
     } else if (sort === "name-desc") {
@@ -67,18 +74,16 @@ export default function BrandOutletPage() {
     } else if (sort === "products-desc") {
       list.sort((a, b) => getBrandProductCount(b) - getBrandProductCount(a));
     }
-
     return list;
   }, [brandList, search, sort]);
 
-  const totalBrands = brands.length;
-  const totalPages = Math.max(1, Math.ceil(totalBrands / limit));
+  // Use server-side pagination metadata when available
+  const totalBrands = serverTotal > 0 ? serverTotal : brands.length;
+  const totalPages = serverTotalPages > 1 ? serverTotalPages : Math.max(1, Math.ceil(brands.length / limit));
   const currentPage = Math.min(page, totalPages);
 
-  const paginatedBrands = useMemo(() => {
-    const start = (currentPage - 1) * limit;
-    return brands.slice(start, start + limit);
-  }, [brands, currentPage, limit]);
+  // When using server-side pagination the API already returns the correct slice
+  const paginatedBrands = brands;
 
   const updateParam = (key, value) => {
     scrollToTop(() => {

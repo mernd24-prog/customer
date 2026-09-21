@@ -185,30 +185,45 @@ export default function OrderListPage() {
                       )}
                     </label>
 
-                    <FilterDropdown
-                      options={[
-                        {
-                          value: "all",
-                          label: "All Orders",
-                          icon: getStatusIcon("all"),
-                        },
-                        ...availableStatusFilters.map((f) => ({
-                          value: f.value,
-                          label: f.label,
-                          icon: getStatusIcon(f.value),
-                        })),
-                      ]}
-                      value={
-                        statusFilters && statusFilters.length === 1
-                          ? statusFilters[0]
-                          : "all"
-                      }
-                      onChange={(v) => {
-                        if (v === "all") setStatusFilters([]);
-                        else setStatusFilters([v]);
-                      }}
-                      placeholder="Status"
-                    />
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                      <FilterDropdown
+                        options={[
+                          {
+                            value: "all",
+                            label: "All Orders",
+                            icon: getStatusIcon("all"),
+                          },
+                          ...availableStatusFilters.map((f) => ({
+                            value: f.value,
+                            label: f.label,
+                            icon: getStatusIcon(f.value),
+                          })),
+                        ]}
+                        value={
+                          statusFilters && statusFilters.length === 1
+                            ? statusFilters[0]
+                            : "all"
+                        }
+                        onChange={(v) => {
+                          if (v === "all") setStatusFilters([]);
+                          else setStatusFilters([v]);
+                        }}
+                        placeholder="Status"
+                      />
+
+                      <FilterDropdown
+                        options={[
+                          { value: 4, label: "4 per page" },
+                          { value: 8, label: "8 per page" },
+                          { value: 12, label: "12 per page" },
+                          { value: 20, label: "20 per page" },
+                        ]}
+                        value={pageSize}
+                        onChange={(v) => setPageSize(Number(v))}
+                        placeholder="Per page"
+                        className="w-full sm:w-[150px]"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
@@ -247,7 +262,7 @@ export default function OrderListPage() {
                     />
                   ))}
                 </div>
-                {totalPages > 1 && (
+                {orderItemsList.length > 0 && (
                   <div className="mt-6">
                     <Pagination
                       currentPage={currentPage}

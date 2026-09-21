@@ -478,7 +478,7 @@ export default function ProductReviewsSection({ productId, product }) {
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(fetchMyProductReview({ productId }));
-      dispatch(fetchMyOrders());
+      dispatch(fetchMyOrders({ params: { limit: 4, page: 1 } }));
     }
   }, [dispatch, productId, isLoggedIn]);
 

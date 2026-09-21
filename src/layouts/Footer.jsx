@@ -165,13 +165,11 @@ export function Footer({ data = footerData }) {
 
   useEffect(() => {
     if (!globalBrands.length) {
-      dispatch(fetchBrands()).finally(() => setBrandsFetched(true));
+      dispatch(fetchBrands({ limit: 5 })).finally(() => setBrandsFetched(true));
     } else {
       setBrandsFetched(true);
     }
   }, [dispatch, globalBrands.length]);
-
-  // ── Static footer data ───────────────────────────────────────────────────────
   const footer = data || footerData;
   const {
     copyright = footerData.copyright,
@@ -183,13 +181,10 @@ export function Footer({ data = footerData }) {
   const appDownload = footer.appDownload || {};
   const appDownloadLinks = asArray(appDownload.links);
 
-  // ── Derive API-based catalog categories (root only) ──────────────────────────
   const catalogCategories = useMemo(
     () => getRootCategories(getCategoryListFromResponse(catalogCategoryList)),
     [catalogCategoryList],
   );
-
-  // ── Build dynamic "Categories" column from API (max 5) ─────────────────────────
   const apiCategoryLinks = useMemo(
     () =>
       catalogCategories.slice(0, 5).map((cat) => ({
@@ -198,8 +193,6 @@ export function Footer({ data = footerData }) {
       })),
     [catalogCategories],
   );
-
-  // ── Build dynamic "Brands" column from API (max 5) ──────────────────────────────
   const apiBrandLinks = useMemo(
     () =>
       asArray(globalBrands)
@@ -219,33 +212,24 @@ export function Footer({ data = footerData }) {
     (!categoriesFetched || catalogLoading) && !apiCategoryLinks.length;
   const isBrandsLoading =
     (!brandsFetched || catalogLoading) && !apiBrandLinks.length;
-
-  // ── Assemble link groups with enforced column order ──────────────────────────
-  // Col 1: Categories (API)  Col 2: Brands (API)  Col 3+: remaining static groups
   const staticGroups = asArray(footer.linkGroups);
 
   const resolvedLinkGroups = useMemo(() => {
-    // Static groups that are NOT Buy/Brands (those are replaced by API data)
     const REPLACED_TITLES = new Set(["buy", "brands"]);
     const remainingStatic = staticGroups.filter(
       (g) => !REPLACED_TITLES.has(String(g?.title || "").toLowerCase()),
     );
 
-    // Col 1 – Categories from API (fallback: empty group so heading still shows)
     const categoriesGroup = {
       title: "Categories",
       links: apiCategoryLinks,
       isLoading: isCategoriesLoading,
     };
-
-    // Col 2 – Brands from API (fallback: empty group)
     const brandsGroup = {
       title: "Brands",
       links: apiBrandLinks,
       isLoading: isBrandsLoading,
     };
-
-    // Final order: Categories → Brands → Sell → About SAM → Help & Contact …
     return [categoriesGroup, brandsGroup, ...remainingStatic];
   }, [staticGroups, apiCategoryLinks, apiBrandLinks, isCategoriesLoading, isBrandsLoading]);
 

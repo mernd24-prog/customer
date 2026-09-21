@@ -97,7 +97,7 @@ export default function SectionContainer({
       </div>
 
       {finalMobileActionStyle === "button" && hasAction && actionHref ? (
-        <div className="mt-8 md:hidden flex justify-center">
+        <div className=" mt-4  mb-4 md:hidden flex justify-center ">
           <OutlineSmallButton
             to={actionHref}
             rightIcon={<ArrowRight className="w-4 h-4" strokeWidth={2.2} />}

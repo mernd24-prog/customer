@@ -27,27 +27,34 @@ export default function FeaturedProductsSection({
     rounded-none
     px-0
     py-0
+    md:my-0
+    md:rounded-none
+    md:px-0
+    md:py-0
 
-    sm:my-8
-    sm:rounded-3xl
-    sm:px-5
-    sm:py-2
+    lg:my-10
+    lg:rounded-3xl
+    lg:px-5
+    lg:py-4
 
-    md:my-12
-
-    bg-[image:var(--featured-gradient)]
+    bg-transparent
+    md:bg-transparent
+    lg:bg-[image:var(--featured-gradient)]
   `;
 
   const contentClassName = `
     px-0
     pb-0
-    sm:px-3
-    sm:pb-2
+    md:px-0
+    md:pb-0
+    lg:px-3
+    lg:pb-2
   `;
 
   const headerClassName = `
     px-0
-    sm:px-3
+    md:px-0
+    lg:px-3
   `;
 
   const sectionStyle = {
@@ -63,10 +70,7 @@ export default function FeaturedProductsSection({
         actionHref={actionHref}
         actionStyle="icon"
         mobileActionStyle="button"
-        className={`
-          ${sectionClassName}
-          max-sm:!bg-none
-        `}
+        className={sectionClassName}
         style={sectionStyle}
         disablePadding={true}
         contentClassName={contentClassName}
@@ -75,7 +79,7 @@ export default function FeaturedProductsSection({
         <SkeletonLoader
           preset="PRODUCT_CARD"
           count={5}
-          containerClass="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          containerClass="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
           wrapperClass="min-w-0"
         />
       </SectionContainer>
@@ -93,16 +97,13 @@ export default function FeaturedProductsSection({
       actionHref={actionHref}
       actionStyle="icon"
       mobileActionStyle="button"
-      className={`
-        ${sectionClassName}
-        max-sm:!bg-none
-      `}
+      className={sectionClassName}
       style={sectionStyle}
       disablePadding={true}
       contentClassName={contentClassName}
       headerClassName={headerClassName}
     >
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {displayProducts.map((product, index) => (
           <ProductCard
             key={getProductId(product) || `featured-product-${index}`}
