@@ -6,7 +6,11 @@ import { SocialIcons } from "../components/ui";
 import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
 import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
-import { fetchCategories, fetchBrands } from "../features/catalog/catalogSlice";
+import {
+  fetchCategories,
+  fetchBrands,
+  setGlobalBrands,
+} from "../features/catalog/catalogSlice";
 import { brandToSlug } from "../utils/ecommerce/brand";
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
@@ -30,6 +34,17 @@ function getCategoryListFromResponse(data) {
     return [data.category];
   if (data?.data) return getCategoryListFromResponse(data.data);
   return [data];
+}
+
+function getBrandListFromResponse(data) {
+  const payload = data?.data ?? data;
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== "object") return [];
+  return (
+    [payload.brands, payload.items, payload.list, payload.results].find(
+      Array.isArray,
+    ) || []
+  );
 }
 
 function getRootCategories(categories = []) {
@@ -165,7 +180,13 @@ export function Footer({ data = footerData }) {
 
   useEffect(() => {
     if (!globalBrands.length) {
-      dispatch(fetchBrands({ limit: 5 })).finally(() => setBrandsFetched(true));
+      dispatch(fetchBrands({ limit: 5, active: true }))
+        .unwrap()
+        .then((result) => {
+          dispatch(setGlobalBrands(getBrandListFromResponse(result)));
+        })
+        .catch(() => {})
+        .finally(() => setBrandsFetched(true));
     } else {
       setBrandsFetched(true);
     }

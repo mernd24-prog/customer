@@ -48,7 +48,28 @@ const syncDiscoveryCategories = (state, action) => {
   if (!isGlobalDiscoveryRequest(action)) return;
   const categories = productFacetCategories(action);
   const brands = productFacetBrands(action);
-  if (!state.globalCategories?.length) {
+  if (state.globalCategories?.length && categories.length) {
+    const countsByKey = new Map(
+      categories.map((category) => [
+        String(category.categoryKey),
+        Number(category.count || 0),
+      ]),
+    );
+    const mergeCounts = (items = []) =>
+      items.map((category) => {
+        const categoryKey =
+          category.categoryKey || category.key || category.value;
+        const count = countsByKey.get(String(categoryKey));
+        return {
+          ...category,
+          ...(count === undefined ? {} : { productCount: count, count }),
+          ...(Array.isArray(category.children)
+            ? { children: mergeCounts(category.children) }
+            : {}),
+        };
+      });
+    state.globalCategories = mergeCounts(state.globalCategories);
+  } else if (!state.globalCategories?.length) {
     state.globalCategories = categories;
   }
   state.globalBrands = brands;

@@ -224,22 +224,36 @@ export default function HomeCategoryGrid({
 [&_.swiper-pagination-bullet-active]:!w-[10px]
           "
         >
-          {displayCategories.map((category) => (
-            <SwiperSlide key={category.id || category._id || category.key}>
-              <CategoryCard
-                category={category}
-                activeId={activeId}
-                setActiveId={setActiveId}
-                badge={badge}
-                ctaLabel={ctaLabel}
-                href={
-                  category?.slug
-                    ? `${CUSTOMER_ROUTES.CATEGORIES}/${category.slug}`
-                    : CUSTOMER_ROUTES.CATEGORIES
-                }
-              />
-            </SwiperSlide>
-          ))}
+          {displayCategories.map((category, index) => {
+            const categoryId =
+              category.id || category._id || category.routeKey;
+            const categoryRouteKey =
+              category.routeKey || category.categoryKey || category.slug;
+
+            return (
+              <SwiperSlide key={categoryId}>
+                <CategoryCard
+                  title={category.displayName || category.title || category.name}
+                  image={
+                    category.displayImage ||
+                    category.imageUrl ||
+                    category.bannerUrl ||
+                    category.iconUrl
+                  }
+                  active={activeId === categoryId}
+                  onClick={() => setActiveId(categoryId)}
+                  index={index}
+                  badge={badge}
+                  ctaLabel={ctaLabel}
+                  href={
+                    categoryRouteKey
+                      ? CUSTOMER_ROUTES.category(categoryRouteKey)
+                      : CUSTOMER_ROUTES.products
+                  }
+                />
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
 
         {/* Next Button */}

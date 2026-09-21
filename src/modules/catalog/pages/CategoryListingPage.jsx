@@ -249,13 +249,21 @@ export default function CategoryListingPage() {
   ]);
 
   useEffect(() => {
-    if (
-      !catalogState.globalCategories ||
-      catalogState.globalCategories.length === 0
-    ) {
+    const availableCategories = getRootCategories(
+      catalogState.globalCategories,
+    );
+    const countsAreMissing =
+      availableCategories.length === 0 ||
+      availableCategories.some(
+        (category) =>
+          category.productCount === undefined ||
+          category.productCount === null,
+      );
+
+    if (countsAreMissing) {
       import("../../../modules/products/slices/productSlice").then(
         ({ fetchProducts }) => {
-          dispatch(fetchProducts({ limit: 1 })).catch(() => {});
+          dispatch(fetchProducts({ limit: 1, view: "facets" })).catch(() => {});
         },
       );
     }
@@ -272,7 +280,10 @@ export default function CategoryListingPage() {
       return available.map((category) => ({
         ...(masterByKey.get(category.routeKey) || {}),
         ...category,
-        productCount: Number(category.productCount || 0),
+        productCount:
+          category.productCount == null
+            ? undefined
+            : Number(category.productCount),
       }));
     }
 
