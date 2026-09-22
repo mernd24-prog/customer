@@ -50,8 +50,8 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   "/faq",
   "/contact-us",
   "/category",
+  "/categories",
 ];
-
 export default function AppLayout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -70,13 +70,16 @@ export default function AppLayout() {
   );
 
   const currentUser = useSelector((state) => state.auth.current);
+const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some((route) => {
+  if (route === "/categories") {
+    return location.pathname === route;
+  }
 
-  const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some(
-    (route) =>
-      location.pathname === route ||
-      (route !== "/" && location.pathname.startsWith(`${route}/`)),
+  return (
+    location.pathname === route ||
+    (route !== "/" && location.pathname.startsWith(`${route}/`))
   );
-
+});
   const handleCloseAddedToCartModal = () => {
     dispatch(closeAddedToCartModal());
   };

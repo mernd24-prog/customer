@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EmptyState, Seo } from "../../../components/ui";
+import { EmptyState, PageContainer, Seo } from "../../../components/ui";
 
 import { WatchlistItemCard } from "../components/WatchlistItemCard";
 import { useWishlistActions } from "../../products/controllers/actions";
@@ -76,8 +76,7 @@ export default function WatchlistPage() {
     <>
       <Seo title="My Wishlist | Sam Global" />
 
-      <section className="py-3 sm:py-6 lg:py-8 mt-8 lg:mt-0">
-        <div>
+     <PageContainer>
           <Breadcrumbs items={breadcrumbItems} />
 
           {isLoading ? (
@@ -171,8 +170,8 @@ export default function WatchlistPage() {
               onAction={() => navigate("/products")}
             />
           )}
-        </div>
-      </section>
+        </PageContainer>
+
     </>
   );
 }

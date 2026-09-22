@@ -15,8 +15,9 @@ import { OutlineSmallButton } from "../../../components/ui/button/static";
 import { ArrowRight } from "lucide-react";
 import { CART_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../../utils/ecommerce/money";
+import { PageContainer } from "../../../components/ui/layout";
 import {
-  normalizeCartItemId,
+  normalizeCartItemId,  
   cartLineKey,
   buildSavedProductView,
 } from "../../../utils/ecommerce/cart";
@@ -146,15 +147,13 @@ export default function CartPage() {
         description="Review items in your shopping cart."
       />
 
-      <section className="bg-white mt-6 sm:mt-8 mb-12">
-        <div className="mx-auto w-full max-w-[1900px]">
+    <PageContainer>
           <Breadcrumbs
             items={breadcrumbItems}
             className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
             linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
             currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
             separatorClassName="text-[#2E2E2E]"
-            heading="Shopping Cart"
           />
 
           <ApiState
@@ -273,7 +272,6 @@ export default function CartPage() {
                             setShowGuestOtpModal(true);
                             return;
                           }
-
                           navigate("/checkout");
                         }}
                       />
@@ -341,8 +339,7 @@ export default function CartPage() {
               }
             />
           </ApiState>
-        </div>
-      </section>
+        </PageContainer>
     </>
   );
 }

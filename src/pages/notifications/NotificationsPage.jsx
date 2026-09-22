@@ -30,6 +30,8 @@ import { SKELETON_PRESETS } from "../../components/ui/skeleton/skeletonPresets";
 import { getOpaqueOrderPath } from "../../utils/routeTokens";
 import { orderService } from "../../modules/orders/services/orderService";
 import notificationData from "../../data/notificationData";
+import { PageContainer } from "../../components/ui/layout";
+
 
 const formatRelativeTime = (value) => {
   if (!value) return "";
@@ -570,10 +572,7 @@ export function NotificationsPage() {
   return (
     <>
       <Seo title="Notifications | Sam Global" />
-
-      {/* <main className="main-container p-0 sm:px-6 sm:py-3 lg:px-0 lg:py-4"> */}
-      <section className="bg-white">
-        <div className=" mt-4 mx-auto w-full max-w-[1740px] lg:px-8 pb-4 sm:pb-9 ">
+<PageContainer>
           <Breadcrumbs
             items={breadcrumbItems}
             className="mb-2 flex flex-wrap items-center gap-[10px]  sm:gap-[12px] lg:gap-[15px]"
@@ -689,8 +688,7 @@ export function NotificationsPage() {
               </ApiState>
             </div>
           </div>
-        </div>
-      </section>
+      </PageContainer>
       {/* </main> */}
     </>
   );

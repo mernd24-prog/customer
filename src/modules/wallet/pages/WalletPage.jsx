@@ -8,7 +8,7 @@ import { fetchWallet } from "../../../features/wallet/walletSlice";
 import { formatMoney } from "../../../utils/ecommerce";
 import { WALLET_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import Breadcrumbs from "../../../modules/common/components/Breadcrumbs";
-
+import { PageContainer } from "../../../components/ui/layout";
 export function WalletPage() {
   const dispatch = useDispatch();
   const walletState = useSelector((s) => s.wallet);
@@ -33,7 +33,7 @@ export function WalletPage() {
     <>
       <Seo title="My Wallet | Sam Global" />
 
-      <div className="mt-4 mx-auto w-full max-w-[1740px] lg:px-8 pb-4 sm:pb-9">
+      <PageContainer>
         <Breadcrumbs
           items={breadcrumbItems}
           className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
@@ -92,7 +92,7 @@ export function WalletPage() {
             </div>
           )}
         </ApiState>
-      </div>
+      </PageContainer>
     </>
   );
 }

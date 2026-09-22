@@ -170,7 +170,6 @@ export function PreferencesPage() {
             className="rounded-2xl sm:rounded-3xl border border-[#E7D9B8] bg-white p-5 sm:p-7 lg:p-9 shadow-[0_10px_35px_rgba(17,24,39,0.06)]"
           >
             <div>
-              {/* Channels Heading with Sliders Icon */}
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-[#F4F6FB] border border-[#E2E8F0] flex items-center justify-center text-[#3E4093] shrink-0">
                   <SlidersHorizontal size={18} strokeWidth={1.8} />
@@ -185,8 +184,6 @@ export function PreferencesPage() {
                   </p>
                 </div>
               </div>
-
-                  {/* 2x2 Channels Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
                     {CHANNELS.map((ch) => {
                       const isChecked = Boolean(values[ch.key]);
@@ -206,7 +203,6 @@ export function PreferencesPage() {
                           )}
                         >
                           <div className="flex items-center gap-3.5 min-w-0">
-                            {/* Soft, balanced icon container */}
                             <div
                               className={cn(
                                 "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200",

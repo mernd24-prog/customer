@@ -11,6 +11,7 @@ import { Pagination } from "../../../modules/products/components";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
 import CUSTOMER_ROUTES from "../../../constants/routes";
 import { fetchBrands } from "../../../features/catalog/catalogSlice";
+import { PageContainer } from "../../../components/ui/layout";
 
 import {
   listFromPayload,
@@ -167,10 +168,7 @@ export default function BrandOutletPage() {
         description="Shop Brand Outlet brands at Sam Global."
       />
 
-      <main className="bg-white text-[var(--customer-ink)]">
-        <div className="w-full">
-          <div className="mt-4 mx-auto w-full max-w-[1740px] lg:px-8 pb-4 sm:pb-9">
-            {/* Breadcrumbs */}
+     <PageContainer>
             <Breadcrumbs
               items={breadcrumbItems}
               className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
@@ -346,9 +344,7 @@ export default function BrandOutletPage() {
                 )}
               </section>
             </div>
-          </div>
-        </div>
-      </main>
+         </PageContainer>
     </>
   );
 }

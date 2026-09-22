@@ -106,7 +106,7 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
   const createdAt = order?.created_at || order?.createdAt;
   const currency = getOrderCurrency(order);
   const shipments = Array.isArray(order?.relations?.shipments)
-    ? order.relations.shipments
+    ? order.relations.shipments 
     : Array.isArray(order?.shipments)
       ? order.shipments
       : [];
@@ -168,15 +168,13 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
     !hasMyReview;
 
   return (
-    <article className="group relative overflow-hidden rounded-xl border border-[#E4DDCF] bg-white transition-all duration-200 hover:border-[#D6A323]/40 shadow-2xs">
-      <Link
+<article className="group relative overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-shadow duration-200 hover:shadow-[0_6px_18px_rgba(31,36,48,0.10)]">      <Link
         to={itemDetailPath}
         onClick={handleCardClick}
         className="hidden md:grid grid-cols-12 items-start gap-3 lg:gap-4 p-4 group/link"
       >
         <div className="col-span-6 lg:col-span-7 flex items-start gap-4 min-w-0">
-          <div className="relative flex aspect-square w-16 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E4DDCF]/80 bg-[#FAF6EE]/50 p-1.5">
-            {itemImage ? (
+<div className="relative flex aspect-square w-16 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1.5">            {itemImage ? (
               <img
                 loading="lazy"
                 width="400"
@@ -278,8 +276,7 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
           className="flex flex-col"
         >
           {/* Full Width Image */}
-          <div className="relative flex w-full aspect-video sm:aspect-[2/1] items-center justify-center overflow-hidden bg-[#FAF6EE]/50 border-b border-[#E4DDCF]/80 p-4">
-            {itemImage ? (
+<div className="relative flex w-full aspect-video sm:aspect-[2/1] items-center justify-center overflow-hidden bg-white p-4">            {itemImage ? (
               <img
                 loading="lazy"
                 width="400"

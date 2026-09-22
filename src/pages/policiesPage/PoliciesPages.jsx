@@ -8,7 +8,6 @@ import { useCmsRecord } from "../../hooks/useCmsRecord";
 
 import PolicyHeader from "../../components/policy/PolicyHeader";
 import PolicySection from "../../components/policy/PolicySection";
-import { cleanPolicyText } from "../../utils/pages/policyUtils";
 
 const getPolicyPayload = (page) =>
   page?.metadata?.data ||
@@ -16,7 +15,10 @@ const getPolicyPayload = (page) =>
   page?.data ||
   page?.content ||
   page;
-
+const cleanPolicyText = (value = "") =>
+  String(value || "")
+    .replace(/^\s*:\s*/, "")
+    .trim();
 const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
   const { slug } = useParams();
   const cmsSlug = slugOverride || slug || "";
@@ -58,14 +60,6 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
       }))
       .sort((a, b) => a.sortOrder - b.sortOrder);
   }, [policy]);
-
-  const data = useMemo(() => {
-    if (!sections) return null;
-    return {
-      title: title,
-      sections,
-    };
-  }, [sections, title]);
 
   return (
     <AppErrorBoundary>

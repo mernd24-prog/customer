@@ -731,7 +731,14 @@ select:not([multiple]):disabled {
   width: 0 !important;
   height: 0 !important;
 }
-
+.custom-dropdown-trigger,
+.custom-dropdown-trigger:focus,
+.custom-dropdown-trigger:focus-visible,
+.custom-dropdown-trigger:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #CE9F2D !important;
+}
 .filter-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #CE9F2D33 transparent;

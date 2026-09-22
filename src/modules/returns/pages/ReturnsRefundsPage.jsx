@@ -36,7 +36,7 @@ import { RETURNS_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { getProductPublicPath } from "../../../utils/ecommerce";
 import useReturnsRefunds from "../controllers/useReturnsRefunds";
-
+import { PageContainer } from "../../../components/ui/layout";
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [
   { value: "all", label: "All Returns" },
@@ -491,10 +491,10 @@ function ReturnsRefundsPage() {
     <AppErrorBoundary>
       <Seo title="Returns & Refunds | Sam Global" />
       
-        <div className=" mt-4 mx-auto w-full max-w-[1740px] lg:px-8 pb-4 sm:pb-9 ">
+       <PageContainer>
           <Breadcrumbs
             items={breadcrumbItems}
-            className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+           className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
             heading="My Order"
           />
         <ApiState
@@ -548,7 +548,7 @@ function ReturnsRefundsPage() {
             </>
           )}
         </ApiState>
-      </div>
+     </PageContainer>
     </AppErrorBoundary>
   );
 }

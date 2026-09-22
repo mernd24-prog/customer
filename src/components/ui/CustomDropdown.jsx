@@ -50,8 +50,12 @@ export default function CustomDropdown({
 
     if (canScroll) {
       const availableScrollDistance = scrollHeight - clientHeight;
-      const availableTrackDistance = clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
-      const scrollRatio = Math.max(0, Math.min(1, scrollTop / availableScrollDistance));
+      const availableTrackDistance =
+        clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
+      const scrollRatio = Math.max(
+        0,
+        Math.min(1, scrollTop / availableScrollDistance),
+      );
       setThumbTop(scrollRatio * availableTrackDistance);
     }
   }, []);
@@ -76,10 +80,18 @@ export default function CustomDropdown({
       const deltaY = moveEvent.clientY - startYRef.current;
       const el = scrollContainerRef.current;
       const availableScrollDistance = el.scrollHeight - el.clientHeight;
-      const availableTrackDistance = el.clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
+      const availableTrackDistance =
+        el.clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
       if (availableTrackDistance > 0) {
-        const scrollDelta = (deltaY / availableTrackDistance) * availableScrollDistance;
-        el.scrollTop = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, startScrollTopRef.current + scrollDelta));
+        const scrollDelta =
+          (deltaY / availableTrackDistance) * availableScrollDistance;
+        el.scrollTop = Math.max(
+          0,
+          Math.min(
+            el.scrollHeight - el.clientHeight,
+            startScrollTopRef.current + scrollDelta,
+          ),
+        );
       }
     };
 
@@ -100,10 +112,15 @@ export default function CustomDropdown({
     const clickY = e.clientY - trackRect.top - TRACK_PADDING - THUMB_HEIGHT / 2;
     const el = scrollContainerRef.current;
     const availableScrollDistance = el.scrollHeight - el.clientHeight;
-    const availableTrackDistance = el.clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
+    const availableTrackDistance =
+      el.clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
     if (availableTrackDistance > 0) {
-      const clampedClickY = Math.max(0, Math.min(clickY, availableTrackDistance));
-      el.scrollTop = (clampedClickY / availableTrackDistance) * availableScrollDistance;
+      const clampedClickY = Math.max(
+        0,
+        Math.min(clickY, availableTrackDistance),
+      );
+      el.scrollTop =
+        (clampedClickY / availableTrackDistance) * availableScrollDistance;
     }
   };
 
@@ -150,13 +167,16 @@ export default function CustomDropdown({
         disabled={disabled}
         onClick={() => setIsOpen((previousState) => !previousState)}
         className={cn(
+          "custom-dropdown-trigger",
           "flex h-11 w-full items-center justify-between",
           "rounded-lg border border-[#CE9F2D]",
           "bg-white px-3.5 sm:px-4 text-left",
           "text-sm font-semibold text-[#1B1D60]",
           "shadow-2xs transition-all duration-200",
           "hover:border-[#CE9F2D] hover:shadow-xs",
-          "focus:outline-none",
+          "outline-none focus:outline-none focus:ring-0 focus:border-[#CE9F2D]",
+          "focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CE9F2D]",
+          "active:outline-none active:ring-0 active:border-[#CE9F2D]",
           "disabled:cursor-not-allowed",
           "disabled:bg-gray-100 disabled:opacity-50",
           buttonClassName,

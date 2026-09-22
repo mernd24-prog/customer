@@ -32,7 +32,7 @@ function clearCartStorage() {
   CART_SESSION_KEYS.forEach((key) => window.sessionStorage.removeItem(key));
 }
 
-export default function App() {
+export default function  App() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.current);
   const [sessionReady, setSessionReady] = useState(false);

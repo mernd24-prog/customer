@@ -8,14 +8,17 @@ export default function Container({
   ...props
 }) {
   const sizeMap = {
-    sm: "mx-auto max-w-3xl px-4 sm:px-6",
-    default: "mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8",
-    lg: "mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-10",
-    full: "w-full px-4 sm:px-6",
+    sm: "mx-auto w-full max-w-3xl px-4 sm:px-6",
+    default: "mx-auto w-full max-w-[1900px] px-4 sm:px-6 lg:px-8",
+    lg: "mx-auto w-full max-w-[1900px] px-4 sm:px-6 lg:px-10",
+    full: "w-full px-4 sm:px-6 lg:px-8",
   };
 
   return (
-    <Component className={cn(sizeMap[size] || sizeMap.default, className)} {...props}>
+    <Component
+      className={cn(sizeMap[size] || sizeMap.default, className)}
+      {...props}
+    >
       {children}
     </Component>
   );
