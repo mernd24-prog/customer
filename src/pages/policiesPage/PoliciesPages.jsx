@@ -7,6 +7,7 @@ import Breadcrumbs from "../../modules/common/components/Breadcrumbs";
 import PolicySection from "../../components/policy/PolicySection";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import { FALLBACK_POLICY_DATA } from "../../data/fallbackCmsData";
+import PageContainer from "../../components/ui/layout/PageContainer";
 
 function cleanPolicyText(value = "") {
   return String(value || "")
@@ -79,18 +80,7 @@ function getCmsPayload(page) {
 export default function PoliciesPages({ slugOverride }) {
   const { policyType } = useParams();
 
-  /*
-   * Routes currently provide slugOverride:
-   *
-   * /shipping-policy      -> shipping-delivery-policy
-   * /refund-policy        -> return-refund-policy
-   * /terms-of-use         -> terms-of-use
-   *
-   * If this component is ever used with a dynamic :policyType route,
-   * that value is supported as well.
-   */
   const policySlug = slugOverride || policyType;
-
   const config = POLICY_CONFIG[policySlug];
 
   const { page, loading, error } = useCmsRecord(
@@ -104,19 +94,10 @@ export default function PoliciesPages({ slugOverride }) {
   const policy = useMemo(() => {
     const cmsData = getCmsPayload(page);
 
-    /*
-     * CMS unavailable:
-     * use complete fallback policy.
-     */
     if (!cmsData) {
       return fallbackPolicy;
     }
 
-    /*
-     * CMS exists:
-     * use CMS values but keep fallback values for
-     * anything missing from CMS.
-     */
     return {
       ...fallbackPolicy,
       ...cmsData,
@@ -159,10 +140,6 @@ export default function PoliciesPages({ slugOverride }) {
     [title]
   );
 
-  /*
-   * Only show "Policy Not Found" when the route itself
-   * is not configured.
-   */
   if (!config) {
     return (
       <>
@@ -171,8 +148,11 @@ export default function PoliciesPages({ slugOverride }) {
           metaDescription="Sam Global policies and terms."
         />
 
-        <main className="main-container">
-          <Breadcrumbs items={breadcrumbs} />
+        <PageContainer>
+          <Breadcrumbs
+            items={breadcrumbs}
+            className="mb-6 flex flex-wrap items-center gap-[10px] sm:mb-8 sm:gap-[12px] lg:gap-[15px]"
+          />
 
           <ApiState
             loading={false}
@@ -181,7 +161,7 @@ export default function PoliciesPages({ slugOverride }) {
             emptyTitle="Policy Not Found"
             emptyText="The requested policy page could not be found."
           />
-        </main>
+        </PageContainer>
       </>
     );
   }
@@ -196,11 +176,15 @@ export default function PoliciesPages({ slugOverride }) {
         }
       />
 
-      <main className="main-container">
-        <Breadcrumbs items={breadcrumbs} />
+      <PageContainer>
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={breadcrumbs}
+          className="mb-6 flex flex-wrap items-center gap-[10px] sm:mb-8 sm:gap-[12px] lg:gap-[15px]"
+        />
 
         {/* Policy Hero */}
-        <section className="relative overflow-hidden bg-[#211B73] py-10 md:py-12">
+        <section className="relative overflow-hidden  bg-[#211B73] py-10 md:py-12">
           <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
             <h1 className="text-2xl font-bold text-white md:text-3xl">
               {title}
@@ -209,7 +193,7 @@ export default function PoliciesPages({ slugOverride }) {
         </section>
 
         {/* Policy Content */}
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-10 lg:px-8">
+        <section className="py-8 md:py-10">
           <ApiState
             loading={loading && !page && !fallbackPolicy}
             error={error && !fallbackPolicy ? error : null}
@@ -249,7 +233,7 @@ export default function PoliciesPages({ slugOverride }) {
             )}
           </ApiState>
         </section>
-      </main>
+      </PageContainer>
     </>
   );
 }

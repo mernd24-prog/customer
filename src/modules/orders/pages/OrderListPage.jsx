@@ -204,7 +204,6 @@ export default function OrderListPage() {
         <Breadcrumbs
           items={ORDER_BREADCRUMBS}
           className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-          heading="My Order"
         />
 
         <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">

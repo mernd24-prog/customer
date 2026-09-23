@@ -47,7 +47,6 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   ...Object.values(AUTH_ROUTES),
   "/checkout",
   "/support",
-  "/faq",
   "/contact-us",
   "/category",
   "/categories",
