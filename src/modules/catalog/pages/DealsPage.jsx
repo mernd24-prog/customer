@@ -51,15 +51,14 @@ export default function DealsPage() {
       seoDescription="Shop active deal products with special prices, deal badges, and limited-time offers."
       topContent={
         <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-          <div
-            className="
-              h-[320px]
-              sm:h-[380px]
-              md:h-[350px]
-              lg:h-[350px]
-              xl:h-[500px]
-            "
-          >
+  <div
+    className="
+      h-[280px]
+      sm:h-[300px]
+      md:h-[320px]
+      lg:h-[320px]
+    "
+  >
             {/* Mobile & Tablet Content */}
             <div className="relative flex h-full items-center lg:hidden">
               <div className="customer-container w-full">

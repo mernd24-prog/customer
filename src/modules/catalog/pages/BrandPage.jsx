@@ -78,20 +78,14 @@ export default function BrandPage() {
       </div>
     );
   }
-
-  const brandImage = getBrandLogo(brand);
-  const brandDescription = brand?.description || brand?.about;
   const showPageSizeSelector = Number(pageInfo.total || 0) >= 12;
 
   return (
     <ProductListingLayout
       pageTitle={`${brandName} Products`}
-      seoDescription={
-        brandDescription || `Shop ${brandName} products at Sam Global`
-      }
       topContent={
-        <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-          <div className="grid  gap-0 h-[320px] sm:h-[380px] md:h-[350px] lg:grid-cols-[52%_48%]">
+        <div className=" relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
+          <div className="grid h-[180px] gap-0 sm:h-[220px] md:h-[240px] lg:grid-cols-[52%_48%]">
             <div className="relative lg:hidden h-full">
               <div className="absolute inset-0 bg-black/30" />
               <div className="absolute inset-0 flex items-center">
@@ -107,13 +101,6 @@ export default function BrandPage() {
                     <h1 className="text-h1 font-bold leading-tight text-white capitalize">
                       {brandName}
                     </h1>
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
-                      {brandDescription ||
-                        `Shop ${brandName} products at Sam Global`}
-                    </p>
-                    <p className="mt-3 text-sm text-white">
-                      {Number(pageInfo.total || 0).toLocaleString()} Products
-                    </p>
                   </div>
                 </div>
               </div>
@@ -131,13 +118,6 @@ export default function BrandPage() {
                 <h1 className="text-h1 font-bold leading-tight text-white capitalize">
                   {brandName}
                 </h1>
-                <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
-                  {brandDescription ||
-                    `Shop ${brandName} products at Sam Global`}
-                </p>
-                <p className="mt-3 text-sm text-white">
-                  {Number(pageInfo.total || 0).toLocaleString()} Products
-                </p>
               </div>
             </div>
           </div>

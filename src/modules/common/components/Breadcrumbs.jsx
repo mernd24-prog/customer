@@ -53,7 +53,7 @@ export default function Breadcrumbs({
     <>
       <nav
         className={cn(
-          "mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]",
+          "mb-4 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]",
           className,
         )}
         aria-label="Breadcrumb"

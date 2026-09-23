@@ -155,7 +155,7 @@ export default function CustomDropdown({
   return (
     <div ref={dropdownRef} className={cn("relative", className)}>
       {label && (
-        <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+        <span className=" mb-2 block text-sm font-semibold text-[#2E2E2E]">
           {label}
 
           {required && <span className="text-red-500"> *</span>}

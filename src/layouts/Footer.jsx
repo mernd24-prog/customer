@@ -6,6 +6,7 @@ import { SocialIcons } from "../components/ui";
 import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
 import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
+import { getBrandProductCount } from "../utils/pages/brandUtils";
 import {
   fetchCategories,
   fetchBrands,
@@ -179,18 +180,24 @@ export function Footer({ data = footerData }) {
   }, [dispatch, catalogCategoryList]);
 
   useEffect(() => {
-    if (!globalBrands.length) {
-      dispatch(fetchBrands({ limit: 5, active: true }))
-        .unwrap()
-        .then((result) => {
-          dispatch(setGlobalBrands(getBrandListFromResponse(result)));
-        })
-        .catch(() => {})
-        .finally(() => setBrandsFetched(true));
-    } else {
-      setBrandsFetched(true);
-    }
-  }, [dispatch, globalBrands.length]);
+  if (!globalBrands.length) {
+    dispatch(fetchBrands({ limit: 100, active: true }))
+      .unwrap()
+      .then((result) => {
+        const brands = getBrandListFromResponse(result);
+
+        const brandsWithProducts = brands
+          .filter((brand) => getBrandProductCount(brand) >= 1)
+          .slice(0, 5);
+
+        dispatch(setGlobalBrands(brandsWithProducts));
+      })
+      .catch(() => {})
+      .finally(() => setBrandsFetched(true));
+  } else {
+    setBrandsFetched(true);
+  }
+}, [dispatch, globalBrands.length]); 
   const footer = data || footerData;
   const {
     copyright = footerData.copyright,

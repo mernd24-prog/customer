@@ -4,13 +4,13 @@ import {
   ChevronDown,
   Sparkles,
   MessageSquare,
-  ArrowUpRight,
   Phone,
   Mail,
   Ticket,
 } from "lucide-react";
-import CustomDropdown from "../../../components/ui/CustomDropdown";
+import { useSelector } from "react-redux";
 
+import CustomDropdown from "../../../components/ui/CustomDropdown";
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
@@ -22,7 +22,16 @@ import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { useAuthModal } from "../../auth/context/AuthModalContext";
-import { useSelector } from "react-redux";
+
+import {
+  FALLBACK_SUPPORT,
+} from "../../../data/fallbackCmsData";
+
+import {
+  normalizeHelpTopics,
+  normalizeCommonQuestions,
+  normalizeContactSupport,
+} from "../utils/supportUtils";
 
 const DEFAULT_BREADCRUMBS = [
   { label: "Home", href: "/" },
@@ -39,13 +48,6 @@ const CUSTOMER_SUPPORT_CATEGORIES = [
   { value: "OTHER", label: "Other" },
 ];
 
-import {
-  normalizeHelpTopics,
-  normalizeCommonQuestions,
-  normalizeContactSupport,
-  normalizeSupportQueries,
-} from "../utils/supportUtils";
-
 function SupportStatusBadge({ status }) {
   const normalized = String(status || "pending").toLowerCase();
 
@@ -58,7 +60,7 @@ function SupportStatusBadge({ status }) {
 
   return (
     <span
-      className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2.5 py-[3px] text-[11px] font-semibold leading-none capitalize ${className}`}
+      className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-[3px] text-[11px] font-semibold leading-none capitalize ${className}`}
     >
       {normalized.replace(/_/g, " ")}
     </span>
@@ -66,13 +68,13 @@ function SupportStatusBadge({ status }) {
 }
 
 export default function SupportHelpCenter() {
-  const { page, loading } = useCmsRecord("support-center");
+  const { page, loading, error } = useCmsRecord("support-center");
+
   const { openAuthModal } = useAuthModal();
   const user = useSelector((state) => state.auth.current);
 
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
-
   const [selectedSupportCategory, setSelectedSupportCategory] = useState("");
   const [helpPanelExpandedIndex, setHelpPanelExpandedIndex] = useState(null);
 
@@ -84,28 +86,59 @@ export default function SupportHelpCenter() {
     handleOpenRaiseTicketModal,
   } = useSupportController();
 
-  const pageTitle = page?.title || "";
-  const pageDescription = page?.description || page?.excerpt || "";
+  /*
+   * CMS data has priority.
+   * When CMS data is unavailable, use the centralized fallback.
+   */
+  const supportPage = page || FALLBACK_SUPPORT;
 
-  const topics = useMemo(() => normalizeHelpTopics(page), [page]);
+  const pageTitle =
+    supportPage?.title ||
+    "Help & Support";
 
-  const commonQuestions = useMemo(() => normalizeCommonQuestions(page), [page]);
+  const pageDescription =
+    supportPage?.description ||
+    supportPage?.excerpt ||
+    "";
+
+  const topics = useMemo(
+    () => normalizeHelpTopics(supportPage),
+    [supportPage],
+  );
+
+  const commonQuestions = useMemo(
+    () => normalizeCommonQuestions(supportPage),
+    [supportPage],
+  );
 
   const contactItems = useMemo(
-    () => normalizeContactSupport(page, { Phone, Mail, Ticket }),
-    [page]
+    () =>
+      normalizeContactSupport(supportPage, {
+        Phone,
+        Mail,
+        Ticket,
+      }),
+    [supportPage],
   );
 
   const breadcrumbs = useMemo(() => {
-    if (Array.isArray(page?.seo?.breadcrumbs) && page.seo.breadcrumbs.length > 0) {
-      return page.seo.breadcrumbs.map((b) => ({
-        label: b.label,
-        href: b.url || b.href,
+    if (
+      Array.isArray(supportPage?.seo?.breadcrumbs) &&
+      supportPage.seo.breadcrumbs.length > 0
+    ) {
+      return supportPage.seo.breadcrumbs.map((breadcrumb) => ({
+        label: breadcrumb.label,
+        href: breadcrumb.url || breadcrumb.href,
       }));
     }
-    return DEFAULT_BREADCRUMBS;
-  }, [page]);
 
+    return DEFAULT_BREADCRUMBS;
+  }, [supportPage]);
+
+  /*
+   * Only show the page skeleton when there is no CMS data yet.
+   * Once CMS fails/returns no page, FALLBACK_SUPPORT is rendered.
+   */
   const isPageLoading = loading && !page;
 
   const faqData = commonQuestions;
@@ -118,28 +151,26 @@ export default function SupportHelpCenter() {
     if (isSignedIn) {
       loadSupportQueries(selectedSupportCategory);
     }
-  }, [loadSupportQueries, isSignedIn, selectedSupportCategory]);
-
-  // Form state and submission are now isolated in RaiseTicketModal
+  }, [
+    loadSupportQueries,
+    isSignedIn,
+    selectedSupportCategory,
+  ]);
 
   if (isPageLoading) {
     return (
       <>
         <Seo
-          title={`${pageTitle || "Customer Support"} | Sam Global`}
+          title={`${pageTitle} | Sam Global`}
           description={pageDescription}
         />
 
         <main className="main-container p-0 sm:px-6 sm:py-6 lg:px-0 lg:py-8">
           <Breadcrumbs items={breadcrumbs} />
-          {/* <div className="mb-7 mt-4 sm:mt-5">
-            <h1 className="text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
-              {pageTitle || "Help & Support"}
-            </h1>
-          </div> */}
 
           <ApiState
             loading={isPageLoading}
+            error={error}
             empty={!isPageLoading && !page}
             emptyTitle="Customer Support"
             emptyText="Help topics and support options will appear here."
@@ -154,22 +185,21 @@ export default function SupportHelpCenter() {
   return (
     <AppErrorBoundary>
       <Seo
-        title={`${pageTitle || "Customer Support"} | Sam Global`}
+        title={`${pageTitle} | Sam Global`}
         description={pageDescription}
       />
 
-      <main className="main-container  sm:px-6 sm:py-6 lg:px-0 lg:py-8">
+      <main className="main-container sm:px-6 sm:py-6 lg:px-0 lg:py-8">
         <Breadcrumbs items={breadcrumbs} />
-        {/* <div className="mb-7 mt-4 sm:mt-5">
-          <h1 className="text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
-            {pageTitle || "Help & Support"}
-          </h1>
-        </div> */}
+
+        {/* MOBILE QUICK ACTIONS */}
         {quickActions.length > 0 && (
           <section className="relative mb-5 md:hidden">
             <button
               type="button"
-              onClick={() => setIsQuickActionsOpen((open) => !open)}
+              onClick={() =>
+                setIsQuickActionsOpen((open) => !open)
+              }
               aria-expanded={isQuickActionsOpen}
               className="flex w-full items-center justify-between rounded-[14px] border border-[#D7A522] bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
             >
@@ -219,34 +249,34 @@ export default function SupportHelpCenter() {
             )}
           </section>
         )}
-        {/* =====================================================
-            DESKTOP MAIN GRID
-            Both columns start EXACTLY same row
-        ====================================================== */}
+
         <StickySidebarLayout
           sidebarPosition="right"
           containerClass="flex flex-col md:flex-row gap-5 items-start"
           sidebarClass="w-full md:w-[280px] lg:w-[320px] xl:w-[340px]"
           mainContent={
             <div className="min-w-0 space-y-5">
-              {/* AI Support Assistant Banner */}
-              <section className="mt-5 relative overflow-hidden rounded-xl border border-[#1B1D60]/10 bg-[#17145F] p-5 sm:p-6 text-white shadow-sm">
-                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+              {/* AI SUPPORT ASSISTANT */}
+              <section className="relative mt-5 overflow-hidden rounded-xl border border-[#1B1D60]/10 bg-[#17145F] p-5 text-white shadow-sm sm:p-6">
+                <div className="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
                   <div className="flex items-start gap-3.5 sm:gap-4">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[#efc75f] backdrop-blur-sm">
-                      <Sparkles size={20} className="text-[#efc75f]" />
+                      <Sparkles size={20} />
                     </div>
+
                     <div>
                       <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-                        <h2 className="text-base sm:text-lg font-bold tracking-tight text-white">
+                        <h2 className="text-base font-bold tracking-tight text-white sm:text-lg">
                           Instant AI Help Assistant
                         </h2>
+
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-sm">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                           24/7 Live
                         </span>
                       </div>
-                      <p className="mt-1 text-xs text-gray-200 leading-relaxed max-w-xl">
+
+                      <p className="mt-1 max-w-xl text-xs leading-relaxed text-gray-200">
                         Have a question about your order, returns, or store
                         policies? Ask our AI assistant for instant, grounded
                         answers.
@@ -257,9 +287,11 @@ export default function SupportHelpCenter() {
                   <button
                     type="button"
                     onClick={() => {
-                      window.dispatchEvent(new CustomEvent("open-ai-chat"));
+                      window.dispatchEvent(
+                        new CustomEvent("open-ai-chat"),
+                      );
                     }}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#B88B22] active:bg-[#A3781A] shadow-xs cursor-pointer"
+                    className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors duration-150 hover:bg-[#B88B22] active:bg-[#A3781A] sm:text-sm"
                   >
                     <MessageSquare size={16} />
                     <span>Ask AI Now</span>
@@ -267,15 +299,16 @@ export default function SupportHelpCenter() {
                 </div>
               </section>
 
+              {/* DESKTOP QUICK ACTIONS */}
               {quickActions.length > 0 && (
                 <section className="hidden overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white md:block">
-                  <div className="bg-[#F7EED8] px-5  py-3">
+                  <div className="bg-[#F7EED8] px-5 py-3">
                     <h2 className="text-[18px] font-bold text-[#2E2E2E]">
                       Quick Actions
                     </h2>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-x-3 gap-y-5 px-5  py-5 lg:grid-cols-5">
+                  <div className="grid grid-cols-3 gap-x-3 gap-y-5 px-5 py-5 lg:grid-cols-5">
                     {quickActions.map((topic, index) => (
                       <Link
                         key={`${topic.title}-${index}`}
@@ -322,7 +355,11 @@ export default function SupportHelpCenter() {
                         >
                           <button
                             type="button"
-                            onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                            onClick={() =>
+                              setOpenFaqIndex(
+                                isOpen ? null : index,
+                              )
+                            }
                             className="flex w-full items-center justify-between gap-4 py-4 text-left focus:outline-none"
                           >
                             <span className="text-[15px] font-medium text-[#2E2E2E] sm:text-[18px] lg:text-[17px]">
@@ -358,19 +395,27 @@ export default function SupportHelpCenter() {
           }
           sidebarContent={
             <div className="min-w-0 self-start space-y-5">
-              {/* SAME ROW AS QUICK ACTIONS */}
+              {/* CONTACT SUPPORT */}
               {contactSupportData.length > 0 && (
                 <NeedHelpPanel
                   title="Contact Support"
                   expandedIndex={helpPanelExpandedIndex}
                   onExpandedIndexChange={setHelpPanelExpandedIndex}
                   items={contactSupportData.map((item) => {
-                    const titleLower = (item.title || "").toLowerCase();
-                    const pathLower = (item.path || "").toLowerCase();
+                    const titleLower = (
+                      item.title || ""
+                    ).toLowerCase();
+
+                    const pathLower = (
+                      item.path || ""
+                    ).toLowerCase();
+
                     const isTicket =
                       titleLower.includes("ticket") ||
                       pathLower.includes("ticket") ||
-                      item.description?.toLowerCase().includes("ticket");
+                      item.description
+                        ?.toLowerCase()
+                        .includes("ticket");
 
                     if (isTicket) {
                       return {
@@ -384,11 +429,13 @@ export default function SupportHelpCenter() {
                         },
                       };
                     }
+
                     return item;
                   })}
                   headerStyle="colored"
                 />
               )}
+
               {/* RECENT TICKETS */}
               <section className="rounded-xl border border-[#E7D9B8] bg-white">
                 <div className="flex items-center justify-between gap-3 rounded-t-[11px] bg-[#F7EED8] px-5 py-4">
@@ -404,18 +451,22 @@ export default function SupportHelpCenter() {
                       ...CUSTOMER_SUPPORT_CATEGORIES,
                     ]}
                     value={selectedSupportCategory}
-                    onChange={(val) => setSelectedSupportCategory(val)}
+                    onChange={setSelectedSupportCategory}
                     placeholder="All"
                   />
                 </div>
 
-                <div className="divide-y divide-[#EFE5D2] px-5 max-h-[225px] overflow-y-auto custom-scrollbar">
+                <div className="custom-scrollbar max-h-[225px] divide-y divide-[#EFE5D2] overflow-y-auto px-5">
                   {supportLoading && (
                     <div className="py-5">
                       <SkeletonLoader
                         count={3}
                         layout={[
-                          { type: "box", width: "100%", height: "24px" },
+                          {
+                            type: "box",
+                            width: "100%",
+                            height: "24px",
+                          },
                           {
                             type: "box",
                             width: "60%",
@@ -449,21 +500,26 @@ export default function SupportHelpCenter() {
                     supportQueries.map((ticket) => (
                       <Link
                         key={ticket.id}
-                        to={`/support/tickets/${encodeURIComponent(ticket.id)}`}
-                        className="w-full py-4 text-left  transition-colors cursor-pointer px-2 -mx-2 rounded-lg"
+                        to={`/support/tickets/${encodeURIComponent(
+                          ticket.id,
+                        )}`}
+                        className="w-full cursor-pointer rounded-lg px-2 py-4 text-left transition-colors"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className=" text-sm font-bold text-[#1B1D60] truncate">
+                            <p className="truncate text-sm font-bold text-[#1B1D60]">
                               {ticket.subject}
                             </p>
 
-                            <p className="mt-1 text-xs font-medium text-[#666666] truncate">
-                              {ticket.categoryLabel} · {ticket.updatedAt}
+                            <p className="mt-1 truncate text-xs font-medium text-[#666666]">
+                              {ticket.categoryLabel} ·{" "}
+                              {ticket.updatedAt}
                             </p>
                           </div>
 
-                          <SupportStatusBadge status={ticket.status} />
+                          <SupportStatusBadge
+                            status={ticket.status}
+                          />
                         </div>
                       </Link>
                     ))}
@@ -471,7 +527,7 @@ export default function SupportHelpCenter() {
               </section>
             </div>
           }
-        />{" "}
+        />
       </main>
     </AppErrorBoundary>
   );

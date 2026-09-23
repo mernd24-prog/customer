@@ -34,6 +34,7 @@ import { logout } from "../modules/auth/slices/authSlice";
 import { notify } from "../utils/notify";
 import { fetchMe } from "../features/user/userSlice";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
+import { capitalizeFirst } from "../utils/stringUtils";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -395,7 +396,7 @@ export const Navbar = ({ icons: propIcons }) => {
                       {accountLabel}
                     </span>
                     <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
-                      {profileUser?.email || ""}
+                      {capitalizeFirst(profileUser?.email || "")}
                     </span>
                   </span>
                 </div>
