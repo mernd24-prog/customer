@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
+import ApiState from "../../../components/ui/ApiState";
+import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_POLICY } from "../../../data/fallbackCmsData";
 
@@ -227,6 +229,11 @@ export default function SellerPolicy() {
           "Read our Seller Policy to understand the guidelines, responsibilities, and standards for selling on our platform."
         }
       />
+
+      <ApiState
+        loading={loading && !cmsPolicy && !cmsPolicies}
+        skeletonLayout={SKELETON_PRESETS.POLICY_PAGE}
+      >
 
       {/* ================= HERO ================= */}
       <section className="relative isolate w-full overflow-hidden bg-[#FAF8F3]">
@@ -510,6 +517,7 @@ export default function SellerPolicy() {
             </div>
           </section>
         )}
+      </ApiState>
     </div>
   );
 }

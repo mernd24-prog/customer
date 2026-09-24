@@ -541,4 +541,208 @@ export const SKELETON_PRESETS = {
       ]
     }
   ],
+
+  // Dedicated Order Details Page Skeleton
+  ORDER_DETAIL_PAGE: [
+    {
+      type: "col",
+      className: "w-full gap-6 py-4 sm:py-6",
+      children: [
+        // Top row: Breadcrumbs & Header buttons
+        {
+          type: "row",
+          className: "flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#EAEFF5] pb-6",
+          children: [
+            { type: "box", width: "240px", height: "20px", rounded: "rounded-md" },
+            {
+              type: "row",
+              className: "gap-3 w-full sm:w-auto justify-end",
+              children: [
+                { type: "box", width: "130px", height: "46px", rounded: "rounded-[10px]" },
+                { type: "box", width: "140px", height: "46px", rounded: "rounded-[10px]" },
+              ],
+            },
+          ],
+        },
+        // 4-tile Info Grid
+        {
+          type: "grid",
+          className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4",
+          children: [
+            {
+              type: "col",
+              count: 4,
+              className: "p-4.5 rounded-2xl border border-[#E7D9B8]/60 bg-white gap-2.5 shadow-sm",
+              children: [
+                {
+                  type: "row",
+                  className: "items-center gap-3 mb-1",
+                  children: [
+                    { type: "box", width: "36px", height: "36px", rounded: "rounded-xl" },
+                    { type: "box", width: "100px", height: "14px", rounded: "rounded-md" },
+                  ],
+                },
+                { type: "box", width: "85%", height: "14px", rounded: "rounded-md" },
+                { type: "box", width: "65%", height: "12px", rounded: "rounded-md" },
+              ],
+            },
+          ],
+        },
+        // Main 2-column layout (Items & Tracker on left, Summary on right)
+        {
+          type: "grid",
+          className: "grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-2",
+          children: [
+            // Left Column (2 cols)
+            {
+              type: "col",
+              className: "lg:col-span-2 gap-4",
+              children: [
+                {
+                  type: "col",
+                  count: 2,
+                  className: "p-5 rounded-2xl border border-[#EAEFF5] bg-white gap-4 shadow-sm",
+                  children: [
+                    {
+                      type: "row",
+                      className: "items-center gap-4",
+                      children: [
+                        { type: "box", width: "88px", height: "88px", rounded: "rounded-xl", className: "shrink-0" },
+                        {
+                          type: "col",
+                          className: "flex-1 gap-2 min-w-0",
+                          children: [
+                            { type: "box", width: "80%", height: "18px", rounded: "rounded-md" },
+                            { type: "box", width: "45%", height: "14px", rounded: "rounded-md" },
+                            { type: "box", width: "35%", height: "16px", rounded: "rounded-md" },
+                          ],
+                        },
+                        { type: "box", width: "90px", height: "32px", rounded: "rounded-full", className: "shrink-0" },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            // Right Column (1 col - Order Summary Sidebar)
+            {
+              type: "col",
+              className: "p-6 rounded-2xl border border-[#E7D9B8]/60 bg-white gap-4.5 shadow-sm h-fit",
+              children: [
+                { type: "box", width: "150px", height: "20px", rounded: "rounded-md", className: "mb-2" },
+                {
+                  type: "row",
+                  className: "justify-between items-center",
+                  children: [
+                    { type: "box", width: "80px", height: "14px", rounded: "rounded-md" },
+                    { type: "box", width: "60px", height: "14px", rounded: "rounded-md" },
+                  ],
+                },
+                {
+                  type: "row",
+                  className: "justify-between items-center",
+                  children: [
+                    { type: "box", width: "90px", height: "14px", rounded: "rounded-md" },
+                    { type: "box", width: "50px", height: "14px", rounded: "rounded-md" },
+                  ],
+                },
+                {
+                  type: "row",
+                  className: "justify-between items-center",
+                  children: [
+                    { type: "box", width: "70px", height: "14px", rounded: "rounded-md" },
+                    { type: "box", width: "40px", height: "14px", rounded: "rounded-md" },
+                  ],
+                },
+                { type: "box", width: "100%", height: "1px", className: "bg-[#EAEFF5] my-1" },
+                {
+                  type: "row",
+                  className: "justify-between items-center",
+                  children: [
+                    { type: "box", width: "100px", height: "20px", rounded: "rounded-md" },
+                    { type: "box", width: "80px", height: "22px", rounded: "rounded-md" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+
+  // Become a Seller Page Skeleton
+  BECOME_A_SELLER: [
+    {
+      type: "col",
+      className: "w-full gap-10 py-6",
+      children: [
+        {
+          type: "col",
+          className: "relative h-[440px] sm:h-[520px] w-full rounded-3xl bg-[#17145f]/90 p-8 sm:p-14 justify-center gap-5",
+          children: [
+            { type: "box", width: "220px", height: "34px", rounded: "rounded-full", className: "bg-white/10" },
+            { type: "box", width: "65%", height: "48px", rounded: "rounded-lg", className: "bg-white/10" },
+            { type: "box", width: "45%", height: "20px", rounded: "rounded-md", className: "bg-white/10" },
+            { type: "box", width: "160px", height: "48px", rounded: "rounded-lg", className: "bg-white/15 mt-4" },
+          ],
+        },
+        {
+          type: "col",
+          className: "py-6 gap-6",
+          children: [
+            { type: "box", width: "280px", height: "28px", rounded: "rounded-md" },
+            {
+              type: "grid",
+              className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6",
+              children: [
+                {
+                  type: "col",
+                  count: 4,
+                  className: "p-4 rounded-[22px] border border-[#E4DDCF] bg-white gap-4 shadow-sm",
+                  children: [
+                    { type: "box", height: "176px", width: "100%", rounded: "rounded-xl" },
+                    { type: "box", width: "70%", height: "20px", rounded: "rounded-md" },
+                    { type: "box", width: "50%", height: "14px", rounded: "rounded-md" },
+                    { type: "box", width: "90%", height: "14px", rounded: "rounded-md" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+
+  // Policy & Content Page Skeleton
+  POLICY_PAGE: [
+    {
+      type: "col",
+      className: "w-full gap-6 py-6",
+      children: [
+        { type: "box", width: "180px", height: "18px", rounded: "rounded-md" },
+        { type: "box", width: "100%", height: "110px", rounded: "rounded-2xl", className: "bg-[#211B73]/90" },
+        {
+          type: "col",
+          className: "max-w-6xl mx-auto w-full gap-4 mt-4",
+          children: [
+            { type: "box", width: "100%", height: "16px", rounded: "rounded-md" },
+            { type: "box", width: "90%", height: "16px", rounded: "rounded-md" },
+            { type: "box", width: "95%", height: "16px", rounded: "rounded-md", className: "mb-4" },
+            {
+              type: "col",
+              count: 3,
+              className: "p-6 rounded-2xl border border-[#EAEFF5] bg-white gap-3 shadow-sm",
+              children: [
+                { type: "box", width: "40%", height: "20px", rounded: "rounded-md" },
+                { type: "box", width: "100%", height: "14px", rounded: "rounded-md" },
+                { type: "box", width: "80%", height: "14px", rounded: "rounded-md" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
 };

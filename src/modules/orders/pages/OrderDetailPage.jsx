@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import ApiState from "../../../components/ui/ApiState";
+import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
 import Seo from "../../../components/ui/Seo";
 import Button from "../../../components/ui/buttons/Button";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
@@ -97,6 +98,7 @@ export default function OrderDetailPage({ orderId }) {
           loading={state.loading && !order}
           error={state.error}
           empty={!order}
+          skeletonLayout={SKELETON_PRESETS.ORDER_DETAIL_PAGE}
         >
           <div className="grid gap-5 sm:gap-6 lg:gap-9">
             <section className="grid gap-4 sm:gap-8">
