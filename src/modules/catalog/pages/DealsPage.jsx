@@ -1,4 +1,3 @@
-import { BadgePercent } from "lucide-react";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { ProductListingLayout } from "../../../modules/products/components";
 import {
@@ -6,6 +5,7 @@ import {
   useWishlistActions,
 } from "../../../modules/products/controllers/actions";
 import useDealsPageController from "../controllers/useDealsPageController";
+import { useCmsRecord } from "../../../hooks/useCmsRecord";
 
 const SORT_OPTIONS = [
   { value: "ending_soon", label: "Ending Soon" },
@@ -15,9 +15,21 @@ const SORT_OPTIONS = [
   { value: "newest", label: "Newest Deals" },
 ];
 
+const FALLBACK_DEAL_TITLE = "Deal Products";
+
+const FALLBACK_DEAL_DESCRIPTION =
+  "Products promoted by admin with special deal price, original price, deal badge, and limited-time availability.";
+
 export default function DealsPage() {
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
+
+  // CMS data
+  const {
+    page: cmsPage,
+    loading: cmsLoading,
+    error: cmsError,
+  } = useCmsRecord("deal-products");
 
   const {
     products,
@@ -45,83 +57,68 @@ export default function DealsPage() {
     { label: "Deals" },
   ];
 
+  /*
+   * CMS has priority.
+   *
+   * The API response contains:
+   *
+   * {
+   *   slug: "deal-products",
+   *   title: "...",
+   *   description: "...",
+   *   metadata: {
+   *     data: {
+   *       title: "...",
+   *       description: "..."
+   *     }
+   *   }
+   * }
+   *
+   * Prefer the main CMS fields first.
+   */
+  const dealTitle =
+    cmsPage?.title ||
+    cmsPage?.metadata?.data?.title ||
+    FALLBACK_DEAL_TITLE;
+
+  const dealDescription =
+    cmsPage?.description ||
+    cmsPage?.metadata?.data?.description ||
+    cmsPage?.excerpt ||
+    FALLBACK_DEAL_DESCRIPTION;
+
+  console.log("Deal CMS page:", cmsPage);
+  console.log("Deal CMS title:", dealTitle);
+  console.log("Deal CMS description:", dealDescription);
+
+  const pageError = error || cmsError;
+
   return (
     <ProductListingLayout
-      pageTitle="Deals"
-      seoDescription="Shop active deal products with special prices, deal badges, and limited-time offers."
+      pageTitle={dealTitle}
+      seoDescription={dealDescription}
       topContent={
         <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-  <div
-    className="
-      h-[280px]
-      sm:h-[300px]
-      md:h-[320px]
-      lg:h-[320px]
-    "
-  >
-            {/* Mobile & Tablet Content */}
-            <div className="relative flex h-full items-center lg:hidden">
+          <div className="h-[320px]">
+            <div className="relative flex h-full items-center">
               <div className="customer-container w-full">
                 <div className="max-w-xl">
                   <Breadcrumbs
+                    items={breadcrumbItems}
                     linkClassName="!text-white"
                     currentClassName="!text-[#CE9F2D]"
-                    separatorClassName="!text-gold"
-                    items={breadcrumbItems}
+                    separatorClassName="!text-white"
                     className="mb-5"
                   />
 
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#9A6A00]">
-                    <BadgePercent size={15} />
-                    Live Deals
-                  </div>
-
                   <h1 className="text-h1 font-bold leading-tight text-white capitalize">
-                    Deal Products
+                    {dealTitle}
                   </h1>
 
                   <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
-                    Products promoted by admin with special deal price,
-                    original price, deal badge, and limited-time availability.
+                    {dealDescription}
                   </p>
                 </div>
-              </div>
-            </div>
-
-            {/* Desktop Content */}
-            <div
-              className="
-                hidden
-                h-full
-                items-center
-                pl-6
-                pr-10
-                lg:flex
-                xl:pl-[max(3rem,calc((100vw-1559px)/2))]
-              "
-            >
-              <div className="max-w-xl">
-                <Breadcrumbs
-                  items={breadcrumbItems}
-                  linkClassName="!text-white"
-                  currentClassName="!text-[#CE9F2D]"
-                  separatorClassName="!text-white"
-                  className="mb-5"
-                />
-
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#9A6A00]">
-                  <BadgePercent size={15} />
-                  Live Deals
-                </div>
-
-                <h1 className="text-h1 font-bold leading-tight text-white capitalize">
-                  Deal Products
-                </h1>
-
-                <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
-                  Products promoted by admin with special deal price, original
-                  price, deal badge, and limited-time availability.
-                </p>
               </div>
             </div>
           </div>
@@ -139,9 +136,11 @@ export default function DealsPage() {
       onRemoveFilter={removeFilter}
       onClearFilters={clearFiltersAction}
       loading={
-        (loading && !products.length) || (!firstLoadDone && !products.length)
+        cmsLoading ||
+        (loading && !products.length) ||
+        (!firstLoadDone && !products.length)
       }
-      error={error}
+      error={pageError}
       empty={!products.length && !loading && firstLoadDone}
       emptyTitle="No active deals found"
       emptyText="Please check back later for new deal products."
