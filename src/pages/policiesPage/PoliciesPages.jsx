@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
+import { SKELETON_PRESETS } from "../../components/ui/skeleton/skeletonPresets";
 import Breadcrumbs from "../../modules/common/components/Breadcrumbs";
 import PolicySection from "../../components/policy/PolicySection";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
@@ -200,6 +201,7 @@ export default function PoliciesPages({ slugOverride }) {
             empty={!policy}
             emptyTitle="Policy Not Found"
             emptyText="This policy is currently unavailable."
+            skeletonLayout={SKELETON_PRESETS.POLICY_PAGE}
           >
             {policy && (
               <div className="mx-auto max-w-6xl">

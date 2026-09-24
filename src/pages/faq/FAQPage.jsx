@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import FAQContentSection from "../../components/faq/FAQContentSection";
 import ApiState from "../../components/ui/ApiState";
+import { SKELETON_PRESETS } from "../../components/ui/skeleton/skeletonPresets";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import Breadcrumbs from "../../modules/common/components/Breadcrumbs";
 import PageContainer from "../../components/ui/layout/PageContainer";
@@ -98,6 +99,7 @@ export default function FAQPage() {
           empty={false}
           emptyTitle="FAQ Not Found"
           emptyText="Check back later for answers to frequently asked questions."
+          skeletonLayout={SKELETON_PRESETS.POLICY_PAGE}
         >
           {/* FAQ Hero - same height/style as Policies,
               but text aligned left */}

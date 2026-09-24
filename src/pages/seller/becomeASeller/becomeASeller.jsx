@@ -1,6 +1,5 @@
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import CustomSwiper, { SwiperSlide } from "../../../components/swiper/CustomSwiper";
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,24 +18,12 @@ import {
 } from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
+import ApiState from "../../../components/ui/ApiState";
+import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
-import "swiper/css";
-import "swiper/css/pagination";
-
 const SELLER_LOGIN_URL = "http://45.195.90.183:3000/login";
-
-const STORY_SWIPER_MODULES = [Navigation, Pagination];
-
-const STORY_SWIPER_NAVIGATION = {
-  prevEl: ".seller-story-prev",
-  nextEl: ".seller-story-next",
-};
-
-const STORY_SWIPER_PAGINATION = {
-  clickable: true,
-};
 
 const STORY_SWIPER_BREAKPOINTS = {
   640: {
@@ -118,10 +105,12 @@ export default function BecomeASeller() {
     loading,
     error,
   } = useCmsRecord("become-a-seller");
+const cmsPayload = getCmsPayload(cmsPage);
 
-  const sellerPage =
-    getCmsPayload(cmsPage) || FALLBACK_SELLER_PAGE;
-
+const sellerPage =
+  cmsPayload?.image?.url
+    ? cmsPayload
+    : FALLBACK_SELLER_PAGE;
   const heroTitle = sellerPage?.title || "";
   const [titleLine1, titleLine2] = heroTitle.split("\n");
 
@@ -189,6 +178,12 @@ export default function BecomeASeller() {
           "Grow your business with Sam Global. Reach more customers, manage orders easily, and get reliable seller support."
         }
       />
+
+      <ApiState
+        loading={loading && !cmsPage}
+        error={cmsPage ? error : null}
+        skeletonLayout={SKELETON_PRESETS.BECOME_A_SELLER}
+      >
 
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-[#17145f] text-white">
@@ -314,11 +309,10 @@ export default function BecomeASeller() {
               </div>
             </div>
 
-            <div className="seller-experience-swiper mt-10">
-              <Swiper
-                modules={STORY_SWIPER_MODULES}
-                navigation={STORY_SWIPER_NAVIGATION}
-                pagination={STORY_SWIPER_PAGINATION}
+            <div className="mt-10">
+              <CustomSwiper
+                prevEl=".seller-story-prev"
+                nextEl=".seller-story-next"
                 spaceBetween={24}
                 slidesPerView={1}
                 breakpoints={STORY_SWIPER_BREAKPOINTS}
@@ -329,7 +323,7 @@ export default function BecomeASeller() {
                       key={
                         story.name || index
                       }
-                      className="!h-auto pb-12"
+                      className="!h-auto pb-2"
                     >
                       <article className="group h-full rounded-[22px] bg-white p-3 pb-6 sm:p-4 sm:pb-7">
                         <div className="relative">
@@ -380,7 +374,7 @@ export default function BecomeASeller() {
                     </SwiperSlide>
                   ),
                 )}
-              </Swiper>
+              </CustomSwiper>
             </div>
           </div>
         </section>
@@ -388,7 +382,7 @@ export default function BecomeASeller() {
 
       {/* Benefits */}
       {mappedBenefits.length > 0 && (
-        <section className="py-20 sm:py-24">
+        <section className="bg-white py-16 sm:py-20 lg:py-24">
           <div className="customer-container">
             <SectionHeading
               eyebrow="Made for sellers"
@@ -399,22 +393,25 @@ export default function BecomeASeller() {
               }
             />
 
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid gap-4 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3">
               {mappedBenefits.map(
                 ({ icon: Icon, title, text }, index) => (
                   <article
                     key={title || index}
-                    className="group rounded-2xl border border-[#e4ddcf] bg-white p-7 hover:border-[#d6a323]/60"
+                    className="group flex min-h-[178px] flex-col rounded-[20px] border border-[#e4ddcf] bg-white p-5 shadow-[0_2px_10px_rgba(32,27,120,0.03)] transition-colors duration-200 hover:border-[#d6a323]/70 sm:p-6"
                   >
-                    <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#f4f2ff] text-[#3E4093] transition group-hover:bg-[#d6a323] group-hover:text-[#201b78]">
-                      <Icon size={23} />
+                    {/* Compact icon + title row */}
+                    <div className="flex items-center gap-4">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[13px] bg-[#f4f2ff] text-[#3E4093] transition-colors duration-200 group-hover:bg-[#d6a323] group-hover:text-[#201b78]">
+                        <Icon size={21} strokeWidth={1.9} />
+                      </span>
+
+                      <h3 className="text-[17px] font-bold leading-6 text-[#201b78] sm:text-[18px]">
+                        {title}
+                      </h3>
                     </div>
 
-                    <h3 className="mt-5 text-xl font-bold text-[#201b78]">
-                      {title}
-                    </h3>
-
-                    <p className="mt-3 leading-7 text-[#6f7480]">
+                    <p className="mt-4 pl-0 text-[15px] leading-6 text-[#6f7480] sm:pl-[60px]">
                       {text}
                     </p>
                   </article>
@@ -427,7 +424,7 @@ export default function BecomeASeller() {
 
       {/* Steps */}
       {mappedSteps.length > 0 && (
-        <section className="relative overflow-hidden bg-[#17145f] py-20 sm:py-24">
+        <section className="relative overflow-hidden bg-[#17145f] py-16 sm:py-20 lg:py-24">
           <div className="customer-container relative">
             <SectionHeading
               light
@@ -439,52 +436,58 @@ export default function BecomeASeller() {
               }
             />
 
-            <div className="relative mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-              <div className="absolute left-[12%] right-[12%] top-12 hidden border-t border-dashed border-white/25 lg:block" />
+            <div className="relative mt-10 sm:mt-12 lg:mt-14">
+              {/* Connector stays behind the step icons instead of running through the cards */}
+              <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-7 hidden border-t border-dashed border-white/20 lg:block" />
 
-              {mappedSteps.map(
-                ({ icon: Icon, number, title, text }) => (
-                  <article
-                    key={number}
-                    className="relative rounded-2xl border border-white/10 bg-white/[0.07] p-6 text-white backdrop-blur-sm"
-                  >
-                    <div className="relative z-10 flex items-center justify-between">
-                      <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#d6a323] text-[#17145f] md:h-14 md:w-14">
-                        <Icon size={25} />
-                      </span>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+                {mappedSteps.map(
+                  ({ icon: Icon, number, title, text }, index) => (
+                    <article
+                      key={number}
+                      className="relative flex min-h-[214px] flex-col rounded-[20px] border border-white/10 bg-white/[0.075] p-5 text-white backdrop-blur-sm sm:p-6"
+                    >
+                      {/* Icon and step number share one compact row */}
+                      <div className="relative z-10 flex items-center justify-between">
+                        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-[15px] bg-[#d6a323] text-[#17145f] shadow-[0_8px_20px_rgba(0,0,0,0.12)]">
+                          <Icon size={24} strokeWidth={1.9} />
+                        </span>
 
-                      <span className="text-4xl font-bold text-white/10">
-                        {number}
-                      </span>
-                    </div>
+                        <span className="text-[34px] font-bold leading-none tracking-tight text-white/10">
+                          {number}
+                        </span>
+                      </div>
 
-                    <h3 className="mt-6 text-xl font-bold">
-                      {title}
-                    </h3>
+                      <div className="mt-5">
+                        <h3 className="text-[18px] font-bold leading-6 sm:text-[19px]">
+                          {title}
+                        </h3>
 
-                    <p className="mt-3 text-sm leading-6 text-white/65">
-                      {text}
-                    </p>
-                  </article>
-                ),
-              )}
+                        <p className="mt-2.5 max-w-[270px] text-[14px] leading-6 text-white/65">
+                          {text}
+                        </p>
+                      </div>
+                    </article>
+                  ),
+                )}
+              </div>
             </div>
 
-            <div className="mt-12 text-center">
+            <div className="mt-10 text-center sm:mt-12">
               <a
                 target="_blank"
                 rel="noreferrer"
                 href={SELLER_LOGIN_URL}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-8 font-bold text-[#17145f] transition hover:-translate-y-0.5 hover:bg-[#e5b738]"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-8 font-bold text-[#17145f] transition-colors duration-200 hover:bg-[#e5b738]"
               >
                 Open Your Seller Account
-
                 <ChevronRight size={18} />
               </a>
             </div>
           </div>
         </section>
       )}
+      </ApiState>
     </div>
   );
 }
