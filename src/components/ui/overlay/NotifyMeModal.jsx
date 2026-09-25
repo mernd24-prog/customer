@@ -21,11 +21,14 @@ export default function NotifyMeModal({
   onSubmit,
 }) {
   const currentUser = useSelector((state) => state.auth?.current);
+  const userProfile = useSelector((state) => state.user?.current);
+  const user = userProfile || currentUser;
+
   const resolvedUserId =
     propUserId ||
-    currentUser?._id ||
-    currentUser?.id ||
-    currentUser?.userId ||
+    user?._id ||
+    user?.id ||
+    user?.userId ||
     null;
 
   const [fullName, setFullName] = useState("");
@@ -39,14 +42,33 @@ export default function NotifyMeModal({
 
   useEffect(() => {
     if (open) {
-      const defaultName =
-        currentUser?.name ||
-        currentUser?.fullName ||
-        [currentUser?.firstName, currentUser?.lastName]
-          .filter(Boolean)
-          .join(" ") ||
+      const first =
+        user?.profile?.firstName ||
+        user?.firstName ||
+        user?.user?.firstName ||
+        user?.user?.profile?.firstName ||
         "";
-      const defaultEmail = currentUser?.email || "";
+      const last =
+        user?.profile?.lastName ||
+        user?.lastName ||
+        user?.user?.lastName ||
+        user?.user?.profile?.lastName ||
+        "";
+      const defaultName =
+        [first, last].filter(Boolean).join(" ").trim() ||
+        user?.fullName ||
+        user?.displayName ||
+        user?.name ||
+        user?.profile?.fullName ||
+        user?.profile?.name ||
+        user?.user?.name ||
+        user?.user?.fullName ||
+        "";
+      const defaultEmail =
+        user?.email ||
+        user?.profile?.email ||
+        user?.user?.email ||
+        "";
 
       setFullName(defaultName);
       setEmail(defaultEmail);
@@ -54,7 +76,7 @@ export default function NotifyMeModal({
       setSubmitting(false);
       setSubmitted(false);
     }
-  }, [open, currentUser]);
+  }, [open, user]);
 
   if (!open) return null;
 

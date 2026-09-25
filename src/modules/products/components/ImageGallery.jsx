@@ -11,12 +11,13 @@ import IconActionButton from "./IconActionButton";
 import ShareProductPopover from "./socialMediaShare";
 
 function ProductGallery({
-  images,
+  images = [],
   video,
   isModal = false,
   initialIndex = 0,
   onCollapsedThumbnailClick,
   fallbackLabel = "Product",
+  onActiveIndexChange,
 }) {
   const [mainSwiper, setMainSwiper] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -27,6 +28,9 @@ function ProductGallery({
   const [isLarge, setIsLarge] = useState(
     typeof window !== "undefined" ? window.innerWidth >= 1280 : false,
   );
+
+  const imagesKey = Array.isArray(images) ? images.join(",") : "";
+
   const mediaItems = [
     ...images.map((src) => ({ type: "image", src })),
     ...(video ? [{ type: "video", src: video, poster: images[0] }] : []),
@@ -78,8 +82,11 @@ function ProductGallery({
     );
 
     setActiveIndex(nextIndex);
+    if (onActiveIndexChange) {
+      onActiveIndexChange(nextIndex);
+    }
     mainSwiper.slideTo(nextIndex, 0);
-  }, [initialIndex, mainSwiper, mediaItems.length]);
+  }, [initialIndex, mainSwiper, mediaItems.length, imagesKey]);
 
   const handleMouseMove = (e) => {
     if (!isLarge && !isModal) return;
@@ -156,6 +163,9 @@ function ProductGallery({
                       }
 
                       setActiveIndex(targetIndex);
+                      if (onActiveIndexChange) {
+                        onActiveIndexChange(targetIndex);
+                      }
                       mainSwiper?.slideTo(targetIndex);
                     }}
                     onMouseEnter={() => {
@@ -163,6 +173,9 @@ function ProductGallery({
                       if (isLastVisible && onCollapsedThumbnailClick) return;
 
                       setActiveIndex(targetIndex);
+                      if (onActiveIndexChange) {
+                        onActiveIndexChange(targetIndex);
+                      }
                       mainSwiper?.slideTo(targetIndex);
                     }}
                     className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-[15px] border transition-colors duration-200 xl:w-[92px] ${
@@ -237,6 +250,9 @@ function ProductGallery({
                 videoElement?.pause();
               });
               setActiveIndex(swiper.activeIndex);
+              if (onActiveIndexChange) {
+                onActiveIndexChange(swiper.activeIndex);
+              }
               setIsZoomed(false);
               setIsVideoPlaying(false);
             }}
@@ -334,6 +350,7 @@ export default function ImageGallery({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalInitialIndex, setModalInitialIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const shareRef = useRef(null);
 
   const openModal = (initialIndex = 0) => {
@@ -376,6 +393,7 @@ export default function ImageGallery({
         video={video}
         fallbackLabel={fallbackLabel}
         onCollapsedThumbnailClick={openModal}
+        onActiveIndexChange={setActiveIndex}
       />
 
       <div className="absolute right-3  top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
@@ -439,3 +457,4 @@ export default function ImageGallery({
 }
 
 export { ProductGallery };
+

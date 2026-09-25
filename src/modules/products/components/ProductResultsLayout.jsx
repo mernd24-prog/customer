@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import ApiState from "../../../components/ui/ApiState";
 import ActiveFilterChips from "../../../components/ui/ActiveFilterChips";
 import FilterDrawer from "../../../components/ui/overlay/Drawer";
@@ -21,6 +22,8 @@ export default function ProductResultsLayout({
   empty,
   emptyTitle,
   emptyText,
+  emptyActionLabel,
+  onEmptyAction,
   products = [],
   viewMode = "grid",
   onAddToCart,
@@ -36,6 +39,12 @@ export default function ProductResultsLayout({
   toolbar,
   children,
 }) {
+  const navigate = useNavigate();
+  const resolvedEmptyActionLabel =
+    emptyActionLabel !== undefined ? emptyActionLabel : "Continue Shopping";
+  const resolvedOnEmptyAction =
+    onEmptyAction || (() => navigate("/products"));
+
   const productCount = products.length;
   const totalCount = Number(totalResults) || productCount;
   const perPage = Number(pageSize) || productCount || 1;
@@ -89,6 +98,8 @@ export default function ProductResultsLayout({
                 empty={empty}
                 emptyTitle={emptyTitle}
                 emptyText={emptyText}
+                emptyActionLabel={resolvedEmptyActionLabel}
+                onEmptyAction={resolvedOnEmptyAction}
               >
                 <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <h4 className="text-m md:text-[20px] m-0">

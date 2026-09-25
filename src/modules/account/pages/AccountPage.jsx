@@ -15,6 +15,9 @@ import SecurityTab from "./SecurityTab";
 
 const fallbackAvatar = "/image/png/person.png";
 
+const UPLOAD_URL =
+  "http://192.168.16.42:4000/api/v1/file-uploader/upload";
+
 const MENU_ITEMS = [
   {
     id: "orders",
@@ -54,6 +57,17 @@ const normalizeAvatarPreview = (avatarUrl) =>
     ? avatarUrl
     : fallbackAvatar;
 
+const getUploadedFileUrl = (result) =>
+  result?.url ||
+  result?.fileUrl ||
+  result?.file?.url ||
+  result?.data?.url ||
+  result?.data?.fileUrl ||
+  result?.data?.file?.url ||
+  result?.data?.data?.url ||
+  result?.data?.data?.fileUrl ||
+  "";
+
 function AccountProfileCard({
   user,
   name,
@@ -62,6 +76,7 @@ function AccountProfileCard({
   fileInputRef,
   onAvatarChange,
   showEditButton = true,
+  isAvatarUploading = false,
 }) {
   return (
     <div
@@ -96,14 +111,17 @@ function AccountProfileCard({
           accept="image/*"
           onChange={onAvatarChange}
           className="hidden"
+          disabled={isAvatarUploading}
         />
 
-        {/* Avatar */}
         <button
           type="button"
           onClick={(event) => {
             event.preventDefault();
-            fileInputRef.current?.click();
+
+            if (!isAvatarUploading) {
+              fileInputRef.current?.click();
+            }
           }}
           className="
             group
@@ -115,6 +133,7 @@ function AccountProfileCard({
             focus-visible:ring-[#1B1D60]/40
           "
           aria-label="Change Profile Image"
+          disabled={isAvatarUploading}
         >
           <img
             loading="lazy"
@@ -150,18 +169,20 @@ function AccountProfileCard({
               group-hover:opacity-100
             "
           >
-            <Pencil className="size-5 text-white" />
+            {isAvatarUploading ? (
+              <span className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <Pencil className="size-5 text-white" />
+            )}
           </span>
         </button>
 
-        {/* User Information */}
         <div className="min-w-0 flex-1">
           <div className="min-w-0 truncate text-h3 font-bold text-[#3E4093]">
             {name}
           </div>
 
           <div className="mt-2 grid min-w-0 gap-1.5">
-            {/* Email */}
             <div
               className="
                 flex
@@ -195,7 +216,6 @@ function AccountProfileCard({
               </span>
             </div>
 
-            {/* Phone */}
             <div
               className="
                 flex
@@ -230,7 +250,6 @@ function AccountProfileCard({
           </div>
         </div>
 
-        {/* Edit Profile */}
         {showEditButton && (
           <Link
             to="/account/profile"
@@ -264,6 +283,12 @@ function AccountProfileCard({
           </Link>
         )}
       </div>
+
+      {isAvatarUploading && (
+        <p className="mt-2 text-xs font-medium text-[#3E4093]">
+          Uploading profile image...
+        </p>
+      )}
 
       {avatarError && (
         <p className="mt-2 text-xs font-medium text-red-500">
@@ -425,6 +450,7 @@ function AccountSidebar({
   isMobileMenuOpen,
   setIsMobileMenuOpen,
   tab,
+  isAvatarUploading,
 }) {
   return (
     <aside className="relative z-30 min-w-0 space-y-5 lg:sticky lg:top-24 lg:self-start">
@@ -436,6 +462,7 @@ function AccountSidebar({
         fileInputRef={fileInputRef}
         onAvatarChange={onAvatarChange}
         showEditButton={tab !== "profile"}
+        isAvatarUploading={isAvatarUploading}
       />
 
       <div className="min-w-0">
@@ -453,11 +480,20 @@ function AccountSidebar({
   );
 }
 
-function AccountTabContent({ tab, user, avatarFile }) {
+function AccountTabContent({
+  tab,
+  user,
+  avatarFile,
+  avatarUrl,
+}) {
   return (
     <div className="min-w-0 animate-[fadeIn_180ms_ease-out]">
       {tab === "profile" && (
-        <ProfileTab user={user} avatarFile={avatarFile} />
+        <ProfileTab
+          user={user}
+          avatarFile={avatarFile}
+          avatarUrl={avatarUrl}
+        />
       )}
 
       {tab === "addresses" && <AddressTab user={user} />}
@@ -475,8 +511,10 @@ export default function AccountPage({ tab = "profile" }) {
   const fileInputRef = useRef(null);
 
   const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarPreview, setAvatarPreview] = useState(fallbackAvatar);
   const [avatarError, setAvatarError] = useState("");
+  const [isAvatarUploading, setIsAvatarUploading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -486,11 +524,11 @@ export default function AccountPage({ tab = "profile" }) {
   }, [dispatch, user]);
 
   useEffect(() => {
-    setAvatarPreview(
-      normalizeAvatarPreview(
-        user?.profile?.avatarUrl || user?.profile?.avatar,
-      ),
-    );
+    const existingAvatar =
+      user?.profile?.avatarUrl || user?.profile?.avatar || "";
+
+    setAvatarPreview(normalizeAvatarPreview(existingAvatar));
+    setAvatarUrl(existingAvatar || "");
     setAvatarFile(null);
     setAvatarError("");
   }, [user]);
@@ -504,7 +542,7 @@ export default function AccountPage({ tab = "profile" }) {
     [avatarPreview],
   );
 
-  const handleAvatarChange = (event) => {
+  const handleAvatarChange = async (event) => {
     const file = event.target.files?.[0];
 
     event.target.value = "";
@@ -523,7 +561,70 @@ export default function AccountPage({ tab = "profile" }) {
 
     setAvatarError("");
     setAvatarFile(file);
-    setAvatarPreview(globalThis.URL.createObjectURL(file));
+
+    // Show local preview immediately.
+    const previewUrl = globalThis.URL.createObjectURL(file);
+    setAvatarPreview(previewUrl);
+
+    try {
+      setIsAvatarUploading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(UPLOAD_URL, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+            result?.error ||
+            "Failed to upload profile image.",
+        );
+      }
+
+      console.log("Profile image upload response:", result);
+
+      const uploadedUrl = getUploadedFileUrl(result);
+
+      if (!uploadedUrl) {
+        throw new Error(
+          "Image uploaded, but the server did not return the uploaded image URL.",
+        );
+      }
+
+      // Keep the uploaded URL for the profile update request.
+      setAvatarUrl(uploadedUrl);
+
+      // The file is already uploaded, so ProfileTab must not upload it again.
+      setAvatarFile(null);
+
+      // Replace blob preview with the uploaded URL.
+      setAvatarPreview(normalizeAvatarPreview(uploadedUrl));
+    } catch (error) {
+      console.error("Profile image upload failed:", error);
+
+      setAvatarError(
+        error?.message || "Failed to upload profile image.",
+      );
+
+      setAvatarFile(null);
+      setAvatarUrl("");
+
+      // Restore previous profile image if upload fails.
+      setAvatarPreview(
+        normalizeAvatarPreview(
+          user?.profile?.avatarUrl || user?.profile?.avatar,
+        ),
+      );
+    } finally {
+      setIsAvatarUploading(false);
+    }
   };
 
   const profile = user?.profile || {};
@@ -566,6 +667,7 @@ export default function AccountPage({ tab = "profile" }) {
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
           tab={tab}
+          isAvatarUploading={isAvatarUploading}
         />
 
         <div className="relative z-0 min-w-0 w-full">
@@ -593,6 +695,7 @@ export default function AccountPage({ tab = "profile" }) {
                 tab={tab}
                 user={user}
                 avatarFile={avatarFile}
+                avatarUrl={avatarUrl}
               />
             </ApiState>
           </div>

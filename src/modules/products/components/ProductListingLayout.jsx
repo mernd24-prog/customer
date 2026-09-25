@@ -27,6 +27,8 @@ export default function ProductListingLayout({
   empty,
   emptyTitle,
   emptyText,
+  emptyActionLabel,
+  onEmptyAction,
   products,
   viewMode,
 
@@ -61,6 +63,8 @@ export default function ProductListingLayout({
           empty={empty}
           emptyTitle={emptyTitle}
           emptyText={emptyText}
+          emptyActionLabel={emptyActionLabel}
+          onEmptyAction={onEmptyAction}
           products={products}
           viewMode={viewMode}
           onAddToCart={onAddToCart}

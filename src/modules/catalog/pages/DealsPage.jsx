@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { ProductListingLayout } from "../../../modules/products/components";
 import {
@@ -21,6 +22,7 @@ const FALLBACK_DEAL_DESCRIPTION =
   "Products promoted by admin with special deal price, original price, deal badge, and limited-time availability.";
 
 export default function DealsPage() {
+  const navigate = useNavigate();
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
 
@@ -57,25 +59,7 @@ export default function DealsPage() {
     { label: "Deals" },
   ];
 
-  /*
-   * CMS has priority.
-   *
-   * The API response contains:
-   *
-   * {
-   *   slug: "deal-products",
-   *   title: "...",
-   *   description: "...",
-   *   metadata: {
-   *     data: {
-   *       title: "...",
-   *       description: "..."
-   *     }
-   *   }
-   * }
-   *
-   * Prefer the main CMS fields first.
-   */
+  
   const dealTitle =
     cmsPage?.title ||
     cmsPage?.metadata?.data?.title ||
@@ -86,10 +70,6 @@ export default function DealsPage() {
     cmsPage?.metadata?.data?.description ||
     cmsPage?.excerpt ||
     FALLBACK_DEAL_DESCRIPTION;
-
-  console.log("Deal CMS page:", cmsPage);
-  console.log("Deal CMS title:", dealTitle);
-  console.log("Deal CMS description:", dealDescription);
 
   const pageError = error || cmsError;
 
@@ -144,6 +124,8 @@ export default function DealsPage() {
       empty={!products.length && !loading && firstLoadDone}
       emptyTitle="No active deals found"
       emptyText="Please check back later for new deal products."
+      emptyActionLabel="Continue Shopping"
+      onEmptyAction={() => navigate("/products")}
       products={products}
       viewMode="grid"
       onAddToCart={addToCart}

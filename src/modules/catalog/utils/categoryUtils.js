@@ -104,12 +104,18 @@ export function getCategoryImage(category = {}) {
 }
 
 export function getCategoryCount(category = {}) {
-  return (
+  if (!category || typeof category !== "object") return undefined;
+  if (Array.isArray(category.products)) return category.products.length;
+  const count =
     category.productCount ??
     category.productsCount ??
     category.totalProducts ??
-    category.count
-  );
+    category.count;
+  if (count !== undefined && count !== null && count !== "") {
+    const num = Number(count);
+    return isNaN(num) ? undefined : num;
+  }
+  return undefined;
 }
 
 export function getMatchingCategoryKeys(targetCats, categoryTree) {
@@ -192,10 +198,11 @@ export function getRootCategories(list = []) {
   return Array.from(byKey.values())
     .filter(
       (category) =>
-        category.parentKey === null ||
+        (category.parentKey === null ||
         category.parentKey === undefined ||
         !byKey.has(category.parentKey) ||
-        Number(category.level || 0) === 0,
+        Number(category.level || 0) === 0) &&
+        Number(category.productCount || 0) >= 1,
     )
     .sort(sortByOrder);
 }
