@@ -84,7 +84,7 @@ export function useProductsPageController() {
   const currentPage = pageInfo.page || 1;
   const effectiveSort = searchParams.get("sort") || hiddenParams.sort || "";
   const pageSize = Number(
-    searchParams.get("limit") || hiddenParams.limit || 12,
+    searchParams.get("limit") || hiddenParams.limit || 10,
   );
 
   const availabilityCounts = useMemo(
@@ -179,30 +179,13 @@ export function useProductsPageController() {
         catalogCategoryList,
       );
     }
-    const seen = new Set();
-    const fallbackOptions = products
-      .map((p) => p.category)
-      .filter((cat) => cat && !seen.has(cat) && seen.add(cat))
-      .map((cat) => ({
-        value: cat,
-        label: capitalizeFirst(cat.replace(/-/g, " ")),
-        count: undefined,
-      }));
-    return formatCategoryOptionsForTree(fallbackOptions, catalogCategoryList);
-  }, [catalogCategoryList, facetCategoryOptions, products]);
+    return [];
+  }, [catalogCategoryList, facetCategoryOptions]);
 
   const brandOptions = useMemo(() => {
     if (facetBrandOptions.length) return facetBrandOptions;
-    const seen = new Set();
-    return products
-      .map((p) => p.brand)
-      .filter((b) => b && !seen.has(b) && seen.add(b))
-      .map((brand) => ({
-        value: brand,
-        label: capitalizeFirst(brand),
-        count: undefined,
-      }));
-  }, [facetBrandOptions, products]);
+    return [];
+  }, [facetBrandOptions]);
 
   const getParams = useCallback(() => {
     const params = { ...hiddenParams };
@@ -423,5 +406,6 @@ export function useProductsPageController() {
     removeFilter,
     clearFiltersAction,
     pageTitle,
+    onLoadMore: loadNextPage,
   };
 }

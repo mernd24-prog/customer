@@ -49,9 +49,7 @@ function normalizeSections(sections = []) {
 
       points: Array.isArray(section.points)
         ? section.points
-            .filter(
-              (point) => point?.title || point?.description
-            )
+            .filter((point) => point?.title || point?.description)
             .map((point) => ({
               ...point,
               title: cleanPolicyText(point.title),
@@ -60,9 +58,7 @@ function normalizeSections(sections = []) {
         : [],
 
       sortOrder:
-        typeof section.sortOrder === "number"
-          ? section.sortOrder
-          : index,
+        typeof section.sortOrder === "number" ? section.sortOrder : index,
     }))
     .sort((a, b) => a.sortOrder - b.sortOrder);
 }
@@ -84,9 +80,7 @@ export default function PoliciesPages({ slugOverride }) {
   const policySlug = slugOverride || policyType;
   const config = POLICY_CONFIG[policySlug];
 
-  const { page, loading, error } = useCmsRecord(
-    config?.cmsSlug || ""
-  );
+  const { page, loading, error } = useCmsRecord(config?.cmsSlug || "");
 
   const fallbackPolicy = config
     ? FALLBACK_POLICY_DATA?.[config.fallbackKey] || null
@@ -104,8 +98,7 @@ export default function PoliciesPages({ slugOverride }) {
       ...cmsData,
 
       sections:
-        Array.isArray(cmsData.sections) &&
-        cmsData.sections.length > 0
+        Array.isArray(cmsData.sections) && cmsData.sections.length > 0
           ? cmsData.sections
           : fallbackPolicy?.sections || [],
     };
@@ -113,19 +106,15 @@ export default function PoliciesPages({ slugOverride }) {
 
   const sections = useMemo(
     () => normalizeSections(policy?.sections),
-    [policy?.sections]
+    [policy?.sections],
   );
 
   const title = cleanPolicyText(
-    policy?.title ||
-      fallbackPolicy?.title ||
-      "Policy"
+    policy?.title || fallbackPolicy?.title || "Policy",
   );
 
   const description = cleanPolicyText(
-    policy?.description ||
-      fallbackPolicy?.description ||
-      ""
+    policy?.description || fallbackPolicy?.description || "",
   );
 
   const breadcrumbs = useMemo(
@@ -138,7 +127,7 @@ export default function PoliciesPages({ slugOverride }) {
         label: title,
       },
     ],
-    [title]
+    [title],
   );
 
   if (!config) {
@@ -150,11 +139,6 @@ export default function PoliciesPages({ slugOverride }) {
         />
 
         <PageContainer>
-          <Breadcrumbs
-            items={breadcrumbs}
-            className="mb-6 flex flex-wrap items-center gap-[10px] sm:mb-8 sm:gap-[12px] lg:gap-[15px]"
-          />
-
           <ApiState
             loading={false}
             error="Policy page not found."
@@ -171,30 +155,24 @@ export default function PoliciesPages({ slugOverride }) {
     <>
       <Seo
         title={`${title} | Sam Global`}
-        metaDescription={
-          description ||
-          `Read the ${title} of Sam Global.`
-        }
+        metaDescription={description || `Read the ${title} of Sam Global.`}
       />
 
-      <PageContainer>
-        {/* Breadcrumbs */}
-        <Breadcrumbs
-          items={breadcrumbs}
-          className="mb-6 flex flex-wrap items-center gap-[10px] sm:mb-8 sm:gap-[12px] lg:gap-[15px]"
-        />
+      <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-10 md:py-12 lg:py-14">
+        <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
+          <h1 className="text-center text-2xl font-bold text-white md:text-3xl lg:text-[32px]">
+            {title}
+          </h1>
+        </div>
+      </section>
 
-        {/* Policy Hero */}
-        <section className="relative overflow-hidden  bg-[#211B73] py-10 md:py-12">
-          <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-            <h1 className="text-2xl font-bold text-white md:text-3xl">
-              {title}
-            </h1>
-          </div>
-        </section>
+      <section className="w-full pt-3 pb-10 md:pb-12">
+        <PageContainer>
+          <Breadcrumbs
+            items={breadcrumbs}
+            className="mb-6 flex flex-wrap items-center gap-[10px] sm:mb-8 sm:gap-[12px] lg:gap-[15px]"
+          />
 
-        {/* Policy Content */}
-        <section className="py-8 md:py-10">
           <ApiState
             loading={loading && !page && !fallbackPolicy}
             error={error && !fallbackPolicy ? error : null}
@@ -204,15 +182,15 @@ export default function PoliciesPages({ slugOverride }) {
             skeletonLayout={SKELETON_PRESETS.POLICY_PAGE}
           >
             {policy && (
-              <div className="mx-auto max-w-6xl">
+              <div className="w-full">
                 {description && (
-                  <p className="mb-7 text-[14px] leading-relaxed text-muted md:text-base">
+                  <p className="mb-8 text-[14px] leading-relaxed text-muted md:text-base">
                     {description}
                   </p>
                 )}
 
                 {sections.length > 0 ? (
-                  <div className="space-y-6">
+                  <div className="space-y-7 md:space-y-8">
                     {sections.map((section, index) => (
                       <PolicySection
                         key={
@@ -234,8 +212,8 @@ export default function PoliciesPages({ slugOverride }) {
               </div>
             )}
           </ApiState>
-        </section>
-      </PageContainer>
+        </PageContainer>
+      </section>
     </>
   );
 }

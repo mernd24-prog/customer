@@ -2,13 +2,9 @@ import Seo from "../../../components/ui/Seo";
 import { CollectionToolbar, ProductResultsLayout } from "./index";
 
 export default function ProductListingLayout({
-  // SEO
   pageTitle,
   seoDescription,
-
   topContent,
-
-  // Toolbar
   totalResults,
   pageSize,
   sortValue,
@@ -39,6 +35,7 @@ export default function ProductListingLayout({
   currentPage,
   totalPages,
   loadingMore,
+  onLoadMore,
   sentinelRef,
 }) {
   return (
@@ -74,6 +71,7 @@ export default function ProductListingLayout({
           totalPages={totalPages}
           showPagination={false}
           loadingMore={loadingMore}
+          onLoadMore={onLoadMore}
           sentinelRef={sentinelRef}
           toolbar={
             <CollectionToolbar

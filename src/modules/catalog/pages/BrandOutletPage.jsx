@@ -18,6 +18,7 @@ import {
   getBrandName,
   getBrandRouteKey,
   getBrandLogo,
+  getBrandProductCount,
 } from "../../../utils/pages/brandUtils";
 import { scrollToTop } from "../../../utils/common";
 
@@ -31,16 +32,17 @@ export default function BrandOutletPage() {
   const [brandList, setBrandList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [serverTotal, setServerTotal] = useState(0);
-  const [serverTotalPages, setServerTotalPages] = useState(1);
 
   const page = Math.max(1, Number(searchParams.get("page") || 1));
+
   const requestedLimit = Number(
     searchParams.get("limit") || DEFAULT_PAGE_SIZE,
   );
+
   const limit = PAGE_SIZE_OPTIONS.includes(requestedLimit)
     ? requestedLimit
     : DEFAULT_PAGE_SIZE;
+
   const search = searchParams.get("q") || "";
   const sort = searchParams.get("sort") || "name-asc";
 
@@ -50,32 +52,27 @@ export default function BrandOutletPage() {
     setLoading(true);
     setError("");
 
-    dispatch(fetchBrands({ limit, page, q: search, sort }))
+    dispatch(fetchBrands({ limit: 200, q: search, sort }))
       .unwrap()
       .then((res) => {
         if (!active) return;
 
-        const list = listFromPayload(res);
-        setBrandList(Array.isArray(list) ? list : []);
+        const rawList = listFromPayload(res);
 
-        const meta = res?.meta || res?.data?.meta || {};
-        const total = Number(
-          meta?.total ?? meta?.totalItems ?? meta?.count ?? 0,
-        );
-        const pages = Number(
-          meta?.totalPages ??
-            meta?.pages ??
-            (total > 0 ? Math.ceil(total / limit) : 1),
-        );
+        const list = Array.isArray(rawList)
+          ? rawList.filter((brand) => {
+              const count = getBrandProductCount(brand);
 
-        setServerTotal(total);
-        setServerTotalPages(Math.max(1, pages));
+              return count === undefined ? true : count > 0;
+            })
+          : [];
+
+        setBrandList(list);
       })
       .catch((err) => {
         if (!active) return;
+
         setBrandList([]);
-        setServerTotal(0);
-        setServerTotalPages(1);
         setError(err?.message || "Failed to load brands.");
       })
       .finally(() => {
@@ -85,36 +82,47 @@ export default function BrandOutletPage() {
     return () => {
       active = false;
     };
-  }, [dispatch, limit, page, search, sort]);
+  }, [dispatch, search, sort]);
 
-  // Keep the API page intact. The server is responsible for search/sort,
-  // while the UI renders every brand returned for the requested page size.
-  const brands = Array.isArray(brandList) ? brandList : [];
+  const allValidBrands = Array.isArray(brandList) ? brandList : [];
 
-  const totalBrands = serverTotal > 0 ? serverTotal : brands.length;
-  const totalPages =
-    serverTotalPages > 1
-      ? serverTotalPages
-      : Math.max(1, Math.ceil(totalBrands / limit));
+  const totalBrands = allValidBrands.length;
+
+  const totalPages = Math.max(1, Math.ceil(totalBrands / limit));
+
   const currentPage = Math.min(page, totalPages);
+
+  const startIndex = (currentPage - 1) * limit;
+
+  const brands = allValidBrands.slice(startIndex, startIndex + limit);
 
   const updateParam = (key, value) => {
     scrollToTop(() => {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
 
-        if (value == null || value === "") next.delete(key);
-        else next.set(key, String(value));
+        if (value == null || value === "") {
+          next.delete(key);
+        } else {
+          next.set(key, String(value));
+        }
 
-        if (key !== "page") next.delete("page");
+        if (key !== "page") {
+          next.delete("page");
+        }
 
         return next;
       });
     });
   };
 
-  const handlePageChange = (newPage) => updateParam("page", newPage);
-  const handleSearchChange = (value) => updateParam("q", value);
+  const handlePageChange = (newPage) => {
+    updateParam("page", newPage);
+  };
+
+  const handleSearchChange = (value) => {
+    updateParam("q", value);
+  };
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -123,7 +131,6 @@ export default function BrandOutletPage() {
 
   const brandGridClass =
     "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
-  const stateContainerClass = "rounded-[12px] p-6 text-center";
 
   return (
     <>
@@ -148,12 +155,16 @@ export default function BrandOutletPage() {
                     size={16}
                     className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9E886A]"
                   />
+
                   <input
                     value={search}
-                    onChange={(event) => handleSearchChange(event.target.value)}
+                    onChange={(event) =>
+                      handleSearchChange(event.target.value)
+                    }
                     placeholder="Search brands"
                     className="h-11 w-full rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/40 pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-all focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
                   />
+
                   {Boolean(search) && (
                     <button
                       type="button"
@@ -174,6 +185,7 @@ export default function BrandOutletPage() {
                   value={limit}
                   onChange={(value) => {
                     const nextLimit = Number(value);
+
                     if (PAGE_SIZE_OPTIONS.includes(nextLimit)) {
                       updateParam("limit", nextLimit);
                     }
@@ -193,12 +205,6 @@ export default function BrandOutletPage() {
                   />
                 ))}
               </div>
-            ) : error ? (
-              <div
-                className={`${stateContainerClass} border border-red-200 bg-red-50`}
-              >
-                <p className="text-sm font-semibold text-red-700">{error}</p>
-              </div>
             ) : brands.length ? (
               <>
                 <div className={brandGridClass}>
@@ -206,6 +212,7 @@ export default function BrandOutletPage() {
                     <BrandCard
                       key={getBrandRouteKey(brand)}
                       name={getBrandName(brand)}
+                      logo={getBrandLogo(brand)}
                       image={getBrandLogo(brand)}
                       subtitle=""
                       href={CUSTOMER_ROUTES.brand(getBrandRouteKey(brand))}
@@ -241,8 +248,12 @@ export default function BrandOutletPage() {
             ) : (
               <EmptyState
                 imageSrc="/image/png/NoProductFound.png"
-                title="No Brands Found"
-                description="We couldn't find any brands available at the moment. Please check back later or explore our products."
+                title={error ? "No Brands Found" : "No Brands Found"}
+                description={
+                  search
+                    ? `We couldn't find any brands matching "${search}". Please try another search or explore our products.`
+                    : "We couldn't find any brands available at the moment. Please check back later or explore our products."
+                }
               >
                 <div className="flex flex-wrap items-center justify-center gap-3.5">
                   <Link
@@ -252,6 +263,7 @@ export default function BrandOutletPage() {
                     <span>Explore Products</span>
                     <ArrowRight size={16} />
                   </Link>
+
                   <Link
                     to="/categories"
                     className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-[#CE9F2D] px-6 text-sm font-bold text-[#1B1D60] transition-all duration-200 hover:border-[#B8891F] hover:bg-[#FAF8F3]"

@@ -52,6 +52,7 @@ export default function DealsPage() {
     activeFilters,
     filterSections,
     searchParams,
+    onLoadMore,
   } = useDealsPageController();
 
   const breadcrumbItems = [
@@ -120,7 +121,7 @@ export default function DealsPage() {
         (loading && !products.length) ||
         (!firstLoadDone && !products.length)
       }
-      error={pageError}
+      error={null}
       empty={!products.length && !loading && firstLoadDone}
       emptyTitle="No active deals found"
       emptyText="Please check back later for new deal products."
@@ -134,6 +135,7 @@ export default function DealsPage() {
       currentPage={currentPage}
       totalPages={totalPages}
       loadingMore={loadingMore}
+      onLoadMore={onLoadMore}
       sentinelRef={sentinelRef}
     />
   );

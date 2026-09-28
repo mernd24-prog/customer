@@ -81,8 +81,6 @@
   .small {
     @apply text-sm sm:text-base;
   }
-
-  /* Rich Text Content formatting for Admin HTML descriptions */
   .rich-text-content h1 {
     @apply text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1F2430] mt-4 mb-3 leading-tight block;
   }
@@ -98,9 +96,6 @@
   }
 }
 
-/* ============================= */
-/* GLOBAL FONT CONFIGURATION     */
-/* ============================= */
 
 @layer base {
   html {
@@ -131,10 +126,6 @@
     font-family: "DM Sans", var(--font-sans);
   }
 }
-
-/* ============================= */
-/* LAYOUT & UTILITIES            */
-/* ============================= */
 
 @layer base {
   .w-container {

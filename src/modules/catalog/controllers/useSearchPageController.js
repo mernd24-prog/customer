@@ -106,7 +106,7 @@ export default function useSearchPageController() {
   const inStock = searchParams.get("inStock") === "true";
   const outOfStock = searchParams.get("outOfStock") === "true";
 
-  const limit = Number(searchParams.get("limit") || 20);
+  const limit = Number(searchParams.get("limit") || 10);
   const categoryValue =
     searchParams.get("categoryId") ||
     searchParams.get("category") ||
@@ -385,6 +385,42 @@ export default function useSearchPageController() {
     handlePriceChange,
   ]);
 
+  const [accumulatedHits, setAccumulatedHits] = useState([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  useEffect(() => {
+    if (currentPage === 1) {
+      setAccumulatedHits(hits);
+    }
+  }, [hits, currentPage]);
+
+  const loadMore = useCallback(() => {
+    if (searchState.loading || isLoadingMore || currentPage >= totalPages) return;
+    const nextPage = currentPage + 1;
+    setIsLoadingMore(true);
+    const nextParams = { ...params, page: nextPage };
+    dispatch(
+      searchCatalog({
+        params: nextParams,
+        cacheKey: `search-list-${JSON.stringify(nextParams)}`,
+      })
+    )
+      .unwrap()
+      .then((res) => {
+        const data = res?.data || {};
+        const newHits = data.hits || data.products || data.results || (Array.isArray(data) ? data : []);
+        setAccumulatedHits((prev) => {
+          const currentList = prev.length ? prev : hits;
+          const seen = new Set(currentList.map((p) => p._id || p.id || p.slug));
+          const unique = newHits.filter((p) => !seen.has(p._id || p.id || p.slug));
+          return [...currentList, ...unique];
+        });
+        updateParam("page", nextPage);
+      })
+      .catch(() => {})
+      .finally(() => setIsLoadingMore(false));
+  }, [searchState.loading, isLoadingMore, currentPage, totalPages, params, dispatch, updateParam, hits]);
+
   return {
     q,
     categoryValue,
@@ -392,7 +428,7 @@ export default function useSearchPageController() {
     meta,
     limit,
     sort,
-    hits,
+    hits: accumulatedHits.length ? accumulatedHits : hits,
     currentPage,
     totalPages,
     searchState,
@@ -406,5 +442,7 @@ export default function useSearchPageController() {
     clearFiltersAction,
     activeFilters,
     filterSections,
+    onLoadMore: loadMore,
+    loadingMore: isLoadingMore,
   };
 }

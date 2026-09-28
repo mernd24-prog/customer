@@ -7,16 +7,15 @@ import { MdOutlineLocalPhone } from "react-icons/md";
 
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
-import { fetchMe } from "../../../features/user/userSlice";
+import { fetchMe, updateMe } from "../../../features/user/userSlice";
+import { apiRequest } from "../../../api/client";
+import { endpoints, FILE_UPLOAD_MODULES } from "../../../api/endpoints";
 
 import ProfileTab from "./ProfileTab";
 import AddressTab from "./AddressTab";
 import SecurityTab from "./SecurityTab";
 
 const fallbackAvatar = "/image/png/person.png";
-
-const UPLOAD_URL =
-  "http://192.168.16.42:4000/api/v1/file-uploader/upload";
 
 const MENU_ITEMS = [
   {
@@ -57,16 +56,35 @@ const normalizeAvatarPreview = (avatarUrl) =>
     ? avatarUrl
     : fallbackAvatar;
 
-const getUploadedFileUrl = (result) =>
-  result?.url ||
-  result?.fileUrl ||
-  result?.file?.url ||
-  result?.data?.url ||
-  result?.data?.fileUrl ||
-  result?.data?.file?.url ||
-  result?.data?.data?.url ||
-  result?.data?.data?.fileUrl ||
-  "";
+const getUploadedFileUrl = (uploadResult) => {
+  const data = uploadResult?.data || uploadResult || {};
+
+  const file =
+    data?.file ||
+    data?.uploadedFile ||
+    data?.attachment ||
+    data?.files?.[0] ||
+    data?.items?.[0] ||
+    data?.[0];
+
+  return (
+    data?.url ||
+    data?.imageURL ||
+    data?.fileUrl ||
+    data?.fileURL ||
+    data?.path ||
+    data?.location ||
+    data?.secureUrl ||
+    file?.url ||
+    file?.imageURL ||
+    file?.fileUrl ||
+    file?.fileURL ||
+    file?.path ||
+    file?.location ||
+    file?.secureUrl ||
+    ""
+  );
+};
 
 function AccountProfileCard({
   user,
@@ -571,22 +589,13 @@ export default function AccountPage({ tab = "profile" }) {
 
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("module", FILE_UPLOAD_MODULES.profiles);
 
-      const response = await fetch(UPLOAD_URL, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
+      const result = await apiRequest({
+        method: "post",
+        url: endpoints.fileUploader.upload,
+        data: formData,
       });
-
-      const result = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(
-          result?.message ||
-            result?.error ||
-            "Failed to upload profile image.",
-        );
-      }
 
       console.log("Profile image upload response:", result);
 
@@ -598,13 +607,20 @@ export default function AccountPage({ tab = "profile" }) {
         );
       }
 
-      // Keep the uploaded URL for the profile update request.
+      // Save updated avatarUrl directly to the DB via updateMe API
+      await dispatch(
+        updateMe({
+          profile: {
+            ...(user?.profile || {}),
+            avatarUrl: uploadedUrl,
+          },
+        }),
+      ).unwrap();
+
+      await dispatch(fetchMe()).unwrap();
+
       setAvatarUrl(uploadedUrl);
-
-      // The file is already uploaded, so ProfileTab must not upload it again.
       setAvatarFile(null);
-
-      // Replace blob preview with the uploaded URL.
       setAvatarPreview(normalizeAvatarPreview(uploadedUrl));
     } catch (error) {
       console.error("Profile image upload failed:", error);

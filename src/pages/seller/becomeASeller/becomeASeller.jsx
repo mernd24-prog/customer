@@ -18,8 +18,7 @@ import {
 } from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
-import ApiState from "../../../components/ui/ApiState";
-import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
+import Loader from "../../../components/ui/Loader";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
@@ -179,11 +178,12 @@ const sellerPage =
         }
       />
 
-      <ApiState
-        loading={loading && !cmsPage}
-        error={cmsPage ? error : null}
-        skeletonLayout={SKELETON_PRESETS.BECOME_A_SELLER}
-      >
+      {loading && !cmsPage && (
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <Loader size="xl" />
+        </div>
+      )}
+      {(!loading || cmsPage) && <>
 
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-[#17145f] text-white">
@@ -487,7 +487,7 @@ const sellerPage =
           </div>
         </section>
       )}
-      </ApiState>
+      </>}
     </div>
   );
 }
