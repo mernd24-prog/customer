@@ -50,6 +50,10 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   "/contact-us",
   "/category",
   "/categories",
+  "/shipping-policy",
+  "/refund-policy",
+  "/terms-of-use",
+  "/faq"
 ];
 export default function AppLayout() {
   const dispatch = useDispatch();

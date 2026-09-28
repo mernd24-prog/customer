@@ -74,6 +74,7 @@ export default function ProfileTab({ user, avatarFile }) {
 
   const submit = async (values) => {
     const profile = {
+      ...(user?.profile || {}),
       firstName: values.firstName,
       lastName: values.lastName,
     };

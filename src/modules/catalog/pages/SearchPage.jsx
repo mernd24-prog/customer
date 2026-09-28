@@ -35,6 +35,8 @@ export default function SearchPage() {
     clearFiltersAction,
     activeFilters,
     filterSections,
+    onLoadMore,
+    loadingMore,
   } = useSearchPageController();
 
   const topContent = (
@@ -90,7 +92,8 @@ export default function SearchPage() {
       isWishlisted={isWishlisted}
       currentPage={currentPage}
       totalPages={totalPages}
-      loadingMore={false}
+      loadingMore={loadingMore}
+      onLoadMore={onLoadMore}
     >
       {!(q || categoryValue) ? (
         <div className="state-box flex flex-col items-center py-20 text-center">

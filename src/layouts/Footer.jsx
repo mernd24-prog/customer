@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { asArray, hrefOr } from "../utils/content";
 import { footerData } from "../data/footer";
 import { SocialIcons } from "../components/ui";
-import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
 import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
 import { getBrandProductCount } from "../utils/pages/brandUtils";
@@ -17,7 +16,10 @@ import { brandToSlug } from "../utils/ecommerce/brand";
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 const buildCategorySlug = (name = "category") =>
-  String(name).trim().toLowerCase().replace(/\s+/g, "-");
+  String(name)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-");
 
 const getCategoryKey = (item = {}) =>
   item?.categoryKey ||
@@ -27,20 +29,33 @@ const getCategoryKey = (item = {}) =>
 
 function getCategoryListFromResponse(data) {
   if (Array.isArray(data)) return data;
+
   if (!data || typeof data !== "object") return [];
+
   if (Array.isArray(data?.items)) return data.items;
+
   if (Array.isArray(data?.list)) return data.list;
+
   if (Array.isArray(data?.categories)) return data.categories;
-  if (data?.category && typeof data.category === "object")
+
+  if (data?.category && typeof data.category === "object") {
     return [data.category];
-  if (data?.data) return getCategoryListFromResponse(data.data);
+  }
+
+  if (data?.data) {
+    return getCategoryListFromResponse(data.data);
+  }
+
   return [data];
 }
 
 function getBrandListFromResponse(data) {
   const payload = data?.data ?? data;
+
   if (Array.isArray(payload)) return payload;
+
   if (!payload || typeof payload !== "object") return [];
+
   return (
     [payload.brands, payload.items, payload.list, payload.results].find(
       Array.isArray,
@@ -53,15 +68,23 @@ function getRootCategories(categories = []) {
 
   const visit = (category, parentKey = null) => {
     if (!category || typeof category !== "object") return;
+
     const categoryKey = getCategoryKey(category);
+
     if (!categoryKey) return;
+
     const normalized = {
       ...category,
       categoryKey,
       parentKey: category?.parentKey ?? parentKey,
     };
+
     byKey.set(categoryKey, normalized);
-    asArray(category?.children).forEach((child) => visit(child, categoryKey));
+
+    asArray(category?.children).forEach((child) =>
+      visit(child, categoryKey),
+    );
+
     asArray(category?.subCategories).forEach((child) =>
       visit(child, categoryKey),
     );
@@ -89,59 +112,54 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
 
   return (
     <div className="customer-container">
-      <div className="grid grid-cols-2 gap-6  md:gap-10 xl:gap-24 border-t border-white/25 pt-8 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-        {groups.map((group, groupIndex) => (
+<div className="grid w-full grid-cols-1 gap-6 border-t border-white/25 pt-8 sm:grid-cols-2 lg:grid-cols-3">        {groups.map((group, groupIndex) => (
           <div key={group?.title || `group-${groupIndex}`}>
             <h2 className="mb-4 border-l-2 font-semibold text-lg md:text-2xl pl-2 border-[var(--customer-gold)] text-white">
               {group?.title}
             </h2>
-            {group?.isLoading ? (
-              <div className="flex flex-col gap-2 md:gap-3 py-1">
-                <SkeletonBox width="75%" height="16px" className="!bg-white/10 rounded" />
-                <SkeletonBox width="55%" height="16px" className="!bg-white/10 rounded" />
-                <SkeletonBox width="80%" height="16px" className="!bg-white/10 rounded" />
-                <SkeletonBox width="60%" height="16px" className="!bg-white/10 rounded" />
-                <SkeletonBox width="45%" height="16px" className="!bg-white/10 rounded" />
-              </div>
-            ) : (
-              <ul className="grid gap-1  md:gap-3">
-                {(Array.isArray(group?.links) ? group.links : []).map(
-                  (link, linkIndex) => {
-                    const toPath = hrefOr(link?.href);
-                    return (
-                      <li key={link?.label || `link-${linkIndex}`}>
-                        <Link
-                          to={toPath}
-                          target={link?.target}
-                          rel={
-                            link?.target === "_blank"
-                              ? "noopener noreferrer"
-                              : undefined
+
+            <ul className="grid gap-1 md:gap-3">
+              {(Array.isArray(group?.links) ? group.links : []).map(
+                (link, linkIndex) => {
+                  const toPath = hrefOr(link?.href);
+
+                  return (
+                    <li key={link?.label || `link-${linkIndex}`}>
+                      <Link
+                        to={toPath}
+                        target={link?.target}
+                        rel={
+                          link?.target === "_blank"
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
+                        onClick={() => {
+                          if (location.pathname === toPath) {
+                            window.scrollTo({
+                              top: 0,
+                              behavior: "smooth",
+                            });
                           }
-                          onClick={() => {
-                            if (location.pathname === toPath) {
-                              window.scrollTo({
-                                top: 0,
-                                behavior: "smooth",
-                              });
-                            }
-                          }}
-                          className="text-sm md:text-base text-white/70 transition-all duration-300 ease-in-out font-medium hover:text-white"
-                        >
-                          {link?.label}
-                        </Link>
-                      </li>
-                    );
-                  },
-                )}
-              </ul>
-            )}
+                        }}
+                        className="text-sm md:text-base text-white/70 transition-all duration-300 ease-in-out font-medium hover:text-white"
+                      >
+                        {link?.label}
+                      </Link>
+                    </li>
+                  );
+                },
+              )}
+            </ul>
           </div>
         ))}
       </div>
+
       <div className="flex flex-wrap gap-4 py-6">
         {socialLinks.map((social, index) => (
-          <SocialIcons key={social?.label || `social-${index}`} data={social} />
+          <SocialIcons
+            key={social?.label || `social-${index}`}
+            data={social}
+          />
         ))}
       </div>
     </div>
@@ -157,11 +175,18 @@ export function Footer({ data = footerData }) {
   const location = useLocation();
 
   // ── Redux state ─────────────────────────────────────────────────────────────
-  const catalogLoading = useSelector((state) => Boolean(state.catalog.loading));
+
+  const catalogLoading = useSelector((state) =>
+    Boolean(state.catalog.loading),
+  );
+
   const catalogCategoryList = useSelector(
     (state) =>
-      state.catalog.globalCategories || state.catalog.list || emptyArray,
+      state.catalog.globalCategories ||
+      state.catalog.list ||
+      emptyArray,
   );
+
   const globalBrands = useSelector(
     (state) => state.catalog.globalBrands || emptyArray,
   );
@@ -169,65 +194,104 @@ export function Footer({ data = footerData }) {
   const [categoriesFetched, setCategoriesFetched] = useState(false);
   const [brandsFetched, setBrandsFetched] = useState(false);
 
-  // ── Fetch if not yet loaded ──────────────────────────────────────────────────
+  // ── Fetch categories ────────────────────────────────────────────────────────
+
   useEffect(() => {
-    const categoryList = getCategoryListFromResponse(catalogCategoryList);
+    const categoryList =
+      getCategoryListFromResponse(catalogCategoryList);
+
     if (!categoryList.length) {
-      dispatch(fetchCategories()).finally(() => setCategoriesFetched(true));
+      dispatch(fetchCategories()).finally(() =>
+        setCategoriesFetched(true),
+      );
     } else {
       setCategoriesFetched(true);
     }
   }, [dispatch, catalogCategoryList]);
 
+  // ── Fetch brands ────────────────────────────────────────────────────────────
+
   useEffect(() => {
-  if (!globalBrands.length) {
-    dispatch(fetchBrands({ limit: 100, active: true }))
-      .unwrap()
-      .then((result) => {
-        const brands = getBrandListFromResponse(result);
+    if (!globalBrands.length) {
+      dispatch(
+        fetchBrands({
+          limit: 100,
+          active: true,
+        }),
+      )
+        .unwrap()
+        .then((result) => {
+          const brands = getBrandListFromResponse(result);
 
-        const brandsWithProducts = brands
-          .filter((brand) => getBrandProductCount(brand) >= 1)
-          .slice(0, 5);
+          const brandsWithProducts = brands
+            .filter((brand) => getBrandProductCount(brand) >= 1)
+            .slice(0, 5);
 
-        dispatch(setGlobalBrands(brandsWithProducts));
-      })
-      .catch(() => {})
-      .finally(() => setBrandsFetched(true));
-  } else {
-    setBrandsFetched(true);
-  }
-}, [dispatch, globalBrands.length]); 
+          dispatch(setGlobalBrands(brandsWithProducts));
+        })
+        .catch(() => {})
+        .finally(() => setBrandsFetched(true));
+    } else {
+      setBrandsFetched(true);
+    }
+  }, [dispatch, globalBrands.length]);
+
   const footer = data || footerData;
+
   const {
     copyright = footerData.copyright,
     extrapages = footerData.extrapages,
   } = footer;
+
   const benefits = asArray(footer.benefits);
   const socialLinks = asArray(footer.socialLinks);
   const extraPages = asArray(extrapages);
+
   const appDownload = footer.appDownload || {};
   const appDownloadLinks = asArray(appDownload.links);
 
+  // ── Categories ──────────────────────────────────────────────────────────────
+
   const catalogCategories = useMemo(
-    () => getRootCategories(getCategoryListFromResponse(catalogCategoryList)),
+    () =>
+      getRootCategories(
+        getCategoryListFromResponse(catalogCategoryList),
+      ),
     [catalogCategoryList],
   );
+
   const apiCategoryLinks = useMemo(
     () =>
       catalogCategories.slice(0, 5).map((cat) => ({
-        label: cat?.title || cat?.name || getCategoryKey(cat),
-        href: CUSTOMER_ROUTES.category(getCategoryKey(cat)),
+        label:
+          cat?.title ||
+          cat?.name ||
+          getCategoryKey(cat),
+        href: CUSTOMER_ROUTES.category(
+          getCategoryKey(cat),
+        ),
       })),
     [catalogCategories],
   );
+
+  // ── Brands ──────────────────────────────────────────────────────────────────
+
   const apiBrandLinks = useMemo(
     () =>
       asArray(globalBrands)
         .slice(0, 5)
         .map((brand) => {
-          const name = brand?.name || brand?.label || brand?.value || "";
-          const slug = brand?.slug || brand?.code || brandToSlug(name);
+          const name =
+            brand?.name ||
+            brand?.label ||
+            brand?.value ||
+            "";
+
+          const slug =
+            brand?.slug ||
+            brand?.code ||
+            brandToSlug(name);
+
           return {
             label: name,
             href: CUSTOMER_ROUTES.brand(slug),
@@ -236,35 +300,62 @@ export function Footer({ data = footerData }) {
     [globalBrands],
   );
 
-  const isCategoriesLoading =
-    (!categoriesFetched || catalogLoading) && !apiCategoryLinks.length;
-  const isBrandsLoading =
-    (!brandsFetched || catalogLoading) && !apiBrandLinks.length;
+  /*
+   * IMPORTANT:
+   *
+   * We do NOT create loading skeleton groups anymore.
+   *
+   * If categories/brands are still loading OR the API returns
+   * no data, their footer column is simply not rendered.
+   */
+
   const staticGroups = asArray(footer.linkGroups);
 
   const resolvedLinkGroups = useMemo(() => {
     const REPLACED_TITLES = new Set(["buy", "brands"]);
+
     const remainingStatic = staticGroups.filter(
-      (g) => !REPLACED_TITLES.has(String(g?.title || "").toLowerCase()),
+      (group) =>
+        !REPLACED_TITLES.has(
+          String(group?.title || "").toLowerCase(),
+        ),
     );
 
-    const categoriesGroup = {
-      title: "Categories",
-      links: apiCategoryLinks,
-      isLoading: isCategoriesLoading,
-    };
-    const brandsGroup = {
-      title: "Brands",
-      links: apiBrandLinks,
-      isLoading: isBrandsLoading,
-    };
-    return [categoriesGroup, brandsGroup, ...remainingStatic];
-  }, [staticGroups, apiCategoryLinks, apiBrandLinks, isCategoriesLoading, isBrandsLoading]);
+    const dynamicGroups = [];
 
-  // ─────────────────────────────────────────────────────────────────────────────
+    // Only show Categories when actual category links exist.
+    if (apiCategoryLinks.length > 0) {
+      dynamicGroups.push({
+        title: "Categories",
+        links: apiCategoryLinks,
+      });
+    }
+
+    // Only show Brands when actual brand links exist.
+    if (apiBrandLinks.length > 0) {
+      dynamicGroups.push({
+        title: "Brands",
+        links: apiBrandLinks,
+      });
+    }
+
+    return [
+      ...dynamicGroups,
+      ...remainingStatic,
+    ];
+  }, [
+    staticGroups,
+    apiCategoryLinks,
+    apiBrandLinks,
+    categoriesFetched,
+    brandsFetched,
+    catalogLoading,
+  ]);
+
+  // ───────────────────────────────────────────────────────────────────────────
 
   return (
-    <footer className="w-full   bg-[#1C1C1C] h-auto text-white">
+    <footer className="w-full bg-[#1C1C1C] h-auto text-white">
       {benefits.length > 0 && (
         <div className="bg-[#F5F8FB] border-t-2 border-[#1B1D6033]">
           <div className="flex flex-col lg:flex-row justify-between customer-container">
@@ -273,17 +364,22 @@ export function Footer({ data = footerData }) {
                 key={item?.title || `benefit-${index}`}
                 className="flex items-center gap-3.5 py-3.5 my-1"
               >
-                <div className="flex h-11 w-11 sm:h-14 sm:w-14  items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2.5 shadow-sm">
-                  <img loading="lazy" width="400" height="400"
-                    className="h-6 w-6  shrink-0 object-contain"
+                <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2.5 shadow-sm">
+                  <img
+                    loading="lazy"
+                    width="400"
+                    height="400"
+                    className="h-6 w-6 shrink-0 object-contain"
                     src={item?.icon}
                     alt={item?.alt || item?.title || "Benefit"}
                   />
                 </div>
+
                 <div>
                   <h2 className="mb-0 text-base xl:text-lg font-bold text-[#1B1D60]">
                     {item?.title}
                   </h2>
+
                   <p className="text-xs sm:text-sm xl:text-base font-light text-[#2E2E2E]">
                     {item?.description}
                   </p>
@@ -293,14 +389,16 @@ export function Footer({ data = footerData }) {
           </div>
         </div>
       )}
+
       <div className="customer-container pt-4 sm:pt-0 flex flex-col gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
-        <div className="flex my-2  md:items-center gap-3 ">
+        <div className="flex my-2 md:items-center gap-3">
           <Link to="/">
             <picture>
               <source
                 srcSet="/image/webp/logoWithName-small.webp 1x, /image/webp/logoWithName.webp 2x"
                 type="image/webp"
               />
+
               <img
                 src="/image/webp/logoWithName.webp"
                 alt="Sam Global"
@@ -315,25 +413,31 @@ export function Footer({ data = footerData }) {
 
         {/* App download Section */}
         {(appDownload.title || appDownloadLinks.length > 0) && (
-          <div className="md:py-4 ">
+          <div className="md:py-4">
             <h2 className="max-w-sm lg:!w-full text-sm font-medium text-white/85">
               {appDownload.title}
             </h2>
-            <div className="my-4  flex flex-wrap gap-6 lg:my-6 ">
+
+            <div className="my-4 flex flex-wrap gap-6 lg:my-6">
               {appDownloadLinks.map((app, index) => {
                 const toPath = hrefOr(app?.href);
+
                 return (
                   <Link
                     key={app?.label || `app-link-${index}`}
                     to={toPath}
                     onClick={() => {
                       if (location.pathname === toPath) {
-                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        window.scrollTo({
+                          top: 0,
+                          behavior: "smooth",
+                        });
                       }
                     }}
                     aria-label={app?.label || "App link"}
                   >
-                    <img loading="lazy"
+                    <img
+                      loading="lazy"
                       className="h-10 lg:h-[50px] w-auto"
                       src={app?.image}
                       alt={app?.alt || app?.label || "App"}
@@ -348,21 +452,32 @@ export function Footer({ data = footerData }) {
         )}
       </div>
 
-      <FooterLinkGroups groups={resolvedLinkGroups} socialLinks={socialLinks} />
+      <FooterLinkGroups
+        groups={resolvedLinkGroups}
+        socialLinks={socialLinks}
+      />
 
       <section className="bg-black py-2">
         <div className="customer-container flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
-          <p className="text-center ">{copyright}</p>
+          <p className="text-center">{copyright}</p>
+
           <div className="flex items-center justify-center gap-2 md:gap-8">
             {extraPages.map((item, index) => {
               const toPath = hrefOr(item?.links);
+
               return (
                 <Link
-                  key={item?.labels || `extra-page-${index}`}
+                  key={
+                    item?.labels ||
+                    `extra-page-${index}`
+                  }
                   to={toPath}
                   onClick={() => {
                     if (location.pathname === toPath) {
-                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      window.scrollTo({
+                        top: 0,
+                        behavior: "smooth",
+                      });
                     }
                   }}
                   className="transition-colors duration-300 hover:text-[#CE9F2D]"

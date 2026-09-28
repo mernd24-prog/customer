@@ -45,6 +45,7 @@ export default function BrandPage() {
     activeFilters,
     filterSections,
     searchParams,
+    onLoadMore,
   } = useBrandPageController();
 
   const breadcrumbItems = [
@@ -124,12 +125,12 @@ export default function BrandPage() {
         </div>
       }
       totalResults={pageInfo.total}
-      pageSize={searchParams.get("limit") || 20}
+      pageSize={searchParams.get("limit") || 10}
       sortValue={searchParams.get("sort") || ""}
       sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
       onSortChange={(value) => updateParam("sort", value)}
       countText={`Showing ${Number(items.length || 0).toLocaleString()} of ${Number(pageInfo.total || 0).toLocaleString()} products`}
-      pageSizeValue={searchParams.get("limit") || "20"}
+      pageSizeValue={searchParams.get("limit") || "10"}
       pageSizes={showPageSizeSelector ? PAGE_SIZES : []}
       onPageSizeChange={(value) => updateParam("limit", value)}
       sidebarOpen={sidebarOpen}
@@ -155,6 +156,7 @@ export default function BrandPage() {
       currentPage={currentPage}
       totalPages={pageInfo.totalPages || 1}
       loadingMore={isLoadingMore}
+      onLoadMore={onLoadMore}
       sentinelRef={sentinelRef}
     />
   );

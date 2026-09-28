@@ -35,25 +35,23 @@ export function getBrandRouteKey(brand) {
 export function getBrandLogo(brand) {
   if (!brand || typeof brand === "string") return "";
   return (
-    getImageUrlFromValue(brand.thumbnails) ||
-    getImageUrlFromValue(brand.thumbnail) ||
-    getImageUrlFromValue(brand.logoUrl) ||
     getImageUrlFromValue(brand.logo) ||
-    getImageUrlFromValue(brand.imageUrl) ||
-    getImageUrlFromValue(brand.image) ||
+    getImageUrlFromValue(brand.logoUrl) ||
     ""
   );
 }
 
 export function getBrandProductCount(brand) {
-  if (!brand || typeof brand === "string") return 0;
+  if (!brand || typeof brand === "string") return undefined;
   const count =
-    brand.count ??
     brand.productCount ??
+    brand.count ??
     brand.productsCount ??
     brand.product_count ??
     brand.products_count ??
     brand.counts?.products ??
-    brand.meta?.productCount;
-  return Number(count) || 0;
+    brand.meta?.productCount ??
+    brand.totalProducts ??
+    brand.total_products;
+  return count !== undefined && count !== null ? Number(count) : undefined;
 }

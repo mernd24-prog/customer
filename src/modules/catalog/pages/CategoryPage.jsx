@@ -42,6 +42,7 @@ export default function CategoryPage() {
     currentPage,
     totalPages,
     updateParam,
+    onLoadMore,
   } = useCategory();
 
   const handleCloseSidebar = useCallback(
@@ -138,6 +139,7 @@ export default function CategoryPage() {
           totalPages={totalPages}
           showPagination={false}
           loadingMore={isLoadingMore}
+          onLoadMore={onLoadMore}
           sentinelRef={sentinelRef}
           toolbar={
             <CollectionToolbar

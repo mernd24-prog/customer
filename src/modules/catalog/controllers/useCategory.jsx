@@ -212,7 +212,7 @@ export default function useCategory() {
         inStock: searchParams.get("inStock") || undefined,
         outOfStock: searchParams.get("outOfStock") || undefined,
         page: pageOverride || 1,
-        limit: Number(searchParams.get("limit") || 20),
+        limit: Number(searchParams.get("limit") || 10),
       };
       searchParams.forEach((value, key) => {
         if (!key.startsWith("attr_") || !value) return;
@@ -550,6 +550,11 @@ export default function useCategory() {
     [activeFilters, searchParams, handleClearFilters],
   );
 
+  const loadMore = useCallback(() => {
+    if (isLoadingMore || productState.loading || currentPage >= totalPages) return;
+    loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
+  }, [isLoadingMore, productState.loading, currentPage, totalPages, loadProducts]);
+
   return {
     categoryKey,
     searchParams,
@@ -580,5 +585,6 @@ export default function useCategory() {
     currentPage,
     totalPages,
     updateParam,
+    onLoadMore: loadMore,
   };
 }

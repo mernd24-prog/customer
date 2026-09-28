@@ -73,7 +73,9 @@ const PolicySection = ({
     String(title || "").trim() || fallbackSection.title || "";
 
   const sectionDescription =
-    String(description || "").trim() || fallbackSection.description || "";
+    String(description || "").trim() ||
+    fallbackSection.description ||
+    "";
 
   const cmsPoints = Array.isArray(points)
     ? points.map(normalizePoint).filter(Boolean)

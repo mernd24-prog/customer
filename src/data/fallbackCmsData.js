@@ -38,15 +38,36 @@ export const FALLBACK_HERO_SLIDES = [
   secondaryButton: "Explore Categories",
   secondaryLink: "/categories",
 }));
-
 export const FALLBACK_PROMO_CARDS = [
-  ["chaniya-choli1.webp", "Festive Fashion"],
-  ["chaniya-choli2.webp", "Celebrate In Style"],
-  ["chaniya-choli3.webp", "New Season Looks"],
-  ["chaniya-choli4.webp", "Traditional Edit"],
-].map(([file, title]) => ({
+  [
+    "chaniya-choli1.webp",
+    "Designer Chaniya Cholis",
+    "Traditional Festive Elegance",
+    "Explore now",
+  ],
+  [
+    "chaniya-choli2.webp",
+    "Garba Special Collection",
+    "Dandiya Night Favorites",
+    "Explore now",
+  ],
+  [
+    "chaniya-choli3.webp",
+    "Navratri Ethnic Wear",
+    "Vibrant & Unique Styles",
+    "Explore",
+  ],
+  [
+    "chaniya-choli4.webp",
+    "Festive Lehengas",
+    "Glow in vibrant festive hues",
+    "Explore now",
+  ],
+].map(([file, title, description, ctaLabel]) => ({
   image: `/image/png/fallback/${file}`,
   title,
+  description,
+  ctaLabel,
   link: "/products",
 }));
 

@@ -171,7 +171,7 @@ export default function useBrandPageController() {
         outOfStock:
           searchParams.get("outOfStock") === "true" ? "true" : undefined,
         page: pageOverride || 1,
-        limit: Number(searchParams.get("limit") || 20),
+        limit: Number(searchParams.get("limit") || 10),
       };
       searchParams.forEach((value, key) => {
         if (!key.startsWith("attr_") || !value) return;
@@ -302,6 +302,11 @@ export default function useBrandPageController() {
     handlePriceChange,
   ]);
 
+  const loadMore = useCallback(() => {
+    if (isLoadingMore || productState.loading || currentPage >= totalPages) return;
+    loadProducts({ page: currentPage + 1, append: true });
+  }, [isLoadingMore, productState.loading, currentPage, totalPages, loadProducts]);
+
   return {
     brandSlug,
     decodedBrandSlug,
@@ -325,5 +330,6 @@ export default function useBrandPageController() {
     activeFilters,
     filterSections,
     searchParams,
+    onLoadMore: loadMore,
   };
 }

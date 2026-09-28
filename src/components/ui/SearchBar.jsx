@@ -595,36 +595,43 @@ const SearchBar = ({
                       : "invisible -translate-y-2 opacity-0 pointer-events-none"
                   }`}
                 >
-                  <div className="max-h-[280px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent]  [scrollbar-width:thin] sm:max-h-[320px]">
-                    {categories.map((category) => {
-                      const label = getCategoryLabel(category);
-                      const key = getCategoryId(category);
+                  <div className="max-h-[280px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin] sm:max-h-[320px]">
+                    {categories.length > 0 ? (
+                      categories.map((category) => {
+                        const label = getCategoryLabel(category);
+                        const key = getCategoryId(category);
 
-                      const isSelected =
-                        selectedCategory &&
-                        (selectedCategory.categoryId === category.categoryId ||
-                          selectedCategory.categoryKey ===
-                            category.categoryKey ||
-                          selectedCategory.key === category.key ||
-                          selectedCategory.slug === category.slug ||
-                          selectedCategory._id === category._id ||
-                          selectedCategory.id === category.id);
+                        const isSelected =
+                          selectedCategory &&
+                          (selectedCategory.categoryId ===
+                            category.categoryId ||
+                            selectedCategory.categoryKey ===
+                              category.categoryKey ||
+                            selectedCategory.key === category.key ||
+                            selectedCategory.slug === category.slug ||
+                            selectedCategory._id === category._id ||
+                            selectedCategory.id === category.id);
 
-                      return (
-                        <button
-                          key={key}
-                          type="button"
-                          onClick={() => handleSelectCategory(category)}
-                          className={`w-full  rounded-xl px-3 py-2.5 text-left text-[13px] leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
-                            isSelected
-                              ? "font-semibold text-[#03014D]"
-                              : "font-medium text-[var(--customer-ink)]"
-                          } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={() => handleSelectCategory(category)}
+                            className={`w-full rounded-xl px-3 py-2.5 text-left text-[13px] leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
+                              isSelected
+                                ? "font-semibold text-[#03014D]"
+                                : "font-medium text-[var(--customer-ink)]"
+                            } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })
+                    ) : (
+                      <div className="px-3 py-2 text-center text-xs font-medium text-[var(--customer-muted)]">
+                        No categories found
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -714,7 +721,9 @@ const SearchBar = ({
                 }`}
               >
                 {image ? (
-                  <img width="400" height="400"
+                  <img
+                    width="400"
+                    height="400"
                     src={image}
                     alt=""
                     className="h-10 w-10 shrink-0 rounded-md object-cover"
@@ -746,7 +755,10 @@ const SearchBar = ({
             suggestions.length === 0 &&
             sanitizedQuery.length >= autocompleteMinLength ? (
             <div className="flex flex-col items-center justify-center p-6 text-center">
-              <img loading="lazy" width="400" height="400"
+              <img
+                loading="lazy"
+                width="400"
+                height="400"
                 src="/image/png/NoProductFound.png"
                 alt="No Products Found"
                 className="mb-3 h-20 w-20 object-contain"

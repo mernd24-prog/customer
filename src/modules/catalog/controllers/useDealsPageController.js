@@ -110,7 +110,7 @@ export default function useDealsPageController() {
     ? dealRatingCounts
     : ratingCounts;
 
-  const pageSize = Number(searchParams.get("limit") || 12);
+  const pageSize = Number(searchParams.get("limit") || 10);
   const currentPage = Number(pageInfo.page || 1);
   const totalPages = Number(pageInfo.totalPages || 1);
 
@@ -247,6 +247,11 @@ export default function useDealsPageController() {
     handlePriceChange,
   ]);
 
+  const loadMore = useCallback(() => {
+    if (loadingMore || loading || currentPage >= totalPages) return;
+    loadDeals({ page: currentPage + 1, append: true });
+  }, [loadingMore, loading, currentPage, totalPages, loadDeals]);
+
   return {
     products,
     pageInfo,
@@ -266,5 +271,6 @@ export default function useDealsPageController() {
     activeFilters,
     filterSections,
     searchParams,
+    onLoadMore: loadMore,
   };
 }
