@@ -67,13 +67,30 @@ export const getCancellationSteps = (
 
   const reasonText = effectiveCancellation.reason || "";
   const isMockData = reasonText.includes("Request item cancellation?");
+  const scenario = effectiveCancellation.metadata?.refundPolicyScenario;
+  const isRtoCancellation = Boolean(
+    effectiveCancellation.metadata?.rtoSettlement ||
+      effectiveCancellation.reason_code === "shipment_rto" ||
+      scenario === "rtoDeliveryFailed",
+  );
+  const isSellerCancellation = Boolean(
+    effectiveCancellation.metadata?.sellerSupplyCancellation ||
+      scenario === "sellerCancellation",
+  );
+  const isMerchantFault = isRtoCancellation || isSellerCancellation;
 
   steps.push({
-    label: "Cancellation requested",
+    label: isRtoCancellation
+      ? "Delivery could not be completed"
+      : isSellerCancellation
+        ? "Cancelled by seller"
+        : "Cancellation requested",
     completed: true,
     status: "requested",
     time: timelineEvent?.created_at || null,
-    note: isMockData
+    note: isMerchantFault
+      ? "This was not caused by you. No action is required from you."
+      : isMockData
       ? "User requested cancellation"
       : effectiveCancellation.reason || "Not specified",
   });
@@ -108,11 +125,15 @@ export const getCancellationSteps = (
       effectiveCancellation.status === "cancellation_approved" ||
       effectiveCancellation.status === "cancelled";
     steps.push({
-      label: "Cancellation approved",
+      label: isMerchantFault ? "Refund eligibility confirmed" : "Cancellation approved",
       completed: Boolean(isApproved),
       status: "approved",
       time: timelineEvent?.created_at || null,
-      note: isApproved ? "Cancellation request has been approved." : null,
+      note: isApproved
+        ? isMerchantFault
+          ? "The item amount and eligible customer-paid delivery and platform fees will be returned."
+          : "Cancellation request has been approved."
+        : null,
     });
 
     const isRefunded =
@@ -122,11 +143,13 @@ export const getCancellationSteps = (
 
     if (refundFailed) {
       steps.push({
-        label: "Refund failed",
+        label: isMerchantFault ? "Refund needs review" : "Refund failed",
         completed: true,
         status: "refund_failed",
         time: null,
-        note: `Refund${refundAmountText} could not be processed.`,
+        note: isMerchantFault
+          ? `We are reviewing the refund${refundAmountText}. No action is required from you.`
+          : `Refund${refundAmountText} could not be processed.`,
       });
     } else if (isRefunded) {
       steps.push({

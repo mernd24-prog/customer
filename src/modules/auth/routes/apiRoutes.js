@@ -4,9 +4,9 @@ export const AUTH_API_ENDPOINTS = {
   register: `${API_PREFIX}/auth/register`,
   registerOtp: `${API_PREFIX}/auth/register-otp`,
   verifyRegistration: `${API_PREFIX}/auth/verify-registration`,
-  login: `${API_PREFIX}/auth/login`,
+  login: `${API_PREFIX}/auth/customer/login`,
   social: `${API_PREFIX}/auth/social`,
-  refresh: `${API_PREFIX}/auth/refresh`,
+  refresh: `${API_PREFIX}/auth/customer/refresh`,
   sendOtp: `${API_PREFIX}/auth/send-otp`,
   verifyOtp: `${API_PREFIX}/auth/verify-otp`,
   resendOtp: `${API_PREFIX}/auth/resend-otp`,
@@ -14,7 +14,7 @@ export const AUTH_API_ENDPOINTS = {
   forgotPassword: `${API_PREFIX}/auth/forgot-password`,
   resetPassword: `${API_PREFIX}/auth/reset-password`,
   changePassword: `${API_PREFIX}/auth/change-password`,
-  status: `${API_PREFIX}/auth/status`,
+  status: `${API_PREFIX}/auth/customer/status`,
 };
 
 

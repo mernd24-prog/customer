@@ -12,28 +12,60 @@ export default function OrderCancellations({ cancellations, currency, isCodOrder
     >
       <div className="grid gap-3">
         {cancellations.map((cancellation) => {
+          const scenario = cancellation.metadata?.refundPolicyScenario;
+          const isRtoCancellation = Boolean(
+            cancellation.metadata?.rtoSettlement ||
+              cancellation.reason_code === "shipment_rto" ||
+              scenario === "rtoDeliveryFailed",
+          );
+          const isSellerOrRtoCancellation = Boolean(
+            cancellation.metadata?.sellerSupplyCancellation ||
+              isRtoCancellation ||
+              scenario === "sellerCancellation",
+          );
+          const shippingRefund = Number(
+            cancellation.metadata?.shippingRefundAmount || 0,
+          );
+          const platformFeeRefund = Number(
+            cancellation.metadata?.platformFeeRefundAmount || 0,
+          );
+          const refundStatus = String(
+            cancellation.refund_status || "pending",
+          ).replace(/_/g, " ");
           return (
             <div
               key={cancellation.id}
               className="rounded-[6px] border border-border bg-surface px-3 py-3 text-sm"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <strong>{cancellation.cancellation_number}</strong>
+                <strong>
+                  {isRtoCancellation
+                    ? "Delivery could not be completed"
+                    : isSellerOrRtoCancellation
+                      ? "Cancelled by seller"
+                      : cancellation.cancellation_number}
+                </strong>
                 <span className="capitalize text-muted">
                   {String(cancellation.status || "requested").replace(/_/g, " ")}
                 </span>
               </div>
               <p className="mt-1 text-muted">{cancellation.reason}</p>
+              {isSellerOrRtoCancellation && (
+                <p className="mt-2 rounded-[6px] bg-blue-50 px-3 py-2 text-xs text-blue-700">
+                  {isRtoCancellation
+                    ? "The delivery partner could not complete this delivery and the item is being returned to the seller."
+                    : "The seller could not fulfil this item."} This was not
+                  caused by you, and no action is required. All eligible
+                  customer-paid charges are included in your refund.
+                </p>
+              )}
               <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted">
                 <span>
                   Refund:{" "}
                   {formatMoney(cancellation.refund_amount, currency)}
                 </span>
                 <span>
-                  Refund status:{" "}
-                  {String(
-                    cancellation.refund_status || "pending",
-                  ).replace(/_/g, " ")}
+                  Refund status: {refundStatus}
                 </span>
                 {(cancellation.credit_note_id ||
                   cancellation.creditNoteId) && (
@@ -42,6 +74,21 @@ export default function OrderCancellations({ cancellations, currency, isCodOrder
                   </span>
                 )}
               </div>
+              {isSellerOrRtoCancellation &&
+                (shippingRefund > 0 || platformFeeRefund > 0) && (
+                  <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 rounded-[6px] bg-green-50 px-3 py-2 text-xs text-green-800">
+                    {shippingRefund > 0 && (
+                      <span>
+                        Delivery fee returned: {formatMoney(shippingRefund, currency)}
+                      </span>
+                    )}
+                    {platformFeeRefund > 0 && (
+                      <span>
+                        Platform fee returned: {formatMoney(platformFeeRefund, currency)}
+                      </span>
+                    )}
+                  </div>
+                )}
               <div className="mt-2 space-y-1 text-xs text-muted">
                 {(cancellation.items || []).map((item) => (
                   <div key={item.orderItemId || item.order_item_id}>
