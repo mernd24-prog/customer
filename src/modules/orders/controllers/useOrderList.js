@@ -13,7 +13,13 @@ import {
   getProductTitle,
   normalizeOrderSearchText,
 } from "../../../utils/pages/orderUtils";
-import { getPagination } from "../../../utils/filterUtils";
+
+const ORDER_HISTORY_FETCH_LIMIT = 200;
+
+const toPositiveInteger = (value, fallback) => {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+};
 
 export function useOrderList() {
   const dispatch = useDispatch();
@@ -21,6 +27,7 @@ export function useOrderList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const state = useSelector((s) => s.order);
   const syncTimerRef = useRef(null);
+  const locallySyncedSearchRef = useRef(searchParams.toString());
 
   // ---------------------------------------------------------
   // URL INITIAL VALUES
@@ -38,13 +45,9 @@ export function useOrderList() {
 
   const initialQuery = searchParams.get("q") || "";
 
-  const initialPageSize = Number(
-    searchParams.get("limit") || 10
-  );
+  const initialPageSize = toPositiveInteger(searchParams.get("limit"), 10);
 
-  const initialPage = Number(
-    searchParams.get("page") || 1
-  );
+  const initialPage = toPositiveInteger(searchParams.get("page"), 1);
 
   // ---------------------------------------------------------
   // STATE
@@ -343,6 +346,25 @@ export function useOrderList() {
         ? order.relations.shipments
         : [];
 
+      const trackingText = shipments
+        .flatMap((shipment) => [
+          shipment?.tracking_number,
+          shipment?.trackingNumber,
+          shipment?.awb_number,
+          shipment?.awbNumber,
+          ...(Array.isArray(shipment?.trackingEvents)
+            ? shipment.trackingEvents.flatMap((event) => [
+                event?.tracking_number,
+                event?.trackingNumber,
+                event?.awb_number,
+                event?.awbNumber,
+              ])
+            : []),
+        ])
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
       const orderDate = new Date(
         order?.created_at ||
           order?.createdAt ||
@@ -594,6 +616,7 @@ export function useOrderList() {
                   visibleOrderText,
                   itemText,
                   itemStatus,
+                  trackingText,
                 ].join(" ")
               );
 
@@ -606,6 +629,9 @@ export function useOrderList() {
                 searchTerm
               ) ||
               itemText.includes(
+                searchTerm
+              ) ||
+              trackingText.includes(
                 searchTerm
               ) ||
               visibleOrderText.includes(
@@ -640,83 +666,34 @@ export function useOrderList() {
   ]);
 
   // ---------------------------------------------------------
-  // BACKEND PAGINATION
+  // PAGINATE THE FILTERED ITEM RESULTS
   // ---------------------------------------------------------
 
-  const serverPagination =
-    getPagination(
-      state?.meta,
-      state
-    );
-
-  const serverTotal = Number(
-    serverPagination?.total ??
-      serverPagination?.totalItems ??
-      serverPagination?.totalOrders ??
-      0
-  );
-
-  const serverTotalPages = Number(
-    serverPagination?.totalPages ??
-      serverPagination?.pages ??
-      0
-  );
-
-  /*
-   * IMPORTANT:
-   *
-   * Backend is already handling:
-   *
-   *   page
-   *   limit
-   *
-   * Therefore we MUST NOT use:
-   *
-   * orderItemsList.slice(...)
-   *
-   * here.
-   *
-   * The API response is already the current page.
-   */
-
-  const totalOrders =
-    serverTotal > 0
-      ? serverTotal
-      : orderItemsList.length;
-
-  const totalPages =
-    serverTotalPages > 0
-      ? serverTotalPages
-      : Math.max(
-          1,
-          Math.ceil(
-            totalOrders / pageSize
-          )
-        );
-
-  // Backend-paginated data should be
-  // displayed directly.
-  const paginatedOrders =
-    orderItemsList;
+  const totalOrders = orderItemsList.length;
+  const totalPages = Math.max(1, Math.ceil(totalOrders / pageSize));
+  const pageStart = (currentPage - 1) * pageSize;
+  const paginatedOrders = orderItemsList.slice(pageStart, pageStart + pageSize);
 
   // ---------------------------------------------------------
-  // FETCH ORDERS WHEN PAGE / LIMIT CHANGES
+  // FETCH THE HISTORY USED BY ITEM-LEVEL SEARCH/FILTER/PAGINATION
   // ---------------------------------------------------------
 
   useEffect(() => {
     dispatch(
       fetchMyOrders({
         params: {
-          page: currentPage,
-          limit: pageSize,
+          limit: ORDER_HISTORY_FETCH_LIMIT,
+          offset: 0,
         },
       })
     );
-  }, [
-    dispatch,
-    currentPage,
-    pageSize,
-  ]);
+  }, [dispatch]);
+
+  // A page selected for the previous result set may not exist after a filter,
+  // search, time range, or page-size change.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilters, timeFilters, query, pageSize]);
 
   // ---------------------------------------------------------
   // KEEP URL IN SYNC
@@ -799,6 +776,10 @@ export function useOrderList() {
 
       syncTimerRef.current =
         setTimeout(() => {
+          // Mark this URL as an internal write before navigation updates
+          // searchParams. This prevents the URL reader below from restoring
+          // stale values while a dropdown/search change is being synchronized.
+          locallySyncedSearchRef.current = next;
           setSearchParams(
             params,
             {
@@ -836,6 +817,16 @@ export function useOrderList() {
   // ---------------------------------------------------------
 
   useEffect(() => {
+    const currentSearch = searchParams.toString();
+
+    if (currentSearch === locallySyncedSearchRef.current) {
+      return;
+    }
+
+    // A different URL came from browser navigation or an external link.
+    // Adopt it as the new source before updating local controls.
+    locallySyncedSearchRef.current = currentSearch;
+
     const spStatus =
       searchParams.get("status")
         ? searchParams
@@ -855,13 +846,9 @@ export function useOrderList() {
     const spQuery =
       searchParams.get("q") || "";
 
-    const spLimit = Number(
-      searchParams.get("limit") || 10
-    );
+    const spLimit = toPositiveInteger(searchParams.get("limit"), 10);
 
-    const spPage = Number(
-      searchParams.get("page") || 1
-    );
+    const spPage = toPositiveInteger(searchParams.get("page"), 1);
 
     const sameStatus =
       spStatus.length ===
@@ -936,7 +923,6 @@ export function useOrderList() {
     availableStatusFilters,
     availableTimeFilters,
 
-    // API already paginates this data
     orderItemsList: paginatedOrders,
 
     totalOrders,

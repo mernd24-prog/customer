@@ -250,6 +250,7 @@ export default function OrderListPage() {
                         } else {
                           setStatusFilters([value]);
                         }
+                        setCurrentPage(1);
                       }}
                       placeholder="Status"
                     />
@@ -331,8 +332,10 @@ export default function OrderListPage() {
 
             dispatch(
               fetchMyOrders({
-                page: currentPage,
-                limit: pageSize,
+                params: {
+                  limit: 200,
+                  offset: 0,
+                },
               }),
             );
 
