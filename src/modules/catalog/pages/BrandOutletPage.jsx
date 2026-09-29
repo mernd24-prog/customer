@@ -32,11 +32,17 @@ export default function BrandOutletPage() {
   const [brandList, setBrandList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: DEFAULT_PAGE_SIZE,
+    total: 0,
+    totalPages: 1,
+  });
 
   const page = Math.max(1, Number(searchParams.get("page") || 1));
 
   const requestedLimit = Number(
-    searchParams.get("limit") || DEFAULT_PAGE_SIZE,
+    searchParams.get("limit") || DEFAULT_PAGE_SIZE
   );
 
   const limit = PAGE_SIZE_OPTIONS.includes(requestedLimit)
@@ -52,7 +58,14 @@ export default function BrandOutletPage() {
     setLoading(true);
     setError("");
 
-    dispatch(fetchBrands({ limit: 200, q: search, sort }))
+    dispatch(
+      fetchBrands({
+        page,
+        limit,
+        q: search,
+        sort,
+      })
+    )
       .unwrap()
       .then((res) => {
         if (!active) return;
@@ -68,11 +81,42 @@ export default function BrandOutletPage() {
           : [];
 
         setBrandList(list);
+
+        // Backend pagination
+        const backendPagination =
+          res?.pagination ||
+          res?.meta?.pagination ||
+          res?.meta || {
+            page, 
+            limit,
+            total: list.length,
+            totalPages: Math.max(1, Math.ceil(list.length / limit)),
+          };
+
+        setPagination({
+          page: Number(backendPagination.page) || page,
+          limit: Number(backendPagination.limit) || limit,
+          total: Number(backendPagination.total) || 0,
+          totalPages:
+            Number(backendPagination.totalPages) ||
+            Math.max(
+              1,
+              Math.ceil(
+                Number(backendPagination.total) || list.length / limit
+              )
+            ),
+        });
       })
       .catch((err) => {
         if (!active) return;
 
         setBrandList([]);
+        setPagination({
+          page: 1,
+          limit,
+          total: 0,
+          totalPages: 1,
+        });
         setError(err?.message || "Failed to load brands.");
       })
       .finally(() => {
@@ -82,19 +126,19 @@ export default function BrandOutletPage() {
     return () => {
       active = false;
     };
-  }, [dispatch, search, sort]);
+  }, [dispatch, page, limit, search, sort]);
 
   const allValidBrands = Array.isArray(brandList) ? brandList : [];
 
-  const totalBrands = allValidBrands.length;
-
-  const totalPages = Math.max(1, Math.ceil(totalBrands / limit));
+  const totalPages = Math.max(
+    1,
+    Number(pagination.totalPages) || 1
+  );
 
   const currentPage = Math.min(page, totalPages);
 
-  const startIndex = (currentPage - 1) * limit;
-
-  const brands = allValidBrands.slice(startIndex, startIndex + limit);
+  // API already returns only the requested page.
+  const brands = allValidBrands;
 
   const updateParam = (key, value) => {
     scrollToTop(() => {
@@ -215,7 +259,9 @@ export default function BrandOutletPage() {
                       logo={getBrandLogo(brand)}
                       image={getBrandLogo(brand)}
                       subtitle=""
-                      href={CUSTOMER_ROUTES.brand(getBrandRouteKey(brand))}
+                      href={CUSTOMER_ROUTES.brand(
+                        getBrandRouteKey(brand)
+                      )}
                       className="
                         min-h-0 items-center rounded-[12px]
                         border border-[#EEE8DA] bg-[#FAF8F3] p-1.5 text-center
@@ -248,7 +294,7 @@ export default function BrandOutletPage() {
             ) : (
               <EmptyState
                 imageSrc="/image/png/NoProductFound.png"
-                title={error ? "No Brands Found" : "No Brands Found"}
+                title="No Brands Found"
                 description={
                   search
                     ? `We couldn't find any brands matching "${search}". Please try another search or explore our products.`

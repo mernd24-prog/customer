@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { asArray, hrefOr } from "../utils/content";
 import { footerData } from "../data/footer";
 import { SocialIcons } from "../components/ui";
+import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
 import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
 import { getBrandProductCount } from "../utils/pages/brandUtils";
@@ -105,51 +106,92 @@ function getRootCategories(categories = []) {
 
 // ─── FooterLinkGroups ─────────────────────────────────────────────────────────
 
-function FooterLinkGroups({ groups = [], socialLinks = [] }) {
+function FooterLinkGroups({
+  groups = [],
+  socialLinks = [],
+  hasDynamicGroups = false,
+}) {
   const location = useLocation();
 
   if (!groups.length) return null;
 
   return (
     <div className="customer-container">
-<div className="grid w-full grid-cols-1 gap-6 border-t border-white/25 pt-8 sm:grid-cols-2 lg:grid-cols-3">        {groups.map((group, groupIndex) => (
+      <div
+        className={
+          hasDynamicGroups
+            ? "grid grid-cols-2 gap-6 md:gap-10 xl:gap-24 border-t border-white/25 pt-8 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
+            : "grid w-full grid-cols-1 gap-6 border-t border-white/25 pt-8 sm:grid-cols-2 lg:grid-cols-3"
+        }
+      >
+        {groups.map((group, groupIndex) => (
           <div key={group?.title || `group-${groupIndex}`}>
             <h2 className="mb-4 border-l-2 font-semibold text-lg md:text-2xl pl-2 border-[var(--customer-gold)] text-white">
               {group?.title}
             </h2>
 
-            <ul className="grid gap-1 md:gap-3">
-              {(Array.isArray(group?.links) ? group.links : []).map(
-                (link, linkIndex) => {
-                  const toPath = hrefOr(link?.href);
+            {group?.isLoading ? (
+              <div className="flex flex-col gap-2 md:gap-3 py-1">
+                <SkeletonBox
+                  width="75%"
+                  height="16px"
+                  className="!bg-white/10 rounded"
+                />
+                <SkeletonBox
+                  width="55%"
+                  height="16px"
+                  className="!bg-white/10 rounded"
+                />
+                <SkeletonBox
+                  width="80%"
+                  height="16px"
+                  className="!bg-white/10 rounded"
+                />
+                <SkeletonBox
+                  width="60%"
+                  height="16px"
+                  className="!bg-white/10 rounded"
+                />
+                <SkeletonBox
+                  width="45%"
+                  height="16px"
+                  className="!bg-white/10 rounded"
+                />
+              </div>
+            ) : (
+              <ul className="grid gap-1 md:gap-3">
+                {(Array.isArray(group?.links) ? group.links : []).map(
+                  (link, linkIndex) => {
+                    const toPath = hrefOr(link?.href);
 
-                  return (
-                    <li key={link?.label || `link-${linkIndex}`}>
-                      <Link
-                        to={toPath}
-                        target={link?.target}
-                        rel={
-                          link?.target === "_blank"
-                            ? "noopener noreferrer"
-                            : undefined
-                        }
-                        onClick={() => {
-                          if (location.pathname === toPath) {
-                            window.scrollTo({
-                              top: 0,
-                              behavior: "smooth",
-                            });
+                    return (
+                      <li key={link?.label || `link-${linkIndex}`}>
+                        <Link
+                          to={toPath}
+                          target={link?.target}
+                          rel={
+                            link?.target === "_blank"
+                              ? "noopener noreferrer"
+                              : undefined
                           }
-                        }}
-                        className="text-sm md:text-base text-white/70 transition-all duration-300 ease-in-out font-medium hover:text-white"
-                      >
-                        {link?.label}
-                      </Link>
-                    </li>
-                  );
-                },
-              )}
-            </ul>
+                          onClick={() => {
+                            if (location.pathname === toPath) {
+                              window.scrollTo({
+                                top: 0,
+                                behavior: "smooth",
+                              });
+                            }
+                          }}
+                          className="text-sm md:text-base text-white/70 transition-all duration-300 ease-in-out font-medium hover:text-white"
+                        >
+                          {link?.label}
+                        </Link>
+                      </li>
+                    );
+                  },
+                )}
+              </ul>
+            )}
           </div>
         ))}
       </div>
@@ -300,16 +342,19 @@ export function Footer({ data = footerData }) {
     [globalBrands],
   );
 
-  /*
-   * IMPORTANT:
-   *
-   * We do NOT create loading skeleton groups anymore.
-   *
-   * If categories/brands are still loading OR the API returns
-   * no data, their footer column is simply not rendered.
-   */
+  // ── Loading states ──────────────────────────────────────────────────────────
+
+  const isCategoriesLoading =
+    (!categoriesFetched || catalogLoading) &&
+    !apiCategoryLinks.length;
+
+  const isBrandsLoading =
+    (!brandsFetched || catalogLoading) &&
+    !apiBrandLinks.length;
 
   const staticGroups = asArray(footer.linkGroups);
+
+  // ── Footer groups ───────────────────────────────────────────────────────────
 
   const resolvedLinkGroups = useMemo(() => {
     const REPLACED_TITLES = new Set(["buy", "brands"]);
@@ -323,7 +368,7 @@ export function Footer({ data = footerData }) {
 
     const dynamicGroups = [];
 
-    // Only show Categories when actual category links exist.
+    // Show Categories only when actual category links exist.
     if (apiCategoryLinks.length > 0) {
       dynamicGroups.push({
         title: "Categories",
@@ -331,7 +376,7 @@ export function Footer({ data = footerData }) {
       });
     }
 
-    // Only show Brands when actual brand links exist.
+    // Show Brands only when actual brand links exist.
     if (apiBrandLinks.length > 0) {
       dynamicGroups.push({
         title: "Brands",
@@ -351,6 +396,17 @@ export function Footer({ data = footerData }) {
     brandsFetched,
     catalogLoading,
   ]);
+
+  /*
+   * If Categories OR Brands are available:
+   *     Keep the OLD footer grid UI.
+   *
+   * If neither Categories nor Brands are available:
+   *     Use the NEW 3-column footer UI.
+   */
+  const hasDynamicGroups =
+    apiCategoryLinks.length > 0 ||
+    apiBrandLinks.length > 0;
 
   // ───────────────────────────────────────────────────────────────────────────
 
@@ -455,6 +511,7 @@ export function Footer({ data = footerData }) {
       <FooterLinkGroups
         groups={resolvedLinkGroups}
         socialLinks={socialLinks}
+        hasDynamicGroups={hasDynamicGroups}
       />
 
       <section className="bg-black py-2">

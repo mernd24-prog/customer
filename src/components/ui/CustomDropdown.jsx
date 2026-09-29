@@ -41,24 +41,34 @@ export default function CustomDropdown({
   const displayLabel = selectedOption?.label ?? selectedOption ?? placeholder;
 
   const updateScrollState = useCallback(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
+  const el = scrollContainerRef.current;
+  if (!el) return;
 
-    const { scrollTop, scrollHeight, clientHeight } = el;
-    const canScroll = scrollHeight > clientHeight + 2;
-    setHasScroll(canScroll);
+  // Do not show scrollbar for 5 or fewer options
+  if (options.length <= 5) {
+    setHasScroll(false);
+    setThumbTop(0);
+    return;
+  }
 
-    if (canScroll) {
-      const availableScrollDistance = scrollHeight - clientHeight;
-      const availableTrackDistance =
-        clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
-      const scrollRatio = Math.max(
-        0,
-        Math.min(1, scrollTop / availableScrollDistance),
-      );
-      setThumbTop(scrollRatio * availableTrackDistance);
-    }
-  }, []);
+  const { scrollTop, scrollHeight, clientHeight } = el;
+  const canScroll = scrollHeight > clientHeight + 2;
+
+  setHasScroll(canScroll);
+
+  if (canScroll) {
+    const availableScrollDistance = scrollHeight - clientHeight;
+    const availableTrackDistance =
+      clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
+
+    const scrollRatio = Math.max(
+      0,
+      Math.min(1, scrollTop / availableScrollDistance),
+    );
+
+    setThumbTop(scrollRatio * availableTrackDistance);
+  }
+}, [options.length]);
 
   useEffect(() => {
     if (!isOpen) return;

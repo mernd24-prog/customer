@@ -1,19 +1,7 @@
 import CustomDropdown from "./CustomDropdown";
 import { cn } from "../../utils/common";
 
-/**
- * FilterDropdown - Standardized, reusable page-level filter dropdown
- * Ensures 100% visual and functional consistency across Notifications,
- * Orders, Returns, and all future modules.
- *
- * Defaults:
- * - Responsive width: w-full sm:w-[210px]
- * - Standard height: h-11 (44px)
- * - Gold border (#CE9F2D)
- * - Navy semibold typography (#1B1D60)
- * - Uniform gold icons (text-[var(--customer-gold-dark)])
- * - Fixed compact pill scrollbar (32px) with smooth scrolling
- */
+
 export default function FilterDropdown({
   options = [],
   value,

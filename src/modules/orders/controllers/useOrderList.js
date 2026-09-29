@@ -39,7 +39,7 @@ export function useOrderList() {
   const initialQuery = searchParams.get("q") || "";
 
   const initialPageSize = Number(
-    searchParams.get("limit") || 4
+    searchParams.get("limit") || 10
   );
 
   const initialPage = Number(
@@ -856,7 +856,7 @@ export function useOrderList() {
       searchParams.get("q") || "";
 
     const spLimit = Number(
-      searchParams.get("limit") || 4
+      searchParams.get("limit") || 10
     );
 
     const spPage = Number(

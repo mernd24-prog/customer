@@ -1,93 +1,124 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Grid2X2, ArrowRight, Search, X } from "lucide-react";
+import { ArrowRight, Grid2X2, Search, X } from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { EmptyState } from "../../../components/ui/feedback";
-import CUSTOMER_ROUTES from "../../../constants/routes";
-import { fetchCategories } from "../../../features/catalog/catalogSlice";
-import { fetchProducts } from "../../../modules/products/slices/productSlice";
+import { PageContainer } from "../../../components/ui/layout";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
 import { Pagination } from "../../../modules/products/components";
-import { PageContainer } from "../../../components/ui/layout";
-import { getImageUrlFromValue } from "../../../utils/ecommerce";
-import { scrollToTop } from "../../../utils/common";
+
+import CUSTOMER_ROUTES from "../../../constants/routes";
+import { fetchCategories } from "../../../features/catalog/catalogSlice";
 
 import {
   getCategoryListFromResponse,
+  paginationFromPayload,
+  normalizeCategory,
   getCategoryCount,
 } from "../../../utils/pages/categoryUtils";
+
+import { scrollToTop } from "../../../utils/common";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 40];
 const DEFAULT_PAGE_SIZE = 10;
 
 const categoryGridClass =
-  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:gap-5 xl:grid-cols-5";
+  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
 
-function getCountFromMap(category, countsMap = {}) {
-  const direct = getCategoryCount(category);
-  if (direct > 0) return direct;
+function getRootCategoriesForListing(list = []) {
+  const categories = getCategoryListFromResponse(list);
 
-  const key1 = String(category.categoryKey || "").toLowerCase();
-  const key2 = String(category.routeKey || category.slug || "").toLowerCase();
-  const key3 = String(
-    category.displayName || category.title || category.name || "",
-  ).toLowerCase();
-  const key4 = key3.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  if (!Array.isArray(categories)) return [];
 
-  if (key1 && countsMap[key1] != null) return countsMap[key1];
-  if (key2 && countsMap[key2] != null) return countsMap[key2];
-  if (key4 && countsMap[key4] != null) return countsMap[key4];
+  const seen = new Set();
 
-  for (const [mapKey, val] of Object.entries(countsMap)) {
-    const normMapKey = mapKey.toLowerCase();
-    if (
-      (key1 &&
-        (key1 === normMapKey ||
-          normMapKey.endsWith(key1) ||
-          key1.endsWith(normMapKey))) ||
-      (key2 &&
-        (key2 === normMapKey ||
-          normMapKey.endsWith(key2) ||
-          key2.endsWith(normMapKey)))
-    ) {
-      return val;
-    }
-  }
+  return categories
+    .map((category) => normalizeCategory(category))
+    .filter((category) => {
+      if (!category.routeKey || !category.displayName) return false;
 
-  return 0;
+      const isRoot =
+        category.parentKey === null ||
+        category.parentKey === undefined ||
+        category.parentKey === "" ||
+        Number(category.level || 0) === 0;
+
+      if (!isRoot) return false;
+
+      if (seen.has(category.routeKey)) return false;
+
+      seen.add(category.routeKey);
+
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0),
+    );
 }
 
 function CategoryTile({ category }) {
   const count = getCategoryCount(category);
 
   const imageSrc =
-    getImageUrlFromValue(category.iconUrl) ||
+    category.iconUrl ||
     category.displayImage ||
-    getImageUrlFromValue(category.imageUrl);
+    category.imageUrl ||
+    category.bannerUrl;
 
   return (
     <Link
-      to={CUSTOMER_ROUTES.category(category.routeKey || category.categoryKey || category.slug)}
+      to={CUSTOMER_ROUTES.category(category.routeKey)}
       className="group block text-center"
     >
-      <div className="mt-2 overflow-hidden rounded-[12px] border border-[#EEE8DA] bg-[#FAF8F3] p-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E5D6B5] hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]">
-        <div className="flex h-[140px] w-full items-center justify-center overflow-hidden rounded-[9px] bg-white p-3 sm:h-[150px]">
+      <div
+        className="
+          mt-2 overflow-hidden rounded-[12px]
+          border border-[#EEE8DA]
+          bg-[#FAF8F3]
+          p-1.5
+          shadow-[0_2px_8px_rgba(0,0,0,0.04)]
+          transition-all duration-300
+          hover:-translate-y-0.5
+          hover:border-[#E5D6B5]
+          hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]
+        "
+      >
+        <div
+          className="
+            flex h-[140px] w-full
+            items-center justify-center
+            overflow-hidden rounded-[9px]
+            bg-white
+            p-3
+            transition-all duration-300
+            sm:h-[150px]
+            lg:h-[165px]
+          "
+        >
           {imageSrc ? (
             <img
               width="100"
               height="100"
               src={imageSrc}
-              alt={category.displayName || category.title || category.name}
+              alt={category.displayName}
               loading="lazy"
               decoding="async"
               onError={(event) => {
                 event.currentTarget.onerror = null;
                 event.currentTarget.src = "/image/png/favicon.png";
               }}
-              className="h-[70px] w-[70px] object-contain transition-transform duration-300"
+              className="
+                h-[70px] w-[70px]
+                object-contain
+                transition-transform duration-300
+                sm:h-[80px] sm:w-[80px]
+                lg:h-[90px] lg:w-[90px]
+                group-hover:scale-[1.04]
+              "
             />
           ) : (
             <Grid2X2
@@ -100,10 +131,12 @@ function CategoryTile({ category }) {
       </div>
 
       <h2 className="mt-2 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
-        {category.displayName || category.title || category.name}
+        {category.displayName}
       </h2>
 
-      {count !== undefined && count !== null && count !== "" && Number(count) >= 1 ? (
+      {count !== undefined &&
+      count !== null &&
+      count !== "" ? (
         <p className="mt-0.5 text-xs font-semibold text-muted">
           {Number(count).toLocaleString()} Products
         </p>
@@ -117,7 +150,7 @@ function CategoryGridSkeleton({ count = DEFAULT_PAGE_SIZE }) {
     <div className={categoryGridClass}>
       {Array.from({ length: count }).map((_, index) => (
         <div key={index} className="animate-pulse">
-          <div className="aspect-square rounded-[14px] bg-surface-soft" />
+          <div className="mt-2 h-[140px] rounded-[12px] bg-surface-soft sm:h-[150px] lg:h-[165px]" />
           <div className="mx-auto mt-3 h-4 w-3/4 rounded bg-surface-soft" />
         </div>
       ))}
@@ -130,11 +163,13 @@ export default function CategoryListingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [categoryList, setCategoryList] = useState([]);
-  const [productCountsMap, setProductCountsMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const page = Math.max(1, Number(searchParams.get("page") || 1));
+  const page = Math.max(
+    1,
+    Number(searchParams.get("page") || 1),
+  );
 
   const requestedLimit = Number(
     searchParams.get("limit") || DEFAULT_PAGE_SIZE,
@@ -146,135 +181,169 @@ export default function CategoryListingPage() {
 
   const search = searchParams.get("q") || "";
 
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: DEFAULT_PAGE_SIZE,
+    total: 0,
+    totalPages: 1,
+  });
+
   useEffect(() => {
     let active = true;
 
-    setLoading(true);
-    setError("");
+    const loadCategories = async () => {
+      setLoading(true);
+      setError("");
 
-    Promise.allSettled([
-      dispatch(
-        fetchCategories({
-          tree: false,
-          active: true,
-          limit: 500,
-        }),
-      ).unwrap(),
-      dispatch(
-        fetchProducts({
-          page: 1,
-          limit: 1,
-          view: "facets",
-        }),
-      ).unwrap(),
-    ])
-      .then(([catRes, prodRes]) => {
+      try {
+        const action = await dispatch(
+          fetchCategories({
+            tree: true,
+            active: true,
+            maxDepth: 3,
+            page,
+            limit,
+            q: search,
+            sort: "sortOrder",
+          }),
+        );
+
         if (!active) return;
 
-        if (catRes.status === "fulfilled") {
-          const list = getCategoryListFromResponse(catRes.value);
-          setCategoryList(Array.isArray(list) ? list : []);
-        } else {
-          setError(catRes.reason?.message || "Failed to load categories.");
+        if (action?.error) {
+          throw new Error(
+            action?.payload ||
+              action?.error?.message ||
+              "Failed to load categories.",
+          );
         }
 
-        if (prodRes.status === "fulfilled") {
-          const facets =
-            prodRes.value?.meta?.facets ||
-            prodRes.value?.data?.facets ||
-            prodRes.value?.meta?.filters ||
-            {};
-          const catFacets = facets.categories || facets.category || [];
-          const countsMap = {};
-          catFacets.forEach((item) => {
-            const key = String(
-              item.categoryKey || item.key || item.value || "",
-            ).toLowerCase();
-            const count = Number(item.count || item.productCount || 0);
-            if (key) {
-              countsMap[key] = count;
-            }
-          });
-          setProductCountsMap(countsMap);
+        const payload = action?.payload;
+
+        /*
+         * IMPORTANT:
+         * Do NOT use getRootCategories() here.
+         *
+         * getRootCategories() intentionally filters:
+         *
+         *   productCount >= 1
+         *
+         * But the category API response does not provide
+         * productCount on the root categories.
+         *
+         * Therefore it would turn valid categories into
+         * an empty list.
+         */
+        const rawList = getCategoryListFromResponse(payload);
+
+        const roots = getRootCategoriesForListing(rawList);
+
+        setCategoryList(roots);
+
+        const backendPagination =
+          payload?.pagination ||
+          payload?.meta?.pagination ||
+          payload?.meta ||
+          {};
+
+        const fallbackTotal = roots.length;
+
+        const nextPagination = paginationFromPayload(
+          payload,
+          fallbackTotal,
+          page,
+          limit,
+        );
+
+        setPagination({
+          page:
+            Number(backendPagination.page) ||
+            nextPagination.page ||
+            page,
+
+          limit:
+            Number(backendPagination.limit) ||
+            limit,
+
+          total:
+            Number(backendPagination.total) ||
+            Number(nextPagination.total) ||
+            fallbackTotal,
+
+          totalPages:
+            Number(backendPagination.totalPages) ||
+            Number(nextPagination.totalPages) ||
+            Math.max(
+              1,
+              Math.ceil(
+                fallbackTotal / limit,
+              ),
+            ),
+        });
+      } catch (err) {
+        if (!active) return;
+
+        setCategoryList([]);
+
+        setPagination({
+          page: 1,
+          limit,
+          total: 0,
+          totalPages: 1,
+        });
+
+        setError(
+          err?.message ||
+            "Failed to load categories.",
+        );
+      } finally {
+        if (active) {
+          setLoading(false);
         }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+      }
+    };
+
+    loadCategories();
 
     return () => {
       active = false;
     };
-  }, [dispatch]);
+  }, [dispatch, page, limit, search]);
 
-  const filteredCategories = useMemo(() => {
-    const list = Array.isArray(categoryList) ? categoryList : [];
+  const categories = useMemo(
+    () => (Array.isArray(categoryList) ? categoryList : []),
+    [categoryList],
+  );
 
-    /*
-     * ONLY show categories that have at least 1 product (productCount >= 1) when count is known.
-     * Hide categories where product count is explicitly 0.
-     * Keep categories visible if count is unspecified on the record.
-     */
-    const enrichedList = [];
+  const totalPages = Math.max(
+    1,
+    Number(pagination.totalPages) || 1,
+  );
 
-    for (const category of list) {
-      const count = getCountFromMap(category, productCountsMap);
-
-      if (count !== undefined && count !== null) {
-        if (Number(count) < 1) continue;
-        enrichedList.push({
-          ...category,
-          productCount: count,
-          count,
-        });
-      } else {
-        enrichedList.push(category);
-      }
-    }
-
-    let result = enrichedList;
-
-    // Search categories
-    if (search.trim()) {
-      const query = search.trim().toLowerCase();
-
-      result = result.filter((category) =>
-        String(
-          category.displayName ||
-            category.title ||
-            category.name ||
-            category.label ||
-            "",
-        )
-          .toLowerCase()
-          .includes(query),
-      );
-    }
-
-    return result;
-  }, [categoryList, productCountsMap, search]);
-
-  const totalCategories = filteredCategories.length;
-  const totalPages = Math.max(1, Math.ceil(totalCategories / limit));
-  const currentPage = Math.min(page, totalPages);
-
-  const displayedCategories = useMemo(() => {
-    const startIndex = (currentPage - 1) * limit;
-    return filteredCategories.slice(startIndex, startIndex + limit);
-  }, [filteredCategories, currentPage, limit]);
+  const currentPage = Math.min(
+    page,
+    totalPages,
+  );
 
   const updateParam = (key, value) => {
     scrollToTop(() => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
+      setSearchParams((previous) => {
+        const next = new URLSearchParams(previous);
 
-        if (value == null || value === "") {
+        if (
+          value === null ||
+          value === undefined ||
+          value === ""
+        ) {
           next.delete(key);
         } else {
           next.set(key, String(value));
         }
 
-        // Reset to page 1 when search or page-size changes.
+        /*
+         * Search and per-page changes always start
+         * from page 1.
+         */
         if (key !== "page") {
           next.delete("page");
         }
@@ -284,9 +353,33 @@ export default function CategoryListingPage() {
     });
   };
 
+  const handlePageChange = (newPage) => {
+    updateParam("page", newPage);
+  };
+
+  const handleSearchChange = (value) => {
+    updateParam("q", value);
+  };
+
+  const handleLimitChange = (value) => {
+    const nextLimit = Number(value);
+
+    if (!PAGE_SIZE_OPTIONS.includes(nextLimit)) {
+      return;
+    }
+
+    updateParam("limit", nextLimit);
+  };
+
   const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Categories", href: "/categories" },
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "Categories",
+      href: "/categories",
+    },
   ];
 
   return (
@@ -304,49 +397,79 @@ export default function CategoryListingPage() {
         />
 
         <div className="flex flex-col gap-5 sm:gap-6 lg:mt-4 lg:gap-7">
-          <section className="min-w-0 rounded-xl bg-white pb-7">
+          <section className="min-w-0 rounded-xl bg-white">
             <div className="mb-6 flex flex-col gap-3">
               <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+                {/* Search */}
                 <label className="relative block w-full sm:max-w-[640px]">
                   <Search
                     size={16}
-                    className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9E886A]"
+                    className="
+                      pointer-events-none
+                      absolute left-4 top-1/2
+                      -translate-y-1/2
+                      text-[#9E886A]
+                    "
                   />
 
                   <input
                     value={search}
                     onChange={(event) =>
-                      updateParam("q", event.target.value)
+                      handleSearchChange(
+                        event.target.value,
+                      )
                     }
                     placeholder="Search categories"
-                    className="h-11 w-full rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/40 pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none shadow-2xs transition-all focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15"
+                    className="
+                      h-11 w-full
+                      rounded-lg
+                      border border-[#E4DDCF]
+                      bg-[#FAF6EE]/40
+                      pl-11 pr-11
+                      text-sm font-medium
+                      text-[#1F2430]
+                      placeholder-[#6F7480]
+                      outline-none
+                      transition-all
+                      focus:border-[#E4DDCF]
+                      focus:bg-white
+                      focus:ring-3
+                      focus:ring-[#D6A323]/15
+                      shadow-2xs
+                    "
                   />
 
                   {Boolean(search) && (
                     <button
                       type="button"
-                      onClick={() => updateParam("q", "")}
+                      onClick={() =>
+                        handleSearchChange("")
+                      }
                       aria-label="Clear search"
-                      className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#6F7480] transition hover:text-[#1F2430]"
+                      className="
+                        absolute right-4 top-1/2
+                        flex -translate-y-1/2
+                        items-center justify-center
+                        text-[#6F7480]
+                        transition
+                        hover:text-[#1F2430]
+                      "
                     >
                       <X size={16} />
                     </button>
                   )}
                 </label>
 
+                {/* Per page */}
                 <FilterDropdown
-                  options={PAGE_SIZE_OPTIONS.map((size) => ({
-                    value: size,
-                    label: `${size} per page`,
-                  }))}
+                  options={PAGE_SIZE_OPTIONS.map(
+                    (size) => ({
+                      value: size,
+                      label: `${size} per page`,
+                    }),
+                  )}
                   value={limit}
-                  onChange={(value) => {
-                    const nextLimit = Number(value);
-
-                    if (PAGE_SIZE_OPTIONS.includes(nextLimit)) {
-                      updateParam("limit", nextLimit);
-                    }
-                  }}
+                  onChange={handleLimitChange}
                   placeholder="Per page"
                   className="w-full sm:w-[150px]"
                 />
@@ -356,45 +479,83 @@ export default function CategoryListingPage() {
             {loading ? (
               <CategoryGridSkeleton count={limit} />
             ) : error ? (
-              <div className="rounded-[12px] border border-red-200 bg-red-50 p-6 text-center">
-                <p className="text-sm font-semibold text-red-700">
-                  {error}
-                </p>
-              </div>
-            ) : displayedCategories.length ? (
+              <EmptyState
+                imageSrc="/image/png/NoProductFound.png"
+                title="Unable to Load Categories"
+                description={error}
+              >
+                <Link
+                  to="/products"
+                  className="
+                    inline-flex h-11
+                    items-center justify-center
+                    gap-2 rounded-full
+                    bg-gradient-to-r
+                    from-[#B8891F] to-[#CE9F2D]
+                    px-6
+                    text-sm font-bold
+                    text-white
+                    shadow-sm
+                    transition-all duration-200
+                    hover:from-[#3E4093]
+                    hover:to-[#1B1D60]
+                    hover:shadow-md
+                  "
+                >
+                  <span>Explore Products</span>
+                  <ArrowRight size={16} />
+                </Link>
+              </EmptyState>
+            ) : categories.length ? (
               <>
                 <div className={categoryGridClass}>
-                  {displayedCategories.map((category) => (
+                  {categories.map((category) => (
                     <CategoryTile
                       key={
                         category.id ||
-                        category._id ||
-                        category.routeKey ||
-                        category.categoryKey
+                        category.routeKey
                       }
                       category={category}
                     />
                   ))}
                 </div>
 
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(newPage) =>
-                    updateParam("page", newPage)
-                  }
-                />
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
               </>
             ) : (
               <EmptyState
                 imageSrc="/image/png/NoProductFound.png"
                 title="No Categories Found"
-                description="We couldn't find any categories available at the moment. Please check back later or explore our products."
+                description={
+                  search
+                    ? `We couldn't find any categories matching "${search}". Please try another search.`
+                    : "We couldn't find any categories available at the moment. Please check back later or explore our products."
+                }
               >
                 <div className="flex flex-wrap items-center justify-center gap-3.5">
                   <Link
                     to="/products"
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] px-6 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:from-[#3E4093] hover:to-[#1B1D60] hover:shadow-md"
+                    className="
+                      inline-flex h-11
+                      items-center justify-center
+                      gap-2 rounded-full
+                      bg-gradient-to-r
+                      from-[#B8891F] to-[#CE9F2D]
+                      px-6
+                      text-sm font-bold
+                      text-white
+                      shadow-sm
+                      transition-all duration-200
+                      hover:from-[#3E4093]
+                      hover:to-[#1B1D60]
+                      hover:shadow-md
+                    "
                   >
                     <span>Explore Products</span>
                     <ArrowRight size={16} />
@@ -408,4 +569,3 @@ export default function CategoryListingPage() {
     </>
   );
 }
-  
