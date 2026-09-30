@@ -16,7 +16,6 @@ import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
 import { CategoryBar } from "../../layouts/Header";
-import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import LazySection from "../../components/ui/LazySection";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 
@@ -32,69 +31,15 @@ const PromoCampaignCarousel = React.lazy(
 const HomeProductsForYouSection = React.lazy(
   () => import("../../components/home/HomeProductsForYouSection"),
 );
-const CollageSection = React.lazy(
-  () => import("../../components/home/CollageSection"),
-);
-const ShowcaseSection = React.lazy(
-  () => import("../../components/home/ShowcaseSection"),
-);
 
-import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 import { getProductListFromResponse } from "../../utils/ecommerce";
 import { getCategoryListFromResponse } from "../../utils/pages/categoryUtils";
-
-const buildNewArrivalItems = (products) => {
-  if (!products.length) return [];
-
-  // Group by category (up to 3 groups)
-  const grouped = {};
-  for (const product of products) {
-    const cat = product?.category || "Uncategorized";
-    if (!grouped[cat]) grouped[cat] = [];
-    if (grouped[cat].length < 3) grouped[cat].push(product);
-  }
-
-  const categories = Object.keys(grouped).slice(0, 3);
-
-  return categories.map((cat, index) => {
-    const categoryProducts = grouped[cat];
-    let dynamicBadge = "";
-
-    // Find the first available badge from the products in this category
-    for (const p of categoryProducts) {
-      const b =
-        p?.badge ||
-        p?.deal?.badge ||
-        p?.metadata?.badge ||
-        p?.metadata?.dealBadge ||
-        (p?.isFeatured ? "Featured" : "");
-      if (b) {
-        dynamicBadge = b;
-        break;
-      }
-    }
-
-    // Fallback if no dynamic badge is found
-    if (!dynamicBadge) {
-      const fallbacks = ["New", "Trending", "Popular"];
-      dynamicBadge = fallbacks[index] || "New";
-    }
-
-    return {
-      id: `arrivals-${index}`,
-      badgeText: dynamicBadge,
-      badgeType: "new",
-      title: cat === "Uncategorized" ? "New Arrivals" : cat,
-      seeAllLink: `/products?category=${encodeURIComponent(cat)}`,
-      products: categoryProducts.map(toNewArrivalProduct),
-    };
-  });
-};
 
 export function HomePage() {
   const dispatch = useDispatch();
   const categoryList = useSelector((s) => s.catalog.globalCategories);
   const categories = Array.isArray(categoryList) ? categoryList : [];
+  console.log(categories);
   const [categoryRequestComplete, setCategoryRequestComplete] = useState(
     categories.length > 0,
   );
@@ -103,16 +48,12 @@ export function HomePage() {
   const hasFetchedRef = useRef(false);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const cmsList = useSelector((s) => s.cms.list);
-  const cmsPages = Array.isArray(cmsList) ? cmsList : [];
+
   const { page: promoCampaignPage } = useCmsRecord("promo-campaign-carousel");
   const { page: shoppingBannerPage } = useCmsRecord("shopping-banner");
   const products = homeProducts;
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
-
-  const isTrendingLoading = useSelector((s) => s.recommendation.loading);
-  const isCmsLoading = useSelector((s) => s.cms.loading);
-  const loading = homeLoading || isTrendingLoading;
 
   useEffect(() => {
     if (hasFetchedRef.current) return;
@@ -157,12 +98,6 @@ export function HomePage() {
       .slice(0, 5);
   }, [products, trendingProducts]);
 
-  // New arrivals grouped by category
-  const newArrivalItems = useMemo(
-    () => buildNewArrivalItems(products.slice(0, 12)),
-    [products],
-  );
-
   return (
     <AppErrorBoundary>
       <Seo
@@ -170,9 +105,7 @@ export function HomePage() {
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
       <Banner />
-      <CategoryBar
-        loading={!categoryRequestComplete && !categories.length}
-      />
+      <CategoryBar loading={!categoryRequestComplete && !categories.length} />
 
       {categories.length > 0 && (
         <HomeCategoryGrid
@@ -194,7 +127,6 @@ export function HomePage() {
       <LazySection minHeight="150px">
         <ShoppingMadeEasyBanner data={shoppingBannerPage} />
       </LazySection>
-
 
       {featuredProducts.length > 0 && (
         <LazySection minHeight="450px">
