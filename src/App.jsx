@@ -17,6 +17,8 @@ import Loader from "./components/ui/Loader";
 import AiSupportChatWidget from "./modules/support/components/AiSupportChatWidget";
 import { RaiseTicketModal } from "./modules/support/components/RaiseTicketModal";
 import { TicketSuccessModal } from "./modules/support/components/TicketSuccessModal";
+import ServiceUnavailableDialog from "./components/ui/ServiceUnavailableDialog";
+import { getServiceFailureKind, isServiceUnavailable } from "./api/client";
 
 const CART_STORAGE_KEYS = [
   "sam_global_saved_for_later_items", // localStorage
@@ -58,13 +60,13 @@ export default function  App() {
     const timeoutId = window.setTimeout(() => {
       if (isDone) return;
       isDone = true;
-      dispatch(logout());
       setSessionReady(true);
     }, 8000);
 
     dispatch(checkAuthStatus())
       .unwrap()
-      .catch(() => {
+      .catch((error) => {
+        if (getServiceFailureKind(error) || isServiceUnavailable()) return;
         clearCartStorage();
         dispatch(logout());
       })
@@ -114,6 +116,7 @@ export default function  App() {
         <AiSupportChatWidget />
         <RaiseTicketModal />
         <TicketSuccessModal />
+        <ServiceUnavailableDialog />
       </AuthModalProvider>
     </BrowserRouter>
   );

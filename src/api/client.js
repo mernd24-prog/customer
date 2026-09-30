@@ -37,6 +37,68 @@ const api = axios.create({
 
 let refreshPromise = null;
 const pendingCachedGetRequests = new Map();
+let serviceUnavailable = false;
+
+export const getServiceFailureKind = (error = {}) => {
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    return "offline";
+  }
+  if (["ECONNABORTED", "ETIMEDOUT"].includes(error?.code)) return "timeout";
+  if (error?.code === "ERR_NETWORK" || (!error?.response && error?.request)) {
+    return "unavailable";
+  }
+  if ([502, 504].includes(error?.response?.status)) return "unavailable";
+  if (error?.response?.status === 503) {
+    const data = error?.response?.data || {};
+    const code = data?.code || data?.error?.code || "";
+    const retryAfter = error?.response?.headers?.["retry-after"];
+    if (
+      retryAfter ||
+      [
+        "MAINTENANCE",
+        "SERVICE_UNAVAILABLE",
+        "DATABASE_UNAVAILABLE",
+        "DATABASE_TIMEOUT",
+      ].includes(code)
+    ) {
+      return "maintenance";
+    }
+  }
+  return null;
+};
+
+export const isServiceUnavailable = () => serviceUnavailable;
+
+const publishServiceAvailability = (available, detail = {}) => {
+  if (typeof window === "undefined") return;
+  if (available && !serviceUnavailable) return;
+  serviceUnavailable = !available;
+  window.dispatchEvent(
+    new CustomEvent("service:availability", {
+      detail: { available, ...detail },
+    }),
+  );
+};
+
+export const checkBackendAvailability = async () => {
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    publishServiceAvailability(false, { kind: "offline" });
+    return false;
+  }
+  try {
+    await axios.get(`${API_BASE_URL}/health`, {
+      timeout: Math.min(API_TIMEOUT_MS, 8000),
+      headers: { "Cache-Control": "no-store" },
+    });
+    publishServiceAvailability(true);
+    return true;
+  } catch (error) {
+    publishServiceAvailability(false, {
+      kind: getServiceFailureKind(error) || "unavailable",
+    });
+    return false;
+  }
+};
 
 const FORCE_LOGOUT_CODES = new Set([
   "USER_NOT_FOUND",
@@ -158,8 +220,18 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    publishServiceAvailability(true);
+    return response;
+  },
   async (error) => {
+    const failureKind = getServiceFailureKind(error);
+    if (failureKind) {
+      publishServiceAvailability(false, {
+        kind: failureKind,
+        retryAfter: Number(error?.response?.headers?.["retry-after"] || 0),
+      });
+    }
     const originalRequest = error.config;
     if (isPublicAuthEndpoint(originalRequest?.url)) {
       return Promise.reject(error);

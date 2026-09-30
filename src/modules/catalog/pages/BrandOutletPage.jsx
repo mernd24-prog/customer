@@ -64,6 +64,7 @@ export default function BrandOutletPage() {
         limit,
         q: search,
         sort,
+        hasProducts: true,
       })
     )
       .unwrap()
@@ -71,12 +72,12 @@ export default function BrandOutletPage() {
         if (!active) return;
 
         const rawList = listFromPayload(res);
-
+        // The backend applies hasProducts before pagination. Keep this guard so
+        // stale caches or older deployments can never expose empty brands.
         const list = Array.isArray(rawList)
           ? rawList.filter((brand) => {
-              const count = getBrandProductCount(brand);
-
-              return count === undefined ? true : count > 0;
+              const productCount = getBrandProductCount(brand);
+              return productCount === undefined || productCount > 0;
             })
           : [];
 
