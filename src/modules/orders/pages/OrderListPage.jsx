@@ -95,6 +95,7 @@ export default function OrderListPage() {
     availableTimeFilters,
     orderItemsList,
     totalOrders,
+    hasAnyOrders,
     pageSize,
     setPageSize,
     currentPage,
@@ -124,9 +125,9 @@ export default function OrderListPage() {
           resolveOrderItemDisplayStatus(
             item,
             getOrderStatus(order),
-            order?.shipments || [],
+            order?.relations?.shipments || order?.shipments || [],
             [],
-            order?.cancellations || [],
+            order?.relations?.cancellations || order?.cancellations || [],
           ),
         ).toLowerCase();
 
@@ -157,6 +158,10 @@ export default function OrderListPage() {
     });
   };
 
+  const isFilteredOrSearched = Boolean(
+    statusFilters.length || timeFilters.length || query,
+  );
+
   return (
     <>
       <Seo title="My Orders | Sam Global" />
@@ -169,7 +174,7 @@ export default function OrderListPage() {
 
         <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
           <div className="min-w-0 rounded-xl bg-white">
-            {!(state.loading && !totalOrders && !orderItemsList.length) && (
+            {hasAnyOrders && (
               <div className="mb-4 flex flex-col gap-3">
                 <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
                   <label className="relative block w-full sm:max-w-[640px]">
@@ -260,27 +265,31 @@ export default function OrderListPage() {
             )}
 
             <ApiState
-              loading={state.loading && !totalOrders}
+              loading={state.loading && !hasAnyOrders}
               error={state.error}
-              empty={
-                !orderItemsList.length &&
-                !state.loading &&
-                !!state.lastFetchedAt
-              }
+              empty={!orderItemsList.length && !state.loading}
               skeletonLayout={ORDER_LIST_SKELETON}
               skeletonContainerClass=""
               emptyTitle={
-                statusFilters.length || timeFilters.length
-                  ? "No orders found"
-                  : "No orders yet"
+                isFilteredOrSearched ? "No orders found" : "No orders yet"
               }
               emptyText={
-                statusFilters.length || timeFilters.length || query
+                isFilteredOrSearched
                   ? "Try adjusting your filters."
                   : "Once you place an order, it will appear here."
               }
-              emptyActionLabel="Continue Shopping"
-              onEmptyAction={() => navigate("/products")}
+              emptyActionLabel={
+                isFilteredOrSearched ? "Clear Filters" : "Continue Shopping"
+              }
+              onEmptyAction={() => {
+                if (isFilteredOrSearched) {
+                  setStatusFilters([]);
+                  setTimeFilters([]);
+                  setQuery("");
+                } else {
+                  navigate("/products");
+                }
+              }}
             >
               <div className="flex flex-col gap-3">
                 {orderItemsList.map(({ order, item }) => (

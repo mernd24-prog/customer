@@ -41,34 +41,34 @@ export default function CustomDropdown({
   const displayLabel = selectedOption?.label ?? selectedOption ?? placeholder;
 
   const updateScrollState = useCallback(() => {
-  const el = scrollContainerRef.current;
-  if (!el) return;
+    const el = scrollContainerRef.current;
+    if (!el) return;
 
-  // Do not show scrollbar for 5 or fewer options
-  if (options.length <= 5) {
-    setHasScroll(false);
-    setThumbTop(0);
-    return;
-  }
+    // Do not show scrollbar for 5 or fewer options
+    if (options.length <= 5) {
+      setHasScroll(false);
+      setThumbTop(0);
+      return;
+    }
 
-  const { scrollTop, scrollHeight, clientHeight } = el;
-  const canScroll = scrollHeight > clientHeight + 2;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    const canScroll = scrollHeight > clientHeight + 2;
 
-  setHasScroll(canScroll);
+    setHasScroll(canScroll);
 
-  if (canScroll) {
-    const availableScrollDistance = scrollHeight - clientHeight;
-    const availableTrackDistance =
-      clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
+    if (canScroll) {
+      const availableScrollDistance = scrollHeight - clientHeight;
+      const availableTrackDistance =
+        clientHeight - THUMB_HEIGHT - TRACK_PADDING * 2;
 
-    const scrollRatio = Math.max(
-      0,
-      Math.min(1, scrollTop / availableScrollDistance),
-    );
+      const scrollRatio = Math.max(
+        0,
+        Math.min(1, scrollTop / availableScrollDistance),
+      );
 
-    setThumbTop(scrollRatio * availableTrackDistance);
-  }
-}, [options.length]);
+      setThumbTop(scrollRatio * availableTrackDistance);
+    }
+  }, [options.length]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -178,6 +178,7 @@ export default function CustomDropdown({
         onClick={() => setIsOpen((previousState) => !previousState)}
         className={cn(
           "custom-dropdown-trigger",
+          "customer-dropdown-button",
           "flex h-11 w-full items-center justify-between",
           "rounded-lg border border-[#CE9F2D]",
           "bg-white px-3.5 sm:px-4 text-left",

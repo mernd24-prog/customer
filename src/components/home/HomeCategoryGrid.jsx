@@ -225,20 +225,18 @@ export default function HomeCategoryGrid({
           "
         >
           {displayCategories.map((category, index) => {
-            const categoryId =
-              category.id || category._id || category.routeKey;
+            const categoryId = category.id || category._id || category.routeKey;
             const categoryRouteKey =
               category.routeKey || category.categoryKey || category.slug;
 
             return (
               <SwiperSlide key={categoryId}>
                 <CategoryCard
-                  title={category.displayName || category.title || category.name}
+                  title={
+                    category.displayName || category.title || category.name
+                  }
                   image={
-                    category.displayImage ||
-                    category.imageUrl ||
-                    category.bannerUrl ||
-                    category.iconUrl
+                    category.bannerUrl || category.imageUrl || category.iconUrl
                   }
                   active={activeId === categoryId}
                   onClick={() => setActiveId(categoryId)}
@@ -291,7 +289,7 @@ export default function HomeCategoryGrid({
 
         {/* Pagination */}
         <div
-  className="
+          className="
     category-custom-pagination
     !static
     !relative
@@ -319,7 +317,7 @@ export default function HomeCategoryGrid({
     max-sm:[&_.swiper-pagination-bullet-active]:!h-[4px]
     max-sm:[&_.swiper-pagination-bullet-active]:!w-[11px]
   "
-/>
+        />
       </div>
     </SectionContainer>
   );

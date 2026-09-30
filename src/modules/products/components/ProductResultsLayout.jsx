@@ -95,7 +95,7 @@ export default function ProductResultsLayout({
         onRemove={onRemoveFilter}
       />
 
-      <div className="flex items-start gap-8 w-full mt-8">
+      <div className="flex items-start gap-8 w-full mt-4">
         {(!shouldShowEmpty ||
           filterSections?.length > 0 ||
           loading) && (

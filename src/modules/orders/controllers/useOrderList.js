@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchMyOrders } from "../slices/orderSlice";
+
 import {
   getOrderCollection,
   getOrderId,
@@ -18,73 +19,658 @@ const ORDER_HISTORY_FETCH_LIMIT = 200;
 
 const toPositiveInteger = (value, fallback) => {
   const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+
+  return Number.isInteger(parsed) && parsed > 0
+    ? parsed
+    : fallback;
+};
+
+/**
+ * All statuses that belong to the return/refund flow.
+ */
+const RETURN_STATUSES = new Set([
+  "returned",
+  "return_requested",
+  "requested",
+  "return_approved",
+  "approved",
+  "return_completed",
+  "partially_returned",
+  "return_qc_passed",
+  "qc_passed",
+  "qc_failed",
+  "qc_completed",
+  "qc_failure_upheld",
+  "reverse_pickup_scheduled",
+  "pickup_failed",
+  "manual_ship_back",
+  "shipped_back",
+  "in_reverse_transit",
+  "received",
+  "refund_pending",
+  "refund_failed",
+  "partially_refunded",
+  "refunded",
+]);
+
+const normalizeId = (value) => {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "object") {
+    return String(
+      value?._id ||
+        value?.id ||
+        value?.orderItemId ||
+        value?.itemId ||
+        value?.productId ||
+        "",
+    );
+  }
+
+  return String(value);
+};
+
+/**
+ * Get return records from the order.
+ */
+const getOrderReturns = (order) => {
+  if (!order) {
+    return [];
+  }
+
+  const possibleCollections = [
+    order?.relations?.returns,
+    order?.relations?.returnRequests,
+    order?.relations?.return_requests,
+
+    order?.returns,
+    order?.returnRequests,
+    order?.return_requests,
+
+    order?.returnItems,
+    order?.return_items,
+
+    order?.relations?.returnItems,
+    order?.relations?.return_items,
+  ];
+
+  const returns = [];
+
+  possibleCollections.forEach((collection) => {
+    if (Array.isArray(collection)) {
+      returns.push(...collection);
+    } else if (collection && typeof collection === "object") {
+      returns.push(collection);
+    }
+  });
+
+  return returns;
+};
+
+const getReturnStatus = (returnRecord) => {
+  if (!returnRecord) {
+    return "";
+  }
+
+  return String(
+    returnRecord?.status ||
+      returnRecord?.returnStatus ||
+      returnRecord?.return_status ||
+      returnRecord?.state ||
+      "",
+  )
+    .trim()
+    .toLowerCase();
+};
+
+/**
+ * Collect all possible order-item IDs from a return record.
+ */
+const getReturnItemIds = (returnRecord) => {
+  if (!returnRecord) {
+    return [];
+  }
+
+  const ids = new Set();
+
+  const addId = (value) => {
+    const id = normalizeId(value);
+
+    if (id) {
+      ids.add(id);
+    }
+  };
+
+  addId(returnRecord?.orderItemId);
+  addId(returnRecord?.order_item_id);
+  addId(returnRecord?.itemId);
+  addId(returnRecord?.item_id);
+
+  addId(returnRecord?.orderLineItemId);
+  addId(returnRecord?.order_line_item_id);
+
+  addId(returnRecord?.lineItemId);
+  addId(returnRecord?.line_item_id);
+
+  addId(returnRecord?.item?._id);
+  addId(returnRecord?.item?.id);
+  addId(returnRecord?.item?.orderItemId);
+  addId(returnRecord?.item?.order_item_id);
+
+  addId(returnRecord?.orderItem?._id);
+  addId(returnRecord?.orderItem?.id);
+  addId(returnRecord?.orderItem?.orderItemId);
+  addId(returnRecord?.orderItem?.order_item_id);
+
+  if (Array.isArray(returnRecord?.items)) {
+    returnRecord.items.forEach((item) => {
+      addId(item);
+      addId(item?._id);
+      addId(item?.id);
+      addId(item?.orderItemId);
+      addId(item?.order_item_id);
+      addId(item?.itemId);
+      addId(item?.item_id);
+    });
+  }
+
+  if (Array.isArray(returnRecord?.returnItems)) {
+    returnRecord.returnItems.forEach((item) => {
+      addId(item);
+      addId(item?._id);
+      addId(item?.id);
+      addId(item?.orderItemId);
+      addId(item?.order_item_id);
+      addId(item?.itemId);
+      addId(item?.item_id);
+    });
+  }
+
+  return Array.from(ids);
+};
+
+/**
+ * Check whether the specific item has an actual return.
+ *
+ * IMPORTANT:
+ * A confirmed/in-transit/delivered item is NOT returned
+ * unless it has a matching return record.
+ */
+export const hasReturnedItem = (order, item) => {
+  if (!order || !item) {
+    return false;
+  }
+
+  const returns = getOrderReturns(order);
+
+  if (!returns.length) {
+    return false;
+  }
+
+  const itemIds = new Set();
+
+  const addItemId = (value) => {
+    const id = normalizeId(value);
+
+    if (id) {
+      itemIds.add(id);
+    }
+  };
+
+  addItemId(item?._id);
+  addItemId(item?.id);
+  addItemId(item?.orderItemId);
+  addItemId(item?.order_item_id);
+  addItemId(item?.itemId);
+  addItemId(item?.item_id);
+
+  const itemVariantId = normalizeId(item?.variantId);
+  const itemProductId = normalizeId(item?.productId);
+
+  return returns.some((returnRecord) => {
+    const returnStatus = getReturnStatus(returnRecord);
+
+    if (!RETURN_STATUSES.has(returnStatus)) {
+      return false;
+    }
+
+    const returnItemIds = getReturnItemIds(returnRecord);
+
+    /**
+     * Prefer exact order-item matching.
+     */
+    if (returnItemIds.length > 0) {
+      return returnItemIds.some((returnItemId) =>
+        itemIds.has(returnItemId),
+      );
+    }
+
+    /**
+     * Fallback to variant/product matching.
+     */
+    const returnVariantId = normalizeId(
+      returnRecord?.variantId ||
+        returnRecord?.variant_id ||
+        returnRecord?.item?.variantId ||
+        returnRecord?.item?.variant_id ||
+        returnRecord?.orderItem?.variantId ||
+        returnRecord?.orderItem?.variant_id,
+    );
+
+    const returnProductId = normalizeId(
+      returnRecord?.productId ||
+        returnRecord?.product_id ||
+        returnRecord?.item?.productId ||
+        returnRecord?.item?.product_id ||
+        returnRecord?.orderItem?.productId ||
+        returnRecord?.orderItem?.product_id,
+    );
+
+    if (
+      returnVariantId &&
+      itemVariantId &&
+      returnVariantId === itemVariantId
+    ) {
+      return true;
+    }
+
+    if (
+      returnProductId &&
+      itemProductId &&
+      returnProductId === itemProductId
+    ) {
+      return true;
+    }
+
+    return false;
+  });
+};
+
+/**
+ * Convert an item/order status into the Orders page filter category.
+ *
+ * Returned is based on the actual return record.
+ * An order-level "returned" status does not automatically make
+ * every item in that order returned.
+ */
+export const resolveOrderFilterCategory = (
+  itemStatus,
+  orderStatus,
+  isReturned = false,
+) => {
+  const normItem = String(itemStatus || "").toLowerCase();
+  const normOrder = String(orderStatus || "").toLowerCase();
+
+  const deliveredSet = new Set([
+    "delivered",
+    "fulfilled",
+    "completed",
+    "partially_delivered",
+  ]);
+
+  const returnedSet = new Set([
+    "returned",
+    "return_requested",
+    "return_approved",
+    "return_completed",
+    "return_qc_passed",
+    "qc_passed",
+    "partially_returned",
+    "refunded",
+    "refund_pending",
+    "partially_refunded",
+  ]);
+
+  const cancelledSet = new Set([
+    "cancelled",
+    "cancellation_requested",
+    "cancellation_approved",
+    "cancellation_pending",
+  ]);
+
+  const paymentFailedSet = new Set([
+    "payment_failed",
+    "failed",
+    "pending_payment",
+  ]);
+
+  /**
+   * Actual return record gets highest priority.
+   */
+  if (isReturned) {
+    return "returned";
+  }
+
+  /**
+   * Explicit item-level return status is also returned.
+   */
+  if (returnedSet.has(normItem)) {
+    return "returned";
+  }
+
+  /**
+   * Do NOT use order-level returned status here.
+   *
+   * One order can contain:
+   * Item A -> returned
+   * Item B -> delivered
+   *
+   * Therefore the order status cannot mark all items as returned.
+   */
+
+  if (deliveredSet.has(normItem)) {
+    return "delivered";
+  }
+
+  if (cancelledSet.has(normItem)) {
+    return "cancelled";
+  }
+
+  if (paymentFailedSet.has(normItem)) {
+    return "payment_failed";
+  }
+
+  if (deliveredSet.has(normOrder)) {
+    return "delivered";
+  }
+
+  if (cancelledSet.has(normOrder)) {
+    return "cancelled";
+  }
+
+  if (paymentFailedSet.has(normOrder)) {
+    return "payment_failed";
+  }
+
+  return "on_the_way";
+};
+
+const getOrderItemDate = (order) => {
+  return (
+    order?.createdAt ||
+    order?.orderDate ||
+    order?.orderedAt ||
+    order?.created_at ||
+    0
+  );
+};
+
+const getTimeFilter = (dateValue) => {
+  if (!dateValue) {
+    return "older";
+  }
+
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return "older";
+  }
+
+  const now = new Date();
+
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  );
+
+  const thirtyDaysAgo = new Date(startOfToday);
+
+  thirtyDaysAgo.setDate(
+    thirtyDaysAgo.getDate() - 30,
+  );
+
+  if (date >= thirtyDaysAgo) {
+    return "last_30_days";
+  }
+
+  if (date.getFullYear() === now.getFullYear()) {
+    return "current_year";
+  }
+
+  if (
+    date.getFullYear() ===
+    now.getFullYear() - 1
+  ) {
+    return "previous_year";
+  }
+
+  if (
+    date.getFullYear() ===
+    now.getFullYear() - 2
+  ) {
+    return "two_years_ago";
+  }
+
+  return "older";
+};
+
+const matchesTimeFilter = (dateValue, filter) => {
+  if (!filter || filter === "all") {
+    return true;
+  }
+
+  return getTimeFilter(dateValue) === filter;
+};
+
+const getItemSearchText = (item, order) => {
+  const productTitle = getProductTitle(item);
+
+  const orderId = formatOrderId(
+    getOrderId(order) || getApiOrderId(order),
+  );
+
+  return normalizeOrderSearchText(
+    [
+      productTitle,
+      orderId,
+      item?.sku,
+      item?.productSku,
+      item?.variantSku,
+      item?.color,
+      item?.size,
+      item?.sellerName,
+      item?.seller?.name,
+      item?.trackingNumber,
+      item?.tracking_number,
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
 };
 
 export function useOrderList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [searchParams, setSearchParams] =
+    useSearchParams();
+
   const state = useSelector((s) => s.order);
+
   const syncTimerRef = useRef(null);
-  const locallySyncedSearchRef = useRef(searchParams.toString());
+  const locallySyncedSearchRef = useRef(
+    searchParams.toString(),
+  );
 
-  // ---------------------------------------------------------
-  // URL INITIAL VALUES
-  // ---------------------------------------------------------
+  const initialStatus =
+    searchParams.get("status") || "all";
 
-  const initialStatus = (() => {
-    const v = searchParams.get("status");
-    return v ? v.split(",").filter(Boolean) : [];
-  })();
+  const initialTime =
+    searchParams.get("time") || "all";
 
-  const initialTime = (() => {
-    const v = searchParams.get("time");
-    return v ? v.split(",").filter(Boolean) : [];
-  })();
+  const initialQuery =
+    searchParams.get("q") || "";
 
-  const initialQuery = searchParams.get("q") || "";
+  const initialPageSize = toPositiveInteger(
+    searchParams.get("limit"),
+    10,
+  );
 
-  const initialPageSize = toPositiveInteger(searchParams.get("limit"), 10);
-
-  const initialPage = toPositiveInteger(searchParams.get("page"), 1);
-
-  // ---------------------------------------------------------
-  // STATE
-  // ---------------------------------------------------------
+  const initialPage = toPositiveInteger(
+    searchParams.get("page"),
+    1,
+  );
 
   const [statusFilters, setStatusFilters] =
-    useState(initialStatus);
+    useState(
+      initialStatus === "all"
+        ? []
+        : [initialStatus],
+    );
 
   const [timeFilters, setTimeFilters] =
-    useState(initialTime);
+    useState(
+      initialTime === "all"
+        ? []
+        : [initialTime],
+    );
 
   const [query, setQuery] =
     useState(initialQuery);
 
-  const [pageSize, setPageSize] =
+  const [pageSize, setPageSizeState] =
     useState(initialPageSize);
 
   const [currentPage, setCurrentPage] =
     useState(initialPage);
 
-  // ---------------------------------------------------------
-  // ORDERS
-  // ---------------------------------------------------------
+  /**
+   * Get all orders from Redux.
+   */
+  const allOrders = useMemo(() => {
+    if (
+      Array.isArray(state?.list) &&
+      state.list.length
+    ) {
+      return state.list;
+    }
 
-  const allOrders =
-    state.list.length
-      ? state.list
-      : getOrderCollection(state.current);
+    const collection = getOrderCollection(
+      state?.current,
+    );
 
-  const currentYear = new Date().getFullYear();
+    return Array.isArray(collection)
+      ? collection
+      : [];
+  }, [state?.list, state?.current]);
 
-  // ---------------------------------------------------------
-  // STATUS / TIME COUNTS
-  // ---------------------------------------------------------
+  /**
+   * Flatten orders into individual items.
+   *
+   * Pagination is based on items, not packages/orders.
+   */
+  const orderItemsList = useMemo(() => {
+    const flattened = [];
 
-  const { statusCounts, timeCounts } = useMemo(() => {
-    const sCounts = {
+    allOrders.forEach((order) => {
+      const items = getOrderItems(order);
+
+      if (
+        !Array.isArray(items) ||
+        !items.length
+      ) {
+        return;
+      }
+
+      const orderStatus =
+        getOrderStatus(order);
+
+      const shipments =
+        order?.relations?.shipments ||
+        order?.shipments ||
+        [];
+
+      const cancellations =
+        order?.relations?.cancellations ||
+        order?.cancellations ||
+        [];
+
+      /**
+       * Get actual return records.
+       */
+      const returns =
+        getOrderReturns(order);
+
+      items.forEach((item, itemIndex) => {
+        /**
+         * Check this specific product.
+         */
+        const isReturned =
+          hasReturnedItem(order, item);
+
+        /**
+         * Resolve display status using actual
+         * return records instead of [].
+         */
+        const itemStatus =
+          resolveOrderItemDisplayStatus(
+            item,
+            orderStatus,
+            shipments,
+            returns,
+            cancellations,
+          );
+
+        const filterCategory =
+          resolveOrderFilterCategory(
+            itemStatus,
+            orderStatus,
+            isReturned,
+          );
+
+        const orderDate =
+          getOrderItemDate(order);
+
+        /**
+         * IMPORTANT:
+         *
+         * Keep BOTH `item` and `orderItem`.
+         *
+         * OrderListPage currently does:
+         * orderItemsList.map(({ order, item }) => ...)
+         *
+         * So removing `item` causes:
+         * Cannot read properties of undefined
+         * (reading 'has_reviewed')
+         */
+        flattened.push({
+          ...item,
+
+          order,
+
+          item,
+
+          orderItem: item,
+
+          itemIndex,
+
+          itemStatus,
+
+          filterCategory,
+
+          isReturned,
+
+          orderStatus,
+
+          orderDate,
+
+          returns,
+        });
+      });
+    });
+
+    return flattened;
+  }, [allOrders]);
+
+  /**
+   * Count individual items by status.
+   */
+  const statusCounts = useMemo(() => {
+    const counts = {
+      all: orderItemsList.length,
       on_the_way: 0,
       delivered: 0,
       cancelled: 0,
@@ -92,810 +678,234 @@ export function useOrderList() {
       payment_failed: 0,
     };
 
-    const tCounts = {
+    orderItemsList.forEach((item) => {
+      const category =
+        item?.filterCategory;
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          counts,
+          category,
+        )
+      ) {
+        counts[category] += 1;
+      }
+    });
+
+    return counts;
+  }, [orderItemsList]);
+
+  /**
+   * Count individual items by date.
+   */
+  const timeCounts = useMemo(() => {
+    const counts = {
+      all: orderItemsList.length,
       last_30_days: 0,
-      [String(currentYear)]: 0,
-      [String(currentYear - 1)]: 0,
-      [String(currentYear - 2)]: 0,
+      current_year: 0,
+      previous_year: 0,
+      two_years_ago: 0,
       older: 0,
     };
 
-    allOrders.forEach((order) => {
-      const shipments = Array.isArray(
-        order?.relations?.shipments
-      )
-        ? order.relations.shipments
-        : [];
+    orderItemsList.forEach((item) => {
+      const timeCategory =
+        getTimeFilter(
+          item?.orderDate,
+        );
 
-      const orderDate = new Date(
-        order?.created_at ||
-          order?.createdAt ||
-          Date.now()
-      );
-
-      getOrderItems(order).forEach((item) => {
-        const itemStatus =
-          resolveOrderItemDisplayStatus(
-            item,
-            getOrderStatus(order),
-            shipments,
-            [],
-            order?.relations?.cancellations ||
-              order?.cancellations ||
-              []
-          );
-
-        const normalizedItemStatus =
-          String(itemStatus || "").toLowerCase();
-
-        const normalizedOrderStatus =
-          String(
-            getOrderStatus(order) || ""
-          ).toLowerCase();
-
-        const deliveredSet = new Set([
-          "delivered",
-          "fulfilled",
-          "completed",
-          "partially_delivered",
-        ]);
-
-        const paymentFailedSet = new Set([
-          "payment_failed",
-        ]);
-
-        const cancelledSet = new Set([
-          "cancelled",
-          "cancellation_requested",
-          "cancellation_approved",
-        ]);
-
-        const returnedSet = new Set([
-          "returned",
-          "return_requested",
-          "return_approved",
-          "partially_returned",
-          "refunded",
-          "partially_refunded",
-        ]);
-
-        let category = "on_the_way";
-
-        if (
-          paymentFailedSet.has(normalizedItemStatus) ||
-          paymentFailedSet.has(normalizedOrderStatus)
-        ) {
-          category = "payment_failed";
-        } else if (
-          cancelledSet.has(normalizedItemStatus) ||
-          cancelledSet.has(normalizedOrderStatus)
-        ) {
-          category = "cancelled";
-        } else if (
-          returnedSet.has(normalizedItemStatus) ||
-          returnedSet.has(normalizedOrderStatus)
-        ) {
-          category = "returned";
-        } else if (
-          deliveredSet.has(normalizedItemStatus) ||
-          deliveredSet.has(normalizedOrderStatus)
-        ) {
-          category = "delivered";
-        }
-
-        if (category === "delivered") {
-          sCounts.delivered++;
-        } else if (category === "cancelled") {
-          sCounts.cancelled++;
-        } else if (category === "returned") {
-          sCounts.returned++;
-        } else if (category === "payment_failed") {
-          sCounts.payment_failed++;
-        } else {
-          sCounts.on_the_way++;
-        }
-
-        const now = new Date();
-
-        const daysDiff =
-          (now - orderDate) /
-          (1000 * 60 * 60 * 24);
-
-        const orderYear = orderDate.getFullYear();
-
-        if (daysDiff <= 30) {
-          tCounts.last_30_days++;
-        }
-
-        if (orderYear === currentYear) {
-          tCounts[String(currentYear)]++;
-        }
-
-        if (orderYear === currentYear - 1) {
-          tCounts[String(currentYear - 1)]++;
-        }
-
-        if (orderYear === currentYear - 2) {
-          tCounts[String(currentYear - 2)]++;
-        }
-
-        if (orderYear < currentYear - 2) {
-          tCounts.older++;
-        }
-      });
-    });
-
-    return {
-      statusCounts: sCounts,
-      timeCounts: tCounts,
-    };
-  }, [allOrders, currentYear]);
-
-  // ---------------------------------------------------------
-  // AVAILABLE STATUS FILTERS
-  // ---------------------------------------------------------
-
-  const availableStatusFilters = [
-    {
-      label: "On the way",
-      value: "on_the_way",
-      count: statusCounts.on_the_way,
-    },
-    {
-      label: "Delivered",
-      value: "delivered",
-      count: statusCounts.delivered,
-    },
-    {
-      label: "Cancelled",
-      value: "cancelled",
-      count: statusCounts.cancelled,
-    },
-    {
-      label: "Payment Failed",
-      value: "payment_failed",
-      count: statusCounts.payment_failed,
-    },
-    {
-      label: "Returned",
-      value: "returned",
-      count: statusCounts.returned,
-    },
-  ].filter(
-    (f) =>
-      f.count > 0 ||
-      statusFilters.includes(f.value)
-  );
-
-  // ---------------------------------------------------------
-  // AVAILABLE TIME FILTERS
-  // ---------------------------------------------------------
-
-  const availableTimeFilters = [
-    {
-      label: "Last 30 days",
-      value: "last_30_days",
-      count: timeCounts.last_30_days,
-    },
-    {
-      label: String(currentYear),
-      value: String(currentYear),
-      count: timeCounts[String(currentYear)],
-    },
-    {
-      label: String(currentYear - 1),
-      value: String(currentYear - 1),
-      count: timeCounts[String(currentYear - 1)],
-    },
-    {
-      label: String(currentYear - 2),
-      value: String(currentYear - 2),
-      count: timeCounts[String(currentYear - 2)],
-    },
-    {
-      label: "Older",
-      value: "older",
-      count: timeCounts.older,
-    },
-  ].filter(
-    (f) =>
-      f.count > 0 ||
-      timeFilters.includes(f.value)
-  );
-
-  // ---------------------------------------------------------
-  // FILTER CURRENT API RESULT
-  // ---------------------------------------------------------
-
-  const orderItemsList = useMemo(() => {
-    let term = (query || "")
-      .trim()
-      .toLowerCase();
-
-    const normalizedTerm =
-      normalizeOrderSearchText(query || "");
-
-    if (term.startsWith("#")) {
-      term = term.slice(1);
-    }
-
-    const results = allOrders.flatMap((order) => {
-      const id = String(
-        getOrderId(order) || ""
-      ).toLowerCase();
-
-      const apiOrderId =
-        getApiOrderId(order);
-
-      const orderNumber = String(
-        apiOrderId || ""
-      ).toLowerCase();
-
-      const formattedId = String(
-        formatOrderId(
-          orderNumber || id
+      if (
+        Object.prototype.hasOwnProperty.call(
+          counts,
+          timeCategory,
         )
-      ).toLowerCase();
-
-      const visibleOrderIdText =
-        `order id #${apiOrderId}`.toLowerCase();
-
-      const shipments = Array.isArray(
-        order?.relations?.shipments
-      )
-        ? order.relations.shipments
-        : [];
-
-      const trackingText = shipments
-        .flatMap((shipment) => [
-          shipment?.tracking_number,
-          shipment?.trackingNumber,
-          shipment?.awb_number,
-          shipment?.awbNumber,
-          ...(Array.isArray(shipment?.trackingEvents)
-            ? shipment.trackingEvents.flatMap((event) => [
-                event?.tracking_number,
-                event?.trackingNumber,
-                event?.awb_number,
-                event?.awbNumber,
-              ])
-            : []),
-        ])
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      const orderDate = new Date(
-        order?.created_at ||
-          order?.createdAt ||
-          Date.now()
-      );
-
-      return getOrderItems(order)
-        .map((item) => {
-          const itemStatus =
-            resolveOrderItemDisplayStatus(
-              item,
-              getOrderStatus(order),
-              shipments,
-              [],
-              order?.relations?.cancellations ||
-                order?.cancellations ||
-                []
-            );
-
-          return {
-            order,
-            item,
-            itemStatus,
-            orderDate,
-          };
-        })
-        .filter(
-          ({
-            order,
-            item,
-            itemStatus,
-            orderDate,
-          }) => {
-            // -------------------------------------------------
-            // STATUS FILTER
-            // -------------------------------------------------
-
-            if (statusFilters.length > 0) {
-              const normalizedItemStatus =
-                String(
-                  itemStatus || ""
-                ).toLowerCase();
-
-              const normalizedOrderStatus =
-                String(
-                  getOrderStatus(order) || ""
-                ).toLowerCase();
-
-              const deliveredSet =
-                new Set([
-                  "delivered",
-                  "fulfilled",
-                  "completed",
-                  "partially_delivered",
-                ]);
-
-              const paymentFailedSet =
-                new Set([
-                  "payment_failed",
-                ]);
-
-              const cancelledSet =
-                new Set([
-                  "cancelled",
-                  "cancellation_requested",
-                  "cancellation_approved",
-                ]);
-
-              const returnedSet =
-                new Set([
-                  "returned",
-                  "return_requested",
-                  "return_approved",
-                  "partially_returned",
-                  "refunded",
-                  "partially_refunded",
-                ]);
-
-              let category =
-                "on_the_way";
-
-              if (
-                paymentFailedSet.has(
-                  normalizedItemStatus
-                ) ||
-                paymentFailedSet.has(
-                  normalizedOrderStatus
-                )
-              ) {
-                category =
-                  "payment_failed";
-              } else if (
-                cancelledSet.has(
-                  normalizedItemStatus
-                ) ||
-                cancelledSet.has(
-                  normalizedOrderStatus
-                )
-              ) {
-                category = "cancelled";
-              } else if (
-                returnedSet.has(
-                  normalizedItemStatus
-                ) ||
-                returnedSet.has(
-                  normalizedOrderStatus
-                )
-              ) {
-                category = "returned";
-              } else if (
-                deliveredSet.has(
-                  normalizedItemStatus
-                ) ||
-                deliveredSet.has(
-                  normalizedOrderStatus
-                )
-              ) {
-                category = "delivered";
-              }
-
-              if (
-                !statusFilters.includes(
-                  category
-                )
-              ) {
-                return false;
-              }
-            }
-
-            // -------------------------------------------------
-            // TIME FILTER
-            // -------------------------------------------------
-
-            if (timeFilters.length > 0) {
-              const now = new Date();
-
-              const daysDiff =
-                (now - orderDate) /
-                (1000 * 60 * 60 * 24);
-
-              const orderYear =
-                orderDate.getFullYear();
-
-              const matchesTime =
-                timeFilters.some((f) => {
-                  if (
-                    f === "last_30_days"
-                  ) {
-                    return daysDiff <= 30;
-                  }
-
-                  if (
-                    f === String(
-                      currentYear
-                    )
-                  ) {
-                    return (
-                      orderYear ===
-                      currentYear
-                    );
-                  }
-
-                  if (
-                    f === String(
-                      currentYear - 1
-                    )
-                  ) {
-                    return (
-                      orderYear ===
-                      currentYear - 1
-                    );
-                  }
-
-                  if (
-                    f === String(
-                      currentYear - 2
-                    )
-                  ) {
-                    return (
-                      orderYear ===
-                      currentYear - 2
-                    );
-                  }
-
-                  if (f === "older") {
-                    return (
-                      orderYear <
-                      currentYear - 2
-                    );
-                  }
-
-                  return false;
-                });
-
-              if (!matchesTime) {
-                return false;
-              }
-            }
-
-            // -------------------------------------------------
-            // SEARCH
-            // -------------------------------------------------
-
-            if (!query) {
-              return true;
-            }
-
-            const searchTerm =
-              query.toLowerCase();
-
-            const normalizedSearchTerm =
-              normalizeOrderSearchText(
-                searchTerm
-              );
-
-            const idText = String(
-              order.id || ""
-            ).toLowerCase();
-
-            const apiIdText = String(
-              order.api_order_id || ""
-            ).toLowerCase();
-
-            const orderNumText =
-              String(
-                order.order_number || ""
-              ).toLowerCase();
-
-            const formattedIdText =
-              `ord-${order.id}`.toLowerCase();
-
-            const visibleOrderText =
-              (
-                order.order_number ||
-                `ORD-${order.id}`
-              ).toLowerCase();
-
-            const itemText =
-              getProductTitle(
-                item
-              ).toLowerCase();
-
-            const normalizedOrderText =
-              normalizeOrderSearchText(
-                [
-                  idText,
-                  apiIdText,
-                  formattedIdText,
-                  visibleOrderText,
-                  itemText,
-                  itemStatus,
-                  trackingText,
-                ].join(" ")
-              );
-
-            return (
-              idText.includes(searchTerm) ||
-              orderNumText.includes(
-                searchTerm
-              ) ||
-              formattedIdText.includes(
-                searchTerm
-              ) ||
-              itemText.includes(
-                searchTerm
-              ) ||
-              trackingText.includes(
-                searchTerm
-              ) ||
-              visibleOrderText.includes(
-                searchTerm
-              ) ||
-              String(
-                itemStatus || ""
-              )
-                .toLowerCase()
-                .includes(searchTerm) ||
-              (Boolean(
-                normalizedSearchTerm
-              ) &&
-                normalizedOrderText.includes(
-                  normalizedSearchTerm
-                ))
-            );
-          }
-        );
+      ) {
+        counts[timeCategory] += 1;
+      }
     });
 
-    return results.sort(
-      (a, b) =>
-        b.orderDate - a.orderDate
-    );
-  }, [
-    allOrders,
-    currentYear,
-    statusFilters,
-    timeFilters,
-    query,
-  ]);
+    return counts;
+  }, [orderItemsList]);
 
-  // ---------------------------------------------------------
-  // PAGINATE THE FILTERED ITEM RESULTS
-  // ---------------------------------------------------------
-
-  const totalOrders = orderItemsList.length;
-  const totalPages = Math.max(1, Math.ceil(totalOrders / pageSize));
-  const pageStart = (currentPage - 1) * pageSize;
-  const paginatedOrders = orderItemsList.slice(pageStart, pageStart + pageSize);
-
-  // ---------------------------------------------------------
-  // FETCH THE HISTORY USED BY ITEM-LEVEL SEARCH/FILTER/PAGINATION
-  // ---------------------------------------------------------
-
-  useEffect(() => {
-    dispatch(
-      fetchMyOrders({
-        params: {
-          limit: ORDER_HISTORY_FETCH_LIMIT,
-          offset: 0,
+  const availableStatusFilters =
+    useMemo(
+      () => [
+        {
+          value: "on_the_way",
+          label: "On the Way",
+          count:
+            statusCounts.on_the_way,
         },
-      })
+        {
+          value: "delivered",
+          label: "Delivered",
+          count:
+            statusCounts.delivered,
+        },
+        {
+          value: "cancelled",
+          label: "Cancelled",
+          count:
+            statusCounts.cancelled,
+        },
+        {
+          value: "returned",
+          label: "Returned",
+          count:
+            statusCounts.returned,
+        },
+        {
+          value: "payment_failed",
+          label: "Payment Failed",
+          count:
+            statusCounts.payment_failed,
+        },
+      ],
+      [statusCounts],
     );
-  }, [dispatch]);
 
-  // A page selected for the previous result set may not exist after a filter,
-  // search, time range, or page-size change.
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [statusFilters, timeFilters, query, pageSize]);
+  const availableTimeFilters =
+    useMemo(
+      () => [
+        {
+          value: "last_30_days",
+          label: "Last 30 Days",
+          count:
+            timeCounts.last_30_days,
+        },
+        {
+          value: "current_year",
+          label: "This Year",
+          count:
+            timeCounts.current_year,
+        },
+        {
+          value: "previous_year",
+          label: "Last Year",
+          count:
+            timeCounts.previous_year,
+        },
+        {
+          value: "two_years_ago",
+          label: "2 Years Ago",
+          count:
+            timeCounts.two_years_ago,
+        },
+        {
+          value: "older",
+          label: "Older",
+          count:
+            timeCounts.older,
+        },
+      ],
+      [timeCounts],
+    );
 
-  // ---------------------------------------------------------
-  // KEEP URL IN SYNC
-  // ---------------------------------------------------------
+  /**
+   * Apply filters.
+   */
+  const filteredOrderItems = useMemo(() => {
+    const normalizedQuery =
+      normalizeOrderSearchText(query);
 
-  useEffect(() => {
-    const params =
-      new URLSearchParams(
-        searchParams.toString()
-      );
+    return orderItemsList
+      .filter((entry) => {
+        /**
+         * STATUS FILTER
+         */
+        if (statusFilters.length) {
+          const selectedStatus =
+            statusFilters[0];
 
-    const statusSorted = Array.from(
-      new Set(statusFilters)
-    )
-      .slice()
-      .sort();
-
-    if (statusSorted.length) {
-      params.set(
-        "status",
-        statusSorted.join(",")
-      );
-    } else {
-      params.delete("status");
-    }
-
-    const timeSorted = Array.from(
-      new Set(timeFilters)
-    )
-      .slice()
-      .sort();
-
-    if (timeSorted.length) {
-      params.set(
-        "time",
-        timeSorted.join(",")
-      );
-    } else {
-      params.delete("time");
-    }
-
-    if (query) {
-      params.set("q", query);
-    } else {
-      params.delete("q");
-    }
-
-    // Always keep the selected limit
-    if (pageSize) {
-      params.set(
-        "limit",
-        String(pageSize)
-      );
-    } else {
-      params.delete("limit");
-    }
-
-    // Always keep the current page
-    if (currentPage) {
-      params.set(
-        "page",
-        String(currentPage)
-      );
-    } else {
-      params.delete("page");
-    }
-
-    const current =
-      searchParams.toString();
-
-    const next =
-      params.toString();
-
-    if (current !== next) {
-      if (syncTimerRef.current) {
-        clearTimeout(
-          syncTimerRef.current
-        );
-      }
-
-      syncTimerRef.current =
-        setTimeout(() => {
-          // Mark this URL as an internal write before navigation updates
-          // searchParams. This prevents the URL reader below from restoring
-          // stale values while a dropdown/search change is being synchronized.
-          locallySyncedSearchRef.current = next;
-          setSearchParams(
-            params,
-            {
-              replace: true,
+          /**
+           * Returned is STRICTLY item-level.
+           *
+           * This prevents normal confirmed,
+           * in_transit and delivered products
+           * from appearing in Returned.
+           */
+          if (
+            selectedStatus === "returned"
+          ) {
+            if (!entry?.isReturned) {
+              return false;
             }
-          );
+          } else if (
+            entry?.filterCategory !==
+            selectedStatus
+          ) {
+            return false;
+          }
+        }
 
-          syncTimerRef.current =
-            null;
-        }, 120);
-    }
+        /**
+         * TIME FILTER
+         */
+        if (timeFilters.length) {
+          if (
+            !matchesTimeFilter(
+              entry?.orderDate,
+              timeFilters[0],
+            )
+          ) {
+            return false;
+          }
+        }
 
-    return () => {
-      if (syncTimerRef.current) {
-        clearTimeout(
-          syncTimerRef.current
-        );
+        /**
+         * SEARCH
+         */
+        if (normalizedQuery) {
+          const searchableText =
+            getItemSearchText(
+              entry?.item || entry,
+              entry?.order,
+            );
 
-        syncTimerRef.current =
-          null;
-      }
-    };
+          if (
+            !searchableText.includes(
+              normalizedQuery,
+            )
+          ) {
+            return false;
+          }
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        const dateA = new Date(
+          a?.orderDate || 0,
+        ).getTime();
+
+        const dateB = new Date(
+          b?.orderDate || 0,
+        ).getTime();
+
+        return dateB - dateA;
+      });
   }, [
+    orderItemsList,
     statusFilters,
     timeFilters,
     query,
-    pageSize,
-    currentPage,
-    searchParams,
-    setSearchParams,
   ]);
 
-  // ---------------------------------------------------------
-  // SYNC STATE FROM URL
-  // ---------------------------------------------------------
+  const totalOrders =
+    filteredOrderItems.length;
 
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      totalOrders / pageSize,
+    ),
+  );
+
+  /**
+   * Keep current page valid after filtering.
+   */
   useEffect(() => {
-    const currentSearch = searchParams.toString();
-
-    if (currentSearch === locallySyncedSearchRef.current) {
-      return;
-    }
-
-    // A different URL came from browser navigation or an external link.
-    // Adopt it as the new source before updating local controls.
-    locallySyncedSearchRef.current = currentSearch;
-
-    const spStatus =
-      searchParams.get("status")
-        ? searchParams
-            .get("status")
-            .split(",")
-            .filter(Boolean)
-        : [];
-
-    const spTime =
-      searchParams.get("time")
-        ? searchParams
-            .get("time")
-            .split(",")
-            .filter(Boolean)
-        : [];
-
-    const spQuery =
-      searchParams.get("q") || "";
-
-    const spLimit = toPositiveInteger(searchParams.get("limit"), 10);
-
-    const spPage = toPositiveInteger(searchParams.get("page"), 1);
-
-    const sameStatus =
-      spStatus.length ===
-        statusFilters.length &&
-      spStatus.every(
-        (v, i) =>
-          v === statusFilters[i]
-      );
-
-    const sameTime =
-      spTime.length ===
-        timeFilters.length &&
-      spTime.every(
-        (v, i) =>
-          v === timeFilters[i]
-      );
-
-    if (!sameStatus) {
-      setStatusFilters(spStatus);
-    }
-
-    if (!sameTime) {
-      setTimeFilters(spTime);
-    }
-
-    if (spQuery !== query) {
-      setQuery(spQuery);
-    }
-
-    if (spLimit !== pageSize) {
-      setPageSize(spLimit);
-    }
-
-    if (spPage !== currentPage) {
-      setCurrentPage(spPage);
-    }
-  }, [searchParams]);
-
-  // ---------------------------------------------------------
-  // PROTECT AGAINST INVALID CURRENT PAGE
-  // ---------------------------------------------------------
-
-  useEffect(() => {
-    if (
-      totalPages > 0 &&
-      currentPage > totalPages
-    ) {
+    if (currentPage > totalPages) {
       setCurrentPage(totalPages);
     }
   }, [
@@ -903,36 +913,330 @@ export function useOrderList() {
     totalPages,
   ]);
 
-  // ---------------------------------------------------------
-  // RETURN
-  // ---------------------------------------------------------
+  /**
+   * Current page items.
+   */
+  const paginatedOrderItems =
+    useMemo(() => {
+      const startIndex =
+        (currentPage - 1) *
+        pageSize;
+
+      const endIndex =
+        startIndex + pageSize;
+
+      return filteredOrderItems.slice(
+        startIndex,
+        endIndex,
+      );
+    }, [
+      filteredOrderItems,
+      currentPage,
+      pageSize,
+    ]);
+
+  /**
+   * Fetch order history.
+   */
+  useEffect(() => {
+    dispatch(
+      fetchMyOrders({
+        limit:
+          ORDER_HISTORY_FETCH_LIMIT,
+        offset: 0,
+      }),
+    );
+  }, [dispatch]);
+
+  /**
+   * Reset page when filters/search/page size change.
+   */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    statusFilters,
+    timeFilters,
+    query,
+    pageSize,
+  ]);
+
+  /**
+   * Sync local filters with URL.
+   */
+  useEffect(() => {
+    const params =
+      new URLSearchParams();
+
+    if (statusFilters.length) {
+      params.set(
+        "status",
+        statusFilters[0],
+      );
+    }
+
+    if (timeFilters.length) {
+      params.set(
+        "time",
+        timeFilters[0],
+      );
+    }
+
+    if (query.trim()) {
+      params.set(
+        "q",
+        query.trim(),
+      );
+    }
+
+    params.set(
+      "limit",
+      String(pageSize),
+    );
+
+    params.set(
+      "page",
+      String(currentPage),
+    );
+
+    const nextSearch =
+      params.toString();
+
+    if (
+      locallySyncedSearchRef.current !==
+      nextSearch
+    ) {
+      locallySyncedSearchRef.current =
+        nextSearch;
+
+      if (syncTimerRef.current) {
+        clearTimeout(
+          syncTimerRef.current,
+        );
+      }
+
+      syncTimerRef.current =
+        setTimeout(() => {
+          setSearchParams(
+            params,
+            {
+              replace: true,
+            },
+          );
+        }, 0);
+    }
+
+    return () => {
+      if (syncTimerRef.current) {
+        clearTimeout(
+          syncTimerRef.current,
+        );
+      }
+    };
+  }, [
+    statusFilters,
+    timeFilters,
+    query,
+    pageSize,
+    currentPage,
+    setSearchParams,
+  ]);
+
+  /**
+   * Sync URL changes back into state.
+   */
+  useEffect(() => {
+    const currentSearch =
+      searchParams.toString();
+
+    if (
+      currentSearch ===
+      locallySyncedSearchRef.current
+    ) {
+      return;
+    }
+
+    locallySyncedSearchRef.current =
+      currentSearch;
+
+    const status =
+      searchParams.get(
+        "status",
+      ) || "all";
+
+    const time =
+      searchParams.get(
+        "time",
+      ) || "all";
+
+    const urlQuery =
+      searchParams.get("q") || "";
+
+    const urlPageSize =
+      toPositiveInteger(
+        searchParams.get(
+          "limit",
+        ),
+        10,
+      );
+
+    const urlPage =
+      toPositiveInteger(
+        searchParams.get(
+          "page",
+        ),
+        1,
+      );
+
+    setStatusFilters(
+      status === "all"
+        ? []
+        : [status],
+    );
+
+    setTimeFilters(
+      time === "all"
+        ? []
+        : [time],
+    );
+
+    setQuery(urlQuery);
+
+    setPageSizeState(
+      urlPageSize,
+    );
+
+    setCurrentPage(
+      urlPage,
+    );
+  }, [searchParams]);
+
+  const setPageSize = (value) => {
+    const nextSize =
+      toPositiveInteger(
+        value,
+        10,
+      );
+
+    setPageSizeState(
+      nextSize,
+    );
+
+    setCurrentPage(1);
+  };
+
+  const handleStatusFiltersChange = (
+    values,
+  ) => {
+    const nextValues =
+      Array.isArray(values)
+        ? values
+        : values
+          ? [values]
+          : [];
+
+    setStatusFilters(
+      nextValues,
+    );
+
+    setCurrentPage(1);
+  };
+
+  const handleTimeFiltersChange = (
+    values,
+  ) => {
+    const nextValues =
+      Array.isArray(values)
+        ? values
+        : values
+          ? [values]
+          : [];
+
+    setTimeFilters(
+      nextValues,
+    );
+
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setStatusFilters([]);
+    setTimeFilters([]);
+    setQuery("");
+    setCurrentPage(1);
+  };
+
+  const hasAnyOrders =
+    allOrders.length > 0;
 
   return {
     state,
+
     navigate,
 
-    statusFilters,
-    setStatusFilters,
+    allOrders,
 
-    timeFilters,
-    setTimeFilters,
+    filteredOrderItems,
 
-    query,
-    setQuery,
-
-    availableStatusFilters,
-    availableTimeFilters,
-
-    orderItemsList: paginatedOrders,
+    /**
+     * Current page items.
+     *
+     * Each entry contains:
+     * {
+     *   order,
+     *   item,
+     *   orderItem,
+     *   isReturned,
+     *   itemStatus,
+     *   filterCategory,
+     *   returns
+     * }
+     */
+    orderItemsList:
+      paginatedOrderItems,
 
     totalOrders,
 
+    hasAnyOrders,
+
+    statusFilters,
+
+    setStatusFilters:
+      handleStatusFiltersChange,
+
+    timeFilters,
+
+    setTimeFilters:
+      handleTimeFiltersChange,
+
+    query,
+
+    setQuery: (value) => {
+      setQuery(value);
+      setCurrentPage(1);
+    },
+
+    availableStatusFilters,
+
+    availableTimeFilters,
+
+    statusCounts,
+
+    timeCounts,
+
     pageSize,
+
     setPageSize,
 
     currentPage,
+
     setCurrentPage,
 
     totalPages,
+
+    clearFilters,
+
+    getOrderReturns,
+
+    hasReturnedItem,
   };
 }

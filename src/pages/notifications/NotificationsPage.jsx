@@ -209,7 +209,7 @@ const NotificationCard = ({ notif, onClick }) => {
   return (
     <article
       onClick={onClick}
-      className={`overflow-hidden cursor-pointer group relative flex items-start gap-3.5 p-4 sm:px-5 rounded-2xl border transition-all duration-200 shadow-sm hover:shadow-md ${
+      className={`overflow-hidden cursor-pointer group relative flex items-start gap-3.5 p-4 sm:px-5 rounded-lg border transition-all duration-200 shadow-sm hover:shadow-md ${
         isRead
           ? "border-[#EAEFF5] bg-white hover:border-[#D9DDE8]"
           : "border-[#F0E6D2] bg-[#FCFAF2]"
