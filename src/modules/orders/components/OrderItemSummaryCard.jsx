@@ -32,7 +32,10 @@ export const StarRatingUI = ({
   if (isUnreviewed) {
     return (
       <div className="flex items-center justify-between sm:justify-start sm:gap-2.5">
-        <div className="flex items-center gap-1" onMouseLeave={() => setHoverStar(0)}>
+        <div
+          className="flex items-center gap-1"
+          onMouseLeave={() => setHoverStar(0)}
+        >
           {[1, 2, 3, 4, 5].map((star) => {
             const isFilled = star <= (hoverStar || 0);
             return (
@@ -49,9 +52,15 @@ export const StarRatingUI = ({
                 aria-label={`${star} star`}
               >
                 {isFilled ? (
-                  <PiStarFill size={22} className="text-[#F59E0B] sm:h-6 sm:w-6" />
+                  <PiStarFill
+                    size={22}
+                    className="text-[#F59E0B] sm:h-6 sm:w-6"
+                  />
                 ) : (
-                  <PiStarThin size={22} className="text-[#9CA3AF] sm:h-6 sm:w-6" />
+                  <PiStarThin
+                    size={22}
+                    className="text-[#9CA3AF] sm:h-6 sm:w-6"
+                  />
                 )}
               </button>
             );
@@ -77,16 +86,26 @@ export const StarRatingUI = ({
   return (
     <div className="inline-flex items-center gap-1.5 rounded-lg bg-[#F0FDF4] px-2.5 py-1 sm:bg-transparent sm:px-0 sm:py-0">
       <div className="flex items-center gap-0.5 sm:gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5].map((star) =>
           star <= rating ? (
-            <PiStarFill key={star} size={18} className="text-[#16A34A] sm:h-5 sm:w-5" />
+            <PiStarFill
+              key={star}
+              size={18}
+              className="text-[#16A34A] sm:h-5 sm:w-5"
+            />
           ) : (
-            <PiStarThin key={star} size={18} className="text-[#16A34A] sm:h-5 sm:w-5" />
-          )
-        ))}
+            <PiStarThin
+              key={star}
+              size={18}
+              className="text-[#16A34A] sm:h-5 sm:w-5"
+            />
+          ),
+        )}
       </div>
       <span className="text-[#BBF7D0] sm:hidden">|</span>
-      <span className="text-[11px] font-bold text-[#1F2430] sm:hidden">{rating.toFixed(1)}</span>
+      <span className="text-[11px] font-bold text-[#1F2430] sm:hidden">
+        {rating.toFixed(1)}
+      </span>
       <span className="text-[#BBF7D0] sm:hidden">|</span>
       <span className="text-[10px] sm:text-[11px] font-bold text-[#065F46] sm:bg-[#DCFCE7] sm:px-2 sm:py-0.5 sm:rounded-md">
         Reviewed
@@ -95,18 +114,25 @@ export const StarRatingUI = ({
   );
 };
 
-export default function OrderItemSummaryCard({ order, item, onReviewClick, locallyReviewedProducts = new Set() }) {
+export default function OrderItemSummaryCard({
+  order,
+  item,
+  onReviewClick,
+  locallyReviewedProducts = new Set(),
+}) {
   if (!order || !item) return null;
 
   const productId = getReviewProductId(item);
-  const myReview = useSelector((state) => state.review?.myReviewByProduct?.[productId]);
+  const myReview = useSelector(
+    (state) => state.review?.myReviewByProduct?.[productId],
+  );
 
   const id = getOrderId(order);
   const productTitle = getProductTitle(item);
   const createdAt = order?.created_at || order?.createdAt;
   const currency = getOrderCurrency(order);
   const shipments = Array.isArray(order?.relations?.shipments)
-    ? order.relations.shipments 
+    ? order.relations.shipments
     : Array.isArray(order?.shipments)
       ? order.shipments
       : [];
@@ -136,11 +162,22 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
   };
 
   const s = String(itemStatus).toLowerCase();
-  let statusDotColor = "bg-[#ff9f00]"; // default yellow/orange
+  const orderStatus = String(getOrderStatus(order) || "").toLowerCase();
+  const paymentStatus = String(
+    order?.payment_status || order?.paymentStatus || "",
+  ).toLowerCase();
+
+  const isPaymentFailed =
+    ["payment_failed", "failed", "pending_payment"].includes(s) ||
+    ["payment_failed", "failed", "pending_payment"].includes(orderStatus) ||
+    ["failed", "payment_failed"].includes(paymentStatus);
+
+  let statusDotColor = "bg-[#ff9f00]"; // default yellow/orange (for processing / on the way)
 
   if (["delivered", "completed"].includes(s)) {
     statusDotColor = "bg-[#26a541]"; // green
   } else if (
+    isPaymentFailed ||
     [
       "cancelled",
       "failed",
@@ -152,29 +189,33 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
     ].includes(s)
   ) {
     statusDotColor = "bg-[#ff6161]"; // red
-  } else if (["pending_payment"].includes(s)) {
-    statusDotColor = "bg-[#ff9f00]"; // orange
   }
 
   const isDelivered = ["delivered", "completed", "refunded"].includes(s);
-  // Refunded and returned items should NOT show the review option
+
   const canReview = isDelivered && !["refunded", "returned"].includes(s);
-  const isReviewForThisItem = !myReview?.orderItemId && !myReview?.order_item_id 
-    ? true 
-    : (myReview?.orderItemId === itemId || myReview?.order_item_id === itemId);
-  const hasMyReview = myReview && (myReview._id || myReview.id || myReview.rating !== undefined) && isReviewForThisItem;
-  const isUnreviewed = 
-    !locallyReviewedProducts.has(productId) &&
-    !hasMyReview;
+  const isReviewForThisItem =
+    !myReview?.orderItemId && !myReview?.order_item_id
+      ? true
+      : myReview?.orderItemId === itemId || myReview?.order_item_id === itemId;
+  const hasMyReview =
+    myReview &&
+    (myReview._id || myReview.id || myReview.rating !== undefined) &&
+    isReviewForThisItem;
+  const isUnreviewed = !locallyReviewedProducts.has(productId) && !hasMyReview;
 
   return (
-<article className="group relative overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-shadow duration-200 hover:shadow-[0_6px_18px_rgba(31,36,48,0.10)]">      <Link
+    <article className="group relative overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-shadow duration-200 hover:shadow-[0_6px_18px_rgba(31,36,48,0.10)]">
+      {" "}
+      <Link
         to={itemDetailPath}
         onClick={handleCardClick}
         className="hidden md:grid grid-cols-12 items-start gap-3 lg:gap-4 p-4 group/link"
       >
         <div className="col-span-6 lg:col-span-7 flex items-start gap-4 min-w-0">
-<div className="relative flex aspect-square w-16 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1.5">            {itemImage ? (
+          <div className="relative flex aspect-square w-16 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1.5">
+            {" "}
+            {itemImage ? (
               <img
                 loading="lazy"
                 width="400"
@@ -230,18 +271,21 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
 
         {/* Right Section: Status & Date & Actions */}
         <div className="col-span-4 lg:col-span-3 flex min-w-0 gap-2 items-start justify-start">
-          <span className={`h-2.5 w-2.5 rounded-full ${statusDotColor} shrink-0 mt-[5px]`} />
+          <span
+            className={`h-2.5 w-2.5 rounded-full ${statusDotColor} shrink-0 mt-[5px]`}
+          />
           <div className="flex flex-col items-start min-w-0">
             <span className="text-sm font-semibold text-[#1F2430] whitespace-normal sm:whitespace-nowrap">
-              {humanize(itemStatus, "Processing")} on {formatOrderDate(createdAt)}
+              {humanize(itemStatus, "Processing")} on{" "}
+              {formatOrderDate(createdAt)}
             </span>
 
             <p className="text-xs text-[#6F7480] mt-0.5">
               {s === "delivered"
                 ? "Your item has been delivered"
                 : s === "cancelled"
-                ? "Your order was cancelled"
-                : "Your order is being processed"}
+                  ? "Your order was cancelled"
+                  : "Your order is being processed"}
             </p>
 
             {/* Review Section positioned under Status without creating extra space */}
@@ -267,7 +311,6 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
           </div>
         </div>
       </Link>
-
       {/* Mobile Layout */}
       <div className="flex flex-col md:hidden">
         <Link
@@ -276,7 +319,9 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
           className="flex flex-col"
         >
           {/* Full Width Image */}
-<div className="relative flex w-full aspect-video sm:aspect-[2/1] items-center justify-center overflow-hidden bg-white p-4">            {itemImage ? (
+          <div className="relative flex w-full aspect-video sm:aspect-[2/1] items-center justify-center overflow-hidden bg-white p-4">
+            {" "}
+            {itemImage ? (
               <img
                 loading="lazy"
                 width="400"
@@ -289,46 +334,51 @@ export default function OrderItemSummaryCard({ order, item, onReviewClick, local
               <Package size={40} className="text-[#9E886A]/50" />
             )}
           </div>
-          
+
           {/* Content Area */}
           <div className="flex flex-col p-4 gap-3">
-             <div className="flex justify-between items-start gap-3">
-                <h3 className="text-sm font-bold text-[#1F2430] leading-snug line-clamp-2 flex-1">
-                   {productTitle}
-                </h3>
-                <div className="flex flex-col items-end shrink-0">
-                  <span className="text-sm font-extrabold text-[#1F2430] tracking-tight">
-                    {formatMoney(itemTotal, currency)}
-                  </span>
-                  <span className="text-[10px] font-medium text-[#6F7480] mt-1">
-                     {formatOrderDate(createdAt)}
-                  </span>
-                </div>
-             </div>
+            <div className="flex justify-between items-start gap-3">
+              <h3 className="text-sm font-bold text-[#1F2430] leading-snug line-clamp-2 flex-1">
+                {productTitle}
+              </h3>
+              <div className="flex flex-col items-end shrink-0">
+                <span className="text-sm font-extrabold text-[#1F2430] tracking-tight">
+                  {formatMoney(itemTotal, currency)}
+                </span>
+                <span className="text-[10px] font-medium text-[#6F7480] mt-1">
+                  {formatOrderDate(createdAt)}
+                </span>
+              </div>
+            </div>
 
-             <div className="flex items-center gap-2 mt-0.5">
-               <span className={`h-2 w-2 rounded-full ${statusDotColor} shrink-0`} />
-               <span className="text-xs font-semibold text-[#1F2430]">
-                  {humanize(itemStatus, "Processing")}
-               </span>
-             </div>
-             
-             {canReview && (
-               <div 
-                 className="mt-2 w-full pt-3 border-t border-[#E4DDCF]/60"
-                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-               >
-                 <StarRatingUI
-                   item={item}
-                   order={order}
-                   isUnreviewed={isUnreviewed}
-                   myReview={myReview}
-                   onReviewClick={onReviewClick}
-                   hoverStar={hoverStar}
-                   setHoverStar={setHoverStar}
-                 />
-               </div>
-             )}
+            <div className="flex items-center gap-2 mt-0.5">
+              <span
+                className={`h-2 w-2 rounded-full ${statusDotColor} shrink-0`}
+              />
+              <span className="text-xs font-semibold text-[#1F2430]">
+                {humanize(itemStatus, "Processing")}
+              </span>
+            </div>
+
+            {canReview && (
+              <div
+                className="mt-2 w-full pt-3 border-t border-[#E4DDCF]/60"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <StarRatingUI
+                  item={item}
+                  order={order}
+                  isUnreviewed={isUnreviewed}
+                  myReview={myReview}
+                  onReviewClick={onReviewClick}
+                  hoverStar={hoverStar}
+                  setHoverStar={setHoverStar}
+                />
+              </div>
+            )}
           </div>
         </Link>
       </div>

@@ -299,12 +299,23 @@ select,
 textarea {
   font: inherit;
 }
-
 :focus-visible {
   outline: 2px solid rgba(214, 163, 35, 0.55);
   outline-offset: 2px;
 }
 
+.customer-dropdown-button:focus-visible {
+  outline: none;
+  outline-offset: 0;
+}
+.custom-dropdown-trigger:focus,
+.custom-dropdown-trigger:focus-visible,
+.customer-dropdown-button:focus,
+.customer-dropdown-button:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
 .customer-shell {
   min-height: 100vh;
   background: var(--customer-surface);
@@ -355,7 +366,6 @@ textarea {
   font-size: 11px;
   font-weight: 700;
 }
-
 .customer-input {
   min-height: 42px;
   width: 100%;
@@ -368,18 +378,18 @@ textarea {
   outline: none;
   transition:
     border-color 180ms ease,
-    box-shadow 180ms ease,
     background-color 180ms ease;
 }
 
+.customer-input:focus {
+  border-color: var(--customer-gold);
+  outline: none;
+  box-shadow: none;
+}
 .customer-input::placeholder {
   color: var(--customer-subtle);
 }
 
-/* .customer-input:focus {
-  border-color: var(--customer-gold);
-  box-shadow: 0 0 0 3px rgba(214, 163, 35, 0.18);
-} */
 
 main {
   /* width: min(1180px, calc(100% - 32px)); */

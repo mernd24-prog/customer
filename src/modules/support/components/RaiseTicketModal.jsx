@@ -129,7 +129,7 @@ export function RaiseTicketModal() {
               value={form.subject}
               onChange={handleChange}
               placeholder="e.g. Order #1234 Delivery Delay"
-              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 focus:outline-none transition"
+              className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 focus:outline-none transition"
               required
             />
           </label>
@@ -144,7 +144,7 @@ export function RaiseTicketModal() {
               onChange={handleChange}
               rows={4}
               placeholder="Describe your issue with order numbers, items, or screenshots..."
-              className="w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 focus:outline-none transition"
+              className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3.5 py-3 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 focus:outline-none transition"
               required
             />
           </label>
@@ -153,7 +153,7 @@ export function RaiseTicketModal() {
             <button
               type="submit"
               disabled={supportSubmitting}
-              className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#CE9F2D] text-sm font-bold text-white shadow-md transition hover:bg-[#B88B22] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] text-sm font-bold text-white shadow-md transition hover:bg-[#B88B22] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {supportSubmitting ? (
                 <>

@@ -611,7 +611,7 @@ export default function ProductCard({
             variant="featured"
             className="
               flex items-center justify-center
-              rounded-[50px]
+              rounded-lg
               bg-[#1F2430]
               bg-[linear-gradient(#CE9F2D,#CE9F2D)]
               px-2 py-0.5

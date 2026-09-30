@@ -3,10 +3,7 @@ import Breadcrumbs from "../../common/components/Breadcrumbs";
 import ApiState from "../../../components/ui/ApiState";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  disputeReturnQc,
-  fetchMyReturns,
-} from "../slices/returnsSlice";
+import { disputeReturnQc, fetchMyReturns } from "../slices/returnsSlice";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
 import { notify } from "../../../utils/notify";
 import {
@@ -37,6 +34,7 @@ import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { getProductPublicPath } from "../../../utils/ecommerce";
 import useReturnsRefunds from "../controllers/useReturnsRefunds";
 import { PageContainer } from "../../../components/ui/layout";
+import EmptyState from "../../../components/ui/feedback/EmptyState";
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [
   { value: "all", label: "All Returns" },
@@ -89,12 +87,19 @@ const buildTrackingSteps = (ret) => {
 
   const recordedSteps = uniqueTimeline.map((t, idx) => {
     const status = t.status || "";
-    let title = STATUS_FILTERS.find(f => f.value === status)?.label || String(status)
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
+    let title =
+      STATUS_FILTERS.find((f) => f.value === status)?.label ||
+      String(status)
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
 
     let rawNote = t.note || t.reason || "";
-    if (rawNote && (rawNote.includes("http://") || rawNote.includes("https://") || rawNote.includes("Timeline-,"))) {
+    if (
+      rawNote &&
+      (rawNote.includes("http://") ||
+        rawNote.includes("https://") ||
+        rawNote.includes("Timeline-,"))
+    ) {
       rawNote = "";
     }
 
@@ -228,7 +233,6 @@ const getReturnStatusIcon = (status, size = 15) => {
   }
 };
 
-
 /* ─── Main page ───────────────────────────────────────────────────────── */
 function ReturnsRefundsPage() {
   const {
@@ -245,7 +249,7 @@ function ReturnsRefundsPage() {
     hasMoreReturns,
     handleStatusFilterChange,
     toggleTracking,
-    submitQcDispute
+    submitQcDispute,
   } = useReturnsRefunds();
 
   const returnFilterOptions = useMemo(
@@ -263,240 +267,258 @@ function ReturnsRefundsPage() {
     { label: "Returns & Refunds" },
   ];
 
-  const renderReturnsList = useCallback((list) => {
-    return (
-      <div className="flex flex-col gap-4">
-        {list.map((ret) => {
-          const returnId =
-            ret._id || ret.id || ret.returnId || ret.returnNumber;
+  const renderReturnsList = useCallback(
+    (list) => {
+      return (
+        <div className="flex flex-col gap-4">
+          {list.map((ret) => {
+            const returnId =
+              ret._id || ret.id || ret.returnId || ret.returnNumber;
 
-          const isExpanded = expandedReturnId === returnId;
-          const trackingSteps = buildTrackingSteps(ret);
-          const firstItemTitle = ret.items?.[0]?.productTitle || "Product";
-          const trackingReturnId = ret.returnNumber || returnId;
-          const expectedDate = getExpectedDate(ret);
-          const qcDisputeDeadline = ret.qcReview?.disputeDeadline
-            ? new Date(ret.qcReview.disputeDeadline)
-            : null;
-          const qcDisputeOpen =
-            !qcDisputeDeadline || qcDisputeDeadline >= new Date();
+            const isExpanded = expandedReturnId === returnId;
+            const trackingSteps = buildTrackingSteps(ret);
+            const firstItemTitle = ret.items?.[0]?.productTitle || "Product";
+            const trackingReturnId = ret.returnNumber || returnId;
+            const expectedDate = getExpectedDate(ret);
+            const qcDisputeDeadline = ret.qcReview?.disputeDeadline
+              ? new Date(ret.qcReview.disputeDeadline)
+              : null;
+            const qcDisputeOpen =
+              !qcDisputeDeadline || qcDisputeDeadline >= new Date();
 
-          return (
-            <div
-              key={returnId}
-              className="overflow-hidden rounded-2xl border border-[#E7D9B8] bg-[#FFFCF6] shadow-2xs transition-all"
-            >
-              {ret.items?.map((item, idx) => {
-                const title = item.productTitle || "Product";
-                const image = item.productImage;
-                const orderId = ret.orderId;
-                const quantity = item.quantity || item.requestedQuantity || 1;
-                const seller = item.sellerName || "Sam Global Seller";
-                const price = item.lineTotal || item.unitPrice || 0;
-                const status = STATUS_FILTERS.find(f => f.value === ret.status)?.label || ret.status?.replace(/_/g, " ");
-                const requestedOn = new Date(
-                  ret.requestedAt || ret.createdAt || Date.now(),
-                ).toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                });
-                const reason = ret.description;
+            return (
+              <div
+                key={returnId}
+                className="overflow-hidden rounded-2xl border border-[#E7D9B8] bg-[#FFFCF6] shadow-2xs transition-all"
+              >
+                {ret.items?.map((item, idx) => {
+                  const title = item.productTitle || "Product";
+                  const image = item.productImage;
+                  const orderId = ret.orderId;
+                  const quantity = item.quantity || item.requestedQuantity || 1;
+                  const seller = item.sellerName || "Sam Global Seller";
+                  const price = item.lineTotal || item.unitPrice || 0;
+                  const status =
+                    STATUS_FILTERS.find((f) => f.value === ret.status)?.label ||
+                    ret.status?.replace(/_/g, " ");
+                  const requestedOn = new Date(
+                    ret.requestedAt || ret.createdAt || Date.now(),
+                  ).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  });
+                  const reason = ret.description;
 
-                const productId = item.productId || item.product_id || item.product?._id || item.product?.id || "";
-                const productPath = productId ? getProductPublicPath(item.product || { id: productId }) : "";
+                  const productId =
+                    item.productId ||
+                    item.product_id ||
+                    item.product?._id ||
+                    item.product?.id ||
+                    "";
+                  const productPath = productId
+                    ? getProductPublicPath(item.product || { id: productId })
+                    : "";
 
-                return (
-                  <ReturnItemCard
-                    key={`${returnId}-${item.orderItemId || idx}`}
-                    title={title}
-                    image={image}
-                    orderId={orderId}
-                    quantity={quantity}
-                    seller={seller}
-                    price={price}
-                    status={status}
-                    requestedOn={requestedOn}
-                    returnId={ret.returnNumber || returnId}
-                    reason={reason}
-                    refundAmount={price}
-                    expectedDate={expectedDate}
-                    onTrackRequest={() => toggleTracking(returnId)}
-                    trackLabel={isExpanded ? "Hide Tracking" : "Track Order"}
-                    productPath={productPath}
-                    className="!border-0 !rounded-none"
-                  />
-                );
-              })}
+                  return (
+                    <ReturnItemCard
+                      key={`${returnId}-${item.orderItemId || idx}`}
+                      title={title}
+                      image={image}
+                      orderId={orderId}
+                      quantity={quantity}
+                      seller={seller}
+                      price={price}
+                      status={status}
+                      requestedOn={requestedOn}
+                      returnId={ret.returnNumber || returnId}
+                      reason={reason}
+                      refundAmount={price}
+                      expectedDate={expectedDate}
+                      onTrackRequest={() => toggleTracking(returnId)}
+                      trackLabel={isExpanded ? "Hide Tracking" : "Track Order"}
+                      productPath={productPath}
+                      className="!border-0 !rounded-none"
+                    />
+                  );
+                })}
 
-              {ret.status === "qc_failed" && (
-                <div className="border-t border-amber-200 bg-amber-50 p-4 sm:p-6">
-                  <h3 className="font-semibold text-amber-900">
-                    Quality Check Failed ——— Marketplace Review
-                  </h3>
-                  <p className="mt-1 text-sm text-amber-800">
-                    The Seller Reported That the Returned Product Did Not Pass
-                    Inspection. Your Refund Remains on Hold Until the Evidence
-                    Is Reviewed.
-                  </p>
-                  {(ret.qcReview?.sellerEvidence || []).map(
-                    (evidence, index) => (
-                      <div
-                        key={evidence.orderItemId || index}
-                        className="mt-3 rounded-lg bg-white p-3 text-sm text-[#454545]"
-                      >
-                        <div className="font-medium">
-                          Seller Finding:{" "}
-                          {String(evidence.result || "").replace(/_/g, " ")}
-                        </div>
-                        <div>
-                          {evidence.notes || "No inspection note provided."}
-                        </div>
-                        {(evidence.photos || []).map((url) => (
-                          <a
-                            key={url}
-                            href={url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="mr-3 text-blue-700 underline"
-                          >
-                            View Evidence
-                          </a>
-                        ))}
-                      </div>
-                    ),
-                  )}
-                  {ret.qcReview?.customerDispute ? (
-                    <p className="mt-3 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
-                      Your Dispute Is Under Admin Review:{" "}
-                      {ret.qcReview.customerDispute.reason}
+                {ret.status === "qc_failed" && (
+                  <div className="border-t border-amber-200 bg-amber-50 p-4 sm:p-6">
+                    <h3 className="font-semibold text-amber-900">
+                      Quality Check Failed ——— Marketplace Review
+                    </h3>
+                    <p className="mt-1 text-sm text-amber-800">
+                      The Seller Reported That the Returned Product Did Not Pass
+                      Inspection. Your Refund Remains on Hold Until the Evidence
+                      Is Reviewed.
                     </p>
-                  ) : !qcDisputeOpen ? (
-                    <p className="mt-3 rounded-lg bg-stone-100 p-3 text-sm text-stone-700">
-                      The Qc Dispute Window Closed on{" "}
-                      {qcDisputeDeadline.toLocaleString("en-IN")}.
-                    </p>
-                  ) : qcDispute.returnId === returnId ? (
-                    <div className="mt-4 space-y-3">
-                      <textarea
-                        className="w-full rounded-lg border border-amber-300 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 bg-white p-3 text-sm"
-                        rows={4}
-                        placeholder="Explain Why You Disagree with the Qc Result"
-                        value={qcDispute.reason}
-                        onChange={(event) =>
-                          setQcDispute((current) => ({
-                            ...current,
-                            reason: event.target.value,
-                          }))
-                        }
-                      />
-                      <textarea
-                        className="w-full rounded-lg border border-amber-300 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 bg-white p-3 text-sm"
-                        rows={2}
-                        placeholder="Optional Evidence Image Urls, One Per Line"
-                        value={qcDispute.evidence}
-                        onChange={(event) =>
-                          setQcDispute((current) => ({
-                            ...current,
-                            evidence: event.target.value,
-                          }))
-                        }
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          disabled={qcDispute.submitting}
-                          onClick={submitQcDispute}
-                          className="rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                    {(ret.qcReview?.sellerEvidence || []).map(
+                      (evidence, index) => (
+                        <div
+                          key={evidence.orderItemId || index}
+                          className="mt-3 rounded-lg bg-white p-3 text-sm text-[#454545]"
                         >
-                          Submit Dispute
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setQcDispute({
-                              returnId: null,
-                              reason: "",
-                              evidence: "",
-                              submitting: false,
-                            })
+                          <div className="font-medium">
+                            Seller Finding:{" "}
+                            {String(evidence.result || "").replace(/_/g, " ")}
+                          </div>
+                          <div>
+                            {evidence.notes || "No inspection note provided."}
+                          </div>
+                          {(evidence.photos || []).map((url) => (
+                            <a
+                              key={url}
+                              href={url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mr-3 text-blue-700 underline"
+                            >
+                              View Evidence
+                            </a>
+                          ))}
+                        </div>
+                      ),
+                    )}
+                    {ret.qcReview?.customerDispute ? (
+                      <p className="mt-3 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+                        Your Dispute Is Under Admin Review:{" "}
+                        {ret.qcReview.customerDispute.reason}
+                      </p>
+                    ) : !qcDisputeOpen ? (
+                      <p className="mt-3 rounded-lg bg-stone-100 p-3 text-sm text-stone-700">
+                        The Qc Dispute Window Closed on{" "}
+                        {qcDisputeDeadline.toLocaleString("en-IN")}.
+                      </p>
+                    ) : qcDispute.returnId === returnId ? (
+                      <div className="mt-4 space-y-3">
+                        <textarea
+                          className="w-full rounded-lg border border-amber-300 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 bg-white p-3 text-sm"
+                          rows={4}
+                          placeholder="Explain Why You Disagree with the Qc Result"
+                          value={qcDispute.reason}
+                          onChange={(event) =>
+                            setQcDispute((current) => ({
+                              ...current,
+                              reason: event.target.value,
+                            }))
                           }
-                          className="rounded-lg border px-4 py-2 text-sm"
-                        >
-                          Cancel
-                        </button>
+                        />
+                        <textarea
+                          className="w-full rounded-lg border border-amber-300 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 bg-white p-3 text-sm"
+                          rows={2}
+                          placeholder="Optional Evidence Image Urls, One Per Line"
+                          value={qcDispute.evidence}
+                          onChange={(event) =>
+                            setQcDispute((current) => ({
+                              ...current,
+                              evidence: event.target.value,
+                            }))
+                          }
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            disabled={qcDispute.submitting}
+                            onClick={submitQcDispute}
+                            className="rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                          >
+                            Submit Dispute
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setQcDispute({
+                                returnId: null,
+                                reason: "",
+                                evidence: "",
+                                submitting: false,
+                              })
+                            }
+                            className="rounded-lg border px-4 py-2 text-sm"
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setQcDispute({
-                          returnId,
-                          reason: "",
-                          evidence: "",
-                          submitting: false,
-                        })
-                      }
-                      className="mt-3 rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      Dispute Qc Result
-                    </button>
-                  )}
-                </div>
-              )}
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setQcDispute({
+                            returnId,
+                            reason: "",
+                            evidence: "",
+                            submitting: false,
+                          })
+                        }
+                        className="mt-3 rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white"
+                      >
+                        Dispute Qc Result
+                      </button>
+                    )}
+                  </div>
+                )}
 
-              {ret.qcReview?.status === "resolved" && (
-                <div className="border-t border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 sm:p-6">
-                  <strong>Marketplace Decision:</strong>{" "}
-                  {String(ret.qcReview.adminDecision || "").replace(/_/g, " ")}{" "}
-                  — {ret.qcReview.decisionReason}
-                </div>
-              )}
+                {ret.qcReview?.status === "resolved" && (
+                  <div className="border-t border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 sm:p-6">
+                    <strong>Marketplace Decision:</strong>{" "}
+                    {String(ret.qcReview.adminDecision || "").replace(
+                      /_/g,
+                      " ",
+                    )}{" "}
+                    — {ret.qcReview.decisionReason}
+                  </div>
+                )}
 
-              {ret.returnToCustomer?.trackingNumber && (
-                <div className="border-t border-purple-200 bg-purple-50 p-4 text-sm text-purple-900 sm:p-6">
-                  <strong>Product Returning to You:</strong>{" "}
-                  {ret.returnToCustomer.courierName} ·{" "}
-                  {ret.returnToCustomer.trackingNumber} ·{" "}
-                  {String(ret.returnToCustomer.status || "").replace(/_/g, " ")}
-                  {ret.returnToCustomer.trackingUrl && (
-                    <a
-                      className="ml-3 underline"
-                      href={ret.returnToCustomer.trackingUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Track Shipment
-                    </a>
-                  )}
-                </div>
-              )}
+                {ret.returnToCustomer?.trackingNumber && (
+                  <div className="border-t border-purple-200 bg-purple-50 p-4 text-sm text-purple-900 sm:p-6">
+                    <strong>Product Returning to You:</strong>{" "}
+                    {ret.returnToCustomer.courierName} ·{" "}
+                    {ret.returnToCustomer.trackingNumber} ·{" "}
+                    {String(ret.returnToCustomer.status || "").replace(
+                      /_/g,
+                      " ",
+                    )}
+                    {ret.returnToCustomer.trackingUrl && (
+                      <a
+                        className="ml-3 underline"
+                        href={ret.returnToCustomer.trackingUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Track Shipment
+                      </a>
+                    )}
+                  </div>
+                )}
 
-              {isExpanded && (
-                <ReturnTrackingCard
-                  title={`Return Tracking – ${firstItemTitle}`}
-                  returnId={trackingReturnId}
-                  steps={trackingSteps}
-                />
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  }, [expandedReturnId, qcDispute, toggleTracking, submitQcDispute]);
+                {isExpanded && (
+                  <ReturnTrackingCard
+                    title={`Return Tracking – ${firstItemTitle}`}
+                    returnId={trackingReturnId}
+                    steps={trackingSteps}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      );
+    },
+    [expandedReturnId, qcDispute, toggleTracking, submitQcDispute],
+  );
 
   return (
     <AppErrorBoundary>
       <Seo title="Returns & Refunds | Sam Global" />
-      
-       <PageContainer>
-          <Breadcrumbs
-            items={breadcrumbItems}
-           className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-            heading="My Order"
-          />
+
+      <PageContainer>
+        <Breadcrumbs
+          items={breadcrumbItems}
+          className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+          heading="My Order"
+        />
         <ApiState
           loading={state.loading && !returns.length}
           error={state.error}
@@ -525,11 +547,15 @@ function ReturnsRefundsPage() {
             />
           </div>
 
-          {/* ── Return cards ────────────────────────────────────────── */}
           {filteredReturns.length === 0 ? (
-            <div className="rounded-[15px] border border-dashed border-[#CE9F2D66] bg-[#FFF4D7]/10 p-8 text-center text-[16px] font-medium text-[#454545]">
-              No Returns Found for This Filter.
-            </div>
+            <EmptyState
+              title="No Returns Found"
+              description={
+                statusFilter !== "all"
+                  ? "No returns found for this filter."
+                  : "Your return requests will appear here."
+              }
+            />
           ) : (
             <>
               {renderReturnsList(visibleReturns)}
@@ -548,7 +574,7 @@ function ReturnsRefundsPage() {
             </>
           )}
         </ApiState>
-     </PageContainer>
+      </PageContainer>
     </AppErrorBoundary>
   );
 }

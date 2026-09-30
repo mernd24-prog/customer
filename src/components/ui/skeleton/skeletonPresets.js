@@ -376,8 +376,6 @@ export const SKELETON_PRESETS = {
       ],
     },
   ],
-
-  // Checkout/Cart Order Summary 
   ORDER_SUMMARY: [
     { type: "box", width: "60%", height: "28px", className: "rounded-md mb-2" },
     { type: "box", width: "100%", height: "24px", className: "rounded-md" },
@@ -461,7 +459,7 @@ export const SKELETON_PRESETS = {
   OUR_STORY: [
     {
       type: "grid",
-      className: "grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12",
+      className: "grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12",  
       children: [
         {
           type: "box",
@@ -503,44 +501,63 @@ export const SKELETON_PRESETS = {
     },
   ],
 
-  NOTIFICATIONS_PAGE_SKELETON: [
-    {
-      type: "col",
-      className: "w-full gap-2.5",
-      count: 4,
-      children: [
-        {
-          type: "row",
-          className: "relative flex items-start gap-3.5 p-4 sm:px-5 rounded-2xl border border-[#EAEFF5] bg-white shadow-sm",
-          children: [
-            {
-              type: "box",
-              width: "44px", // h-11 w-11
-              height: "44px",
-              variant: "circle",
-              className: "shrink-0 mt-0.5",
-            },
-            {
-              type: "col",
-              className: "min-w-0 flex-1 gap-1 pt-1",
-              children: [
-                {
-                  type: "row",
-                  className: "justify-between gap-2 sm:gap-4 items-start sm:items-center mb-1",
-                  children: [
-                    { type: "box", width: "160px", height: "18px", rounded: "rounded-md" },
-                    { type: "box", width: "70px", height: "14px", rounded: "rounded-md", className: "shrink-0" },
-                  ]
-                },
-                { type: "box", width: "100%", height: "14px", rounded: "rounded-md" },
-                { type: "box", width: "85%", height: "14px", rounded: "rounded-md" },
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ],
+ NOTIFICATIONS_PAGE_SKELETON: [
+  {
+    type: "col",
+    className: "w-full",
+    count: 4,
+    children: [
+      {
+        type: "row",
+        className:
+          "w-full items-start gap-3.5 p-4 sm:px-5 mb-5 rounded-lg border border-[#EAEFF5] bg-white shadow-sm",
+        children: [
+          {
+            type: "box",
+            width: "44px",
+            height: "44px",
+            variant: "circle",
+            className: "shrink-0 mt-0.5",
+          },
+          {
+            type: "col",
+            className: "min-w-0 flex-1 !gap-1",
+            children: [
+              {
+                type: "row",
+                className:
+                  "w-full justify-between items-start sm:items-center gap-2 sm:gap-4",
+                children: [
+                  {
+                    type: "box",
+                    width: "155px",
+                    height: "16px",
+                    rounded: "rounded-md",
+                    className: "shrink-0",
+                  },
+                  {
+                    type: "box",
+                    width: "48px",
+                    height: "12px",
+                    rounded: "rounded-md",
+                    className: "shrink-0",
+                  },
+                ],
+              },
+              {
+                type: "box",
+                width: "75%",
+                height: "14px",
+                rounded: "rounded-md",
+                className: "mt-0.5",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+],
 
   // Dedicated Order Details Page Skeleton
   ORDER_DETAIL_PAGE: [
