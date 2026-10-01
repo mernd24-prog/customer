@@ -48,15 +48,12 @@ export const CategoryBar = ({
   useEffect(() => {
     const list = getCategoryListFromResponse(catalogCategoryList);
     const actualCategories = list.filter(
-      (item) =>
-        item &&
-        (item.categoryKey || item.parentKey || item.name || item.title),
+      (item) => item && (item.categoryKey || item.parentKey),
     );
     if (actualCategories.length > 0) {
       setCategoriesList(actualCategories);
     }
   }, [catalogCategoryList]);
-
 
   // Fetch if we don't have categories yet
   useEffect(() => {
@@ -67,9 +64,7 @@ export const CategoryBar = ({
           const data = result?.data || result;
           const list = getCategoryListFromResponse(data);
           const actualCategories = list.filter(
-            (item) =>
-              item &&
-              (item.categoryKey || item.parentKey || item.name || item.title),
+            (item) => item && (item.categoryKey || item.parentKey),
           );
           if (actualCategories.length > 0) {
             setCategoriesList(actualCategories);
@@ -81,9 +76,7 @@ export const CategoryBar = ({
               .then((treeResult) => {
                 const treeData = treeResult?.data || treeResult;
                 const tree = getCategoryListFromResponse(treeData).filter(
-                  (item) =>
-                    item &&
-                    (item.categoryKey || item.parentKey || item.name || item.title),
+                  (item) => item && (item.categoryKey || item.parentKey),
                 );
                 if (tree.length) setCategoriesList(tree);
               })

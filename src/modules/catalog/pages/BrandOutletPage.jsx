@@ -18,7 +18,7 @@ import {
   getBrandName,
   getBrandRouteKey,
   getBrandLogo,
-  getBrandProductCount,
+  filterBrandList,
 } from "../../../utils/pages/brandUtils";
 import { scrollToTop } from "../../../utils/common";
 
@@ -72,14 +72,7 @@ export default function BrandOutletPage() {
         if (!active) return;
 
         const rawList = listFromPayload(res);
-        // The backend applies hasProducts before pagination. Keep this guard so
-        // stale caches or older deployments can never expose empty brands.
-        const list = Array.isArray(rawList)
-          ? rawList.filter((brand) => {
-              const productCount = getBrandProductCount(brand);
-              return productCount === undefined || productCount > 0;
-            })
-          : [];
+        const list = filterBrandList(rawList, search);
 
         setBrandList(list);
 

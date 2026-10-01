@@ -123,7 +123,7 @@ export const userThunks = {
 export const catalogThunks = {
   fetchCategories: makeThunk("catalog/fetchCategories", {
     url: endpoints.platform.categories,
-    params: (q) => ({ tree: true, active: true, ...q }),
+    params: (q) => ({ tree: true, active: true, hasProducts: true, ...(q || {}) }),
     cache: true,
     cacheTtl: 300000,
   }),
@@ -158,7 +158,7 @@ export const catalogThunks = {
   }),
   fetchBrands: makeThunk("catalog/fetchBrands", {
     url: endpoints.platform.brands,
-    params: q,
+    params: (q) => ({ hasProducts: true, ...(q || {}) }),
     cache: true,
     cacheTtl: 300000,
   }),

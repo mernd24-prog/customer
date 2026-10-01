@@ -18,6 +18,7 @@ import {
   paginationFromPayload,
   normalizeCategory,
   getCategoryCount,
+  filterCategoryList,
 } from "../../../utils/pages/categoryUtils";
 
 import { scrollToTop } from "../../../utils/common";
@@ -39,6 +40,16 @@ function getRootCategoriesForListing(list = []) {
     .map((category) => normalizeCategory(category))
     .filter((category) => {
       if (!category.routeKey || !category.displayName) return false;
+
+      const explicitCount = category.productCount;
+      if (
+        explicitCount !== undefined &&
+        explicitCount !== null &&
+        explicitCount !== "" &&
+        Number(explicitCount) < 1
+      ) {
+        return false;
+      }
 
       const isRoot =
         category.parentKey === null ||
@@ -236,7 +247,10 @@ export default function CategoryListingPage() {
          */
         const rawList = getCategoryListFromResponse(payload);
 
-        const roots = getRootCategoriesForListing(rawList);
+        const roots = filterCategoryList(
+          getRootCategoriesForListing(rawList),
+          search,
+        );
 
         setCategoryList(roots);
 

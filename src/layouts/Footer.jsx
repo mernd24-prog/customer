@@ -95,13 +95,22 @@ function getRootCategories(categories = []) {
     visit(category, category?.parentKey ?? null),
   );
 
-  return Array.from(byKey.values()).filter(
-    (category) =>
-      category.parentKey === null ||
-      category.parentKey === undefined ||
-      !byKey.has(category.parentKey) ||
-      Number(category?.level ?? 0) === 0,
-  );
+  return Array.from(byKey.values()).filter((category) => {
+    const count = category?.productCount ?? category?.count;
+    const hasExplicitZeroCount =
+      count !== undefined &&
+      count !== null &&
+      count !== "" &&
+      Number(count) < 1;
+
+    return (
+      (category.parentKey === null ||
+        category.parentKey === undefined ||
+        !byKey.has(category.parentKey) ||
+        Number(category.level || 0) === 0) &&
+      !hasExplicitZeroCount
+    );
+  });
 }
 
 // ─── FooterLinkGroups ─────────────────────────────────────────────────────────
@@ -266,7 +275,10 @@ export function Footer({ data = footerData }) {
           const brands = getBrandListFromResponse(result);
 
           const brandsWithProducts = brands
-            .filter((brand) => getBrandProductCount(brand) >= 1)
+            .filter((brand) => {
+            const count = getBrandProductCount(brand);
+            return count === undefined || count >= 1;
+          })
             .slice(0, 5);
 
           dispatch(setGlobalBrands(brandsWithProducts));

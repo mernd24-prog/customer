@@ -183,6 +183,49 @@ export function normalizeCategory(category = {}) {
   };
 }
 
+export function matchesCategorySearch(category = {}, searchText = "") {
+  const trimmedQuery = String(searchText ?? "").trim();
+  if (!trimmedQuery) return true;
+
+  const query = trimmedQuery.toLowerCase();
+  const searchableText = [
+    category.title,
+    category.name,
+    category.label,
+    category.categoryKey,
+    category.key,
+    category.slug,
+    category.code,
+    category.displayName,
+  ]
+    .filter((value) => value !== undefined && value !== null && value !== "")
+    .join(" ")
+    .toLowerCase();
+
+  return searchableText.includes(query);
+}
+
+export function filterCategoryList(categories = [], searchText = "") {
+  const normalized = Array.isArray(categories) ? categories : [];
+  const query = String(searchText ?? "").trim();
+
+  return normalized.filter((category) => {
+    const normalizedCategory = normalizeCategory(category);
+    const explicitCount = getCategoryCount(normalizedCategory);
+
+    if (
+      explicitCount !== undefined &&
+      explicitCount !== null &&
+      explicitCount !== "" &&
+      Number(explicitCount) < 1
+    ) {
+      return false;
+    }
+
+    return matchesCategorySearch(normalizedCategory, query);
+  });
+}
+
 export function getRootCategories(list = []) {
   const categories = getCategoryListFromResponse(list);
   const byKey = new Map();
@@ -196,14 +239,21 @@ export function getRootCategories(list = []) {
   });
 
   return Array.from(byKey.values())
-    .filter(
-      (category) =>
+    .filter((category) => {
+      const hasExplicitZeroCount =
+        category.productCount !== undefined &&
+        category.productCount !== null &&
+        category.productCount !== "" &&
+        Number(category.productCount) < 1;
+
+      return (
         (category.parentKey === null ||
-        category.parentKey === undefined ||
-        !byKey.has(category.parentKey) ||
-        Number(category.level || 0) === 0) &&
-        Number(category.productCount || 0) >= 1,
-    )
+          category.parentKey === undefined ||
+          !byKey.has(category.parentKey) ||
+          Number(category.level || 0) === 0) &&
+        !hasExplicitZeroCount
+      );
+    })
     .sort(sortByOrder);
 }
 

@@ -1,4 +1,4 @@
-import { getImageUrlFromValue } from "../../utils/ecommerce";
+import { getImageUrlFromValue } from "../../utils/ecommerce/index.js";
 
 export function listFromPayload(payload) {
   const data = payload?.data ?? payload;
@@ -16,6 +16,40 @@ export function getBrandName(brand) {
   return typeof brand === "string"
     ? brand
     : brand.name || brand.brandName || brand.title || brand.code || "";
+}
+
+export function matchesBrandSearch(brand, searchText = "") {
+  const rawQuery = String(searchText ?? "").trim();
+  if (!rawQuery) return true;
+
+  const query = rawQuery.toLowerCase();
+  const searchableText = [
+    getBrandName(brand),
+    brand?.slug,
+    brand?.code,
+    brand?._id,
+    brand?.brandId,
+    brand?.brandName,
+  ]
+    .filter((value) => value !== undefined && value !== null && value !== "")
+    .join(" ")
+    .toLowerCase();
+
+  return searchableText.includes(query);
+}
+
+export function filterBrandList(brands = [], searchText = "") {
+  const normalizedList = Array.isArray(brands) ? brands : [];
+  const query = String(searchText ?? "").trim();
+
+  return normalizedList.filter((brand) => {
+    const productCount = getBrandProductCount(brand);
+    if (productCount !== undefined && productCount !== null && Number(productCount) < 1) {
+      return false;
+    }
+
+    return matchesBrandSearch(brand, query);
+  });
 }
 
 export function slugifyBrand(value = "") {

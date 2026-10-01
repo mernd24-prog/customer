@@ -196,14 +196,21 @@ export function getRootCategories(list = []) {
   });
 
   return Array.from(byKey.values())
-    .filter(
-      (category) =>
+    .filter((category) => {
+      const hasExplicitZeroCount =
+        category.productCount !== undefined &&
+        category.productCount !== null &&
+        category.productCount !== "" &&
+        Number(category.productCount) < 1;
+
+      return (
         (category.parentKey === null ||
-        category.parentKey === undefined ||
-        !byKey.has(category.parentKey) ||
-        Number(category.level || 0) === 0) &&
-        Number(category.productCount || 0) >= 1,
-    )
+          category.parentKey === undefined ||
+          !byKey.has(category.parentKey) ||
+          Number(category.level || 0) === 0) &&
+        !hasExplicitZeroCount
+      );
+    })
     .sort(sortByOrder);
 }
 
