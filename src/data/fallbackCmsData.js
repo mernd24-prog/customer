@@ -1,9 +1,37 @@
-
-const image = (url, alt = "") => ({
-  url,
-  alt,
-});
-
+const image = (url, alt = "") => ({ url, alt });
+export const FALLBACK_CONTACT_PAGE = {
+  title: "Contact us",
+  excerpt: "Get in touch with Sam Global for support, inquiries, or feedback.",
+  sections: [
+    {
+      type: "content",
+      title: "contact-info",
+      description: "",
+      points: [
+        { title: "Email", description: "info@samglobal1.com" },
+        { title: "Phone", description: "+91 99154 29897" },
+        { title: "Working Hours", description: "Mon - Sat\n9 AM - 7 PM" },
+        {
+          title: "Office",
+          description:
+            "202, KINGSTON1 OMAXE ROYAL RESIDENCY, PAKHOWAL ROAD, Lalton Kalan, Ludhiana, Ludhiana Punjab 142022",
+        },
+      ],
+    },
+    {
+      type: "content",
+      title: "subject",
+      description: "",
+      points: [
+        { title: "Order Issue", description: "" },
+        { title: "Payment", description: "" },
+        { title: "Return", description: "" },
+        { title: "Seller Support", description: "" },
+        { title: "Technical", description: "" },
+      ],
+    },
+  ],
+};
 export const FALLBACK_HERO_SLIDES = [
   [
     "HeroImg1.webp",
@@ -70,16 +98,12 @@ export const FALLBACK_PROMO_CARDS = [
   ctaLabel,
   link: "/products",
 }));
-
 export const FALLBACK_SHOPPING_BANNER = {
   image: "/image/png/fallback/bannerDeals.png",
   title: "Irresistible Brands,\nBest Prices",
   description: "50-80",
-  cta: {
-    url: "/deals",
-  },
+  cta: { url: "/deals" },
 };
-
 export const FALLBACK_SUPPORT = {
   topicImages: {
     order: "/image/png/fallback/Help&Support/Track-order.png",
@@ -91,7 +115,6 @@ export const FALLBACK_SUPPORT = {
     account: "/image/png/fallback/Help&Support/account-security.png",
     security: "/image/png/fallback/Help&Support/account-security.png",
   },
-
   topics: [
     ["Track Order", "Track-order.png", "/orders"],
     ["Return & Refund", "Return-refund.png", "/returns-refunds"],
@@ -103,7 +126,6 @@ export const FALLBACK_SUPPORT = {
     image: `/image/png/fallback/Help&Support/${file}`,
     path,
   })),
-
   faqs: [
     [
       "How do I cancel an order?",
@@ -129,11 +151,7 @@ export const FALLBACK_SUPPORT = {
       "What payment methods do you accept?",
       "We accept cards, UPI, net banking, wallets, and eligible Cash on Delivery.",
     ],
-  ].map(([title, description]) => ({
-    title,
-    description,
-  })),
-
+  ].map(([title, description]) => ({ title, description })),
   contacts: [
     {
       type: "phone",
@@ -154,12 +172,9 @@ export const FALLBACK_SUPPORT = {
     },
   ],
 };
-
 export const FALLBACK_FAQ_PAGE = {
   title: "Frequently Asked Questions",
-  description:
-    "Helpful answers for shopping, orders, delivery, and payments.",
-
+  description: "Helpful answers for shopping, orders, delivery, and payments.",
   sections: [
     {
       type: "faq-category",
@@ -167,8 +182,7 @@ export const FALLBACK_FAQ_PAGE = {
       points: [
         {
           title: "How do I track my order?",
-          description:
-            "Open My Orders to view the latest delivery status.",
+          description: "Open My Orders to view the latest delivery status.",
         },
         {
           title: "How do I cancel an order?",
@@ -190,354 +204,272 @@ export const FALLBACK_FAQ_PAGE = {
     },
   ],
 };
-
-/* -------------------------------------------------------------------------- */
-/* Become A Seller                                                            */
-/* -------------------------------------------------------------------------- */
-
-const sellerStories = [
+/* -------------------------------------------------------------------------- */ /* Become A Seller                                                            */ /* -------------------------------------------------------------------------- */ const sellerStories =
   [
-    "Aarav Mehta",
-    "Sam Global gave our handcrafted home collection the reach it deserved.",
-    "SellerStory.avif",
-    "Founder, House of Aara",
-    "3.2x growth in 8 months",
-  ],
-  [
-    "Nisha Kapoor",
-    "The seller tools help us make better decisions every week.",
-    "SellerStory1.webp",
-    "Owner, Nivara Studio",
-    "18,000+ orders delivered",
-  ],
-  [
-    "Kabir Shah",
-    "Reliable payouts gave us the confidence to scale.",
-    "SellerStory2.webp",
-    "Director, K&S Essentials",
-    "200+ products listed",
-  ],
-  [
-    "Riya Malhotra",
-    "The marketplace helped our family-run brand find customers beyond our city.",
-    "SellerStory3.webp",
-    "Co-founder, Terra Crafts",
-    "42 cities reached",
-  ],
-  [
-    "Dev Arora",
-    "Sam Global made online selling feel approachable from day one.",
-    "SellerStory4.webp",
-    "Owner, Volt Avenue",
-    "4.8 average rating",
-  ],
-  [
-    "Meera Iyer",
-    "Simple tools and dependable support let us focus on our customers.",
-    "SellerStory5.webp",
-    "Founder, Studio Meera",
-    "2.5x monthly growth",
-  ],
-].map(([title, description, file, role, result]) => ({
-  title,
-  description,
-
-  image: image(
-    `/image/png/fallback/become-a-seller/${file}`,
-    `${title} - ${role}`,
-  ),
-
-  metadata: {
-    role,
-  },
-
-  cta: {
-    label: result,
-  },
-}));
-
+    [
+      "Aarav Mehta",
+      "Sam Global gave our handcrafted home collection the reach it deserved.",
+      "SellerStory.avif",
+      "Founder, House of Aara",
+      "3.2x growth in 8 months",
+    ],
+    [
+      "Nisha Kapoor",
+      "The seller tools help us make better decisions every week.",
+      "SellerStory1.webp",
+      "Owner, Nivara Studio",
+      "18,000+ orders delivered",
+    ],
+    [
+      "Kabir Shah",
+      "Reliable payouts gave us the confidence to scale.",
+      "SellerStory2.webp",
+      "Director, K&S Essentials",
+      "200+ products listed",
+    ],
+    [
+      "Riya Malhotra",
+      "The marketplace helped our family-run brand find customers beyond our city.",
+      "SellerStory3.webp",
+      "Co-founder, Terra Crafts",
+      "42 cities reached",
+    ],
+    [
+      "Dev Arora",
+      "Sam Global made online selling feel approachable from day one.",
+      "SellerStory4.webp",
+      "Owner, Volt Avenue",
+      "4.8 average rating",
+    ],
+    [
+      "Meera Iyer",
+      "Simple tools and dependable support let us focus on our customers.",
+      "SellerStory5.webp",
+      "Founder, Studio Meera",
+      "2.5x monthly growth",
+    ],
+  ].map(([title, description, file, role, result]) => ({
+    title,
+    description,
+    image: image(
+      `/image/png/fallback/become-a-seller/${file}`,
+      `${title} - ${role}`,
+    ),
+    metadata: { role },
+    cta: { label: result },
+  }));
 export const FALLBACK_SELLER_PAGE = {
   title: "Grow Your Business\nWith Sam Global",
-
   excerpt:
     "Reach more customers, manage orders easily, and grow with reliable support.",
-
-  image: image(
-    "/image/png/fallback/sellerBanner.webp",
-    "Sam Global seller",
-  ),
-
+  image: image("/image/png/fallback/sellerBanner.webp", "Sam Global seller"),
   sections: [
-    {
-      type: "seller-stories",
-      points: sellerStories,
-    },
-
+    { type: "seller-stories", points: sellerStories },
     {
       type: "seller-benefits",
       title: "Why sell with us",
-      description:
-        "Everything you need to build a thriving online business.",
-
+      description: "Everything you need to build a thriving online business.",
       points: [
         {
           title: "Transparent earnings",
-          description:
-            "Clear fees and dependable payment cycles.",
+          description: "Clear fees and dependable payment cycles.",
         },
         {
           title: "Nationwide reach",
-          description:
-            "Reach customers across India.",
+          description: "Reach customers across India.",
         },
         {
           title: "Insights that help",
-          description:
-            "Understand product performance.",
+          description: "Understand product performance.",
         },
       ],
     },
-
     {
       type: "seller-steps",
       title: "Start selling",
-      description:
-        "Set up your storefront in a few simple steps.",
-
+      description: "Set up your storefront in a few simple steps.",
       points: [
         {
           title: "Create your account",
-          description:
-            "Register your business and share basic details.",
+          description: "Register your business and share basic details.",
         },
         {
           title: "Build your storefront",
-          description:
-            "Add products, pricing, and inventory.",
+          description: "Add products, pricing, and inventory.",
         },
         {
           title: "Receive and ship orders",
-          description:
-            "Manage orders from your seller dashboard.",
+          description: "Manage orders from your seller dashboard.",
         },
         {
           title: "Get paid and grow",
-          description:
-            "Track payouts and performance insights.",
+          description: "Track payouts and performance insights.",
         },
       ],
     },
   ],
 };
-
-/* -------------------------------------------------------------------------- */
-/* Seller Policy                                                              */
-/* -------------------------------------------------------------------------- */
-
-export const FALLBACK_SELLER_POLICY = {
-  title: "Seller Policy",
-  excerpt: "Seller Guidelines",
-
-  description:
-    "Our Seller Policy defines the standards and responsibilities that create a trusted experience for sellers and customers.",
-
-  image: image(
-    "/image/png/fallback/sellerPolicy.webp",
-    "Seller Policy",
-  ),
-
-  cta: {
-    label: "Become a Seller",
-    url: "/become-a-seller",
-  },
-
-  sections: [
-    [
-      "policy-highlights",
-      "Everything You Need To Sell Confidently",
-      "Our marketplace policies protect sellers and strengthen customer confidence.",
-      [
-        [
-          "Genuine Products",
-          "Sell only authentic and legally sourced products.",
-        ],
-        [
-          "Accurate Listings",
-          "Provide correct titles, images, pricing and specifications.",
-        ],
-        [
-          "Timely Shipping",
-          "Dispatch orders within the promised timeline.",
-        ],
-      ],
-    ],
-
-    [
-      "seller-responsibilities",
-      "Your Commitment Matters",
-      "Follow these responsibilities to provide a trusted shopping experience.",
-      [
-        [
-          "List Authentic Products",
-          "Upload only original products with complete details.",
-        ],
-        [
-          "Maintain Accurate Listings",
-          "Keep pricing, stock, and information updated.",
-        ],
-        [
-          "Process Orders Quickly",
-          "Accept, pack and dispatch every order on time.",
-        ],
-        [
-          "Support Customers",
-          "Respond professionally to customer queries and returns.",
-        ],
-      ],
-    ],
-
-    [
-      "account-compliance",
-      "Maintain a Healthy Seller Account",
-      "We monitor seller performance to ensure reliable service.",
-      [
-        [
-          "Good Standing",
-          "Maintain accurate listings, timely shipping, and quality service.",
-        ],
-        [
-          "Performance Review",
-          "Accounts are reviewed using fulfillment and satisfaction data.",
-        ],
-        [
-          "Policy Violations",
-          "Repeated violations can lead to account restrictions.",
-        ],
-      ],
-    ],
-  ].map(([type, title, description, points]) => ({
-    type,
-    title,
-    description,
-    points: points.map(([pointTitle, pointDescription]) => ({
-      title: pointTitle,
-      description: pointDescription,
-    })),
-  })),
-};
-
-/* -------------------------------------------------------------------------- */
-/* About                                                                      */
-/* -------------------------------------------------------------------------- */
-
-export const FALLBACK_ABOUT = {
-  bannerImage: "/image/png/fallback/sellerPolicy.webp",
-
-  story: {
+/* -------------------------------------------------------------------------- */ /* Seller Policy                                                              */ /* -------------------------------------------------------------------------- */ export const FALLBACK_SELLER_POLICY =
+  {
+    title: "Seller Policy",
+    excerpt: "Seller Guidelines",
     description:
-      "Sam Global is built on years of retail and distribution experience, with a clear focus on disciplined execution, customer trust, and sustainable growth across India.",
-
-    image: image(
-      "/image/png/fallback/become-a-seller/outStory.png",
-      "Sam Global story",
-    ),
-  },
-
-  values: {
-    title: "Our Values",
-
-    points: [
+      "Our Seller Policy defines the standards and responsibilities that create a trusted experience for sellers and customers.",
+    image: image("/image/png/fallback/sellerPolicy.webp", "Seller Policy"),
+    cta: { label: "Become a Seller", url: "/become-a-seller" },
+    sections: [
       [
-        "Execution Excellence",
-        "Every customer interaction and process is driven by performance and discipline.",
-        "excellence.png",
+        "policy-highlights",
+        "Everything You Need To Sell Confidently",
+        "Our marketplace policies protect sellers and strengthen customer confidence.",
+        [
+          [
+            "Genuine Products",
+            "Sell only authentic and legally sourced products.",
+          ],
+          [
+            "Accurate Listings",
+            "Provide correct titles, images, pricing and specifications.",
+          ],
+          ["Timely Shipping", "Dispatch orders within the promised timeline."],
+        ],
       ],
       [
-        "Customer First",
-        "We focus on consistent, high-quality retail experiences for Indian consumers.",
-        "customer.png",
+        "seller-responsibilities",
+        "Your Commitment Matters",
+        "Follow these responsibilities to provide a trusted shopping experience.",
+        [
+          [
+            "List Authentic Products",
+            "Upload only original products with complete details.",
+          ],
+          [
+            "Maintain Accurate Listings",
+            "Keep pricing, stock, and information updated.",
+          ],
+          [
+            "Process Orders Quickly",
+            "Accept, pack and dispatch every order on time.",
+          ],
+          [
+            "Support Customers",
+            "Respond professionally to customer queries and returns.",
+          ],
+        ],
       ],
       [
-        "Scalable Growth",
-        "We build systems that support sustainable long-term expansion.",
-        "growth.png",
+        "account-compliance",
+        "Maintain a Healthy Seller Account",
+        "We monitor seller performance to ensure reliable service.",
+        [
+          [
+            "Good Standing",
+            "Maintain accurate listings, timely shipping, and quality service.",
+          ],
+          [
+            "Performance Review",
+            "Accounts are reviewed using fulfillment and satisfaction data.",
+          ],
+          [
+            "Policy Violations",
+            "Repeated violations can lead to account restrictions.",
+          ],
+        ],
       ],
-    ].map(([title, description, file]) => ({
+    ].map(([type, title, description, points]) => ({
+      type,
       title,
       description,
-      image: image(`/image/png/fallback/icons/${file}`),
+      points: points.map(([pointTitle, pointDescription]) => ({
+        title: pointTitle,
+        description: pointDescription,
+      })),
     })),
-  },
-
-  brands: {
-    title: "Indian Brands",
-    description: "Experience Across Leading Global Brands",
-
-    points: [
-      "zara",
-      "gq",
-      "lacoste",
-      "gucci",
-      "prada",
-      "vogue",
-    ].map((brand) => ({
-      title: brand.toUpperCase(),
-      image: image(`/image/png/fallback/brands/${brand}.png`),
-    })),
-  },
-
-  mission: {
-    title: "Our Mission",
-
-    description:
-      "Our mission is to build an execution-focused retail network that delivers dependable stores, strong brand experiences, and long-term value for customers and partners.",
-
-    image: image(
-      "/image/png/fallback/become-a-seller/hand.png",
-      "Our mission",
-    ),
-  },
-
-  whyChoose: {
-    title: "Why Choose Us",
-
-    description:
-      "A strong retail partner focused on execution, growth, and long-term success.",
-
-    points: [
-      [
-        "Global Brand Experience",
-        "Retail expertise shaped by leading global brands.",
-      ],
-      [
-        "Financial Discipline",
-        "Strong governance and structured planning.",
-      ],
-      [
-        "Strong Retail Execution",
-        "Disciplined operations that drive consistency.",
-      ],
-      [
-        "Structured Expansion",
-        "Scalable systems for multi-city growth.",
-      ],
-      [
-        "Consumer Understanding",
-        "Deep insight into customer needs and choices.",
-      ],
-      [
-        "Long-Term Partnerships",
-        "Built for trusted and sustainable collaboration.",
-      ],
-    ].map(([title, description], index) => ({
-      title,
-      description,
+  };
+/* -------------------------------------------------------------------------- */ /* About                                                                      */ /* -------------------------------------------------------------------------- */ export const FALLBACK_ABOUT =
+  {
+    bannerImage: "/image/png/fallback/sellerPolicy.webp",
+    story: {
+      description:
+        "Sam Global is built on years of retail and distribution experience, with a clear focus on disciplined execution, customer trust, and sustainable growth across India.",
       image: image(
-        `/image/png/fallback/icons/dummy${index || ""}.png`,
+        "/image/png/fallback/become-a-seller/outStory.png",
+        "Sam Global story",
       ),
-    })),
-  },
-};
+    },
+    values: {
+      title: "Our Values",
+      points: [
+        [
+          "Execution Excellence",
+          "Every customer interaction and process is driven by performance and discipline.",
+          "excellence.png",
+        ],
+        [
+          "Customer First",
+          "We focus on consistent, high-quality retail experiences for Indian consumers.",
+          "customer.png",
+        ],
+        [
+          "Scalable Growth",
+          "We build systems that support sustainable long-term expansion.",
+          "growth.png",
+        ],
+      ].map(([title, description, file]) => ({
+        title,
+        description,
+        image: image(`/image/png/fallback/icons/${file}`),
+      })),
+    },
+    brands: {
+      title: "Indian Brands",
+      description: "Experience Across Leading Global Brands",
+      points: ["zara", "gq", "lacoste", "gucci", "prada", "vogue"].map(
+        (brand) => ({
+          title: brand.toUpperCase(),
+          image: image(`/image/png/fallback/brands/${brand}.png`),
+        }),
+      ),
+    },
+    mission: {
+      title: "Our Mission",
+      description:
+        "Our mission is to build an execution-focused retail network that delivers dependable stores, strong brand experiences, and long-term value for customers and partners.",
+      image: image(
+        "/image/png/fallback/become-a-seller/hand.png",
+        "Our mission",
+      ),
+    },
+    whyChoose: {
+      title: "Why Choose Us",
+      description:
+        "A strong retail partner focused on execution, growth, and long-term success.",
+      points: [
+        [
+          "Global Brand Experience",
+          "Retail expertise shaped by leading global brands.",
+        ],
+        ["Financial Discipline", "Strong governance and structured planning."],
+        [
+          "Strong Retail Execution",
+          "Disciplined operations that drive consistency.",
+        ],
+        ["Structured Expansion", "Scalable systems for multi-city growth."],
+        [
+          "Consumer Understanding",
+          "Deep insight into customer needs and choices.",
+        ],
+        [
+          "Long-Term Partnerships",
+          "Built for trusted and sustainable collaboration.",
+        ],
+      ].map(([title, description], index) => ({
+        title,
+        description,
+        image: image(`/image/png/fallback/icons/dummy${index || ""}.png`),
+      })),
+    },
+  };
 export const FALLBACK_POLICY_DATA = {
   shipping: {
     title: "Shipping & Delivery Policy",
@@ -548,182 +480,79 @@ export const FALLBACK_POLICY_DATA = {
         title: "Designed for Convenience. Delivered with Care.",
         description:
           "At Sam Global, we aim to ensure a seamless delivery experience. This Shipping Policy outlines the terms governing order processing, dispatch, and delivery.",
-
-        image: {
-          url: "",
-          alt: "",
-          title: "",
-          caption: "",
-          type: "",
-        },
-
+        image: { url: "", alt: "", title: "", caption: "", type: "" },
         gallery: [],
-
         points: [
           {
             title: "Order Processing",
             description:
               "Orders are processed within standard business timelines after successful payment confirmation.\nProcessing timelines may vary based on product availability, order volume, or operational factors.\nSam Global reserves the right to cancel or delay orders in case of unforeseen circumstances, including stock unavailability or verification issues.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 1,
           },
-
           {
             title: "Delivery Timelines",
             description:
               "Estimated delivery timelines are indicative and will be displayed at checkout.\nActual delivery may vary depending on location, logistics partner timelines, and external factors.\nDelays caused by circumstances beyond our control, including weather, strikes, regional restrictions, or logistics disruptions, shall not constitute a breach of obligation.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 2,
           },
-
           {
             title: "Shipping Coverage",
             description:
               "Delivery is subject to serviceable pincodes as determined by our logistics partners.\nSam Global reserves the right to refuse delivery to certain locations without prior notice.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 3,
           },
-
           {
             title: "Shipping Charges",
             description:
               "Shipping charges, if applicable, will be displayed at checkout prior to order confirmation.\nCharges may vary based on order value, delivery location, product category, or promotional offers.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 4,
           },
-
           {
             title: "Order Tracking",
             description:
               "Tracking details will be shared upon dispatch of the order.\nThe customer is responsible for monitoring shipment updates using the provided tracking information.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 5,
           },
-
           {
             title: "Delivery & Acceptance",
             description:
               "Delivery shall be deemed completed once the order is delivered to the address provided at the time of purchase.\nAny person available at the delivery address shall be deemed authorized to receive the order on behalf of the customer.\nSam Global shall not be liable for loss or damage after successful delivery.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 6,
           },
-
           {
             title: "Limitation of Liability",
             description:
               "Sam Global shall not be liable for delays, non-delivery, or service interruptions caused by third-party logistics providers or events beyond reasonable control.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 7,
           },
-
           {
             title: "Need Assistance?",
             description:
               "For any shipping-related queries, please contact our support team.Reliable delivery, aligned with clarity and trust.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 8,
           },
         ],
-
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
-
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 1,
       },
     ],
   },
-
   returns: {
     title: "Return & Refund Policy",
     description: "",
@@ -733,220 +562,95 @@ export const FALLBACK_POLICY_DATA = {
         title: "Simple. Transparent. Hassle-Free.",
         description:
           "This Return & Refund Policy governs the conditions under which returns, exchanges, and refunds are processed.",
-
-        image: {
-          url: "",
-          alt: "",
-          title: "",
-          caption: "",
-          type: "",
-        },
-
+        image: { url: "", alt: "", title: "", caption: "", type: "" },
         gallery: [],
-
         points: [
           {
             title: "Return Eligibility",
             description:
               "Returns will be accepted only if the product is eligible under the applicable policy.\nThe return request is initiated within the specified return window.\nThe product is unused, undamaged, and in its original condition.\nOriginal tags, packaging, and accessories are intact.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 1,
           },
-
           {
             title: "Return Process",
             description:
               "Return requests must be raised through the appropriate platform or support channel.\nOnce submitted, return requests will be reviewed and approved where applicable.\nProducts must be handed over to the return courier as instructed.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 2,
           },
-
           {
             title: "Verification & Approval",
             description:
               "All returned products are subject to inspection and quality checks.\nApproval of return or refund is at the sole discretion of Sam Global based on product condition.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 3,
           },
-
           {
             title: "Refund Process",
             description:
               "Refunds will be initiated only after successful verification of returned products.\nRefunds will be processed to the original mode of payment unless otherwise specified.\nTimelines may vary depending on banking/payment gateway and logistics partner.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 4,
           },
-
           {
             title: "Exchange Policy",
             description:
               "Exchanges are subject to product availability and eligibility.\nIf the requested replacement is unavailable, a refund may be issued as per policy.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 5,
           },
-
           {
             title: "Non-Returnable Items",
             description:
               "Certain products may be marked as non-returnable at the time of purchase.\nPersonalized or hygiene-sensitive items.\nProducts used, damaged, or returned without original condition.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 6,
           },
-
           {
             title: "Damaged / Incorrect Products",
             description:
               "Any claims regarding damaged, defective, or incorrect products must be reported within 48 hours of delivery.\nPhotographic or video evidence may be required for claim review.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 7,
           },
-
           {
             title: "Cancellation Policy",
             description:
               "Orders can be cancelled only within the permitted cancellation window.\nOnce dispatched, cancellation requests shall be treated under the return policy.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 8,
           },
-
           {
             title: "Limitation of Liability",
             description:
               "Sam Global shall not be liable for improper use or handling of products after delivery.\nRefund liability shall be limited to the value of the eligible product.\nDelays attributable to banks, logistics, or payment gateways are outside our control.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 9,
           },
-
           {
             title: "Need Help?",
             description:
               "For assistance, please reach out to our support team.",
-            image: {
-              url: "",
-              alt: "",
-              title: "",
-              caption: "",
-              type: "",
-            },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 10,
           },
         ],
-
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
-
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 1,
       },
     ],
   },
-
   terms: {
     title: "Terms of Use",
     description: "",
@@ -956,7 +660,6 @@ export const FALLBACK_POLICY_DATA = {
         title: "Please Read Carefully",
         description:
           'These Terms & Conditions ("Terms") govern your access to and use of the Sam Global website, platform, and services (collectively, the "Platform"). By accessing, browsing, or using the Platform, you agree to be bound by these Terms. If you do not agree, please do not use the Platform.',
-
         image: {
           url: "",
           alt: "Please Read Carefully",
@@ -964,9 +667,7 @@ export const FALLBACK_POLICY_DATA = {
           caption: "",
           type: "section",
         },
-
         gallery: [],
-
         points: [
           {
             title: "Eligibility",
@@ -979,14 +680,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 1,
           },
-
           {
             title: "Eligibility",
             description:
@@ -998,14 +694,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 2,
           },
-
           {
             title: "Account & User Responsibility",
             description:
@@ -1017,14 +708,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 3,
           },
-
           {
             title: "Platform Usage",
             description:
@@ -1036,14 +722,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 4,
           },
-
           {
             title: "Product Information & Pricing",
             description:
@@ -1055,14 +736,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 5,
           },
-
           {
             title: "Orders & Acceptance",
             description:
@@ -1074,14 +750,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 6,
           },
-
           {
             title: "Payments",
             description:
@@ -1093,14 +764,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 7,
           },
-
           {
             title: "Shipping, Returns & Refunds",
             description:
@@ -1112,14 +778,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 8,
           },
-
           {
             title: "Marketplace Disclaimer",
             description:
@@ -1131,14 +792,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 9,
           },
-
           {
             title: "Intellectual Property",
             description:
@@ -1150,14 +806,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 10,
           },
-
           {
             title: "Limitation of Liability",
             description:
@@ -1169,14 +820,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 11,
           },
-
           {
             title: "INDEMNITY",
             description:
@@ -1188,14 +834,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 12,
           },
-
           {
             title: "TERMINATION",
             description:
@@ -1207,14 +848,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 13,
           },
-
           {
             title: "FORCE MAJEURE",
             description:
@@ -1226,14 +862,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 14,
           },
-
           {
             title: "GOVERNING LAW & JURISDICTION",
             description:
@@ -1245,14 +876,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 15,
           },
-
           {
             title: "MODIFICATIONS",
             description:
@@ -1264,14 +890,9 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 16,
           },
-
           {
             title: "CONTACT",
             description:
@@ -1283,21 +904,11 @@ export const FALLBACK_POLICY_DATA = {
               caption: "",
               type: "point",
             },
-            cta: {
-              label: "",
-              url: "",
-              target: "_self",
-            },
+            cta: { label: "", url: "", target: "_self" },
             sortOrder: 17,
           },
         ],
-
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
-
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 1,
       },
     ],
@@ -1315,13 +926,7 @@ export const FALLBACK_CMS_DATA = {
     excerpt: "Everything You Need To Know",
     published: true,
     status: "published",
-
-    cta: {
-      label: "Contact Support",
-      url: "/contact-us",
-      target: "_self",
-    },
-
+    cta: { label: "Contact Support", url: "/contact-us", target: "_self" },
     sections: [
       {
         type: "faq-category",
@@ -1347,14 +952,9 @@ export const FALLBACK_CMS_DATA = {
             sortOrder: 3,
           },
         ],
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 1,
       },
-
       {
         type: "faq-category",
         title: "Shipping & Delivery",
@@ -1373,14 +973,9 @@ export const FALLBACK_CMS_DATA = {
             sortOrder: 2,
           },
         ],
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 2,
       },
-
       {
         type: "faq-category",
         title: "Returns & Refunds",
@@ -1399,14 +994,9 @@ export const FALLBACK_CMS_DATA = {
             sortOrder: 2,
           },
         ],
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 3,
       },
-
       {
         type: "faq-category",
         title: "Payments",
@@ -1419,14 +1009,9 @@ export const FALLBACK_CMS_DATA = {
             sortOrder: 1,
           },
         ],
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 4,
       },
-
       {
         type: "faq-category",
         title: "Account & Support",
@@ -1439,14 +1024,9 @@ export const FALLBACK_CMS_DATA = {
             sortOrder: 1,
           },
         ],
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 5,
       },
-
       {
         type: "faq-category",
         title: "For Brands & Partners",
@@ -1459,41 +1039,24 @@ export const FALLBACK_CMS_DATA = {
             sortOrder: 1,
           },
         ],
-        cta: {
-          label: "",
-          url: "",
-          target: "_self",
-        },
+        cta: { label: "", url: "", target: "_self" },
         sortOrder: 6,
       },
-
       {
         type: "need-help",
         title: "Need More Help?",
         description:
           "Get the help you need from our automated assistant or contact our support team for further assistance.",
         points: [],
-        cta: {
-          label: "Contact Support",
-          url: "/contact-us",
-          target: "_self",
-        },
+        cta: { label: "Contact Support", url: "/contact-us", target: "_self" },
         sortOrder: 99,
       },
     ],
-
     seo: {
       metaTitle: "Frequently Asked Questions",
       metaDescription:
         "Find answers to common shopping, payment, shipping and account questions.",
-      keywords: [
-        "faq",
-        "help",
-        "shipping",
-        "orders",
-        "payments",
-        "returns",
-      ],
+      keywords: ["faq", "help", "shipping", "orders", "payments", "returns"],
       focusKeyword: "Frequently Asked Questions",
       canonicalUrl: "/faq",
       robots: "index,follow",
@@ -1502,15 +1065,165 @@ export const FALLBACK_CMS_DATA = {
         "Find answers to common shopping, payment, shipping and account questions.",
       schemaType: "FAQPage",
       breadcrumbs: [
-        {
-          label: "Home",
-          url: "/",
-        },
-        {
-          label: "FAQ",
-          url: "/faq",
-        },
+        { label: "Home", url: "/" },
+        { label: "FAQ", url: "/faq" },
       ],
     },
   },
 };
+/* -------------------------------------------------------------------------- */
+/* Footer                                                                     */
+/* -------------------------------------------------------------------------- */
+
+const footerImage = (url, alt = "") => ({
+  url,
+  alt,
+});
+
+export const FALLBACK_FOOTER = {
+  slug: "footerdata",
+  title: "footerData",
+ logo: "/image/webp/logoWithName.webp", 
+  benefits: [
+    {
+      title: "100% Secure Payments",
+      description: "Multiple sale payment options",
+      icon: footerImage(
+        "/image/png/fallback/footer/payment.png",
+        "Payment",
+      ).url,
+      alt: "Payment",
+    },
+    {
+      title: "Easy Returns",
+      description: "Hassle-free 10 days return",
+      icon: footerImage(
+        "/image/png/fallback/footer/return.png",
+        "Returns and exchanges",
+      ).url,
+      alt: "Returns and exchanges",
+    },
+    {
+      title: "24/7 Support",
+      description: "We’re here to help you.",
+      icon: footerImage(
+        "/image/png/fallback/footer/support.png",
+        "Support",
+      ).url,
+      alt: "Support",
+    },
+  ],
+
+  linkGroups: [
+    {
+      title: "Sell",
+      links: [
+        {
+          label: "Become a Seller",
+          href: "/become-a-seller",
+        },
+        {
+          label: "Seller Dashboard",
+          href: "http://45.195.90.183:3000/login",
+          target: "_blank",
+        },
+        {
+          label: "Seller Policies",
+          href: "/seller-policies",
+        },
+      ],
+    },
+    {
+      title: "About SAM",
+      links: [
+        {
+          label: "Who We Are",
+          href: "/about-us#who-we-are",
+        },
+        {
+          label: "Why Choose Us",
+          href: "/about-us#why-choose-us",
+        },
+        {
+          label: "Our Values",
+          href: "/about-us#our-values",
+        },
+      ],
+    },
+    {
+      title: "Help & Contact",
+      links: [
+        {
+          label: "Customer Support",
+          href: "/support",
+        },
+        {
+          label: "Mobile App",
+          href: "/mobile-app",
+        },
+        {
+          label: "Shipping & Delivery Policy",
+          href: "/shipping-policy",
+        },
+        {
+          label: "Return & Refund Policy",
+          href: "/refund-policy",
+        },
+        {
+          label: "Terms of Use",
+          href: "/terms-of-use",
+        },
+        {
+          label: "FAQ",
+          href: "/faq",
+        },
+      ],
+    },
+  ],
+
+  appDownload: {
+    title:
+      "Download our app for a faster and smarter shopping experience.",
+
+    links: [
+      {
+        label: "Download on the App Store",
+        href: "/mobile-app",
+        image:
+          "/image/png/fallback/footer/app-store.png",
+        alt: "Download on the App Store",
+      },
+      {
+        label: "Get it on Google Play",
+        href: "/mobile-app",
+        image:
+          "/image/png/fallback/footer/google-play.png",
+        alt: "Get it on Google Play",
+      },
+    ],
+  },
+
+  copyright:
+    "© 2026 Samglobal Marketplace Pvt. Ltd. All Rights Reserved.",
+
+  socialLinks: [
+    {
+      label: "Instagram",
+      href: "/Description",
+      icon: "",
+      alt: "Instagram",
+    },
+    {
+      label: "Facebook",
+      href: "/Description",
+      icon: "",
+      alt: "Facebook",
+    },
+    {
+      label: "YouTube",
+      href: "/Description",
+      icon: "",
+      alt: "YouTube",
+    },
+  ],
+}; 

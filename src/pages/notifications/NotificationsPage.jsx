@@ -411,9 +411,6 @@ export function NotificationsPage() {
     dispatch(fetchNotifications({ params: { page: 1, limit: pageSize } }));
   };
 
-  const handleClearAll = () => {
-    console.log("Clear All triggered");
-  };
 
   const handleNotificationClick = async (notif) => {
     dispatch(markAsRead(notif.id || notif._id));
