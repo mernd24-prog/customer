@@ -487,10 +487,13 @@ export default function useCategory() {
     const brandOptions = allBrands
       .map((brand) => ({
         value: String(brand.value),
-        label: String(brand.value),
+        label: String(brand.label || brand.name || brand.value),
         count: Number(brand.count || 0),
       }))
-      .filter((brand) => brand.count > 0);
+      .filter(
+        (brand) =>
+          brand.count > 0 && !/^[a-f\d]{24}$/i.test(brand.label.trim()),
+      );
 
     const attributeFacets = filterableAttributes
       .map((attribute) => ({

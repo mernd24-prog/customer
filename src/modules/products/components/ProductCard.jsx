@@ -28,6 +28,8 @@ import {
   isProductCodAvailable,
   getOptimizedCloudinaryUrl,
   generateCloudinarySrcSet,
+  getProductBrandName,
+  getProductCategoryName,
 } from "../../../utils/ecommerce";
 
 import { cn } from "../../../utils/common";
@@ -122,7 +124,7 @@ export default function ProductCard({
 
   const title = titleProp || getProductTitle(cardProduct);
 
-  const rawBrand = brandProp || cardProduct?.brand;
+  const rawBrand = brandProp || getProductBrandName(cardProduct);
 
   const brand =
     typeof rawBrand === "object"
@@ -142,8 +144,8 @@ export default function ProductCard({
   const subtitle =
     subtitleProp ||
     cardProduct?.description ||
-    cardProduct?.category ||
-    cardProduct?.brand ||
+    getProductCategoryName(cardProduct) ||
+    getProductBrandName(cardProduct) ||
     "";
 
   const price = priceProp ?? getProductPrice(displayProduct) ?? 0;

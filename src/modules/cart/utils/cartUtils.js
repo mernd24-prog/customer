@@ -8,6 +8,7 @@ import {
   getProductDealPrice,
   getProductPrice,
   getVariantPrice,
+  getProductBrandName,
 } from "../../../utils/ecommerce";
 import {
   getCartItemStock,
@@ -99,7 +100,7 @@ export function adaptItemForCard(item, fullProduct = null) {
               0,
           ) + Number(productShippingInfo.handlingCharge ?? 0);
   const quantity = item.quantity || 1;
-  const seller = item.seller || product.seller?.name || product.brand;
+  const seller = item.seller || product.seller?.name || getProductBrandName(product);
   const condition = item.condition;
   const attributes = item.attributes || {};
   const color = item.color || item.selectedColor || attributes.color;

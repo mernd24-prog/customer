@@ -6,7 +6,11 @@ import { SocialIcons } from "../components/ui";
 import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
 import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
-import { getBrandProductCount } from "../utils/pages/brandUtils";
+import {
+  getBrandName,
+  getBrandProductCount,
+  getBrandRouteKey,
+} from "../utils/pages/brandUtils";
 import {
   fetchCategories,
   fetchBrands,
@@ -241,6 +245,13 @@ export function Footer({ data = footerData }) {
   const globalBrands = useSelector(
     (state) => state.catalog.globalBrands || emptyArray,
   );
+  const displayableGlobalBrands = useMemo(
+    () => asArray(globalBrands).filter((brand) => getBrandName(brand)),
+    [globalBrands],
+  );
+  const needsBrandRefresh =
+    !displayableGlobalBrands.length ||
+    displayableGlobalBrands.length !== asArray(globalBrands).length;
 
   const [categoriesFetched, setCategoriesFetched] = useState(false);
   const [brandsFetched, setBrandsFetched] = useState(false);
@@ -263,11 +274,12 @@ export function Footer({ data = footerData }) {
   // ── Fetch brands ────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!globalBrands.length) {
+    if (needsBrandRefresh) {
       dispatch(
         fetchBrands({
           limit: 100,
           active: true,
+          hasProducts: true,
         }),
       )
         .unwrap()
@@ -288,7 +300,7 @@ export function Footer({ data = footerData }) {
     } else {
       setBrandsFetched(true);
     }
-  }, [dispatch, globalBrands.length]);
+  }, [dispatch, needsBrandRefresh]);
 
   const footer = data || footerData;
 
@@ -332,26 +344,20 @@ export function Footer({ data = footerData }) {
 
   const apiBrandLinks = useMemo(
     () =>
-      asArray(globalBrands)
+      displayableGlobalBrands
         .slice(0, 5)
         .map((brand) => {
-          const name =
-            brand?.name ||
-            brand?.label ||
-            brand?.value ||
-            "";
+          const name = getBrandName(brand);
 
           const slug =
-            brand?.slug ||
-            brand?.code ||
-            brandToSlug(name);
+            getBrandRouteKey(brand) || brandToSlug(name);
 
           return {
             label: name,
             href: CUSTOMER_ROUTES.brand(slug),
           };
         }),
-    [globalBrands],
+    [displayableGlobalBrands],
   );
 
   // ── Loading states ──────────────────────────────────────────────────────────

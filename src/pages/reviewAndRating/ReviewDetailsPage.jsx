@@ -14,6 +14,7 @@ import {
 } from "../../features/review/reviewSlice";
 import {
   getImageUrlFromValue,
+  getProductBrandName,
   getProductPublicPath,
 } from "../../utils/ecommerce";
 import {
@@ -105,9 +106,9 @@ function ProductReviewSidebar({ product, productId }) {
       </Link>
 
       <div className="mt-5 space-y-2">
-        {product.brand && (
+        {getProductBrandName(product) && (
           <p className="text-xs font-extrabold uppercase text-[var(--customer-gold-dark)]">
-            {product.brand}
+            {getProductBrandName(product)}
           </p>
         )}
 

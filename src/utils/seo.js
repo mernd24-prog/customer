@@ -1,5 +1,5 @@
 import { DEFAULT_SEO, SITE_CONFIG } from "../config/site";
-import { getProductPublicPath } from "./ecommerce";
+import { getProductBrandName, getProductPublicPath } from "./ecommerce";
 
 export function absoluteUrl(path = "", baseUrl = SITE_CONFIG.url) {
   if (!path) return baseUrl;
@@ -45,6 +45,7 @@ export function buildSeo({
 export function buildProductJsonLd(product = {}, url) {
   const name = product.title || product.name || "Product";
   const image = product.image || product.imageUrl || product.images?.[0];
+  const brandName = getProductBrandName(product);
 
   return {
     "@context": "https://schema.org",
@@ -53,8 +54,8 @@ export function buildProductJsonLd(product = {}, url) {
     image: image ? [absoluteUrl(image)] : undefined,
     description: product.description || product.subtitle,
     sku: product.sku || product.id || product._id || product.productId,
-    brand: product.brand
-      ? { "@type": "Brand", name: product.brand }
+    brand: brandName
+      ? { "@type": "Brand", name: brandName }
       : undefined,
     offers: product.price
       ? {

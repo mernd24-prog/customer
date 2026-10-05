@@ -1,5 +1,7 @@
 import { getImageUrlFromValue } from "../../utils/ecommerce/index.js";
 
+export const isReferenceId = (value) => /^[a-f\d]{24}$/i.test(String(value || "").trim());
+
 export function listFromPayload(payload) {
   const data = payload?.data ?? payload;
   if (Array.isArray(data)) return data;
@@ -13,9 +15,14 @@ export function listFromPayload(payload) {
 
 export function getBrandName(brand) {
   if (!brand) return "";
-  return typeof brand === "string"
-    ? brand
-    : brand.name || brand.brandName || brand.title || brand.code || "";
+  const candidates = typeof brand === "string"
+    ? [brand]
+    : [brand.name, brand.brandName, brand.title, brand.label, brand.code];
+  return (
+    candidates
+      .map((value) => String(value || "").trim())
+      .find((value) => value && !isReferenceId(value)) || ""
+  );
 }
 
 export function matchesBrandSearch(brand, searchText = "") {
@@ -63,7 +70,7 @@ export function slugifyBrand(value = "") {
 export function getBrandRouteKey(brand) {
   if (!brand) return "";
   if (typeof brand === "string") return slugifyBrand(brand);
-  return brand.slug || brand.code || slugifyBrand(getBrandName(brand));
+  return brand.slug || (isReferenceId(brand.code) ? "" : brand.code) || slugifyBrand(getBrandName(brand));
 }
 
 export function getBrandLogo(brand) {

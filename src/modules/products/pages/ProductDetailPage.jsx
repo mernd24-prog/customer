@@ -9,6 +9,7 @@ import {
   getProductTitle,
   getProductPublicPath,
   decodeProductRouteToken,
+  getProductCategoryName,
 } from "../../../utils/ecommerce";
 
 import CUSTOMER_ROUTES from "../../../constants/routes";
@@ -181,7 +182,8 @@ export default function ProductDetailPage() {
 
                 <span>{">"}</span>
 
-                {product?.parentCategory && (
+                {product?.parentCategory &&
+                  !/^[a-f\d]{24}$/i.test(String(product.parentCategory)) && (
                   <>
                     <Link
                       to={CUSTOMER_ROUTES.category(product.parentCategory)}
@@ -194,14 +196,14 @@ export default function ProductDetailPage() {
                   </>
                 )}
 
-                {product?.category &&
-                  product.category !== product.parentCategory && (
+                {getProductCategoryName(product) &&
+                  (product.categoryKey || product.category) !== product.parentCategory && (
                     <>
                       <Link
-                        to={CUSTOMER_ROUTES.category(product.category)}
+                        to={CUSTOMER_ROUTES.category(product.categoryKey || product.category)}
                         className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
                       >
-                        {(product.category || "").replace(/-/g, " ")}
+                        {getProductCategoryName(product)}
                       </Link>
 
                       <span>{">"}</span>

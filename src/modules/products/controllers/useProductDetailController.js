@@ -39,6 +39,8 @@ import {
   firstMoneyValue,
   buildCartItem,
   isProductCodAvailable,
+  getProductBrandName,
+  getProductCategoryName,
 } from "../../../utils/ecommerce";
 import {
   getActiveDealPrice,
@@ -413,27 +415,11 @@ export function useProductDetailController(
       ? `Only ${availableStock} in stock`
       : "";
 
-  const rawBrand =
-    product?.brand ||
-    product?.brandName ||
-    product?.brand?.name ||
-    product?.brand?.title ||
-    product?.brandTitle ||
-    selectedVariant?.brand ||
-    "";
-  const brand =
-    typeof rawBrand === "object"
-      ? rawBrand?.name || rawBrand?.title || rawBrand?.label || ""
-      : String(rawBrand || "").trim();
-
-  const categoryLabel = product?.category
-    ? (product.category || "")
-        .replace(/-/g, " ")
-        .replace(/\b\w/g, (c) => c.toUpperCase())
-    : null;
+  const brand = getProductBrandName(product);
+  const categoryLabel = getProductCategoryName(product);
 
   const rawDetails = {
-    Brand: brand || product?.brand,
+    Brand: brand,
     Category: categoryLabel,
     ...attributes,
   };

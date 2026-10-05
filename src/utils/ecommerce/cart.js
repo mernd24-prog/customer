@@ -13,6 +13,7 @@ import {
   getProductMrp,
   getProductPrice,
   getProductTitle,
+  getProductBrandName,
   getVariantPrice,
 } from "./product";
 
@@ -370,7 +371,7 @@ export function buildSavedProductView(wishlistProduct, resolvedProduct) {
     image: image || getImageFallbackSrc(title, "saved"),
     price: product?.price ?? product?.sellingPrice ?? product?.salePrice,
     brand:
-      product?.brand?.name || product?.brand || product?.seller?.name || "",
+      getProductBrandName(product) || product?.seller?.name || "",
     productForCart: product || wishlistProduct,
   };
 }

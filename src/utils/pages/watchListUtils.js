@@ -6,6 +6,7 @@ import {
   getProductAvailableStock,
   getProductMrp,
   getProductPrice,
+  getProductBrandName,
 } from "../../utils/ecommerce";
 
 export function adaptProductToItem(product, quantity = 1) {
@@ -53,7 +54,7 @@ export function adaptProductToItem(product, quantity = 1) {
     oldPrice,
     quantity,
     shipping: 0,
-    seller: product?.seller?.name || product?.seller || product?.brand || "",
+    seller: product?.seller?.name || product?.seller || getProductBrandName(product),
     color:
       product?.selectedVariant?.attributes?.color ||
       product?.color ||

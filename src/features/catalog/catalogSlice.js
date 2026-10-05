@@ -1,5 +1,6 @@
 import { createApiSlice } from "../createApiSlice";
 import { catalogThunks, productThunks } from "../domainThunks";
+import { isReferenceId } from "../../utils/pages/brandUtils";
 
 const productFacetCategories = (action = {}) => {
   const facets =
@@ -24,7 +25,11 @@ const productFacetBrands = (action = {}) => {
     action.payload?.meta?.filters ||
     {};
   return (facets.brands || facets.brand || [])
-    .filter((brand) => Number(brand.count || 0) > 0)
+    .filter(
+      (brand) =>
+        Number(brand.count || 0) > 0 &&
+        !isReferenceId(brand.name || brand.label || brand.value),
+    )
     .map((brand) => ({
       ...brand,
       name: brand.name || brand.label || brand.value,

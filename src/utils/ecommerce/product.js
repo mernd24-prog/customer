@@ -505,13 +505,30 @@ export function getProductImage(product) {
 }
 
 export function getProductBrandName(product) {
-  return (
-    product?.brand ||
+  const value =
     product?.brandName ||
+    product?.brandRef?.name ||
+    product?.brand?.name ||
+    product?.brand?.title ||
+    product?.brand?.label ||
     product?.manufacturer ||
     product?.vendor ||
-    ""
-  );
+    product?.brand ||
+    "";
+  const label = typeof value === "string" ? value.trim() : "";
+  return /^[a-f\d]{24}$/i.test(label) ? "" : label;
+}
+
+export function getProductCategoryName(product) {
+  const value =
+    product?.categoryName ||
+    product?.categoryRef?.name ||
+    product?.category?.title ||
+    product?.category?.name ||
+    product?.category?.label ||
+    "";
+  const label = typeof value === "string" ? value.trim() : "";
+  return /^[a-f\d]{24}$/i.test(label) ? "" : label;
 }
 
 export function getProductRatingValue(product) {

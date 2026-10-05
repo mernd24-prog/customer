@@ -75,7 +75,7 @@ export const normalizeFacetOption = (option = {}) => {
     option.brand_id ??
     option.name ??
     option.title;
-  const label =
+  const rawLabel =
     option.label ??
     option.name ??
     option.title ??
@@ -84,6 +84,9 @@ export const normalizeFacetOption = (option = {}) => {
     option.category_name ??
     option.brand_name ??
     value;
+  const label = /^[a-f\d]{24}$/i.test(String(rawLabel || "").trim())
+    ? ""
+    : rawLabel;
 
   return value
     ? {
