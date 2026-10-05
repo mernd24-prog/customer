@@ -597,8 +597,6 @@ export default function AccountPage({ tab = "profile" }) {
         data: formData,
       });
 
-      console.log("Profile image upload response:", result);
-
       const uploadedUrl = getUploadedFileUrl(result);
 
       if (!uploadedUrl) {

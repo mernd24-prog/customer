@@ -133,8 +133,6 @@ export default function NotifyMeModal({
       sku: selectedVariant?.sku || product?.sku || "",
     };
 
-    console.log("[NotifyMe] Form submission data / Payload:", payload);
-
     setSubmitting(true);
     try {
       if (onSubmit) {

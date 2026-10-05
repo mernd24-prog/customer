@@ -39,7 +39,6 @@ export function HomePage() {
   const dispatch = useDispatch();
   const categoryList = useSelector((s) => s.catalog.globalCategories);
   const categories = Array.isArray(categoryList) ? categoryList : [];
-  console.log(categories);
   const [categoryRequestComplete, setCategoryRequestComplete] = useState(
     categories.length > 0,
   );
