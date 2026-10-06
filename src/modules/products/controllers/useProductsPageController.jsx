@@ -225,6 +225,8 @@ export function useProductsPageController() {
   } = useCatalogFilters({
     attributeFacets,
     absolutePriceLimits,
+    brandOptions,
+    categoryOptions,
     clearExceptions: ["q", "collectionIds", "f"],
   });
 

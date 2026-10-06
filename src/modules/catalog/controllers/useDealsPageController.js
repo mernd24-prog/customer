@@ -210,6 +210,8 @@ export default function useDealsPageController() {
     activeFilters,
   } = useCatalogFilters({
     attributeFacets: [],
+    brandOptions,
+    categoryOptions,
     absolutePriceLimits: {
       min: dealFacets.priceStats?.min ?? dealFacets.price?.min ?? 0,
       max: dealFacets.priceStats?.max ?? dealFacets.price?.max ?? 150000,

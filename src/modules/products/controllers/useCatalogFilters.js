@@ -7,6 +7,8 @@ import { scrollToTop } from "../../../utils/common";
 export function useCatalogFilters({
   attributeFacets = [],
   absolutePriceLimits = { min: 0, max: 0 },
+  brandOptions = [],
+  categoryOptions = [],
   clearExceptions = ["q", "collectionIds", "category"]
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -115,7 +117,12 @@ export function useCatalogFilters({
     [setSearchParams, navigate],
   );
 
-  const activeFilters = getActiveFilters(searchParams, attributeFacets, absolutePriceLimits);
+  const activeFilters = getActiveFilters(
+    searchParams,
+    attributeFacets,
+    absolutePriceLimits,
+    { brandOptions, categoryOptions },
+  );
 
   const clearFiltersAction = useMemo(
     () =>

@@ -1,7 +1,19 @@
 import { parseMultiValue } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 
-export function getActiveFilters(searchParams, attributeFacets, absolutePriceLimits = {}) {
+const displayValue = (value, options = []) => {
+  const match = (options || []).find(
+    (option) => String(option?.value ?? option?.id ?? option?._id ?? "") === String(value),
+  );
+  return String(match?.label || match?.name || match?.title || value);
+};
+
+export function getActiveFilters(
+  searchParams,
+  attributeFacets,
+  absolutePriceLimits = {},
+  { brandOptions = [], categoryOptions = [] } = {},
+) {
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
 
@@ -16,13 +28,17 @@ export function getActiveFilters(searchParams, attributeFacets, absolutePriceLim
     ...parseMultiValue(searchParams.get("category")).map((val) => ({
       key: `category:${val}`,
       type: "category",
-      label: "Category: " + capitalizeFirst(val.replace(/-/g, " ")),
+      label:
+        "Category: " +
+        capitalizeFirst(displayValue(val, categoryOptions).replace(/-/g, " ")),
       value: val,
     })),
     ...parseMultiValue(searchParams.get("brand")).map((val) => ({
       key: `brand:${val}`,
       type: "brand",
-      label: "Brand: " + capitalizeFirst(val.replace(/-/g, " ")),
+      label:
+        "Brand: " +
+        capitalizeFirst(displayValue(val, brandOptions).replace(/-/g, " ")),
       value: val,
     })),
     ...parseMultiValue(searchParams.get("rating")).map((val) => ({
