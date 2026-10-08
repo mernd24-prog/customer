@@ -14,8 +14,8 @@ export default function BuyerRegisterPage() {
       />
       <AuthCard
         eyebrow="Registration"
-        title="Start Shopping With a Customer A   ccount."
-        subtitle="Your role is locked to buyer on submit, so this form cannot accidentally create a seller or admin profile."
+        title="Create Your Account"
+        subtitle="Enter your details, then verify your OTP to start shopping."
         icon="/image/png/person.png"
         image="/image/png/authImg1.png"
         maxWidth="max-w-[1220px]"

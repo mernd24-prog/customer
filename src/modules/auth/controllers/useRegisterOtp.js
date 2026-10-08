@@ -8,6 +8,8 @@ import { AUTH_ROUTES } from "../routes/apiRoutes";
 import { registerUserWithOtp, clearError } from "../slices/authSlice";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { registerOtpSchema } from "../../../validations/validationSchemas";
+import { registrationOtpMessage } from "../utils/registrationOtp";
+import { notify } from "../../../utils/notify";
 
 export default function useRegisterOtp() {
   const dispatch = useDispatch();
@@ -46,9 +48,11 @@ export default function useRegisterOtp() {
       profile: { firstName: values.firstName, lastName: values.lastName },
       referralCode: values.referralCode || undefined,
     };
-    await run(dispatch, registerUserWithOtp(payload), "OTP sent to your email");
+    const result = await run(dispatch, registerUserWithOtp(payload));
+    const deliveryMessage = registrationOtpMessage(result);
+    notify.success(deliveryMessage);
     navigate(AUTH_ROUTES.verifyRegistration, {
-      state: { email: values.email },
+      state: { email: values.email, phone: payload.phone, deliveryMode: (result?.data || result)?.deliveryMode, deliveryMessage },
     });
   };
 

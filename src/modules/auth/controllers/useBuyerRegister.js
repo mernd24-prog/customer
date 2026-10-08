@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { registerUser, clearError } from "../slices/authSlice";
 import { AUTH_ROUTES } from "../routes/apiRoutes";
+import { registrationOtpMessage } from "../utils/registrationOtp";
+import { notify } from "../../../utils/notify";
 
 export default function useBuyerRegister() {
   const dispatch = useDispatch();
@@ -19,16 +21,11 @@ export default function useBuyerRegister() {
     const result = await run(
       dispatch,
       registerUser(payload),
-      "Buyer account created",
     );
-    const session = result?.data || result || {};
-    const hasSession = Boolean(session?.accessToken || session?.refreshToken);
-    if (hasSession) {
-      navigate(AUTH_ROUTES.home);
-      return;
-    }
+    const deliveryMessage = registrationOtpMessage(result);
+    notify.success(deliveryMessage);
     navigate(AUTH_ROUTES.verifyRegistration, {
-      state: { email: payload.email },
+      state: { email: payload.email, phone: payload.phone, deliveryMode: (result?.data || result)?.deliveryMode, deliveryMessage },
     });
   };
 

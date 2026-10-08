@@ -58,7 +58,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
 
   return (
     <form className="grid gap-3" onSubmit={handleSubmit(submit)}>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         <FormField
           id="firstName"
           label="First Name"
@@ -77,7 +77,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         <FormField
           id="email"
           label="Email"
@@ -99,7 +99,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         <FormField
           id="password"
           label="Password"
@@ -137,12 +137,12 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       )}
 
       <Button
-        className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+        className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
         loading={loading}
         size="lg"
         type="submit"
       >
-        <UserPlus size={18} /> Register
+        <UserPlus size={18} /> Send OTP
       </Button>
 
       <p className="text-center  text-[0.8rem] text-muted">

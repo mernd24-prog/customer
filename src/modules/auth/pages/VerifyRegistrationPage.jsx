@@ -17,6 +17,8 @@ export default function VerifyRegistrationPage() {
     loading,
     error,
     submit,
+    deliveryMessage,
+    registrationEmail,
     handleResendOtp
   } = useVerifyRegistration();
 
@@ -25,13 +27,19 @@ export default function VerifyRegistrationPage() {
       <Seo title="Verify Registration | Sam Global" />
       <AuthCard
         eyebrow="Almost there"
-        title="Verify Your Email"
-        subtitle="Enter the 6-digit OTP sent to your email to activate your account."
+        title="Verify Your Account"
+        subtitle="Enter the 6-digit OTP to create your account."
         icon="/image/png/person.png"
+        image="/image/png/authImage.png"
         maxWidth="max-w-[65rem]"
       >
-        <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
-          <FormField
+        <form className="grid gap-3" onSubmit={handleSubmit(submit)} noValidate>
+          <p role="status" aria-live="polite" className="rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-800">{deliveryMessage}</p>
+          {registrationEmail ? (
+            <>
+              <input type="hidden" {...register("email")} />
+            </>
+          ) : <FormField
             id="email"
             label="Email Address"
             type="email"
@@ -39,7 +47,7 @@ export default function VerifyRegistrationPage() {
             error={errors.email}
             autoComplete="email"
             placeholder="you@example.com"
-          />
+          />}
 
           <label className=" text-sm font-semibold text-ink">Otp Code</label>
           <input type="hidden" {...register("otp")} />
@@ -63,7 +71,7 @@ export default function VerifyRegistrationPage() {
           <Button
             type="submit"
             loading={loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!isValid || loading}
           >
             <CheckCircle size={18} /> Verify &amp; activate account
@@ -75,6 +83,7 @@ export default function VerifyRegistrationPage() {
               type="button"
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
               onClick={handleResendOtp}
+              disabled={loading}
             >
               Resend OTP
             </button>

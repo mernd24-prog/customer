@@ -5,21 +5,22 @@ export default function AuthCard({
   children,
   subtitle,
   title,
-  image,
+  image = "/image/png/authImage.png",
   icon,
   maxWidth = "max-w-[480px]",
   maxHeight,
+  topSpacing = true,
 }) {
   return (
-    <section className="w-full">
+    <section className={`auth-card w-full ${topSpacing ? "py-6 sm:py-8" : ""}`}>
       <div
         className={`mx-auto w-full ${maxWidth} overflow-hidden rounded-[16px] bg-[#F7F8FC] p-4 shadow-xl sm:rounded-[18px] sm:p-5 lg:rounded-[20px] lg:p-6 md:shadow-sm`}
       >
-        <div className="flex flex-col items-stretch gap-5 lg:flex-row lg:gap-6">
+        <div className="flex flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
           {/* Left image - visible on large screens */}
           <div
-            className={`hidden w-full lg:block lg:w-1/2 ${
-              maxHeight || "h-full"
+            className={`relative hidden w-full lg:block lg:w-1/2 ${
+              maxHeight || "min-h-[440px]"
             }`}
           >
             <img
@@ -28,15 +29,15 @@ export default function AuthCard({
               height="400"
               src={image}
               alt=""
-              className="h-full w-full rounded-lg object-cover"
+              className="absolute inset-0 h-full w-full rounded-lg object-cover"
             />
           </div>
 
           {/* Right content */}
           <div className="flex w-full flex-col justify-center lg:w-1/2">
             <div className="w-full">
-              <div className="mb-3 text-center sm:mb-4">
-                <div className="mx-auto mb-2 flex h-[52px] w-[52px] items-center justify-center rounded-full text-gold sm:h-[60px] sm:w-[60px] lg:h-[70px] lg:w-[70px]">
+              <div className="mb-2 text-center">
+                <div className="mx-auto mb-2 flex h-[40px] w-[40px] items-center justify-center rounded-full text-gold sm:h-[48px] sm:w-[48px]">
                   {icon ? (
                     <img
                       loading="lazy"
@@ -52,7 +53,7 @@ export default function AuthCard({
                 </div>
 
                 {title && (
-                  <h1 className="pt-1 text-h4 font-semibold leading-tight text-[#2E2E2E] sm:pt-2 lg:py-3">
+                  <h1 className="text-h4 font-semibold leading-tight text-[#2E2E2E]">
                     {title}
                   </h1>
                 )}
@@ -64,7 +65,7 @@ export default function AuthCard({
                 )}
               </div>
 
-              <div className="w-full pt-2 sm:pt-4">{children}</div>
+              <div className="w-full pt-1">{children}</div>
             </div>
           </div>
         </div>

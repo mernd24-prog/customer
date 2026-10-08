@@ -37,7 +37,7 @@ export default function LoginPage() {
         image="/image/png/authImage.png"
       >
         <form
-          className="grid gap-4 sm:gap-5"
+          className="grid gap-3"
           onSubmit={handleSubmit(submit)}
           noValidate
         >
@@ -78,7 +78,7 @@ export default function LoginPage() {
             type="submit"
             loading={loading}
             disabled={!isValid || loading || googleLoading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] font-semibold tracking-[0.5px] text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] font-semibold tracking-[0.5px] text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <LogIn size={18} />
             Sign In
@@ -94,7 +94,7 @@ export default function LoginPage() {
             type="button"
             onClick={handleMobileOtpLogin}
             disabled={loading || googleLoading}
-            className="h-12 w-full rounded-[8px] border border-gold bg-white text-[13px] font-semibold tracking-[0.5px] text-gold shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:bg-gold/5 hover:text-gold-dark hover:shadow-md active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 w-full rounded-[8px] border border-gold bg-white text-[13px] font-semibold tracking-[0.5px] text-gold shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:bg-gold/5 hover:text-gold-dark hover:shadow-md active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Smartphone size={18} />
             Continue with Mobile OTP
@@ -106,7 +106,7 @@ export default function LoginPage() {
             onClick={handleGoogleLogin}
             loading={googleLoading}
             disabled={loading || googleLoading}
-            className="h-12 w-full rounded-[8px] border-border bg-white text-[13px] font-semibold tracking-[0.5px] text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
+            className="h-11 w-full rounded-[8px] border-border bg-white text-[13px] font-semibold tracking-[0.5px] text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
           >
             <img loading="lazy" width="400" height="400"
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"

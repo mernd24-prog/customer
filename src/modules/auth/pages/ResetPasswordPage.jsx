@@ -31,7 +31,7 @@ export default function ResetPasswordPage() {
         icon="/image/png/done.png"
         image="/image/png/authImage.png"
         maxWidth="max-w-[65rem]"
-        maxHeight="min-h-[650px]"
+        maxHeight="h-[440px]"
       >
         <form className="grid gap-4" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
@@ -77,7 +77,7 @@ export default function ResetPasswordPage() {
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             Reset Password
           </Button>

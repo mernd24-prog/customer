@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,11 +12,14 @@ import {
 } from "../slices/authSlice";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { verifyOtpSchema } from "../../../validations/validationSchemas";
+import { registrationOtpMessage } from "../utils/registrationOtp";
+import { notify } from "../../../utils/notify";
 
 export default function useVerifyRegistration() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [deliveryMessage, setDeliveryMessage] = useState(registrationOtpMessage());
   const run = useToastThunk();
   const { loading, error } = useSelector((s) => s.auth);
 
@@ -45,14 +48,16 @@ export default function useVerifyRegistration() {
     navigate(AUTH_ROUTES.home);
   };
 
-  const handleResendOtp = () => {
+  const handleResendOtp = async () => {
     const email = watch("email");
     if (!email) return;
-    run(
+    const result = await run(
       dispatch,
       resendOtp({ email, purpose: "registration" }),
-      "OTP resent",
     );
+    const message = registrationOtpMessage(result);
+    setDeliveryMessage(message);
+    notify.success(message);
   };
 
   return {
@@ -65,6 +70,8 @@ export default function useVerifyRegistration() {
     loading,
     error,
     submit,
+    deliveryMessage,
+    registrationEmail: location.state?.email,
     handleResendOtp
   };
 }

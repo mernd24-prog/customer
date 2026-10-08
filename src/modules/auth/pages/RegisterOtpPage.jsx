@@ -25,15 +25,15 @@ export default function RegisterOtpPage() {
       <Seo title="Register with OTP | Sam Global" />
 
       <AuthCard
-        title="Create Account with Otp"
-        subtitle="Create your password now, then verify your email with a one-time code."
+        title="Create Account with OTP"
+        subtitle="Enter your details, then verify the OTP sent to your mobile or email."
         image="/image/png/authImg1.png"
         icon="/image/png/person.png"
         maxWidth="max-w-[1000px]"
-        maxHeight="h-[780px]"
+        maxHeight="h-[440px]"
       >
         <form
-          className="grid gap-3 sm:gap-5"
+          className="grid gap-3"
           onSubmit={handleSubmit(submit)}
           noValidate
         >
@@ -121,7 +121,7 @@ export default function RegisterOtpPage() {
           <Button
             type="submit"
             loading={loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!isValid || loading}
           >
             <Smartphone size={18} /> Send OTP &amp; register

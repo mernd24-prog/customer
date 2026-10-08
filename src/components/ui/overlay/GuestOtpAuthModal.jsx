@@ -243,6 +243,7 @@ export default function GuestOtpAuthModal({
 
         <div className="overflow-hidden rounded-[16px] bg-[#F7F8FC] sm:rounded-[18px] lg:rounded-[20px]">
           <AuthCard
+            topSpacing={false}
             image={image}
             icon={icon}
             title={cardTitle}
