@@ -755,17 +755,17 @@ export default function ProductReviewsSection({ productId, product }) {
 
           {/* View All Reviews Link */}
           {displayTotal > 0 && (
-            <div className="mt-3 pt-3 border-t border-[#E7D9B8]/40 flex justify-end">
+            <div className=" pt-3 border-t border-[#E7D9B8]/40 flex justify-start">
               <Link
                 to={`/products/${productId}/reviews`}
                 state={{ product }}
-                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#CE9F2D] hover:text-[#A96F14] transition-colors"
+                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#CE9F2D] "
               >
-                <span>View All Reviews ({displayTotal})</span>
-                <ArrowRight
-                  className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"
-                  strokeWidth={2.5}
-                />
+                <span>
+                  {displayTotal === 1
+                    ? "View all reviews"
+                    : `View all (${displayTotal}) reviews`}
+                </span>
               </Link>
             </div>
           )}

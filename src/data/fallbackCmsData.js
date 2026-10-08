@@ -386,17 +386,40 @@ export const FALLBACK_SELLER_PAGE = {
       })),
     })),
   };
-/* -------------------------------------------------------------------------- */ /* About                                                                      */ /* -------------------------------------------------------------------------- */ export const FALLBACK_ABOUT =
+/* -------------------------------------------------------------------------- */ /* About                                                                      */ /* -------------------------------------------------------------------------- */ 
+export const FALLBACK_ABOUT =
   {
-    bannerImage: "/image/png/fallback/sellerPolicy.webp",
-    story: {
-      description:
-        "Sam Global is built on years of retail and distribution experience, with a clear focus on disciplined execution, customer trust, and sustainable growth across India.",
-      image: image(
-        "/image/png/fallback/become-a-seller/outStory.png",
-        "Sam Global story",
-      ),
+    banner: {
+    image: "/image/png/fallback/become-a-seller/About-banner.png",
+
+    badge: "Your Next Chapter Starts Here",
+
+    title: "Grow Your Business With Sam Global",
+
+    description:
+      "Reach more customers, manage orders easily, and grow with reliable support.",
+
+    cta: {
+      label: "Learn More",
+      href: "#who-we-are",
     },
+
+    highlights: [
+      "Simple onboarding",
+      "Secure payouts",
+      "Dedicated support",
+    ],
+  },
+
+  story: {
+    description:
+      "Sam Global is built on years of retail and distribution experience, with a clear focus on disciplined execution, customer trust, and sustainable growth across India.",
+    image: image(
+      "/image/png/fallback/become-a-seller/outStory.png",
+      "Sam Global story",
+    ),
+  },
+
     values: {
       title: "Our Values",
       points: [
@@ -1190,14 +1213,14 @@ export const FALLBACK_FOOTER = {
         label: "Download on the App Store",
         href: "/mobile-app",
         image:
-          "/image/png/fallback/footer/app-store.png",
+          "/image/png/fallback/footer/appStore.svg",
         alt: "Download on the App Store",
       },
       {
         label: "Get it on Google Play",
         href: "/mobile-app",
         image:
-          "/image/png/fallback/footer/google-play.png",
+          "/image/png/fallback/footer/playStore.svg",
         alt: "Get it on Google Play",
       },
     ],

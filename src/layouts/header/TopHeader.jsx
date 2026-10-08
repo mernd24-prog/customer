@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut } from "lucide-react";
 
 import { HeaderGoldButton } from "../../components/ui/button/static";
+import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
 
 import { logout } from "../../modules/auth/slices/authSlice";
 import { notify } from "../../utils/notify";
@@ -15,72 +17,90 @@ export const TopHeader = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((s) => s.auth.current);
 
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setShowLogoutModal(false);
+
+    notify.success("Logged out successfully");
+    navigate("/", { replace: true });
+  };
+
   return (
-    <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
-      <div className="customer-container flex h-full items-center justify-between">
-        <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
-          {asArray(DEFAULT_TOP_NAV_LINKS).map((link, index) => (
+    <>
+      <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
+        <div className="customer-container flex h-full items-center justify-between">
+          <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
+            {asArray(DEFAULT_TOP_NAV_LINKS).map((link, index) => (
+              <Link
+                key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
+                to={hrefOr(link?.path)}
+                className="text-[#FFFFFF] transition-all duration-300 ease-in-out hover:text-[#FFFFFF]"
+              >
+                {textOr(link?.name, "Link")}
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex h-full items-center gap-[20px]">
             <Link
-              key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
-              to={hrefOr(link?.path)}
-              className="text-[#FFFFFF] transition-all duration-300 ease-in-out hover:text-[#FFFFFF]"
+              to="/become-a-seller"
+              className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-gray-300"
             >
-              {textOr(link?.name, "Link")}
+              Become a Seller
             </Link>
-            
-          ))}
-        </div>
 
-        <div className="flex h-full items-center gap-[20px]">
-          <Link
-            to="/become-a-seller"
-            className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-gray-300"
-          >
-            Become a Seller
-          </Link>
-
-          <Link
-            to="/support"
-            title="Help & Support"
-            aria-label="Help & Support"
-            className="flex items-center justify-center text-[#FFFFFF]"
-          >
-            <img
-              src="/image/svg/customer-support.svg"
-              alt="Help & Support"
-              className="h-6 w-6 object-contain brightness-0 invert"
-            />
-          </Link>
-
-          {currentUser ? (
-            <HeaderGoldButton
-              leftIcon={<LogOut size={14} />}
-              className="
-                inline-flex items-center justify-center gap-2
-                h-[30px] lg:h-[32px]
-                min-w-[90px] lg:min-w-[100px]
-                rounded-[5px]
-                px-3
-                py-0
-                text-[12px] lg:text-[13px]
-                font-semibold
-                leading-none
-                whitespace-nowrap
-                transition-all duration-300 ease-in-out
-                hover:bg-gray-50
-                hover:shadow-md
-              "
-              onClick={() => {
-                dispatch(logout());
-                notify.success("Logged out successfully");
-                navigate("/", { replace: true });
-              }}
+            <Link
+              to="/support"
+              title="Help & Support"
+              aria-label="Help & Support"
+              className="flex items-center justify-center text-[#FFFFFF]"
             >
-              Sign Out
-            </HeaderGoldButton>
-          ) : null}
+              <img
+                src="/image/svg/customer-support.svg"
+                alt="Help & Support"
+                className="h-6 w-6 object-contain brightness-0 invert"
+              />
+            </Link>
+
+            {currentUser ? (
+              <HeaderGoldButton
+                leftIcon={<LogOut size={14} />}
+                className="
+                  inline-flex items-center justify-center gap-2
+                  h-[30px] lg:h-[32px]
+                  min-w-[90px] lg:min-w-[100px]
+                  rounded-[5px]
+                  px-3
+                  py-0
+                  text-[12px] lg:text-[13px]
+                  font-semibold
+                  leading-none
+                  whitespace-nowrap
+                  transition-all duration-300 ease-in-out
+                  hover:bg-gray-50
+                  hover:shadow-md
+                "
+                onClick={() => setShowLogoutModal(true)}
+              >
+                Sign Out
+              </HeaderGoldButton>
+            ) : null}
+          </div>
         </div>
       </div>
-    </div>
+
+      <ConfirmModal
+        open={showLogoutModal}
+        title="Sign Out"
+        description="Are you sure you want to sign out of your account?"
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+      />
+    </>
   );
 };

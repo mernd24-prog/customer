@@ -520,8 +520,6 @@ export async function syncGuestCartWithServer(
     }
     clearGuestCart();
   } catch (err) {
-    // Keep the local copy when synchronization fails so a temporary API/network
-    // error cannot permanently discard the user's cart or wishlist.
     if (fetchCartAction) {
       await dispatch(fetchCartAction()).catch(() => {});
     }

@@ -38,7 +38,7 @@ const api = axios.create({
 let refreshPromise = null;
 const pendingCachedGetRequests = new Map();
 let serviceUnavailable = false;
-
+        
 export const getServiceFailureKind = (error = {}) => {
   if (typeof navigator !== "undefined" && navigator.onLine === false) {
     return "offline";

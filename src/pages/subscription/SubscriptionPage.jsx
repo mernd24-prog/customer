@@ -10,7 +10,8 @@ import {
   purchaseSubscription,
 } from "../../features/subscription/subscriptionSlice";
 import { formatMoney } from "../../utils/ecommerce";
-import { useFetch, itemsFrom } from "../customer/helpers";
+import { useFetchThunk as useFetch } from "../../hooks/useFetchThunk";
+import { itemsFrom } from "../../utils/ecommerce";
 
 export function SubscriptionPage() {
   const dispatch = useDispatch();

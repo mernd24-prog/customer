@@ -56,6 +56,7 @@ export default function OrderDetailPage({ orderId }) {
     pricingSummary,
     customerAmount,
     status,
+    canRequestReturn,
     returnEligibleUntil,
     returnWindowOpen,
     selectedOrderItem,
@@ -141,9 +142,14 @@ export default function OrderDetailPage({ orderId }) {
                       </Button>
                     )}
 
-                  {Boolean(selectedOrderItem) && selectedItemCanReturn && (
+                  {((Boolean(selectedOrderItem) && selectedItemCanReturn) ||
+                    (!selectedOrderItem && canRequestReturn)) && (
                     <Link
-                      to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`}
+                      to={
+                        selectedOrderItem
+                          ? `/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`
+                          : `/returns/request/${orderId}`
+                      }
                       className="block w-full sm:w-auto"
                     >
                       <Button

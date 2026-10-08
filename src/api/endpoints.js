@@ -17,9 +17,6 @@ export const FILE_UPLOAD_MODULES = {
 
 export const endpoints = {
   health: "/health",
-  home: {
-    collectionCollages: `${API_PREFIX}/home/collection-collages`,
-  },
   fileUploader: {
     upload: `${API_PREFIX}/file-uploader/upload`,
   },

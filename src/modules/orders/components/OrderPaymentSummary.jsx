@@ -236,7 +236,7 @@ function OrderPaymentSummary({
       {variant === "cart" && asNumber?.(productDiscount) > 0 && (
         <div className="border-t  border-[#04258626] pt-2">
           <SummaryRow
-            label="Product discount"
+            label="Product Discount"
             value={`-${formatMoney(productDiscount, currency)}`}
             savings
           />
@@ -247,14 +247,14 @@ function OrderPaymentSummary({
       {asNumber?.(discount) > 0 && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow
-            label="Promotion discount"
+            label="Promotion Discount"
             value={`-${formatMoney(discount, currency)}`}
             savings
           />
           {variant === "order" && (
             <p className="mt-1 text-xs leading-5 text-[#65718b]">
               {asNumber?.(sellerFundedDiscount) > 0
-                ? `${formatMoney(sellerFundedDiscount, currency)} funded by seller`
+                ? `${formatMoney(sellerFundedDiscount, currency)} Funded by Seller`
                 : ""}
               {asNumber?.(sellerFundedDiscount) > 0 &&
               (asNumber?.(marketplaceFundedDiscount) > 0 ||
@@ -262,19 +262,19 @@ function OrderPaymentSummary({
                 ? " · "
                 : ""}
               {asNumber?.(marketplaceFundedDiscount) > 0
-                ? `${formatMoney(marketplaceFundedDiscount, currency)} funded by marketplace`
+                ? `${formatMoney(marketplaceFundedDiscount, currency)} Funded by Marketplace`
                 : ""}
               {asNumber?.(marketplaceFundedDiscount) > 0 &&
               asNumber?.(paymentPartnerFundedDiscount) > 0
                 ? " · "
                 : ""}
               {asNumber?.(paymentPartnerFundedDiscount) > 0
-                ? `${formatMoney(paymentPartnerFundedDiscount, currency)} funded by payment partner`
+                ? `${formatMoney(paymentPartnerFundedDiscount, currency)} Funded by Payment Partner`
                 : ""}
               {!asNumber?.(sellerFundedDiscount) &&
               !asNumber?.(marketplaceFundedDiscount) &&
               !asNumber?.(paymentPartnerFundedDiscount)
-                ? `Funding: ${String(discountFundingType || "promotion").replace(/_/g, " ")}`
+                ? `Funding: ${String(discountFundingType || "Promotion").replace(/_/g, " ")}`
                 : ""}
             </p>
           )}
@@ -316,7 +316,7 @@ function OrderPaymentSummary({
       {variant !== "cart" && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow
-            label="Shipping (collected for seller)"
+            label="Shipping (Collected for Seller)"
             value={
               shippingLoading
                 ? "Calculating..."
@@ -333,14 +333,14 @@ function OrderPaymentSummary({
           <SummaryRow
             label={
               asNumber?.(customerPlatformFeeTax) > 0
-                ? "Platform fee base"
+                ? "Platform Fee Base"
                 : "Platform Fee"
             }
             value={formatMoney(customerPlatformFee, currency)}
           />
           {variant === "order" && (
             <p className="mt-1 text-xs leading-5 text-[#65718b]">
-              Marketplace service fee charged by platform.
+              Marketplace Service Fee Charged by Platform.
             </p>
           )}
         </div>
@@ -355,7 +355,7 @@ function OrderPaymentSummary({
           />
           {variant === "order" && asNumber?.(customerPlatformFeeTax) <= 0 && (
             <p className="mt-1 text-xs leading-5 text-[#65718b]">
-              No GST charged or GST detail not available for this order.
+              No GST Charged or GST Detail Not available for this Order.
             </p>
           )}
         </div>

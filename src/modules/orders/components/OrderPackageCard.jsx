@@ -16,30 +16,19 @@ import { OrderItemReviewAction, ExistingReviewCard } from "./OrderItemReview";
 import { ShowMoreText } from "../../../utils/showMore";
 import {
   getReviewProductId,
-  getReviewOrderItemId,
   reviewKeyForItem,
   getItemId,
-  getItemSellerGroupKey,
   resolveReturnForItem,
-  resolveItemStatus,
-  isDeliveredStatus,
-  resolveItemTracking,
-  sellerGroupKey,
   label,
-  formatDate,
   getItemReturnPolicy,
   getReturnedQuantityForItem,
   getReturnableQuantityForItem,
-  getItemQuantity,
-  getCancellationForItem,
+
 } from "../utils/orderItems";
 import {
-  dateTime,
-  TIMELINE_STEPS,
   STATUS_RANK,
-  getCancellationSteps,
-  getReturnSteps,
 } from "../utils/orderTimelineUtils";
+import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export function OrderPackageCard({
   group,
@@ -418,7 +407,7 @@ export function OrderPackageCard({
                 <div className="min-w-0">
                   <p className="text-xs text-[#6F7480]">Courier</p>
                   <p className="text-sm font-semibold text-[#1B1D60] truncate">
-                    {shipment.courier_name || "Seller Delivery"}
+                    {capitalizeFirst(shipment.courier_name || "Seller Delivery")}
                   </p>
                 </div>
               </div>

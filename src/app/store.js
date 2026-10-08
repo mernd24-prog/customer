@@ -13,7 +13,7 @@ import delivery from "../features/delivery/deliverySlice";
 import returns from "../modules/returns/slices/returnsSlice";
 import wallet from "../features/wallet/walletSlice";
 import subscription from "../features/subscription/subscriptionSlice";
-import notification from "../features/notification/notificationSlice";
+import notification from "../modules/notifications/slices/notificationSlice";
 import loyalty from "../features/loyalty/loyaltySlice";
 import warranty from "../features/warranty/warrantySlice";
 import recommendation from "../features/recommendation/recommendationSlice";

@@ -1,14 +1,12 @@
 import { useMemo } from "react";
 
 import Seo from "../../components/ui/Seo";
+
 import { BENEFITS } from "../../constants/data.constant";
+
 import { useCmsRecord } from "../../hooks/useCmsRecord";
+
 import { FALLBACK_FOOTER } from "../../data/fallbackCmsData";
-
-/* -------------------------------------------------------------------------- */
-/* Helpers                                                                    */
-/* -------------------------------------------------------------------------- */
-
 function asArray(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -35,9 +33,16 @@ function getCmsImageUrl(image) {
   }
 
   if (typeof image === "string") {
-    const markdownMatch = image.match(/\]\((.*?)\)$/);
+    const value = image.trim();
 
-    return markdownMatch?.[1] || image;
+    if (!value) {
+      return "";
+    }
+    const markdownMatch = value.match(
+      /\]\((.*?)\)$/,
+    );
+
+    return markdownMatch?.[1]?.trim() || value;
   }
 
   const url =
@@ -51,26 +56,28 @@ function getCmsImageUrl(image) {
     return "";
   }
 
-  const markdownMatch = String(url).match(/\]\((.*?)\)$/);
+  const value = String(url).trim();
 
-  return markdownMatch?.[1] || url;
+  const markdownMatch = value.match(
+    /\]\((.*?)\)$/,
+  );
+
+  return markdownMatch?.[1]?.trim() || value;
 }
 
 function getCmsSection(sections, title) {
+  const normalizedTitle = String(title)
+    .trim()
+    .toLowerCase();
+
   return asArray(sections).find(
     (section) =>
       String(section?.title || "")
         .trim()
-        .toLowerCase() ===
-      String(title)
-        .trim()
-        .toLowerCase(),
+        .toLowerCase() === normalizedTitle,
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Normalize App Download CMS Data                                            */
-/* -------------------------------------------------------------------------- */
 
 function normalizeAppDownloadData(page) {
   const payload = getCmsPayload(page);
@@ -91,50 +98,55 @@ function normalizeAppDownloadData(page) {
   }
 
   const links = asArray(appSection?.points)
-    .map((point) => ({
-      label:
+    .map((point) => {
+      const label = String(
         point?.title ||
-        point?.cta?.label ||
-        "",
+          point?.cta?.label ||
+          "",
+      ).trim();
 
-      href:
+      const href = String(
         point?.cta?.url ||
-        point?.url ||
-        "",
+          point?.url ||
+          "",
+      ).trim();
 
-      image:
-        getCmsImageUrl(point?.image),
+      const image = getCmsImageUrl(
+        point?.image,
+      );
 
-      alt:
+      const alt = String(
         point?.image?.alt ||
-        point?.title ||
-        point?.cta?.label ||
-        "Download app",
-    }))
-    .filter(
-      (item) =>
-        item.label ||
-        item.href ||
-        item.image,
-    );
+          point?.title ||
+          point?.cta?.label ||
+          "Download app",
+      ).trim();
+      if (!label && !href && !image) {
+        return null;
+      }
+
+      return {
+        label,
+        href,
+        image,
+        alt,
+      };
+    })
+    .filter(Boolean);
 
   return {
-    title:
-      appSection?.description ||
-      "",
+    title: String(
+      appSection?.description || "",
+    ).trim(),
 
-    image:
-      getCmsImageUrl(
-        appSection?.image,
-      ),
+    image: getCmsImageUrl(
+      appSection?.image,
+    ),
 
     links,
   };
 }
 
-/* -------------------------------------------------------------------------- */
-/* Merge Backend + Fallback                                                   */
-/* -------------------------------------------------------------------------- */
 
 function getFallbackAppDownload() {
   return (
@@ -142,10 +154,14 @@ function getFallbackAppDownload() {
       title:
         "Download our app for a faster and smarter shopping experience.",
 
+      image: "",
+
       links: [],
     }
   );
 }
+
+
 
 function mergeAppDownloadData(
   fallback,
@@ -158,78 +174,64 @@ function mergeAppDownloadData(
     return safeFallback;
   }
 
+  const fallbackLinks = asArray(
+    safeFallback?.links,
+  );
+
+  const cmsLinks = asArray(
+    cmsData?.links,
+  );
+  const mergedLinks =
+    cmsLinks.length > 0
+      ? cmsLinks.map((item, index) => {
+          const fallbackItem =
+            fallbackLinks[index] || {};
+
+          return {
+            ...fallbackItem,
+            ...item,
+
+            label:
+              item?.label ||
+              fallbackItem?.label ||
+              "",
+
+            href:
+              item?.href ||
+              fallbackItem?.href ||
+              "#",
+
+            image:
+              item?.image ||
+              fallbackItem?.image ||
+              "",
+
+            alt:
+              item?.alt ||
+              fallbackItem?.alt ||
+              item?.label ||
+              fallbackItem?.label ||
+              "Download app",
+          };
+        })
+      : fallbackLinks;
+
   return {
     ...safeFallback,
-
-    /*
-     * Backend description has priority.
-     */
     title:
       cmsData?.title ||
       safeFallback?.title ||
       "",
-
-    /*
-     * Backend section image has priority.
-     */
     image:
       cmsData?.image ||
       safeFallback?.image ||
       "",
-
-    /*
-     * Backend app links have priority.
-     *
-     * If backend has no points, fallback links are used.
-     */
-    links:
-      cmsData?.links?.length > 0
-        ? cmsData.links.map(
-            (item, index) => ({
-              ...safeFallback?.links?.[
-                index
-              ],
-
-              ...item,
-
-              href:
-                item?.href ||
-                safeFallback?.links?.[
-                  index
-                ]?.href ||
-                "#",
-
-              image:
-                item?.image ||
-                safeFallback?.links?.[
-                  index
-                ]?.image ||
-                "",
-
-              alt:
-                item?.alt ||
-                safeFallback?.links?.[
-                  index
-                ]?.alt ||
-                item?.label ||
-                "Download app",
-            }),
-          )
-        : safeFallback?.links || [],
+    links: mergedLinks,
   };
 }
-
-/* -------------------------------------------------------------------------- */
-/* Download App                                                               */
-/* -------------------------------------------------------------------------- */
-
 export default function DownloadApp() {
   const { page: cmsFooterPage } =
     useCmsRecord("footerdata");
-
-  /* ------------------------------------------------------------------------ */
-  /* CMS App Download Data                                                    */
-  /* ------------------------------------------------------------------------ */
 
   const cmsAppDownload = useMemo(
     () =>
@@ -238,10 +240,6 @@ export default function DownloadApp() {
       ),
     [cmsFooterPage],
   );
-
-  /* ------------------------------------------------------------------------ */
-  /* Final App Download Data                                                  */
-  /* ------------------------------------------------------------------------ */
 
   const appDownload = useMemo(
     () =>
@@ -254,6 +252,10 @@ export default function DownloadApp() {
 
   const appLinks = asArray(
     appDownload?.links,
+  );
+
+  const fallbackAppLinks = asArray(
+    FALLBACK_FOOTER?.appDownload?.links,
   );
 
   return (
@@ -269,6 +271,7 @@ export default function DownloadApp() {
           <div className="relative grid min-h-[520px] grid-cols-1 items-center gap-2 px-5 py-10 sm:gap-12 sm:px-8 md:min-h-[600px] lg:grid-cols-[1fr_0.82fr] lg:px-20 lg:py-6 xl:min-h-[700px]">
             <div className="relative z-10 flex flex-col items-center text-center lg:items-start lg:text-left">
               {/* Logo */}
+
               <div className="flex gap-3">
                 <img
                   loading="lazy"
@@ -285,12 +288,14 @@ export default function DownloadApp() {
               </h1>
 
               {/* Backend appDownload.description */}
+
               <p className="mt-4 max-w-[620px] text-base font-medium text-white/90 sm:text-2xl">
                 {appDownload?.title ||
                   "Download our app for a faster and smarter shopping experience."}
               </p>
 
               {/* Benefits */}
+
               <div className="mt-6 grid w-full max-w-[760px] grid-cols-1 gap-4 sm:mt-10 sm:grid-cols-3">
                 {BENEFITS.map(
                   ({
@@ -308,15 +313,14 @@ export default function DownloadApp() {
                         />
                       </span>
 
-                      <span>
-                        {label}
-                      </span>
+                      <span>{label}</span>
                     </div>
                   ),
                 )}
               </div>
 
               {/* App Store Links */}
+
               {appLinks.length > 0 && (
                 <div className="mt-8 flex w-full flex-row items-center justify-center gap-2 sm:mt-12 xl:gap-4 lg:justify-start">
                   {appLinks.map(
@@ -324,6 +328,12 @@ export default function DownloadApp() {
                       if (!link?.href) {
                         return null;
                       }
+                      const image =
+                        link?.image ||
+                        fallbackAppLinks?.[
+                          index
+                        ]?.image ||
+                        "";
 
                       return (
                         <a
@@ -341,12 +351,12 @@ export default function DownloadApp() {
                           }
                           className="flex h-[58px] w-[205px] items-center justify-center rounded-[8px] border border-white/20 bg-black px-4 shadow-lg"
                         >
-                          {link?.image ? (
+                          {image ? (
                             <img
                               loading="lazy"
                               width="400"
                               height="400"
-                              src={link.image}
+                              src={image}
                               alt={
                                 link?.alt ||
                                 link?.label ||
@@ -368,6 +378,7 @@ export default function DownloadApp() {
             </div>
 
             {/* App Preview */}
+
             <div className="relative z-10 flex items-end justify-center self-end lg:h-full lg:justify-end">
               <img
                 loading="lazy"

@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
@@ -165,8 +166,6 @@ export default function GuestOtpAuthModal({
       });
 
       if (onSuccess) {
-        // The success handler closes the modal after capturing the pending
-        // wishlist action. Calling onClose first clears that action.
         await onSuccess();
       } else {
         onClose?.();
@@ -205,6 +204,7 @@ export default function GuestOtpAuthModal({
   const isSubmitting = loading || authLoading;
 
   const cardTitle = step === 1 ? "Login with Phone" : "Verify OTP";
+
   const cardSubtitle =
     step === 1
       ? "Enter your mobile number to continue shopping with Sam Global."
@@ -212,7 +212,7 @@ export default function GuestOtpAuthModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[200] flex items-end justify-center overflow-y-auto bg-black/55 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-black/55 p-3 backdrop-blur-sm sm:p-4"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
@@ -220,8 +220,8 @@ export default function GuestOtpAuthModal({
     >
       <div
         className={cn(
-          "relative max-h-[95vh] w-full overflow-y-auto",
-          "rounded-t-[20px] sm:max-w-[820px] sm:rounded-xl",
+          "relative max-h-[calc(100vh-24px)] w-full max-w-[820px] overflow-y-auto",
+          "rounded-[16px] sm:max-h-[calc(100vh-32px)] sm:rounded-[18px] lg:rounded-[20px]",
         )}
         onClick={(event) => event.stopPropagation()}
       >
@@ -230,7 +230,7 @@ export default function GuestOtpAuthModal({
           onClick={() => onClose?.()}
           disabled={isSubmitting}
           className={cn(
-            "absolute right-6 top-12 z-30 flex h-9 w-9 items-center justify-center",
+            "absolute right-4 top-4 z-30 flex h-8 w-8 items-center justify-center sm:right-5 sm:top-5 sm:h-9 sm:w-9",
             "rounded-full bg-white text-muted shadow-md",
             "transition hover:bg-cream hover:text-ink",
             "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold",
@@ -241,7 +241,7 @@ export default function GuestOtpAuthModal({
           <X size={14} strokeWidth={1.8} />
         </button>
 
-        <div className="bg-[#F7F8FC]">
+        <div className="overflow-hidden rounded-[16px] bg-[#F7F8FC] sm:rounded-[18px] lg:rounded-[20px]">
           <AuthCard
             image={image}
             icon={icon}
@@ -298,7 +298,9 @@ export default function GuestOtpAuthModal({
                         const value = e.target.value
                           .replace(/\D/g, "")
                           .slice(0, 10);
+
                         setMobile(value);
+
                         if (value.length === 10 && !/^[6-9]/.test(value)) {
                           setErrorMessage(
                             "Mobile number must start with 6, 7, 8, or 9.",
@@ -312,6 +314,7 @@ export default function GuestOtpAuthModal({
                       required
                     />
                   </div>
+
                   {errorMessage && (
                     <p className="mt-1.5 text-xs font-semibold text-red-600">
                       {errorMessage}
