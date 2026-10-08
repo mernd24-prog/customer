@@ -7,22 +7,25 @@ import {
   useRef,
 } from "react";
 import { ChevronDown, Search, Star, X } from "lucide-react";
+import { Check } from "lucide-react";
 
 function FilterTick({ checked }) {
   return (
     <span
       aria-hidden="true"
-      className={`inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[4px] border transition-colors duration-200 ${
+      className={`inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[3px] border transition-all duration-200 ${
         checked
           ? "border-[#3E4093] bg-[#3E4093]"
-          : "border-[#3E4093] bg-transparent"
+          : "border-[#B8BBC5] bg-white"
       }`}
     >
-      <span
-        className={`h-2 w-2 rounded-[1px] bg-white transition-opacity duration-200 ${
-          checked ? "opacity-100" : "opacity-0"
-        }`}
-      />
+      {checked && (
+        <Check
+          size={11}
+          strokeWidth={3}
+          className="text-white"
+        />
+      )}
     </span>
   );
 }

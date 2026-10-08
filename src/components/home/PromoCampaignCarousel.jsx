@@ -3,16 +3,12 @@ import { Link } from "react-router-dom";
 import { IoChevronForward, IoChevronBack } from "react-icons/io5";
 import { FALLBACK_PROMO_CARDS } from "../../data/fallbackCmsData";
 
-/**
- * Normalizes CMS page / section data or direct array of items into carousel card objects.
- */
 function normalizeCards(data) {
   let rawList = [];
 
   if (Array.isArray(data)) {
     rawList = data;
   } else if (data && typeof data === "object") {
-    // Check points in sections[0], or points at top-level, or metadata points/gallery
     const section =
       Array.isArray(data?.sections) && data.sections.length > 0
         ? data.sections[0]
@@ -32,8 +28,6 @@ function normalizeCards(data) {
   return rawList
     .map((item) => {
       if (!item) return null;
-
-      // Extract image URL from CMS point image object or direct string
       const imageUrl =
         item?.image?.url ||
         (typeof item?.image === "string" ? item.image : "") ||
@@ -41,15 +35,10 @@ function normalizeCards(data) {
         item?.imageUrl ||
         item?.url ||
         "";
-
-      // Extract title and description
       const title = item?.title || item?.name || item?.image?.title || "";
       const description = item?.description || item?.subtitle || "";
-
-      // Extract CTA details
       const ctaUrl =
         item?.cta?.url || item?.link || item?.href || item?.targetUrl || "";
-      // Only show CTA label if explicitly set in CMS — no default "Explore"
       const ctaLabel = item?.cta?.label || "";
       const ctaTarget = item?.cta?.target || "_self";
 
@@ -113,10 +102,8 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
           "linear-gradient(135deg, #FFF4D6 0%, #FAF6EE 50%, #F2EADC 100%)",
       }}
     >
-      {/* Main content container */}
       <div className="relative z-10 customer-container py-6 sm:py-8 lg:py-10">
         <div className="relative group/carousel">
-          {/* Left scroll button */}
           {canScrollLeft && (
             <button
               type="button"
@@ -127,8 +114,6 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
               <IoChevronBack className="text-lg sm:text-xl text-[#333]" />
             </button>
           )}
-
-          {/* Right scroll button */}
           {canScrollRight && (
             <button
               type="button"
@@ -139,15 +124,12 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
               <IoChevronForward className="text-lg sm:text-xl text-[#333]" />
             </button>
           )}
-
-          {/* Horizontal scroll container */}
           <div
             ref={scrollRef}
             className="flex items-center gap-3 sm:gap-4 lg:gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth py-1 w-full"
           >
             {cards.map((card, index) => {
-              // Only navigate if a non-empty URL is provided
-              const rawLink = (card.link || "").trim();
+                            const rawLink = (card.link || "").trim();
               const hasLink = rawLink.length > 0;
               const isExternal = hasLink && /^https?:\/\//i.test(rawLink);
 
@@ -156,7 +138,6 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
 
               const CardContent = (
                 <>
-                  {/* Banner/Product image */}
                   {card.image && (
                     <img
                       src={card.image}
@@ -168,8 +149,6 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                       className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                     />
                   )}
-
-                  {/* Bottom gradient overlay */}
                   <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
@@ -177,8 +156,6 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                         "linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 28%, transparent 52%)",
                     }}
                   />
-
-                  {/* Bottom content */}
                   <div className="absolute bottom-0 left-0 right-0 p-2.5 sm:p-4 lg:p-5 flex flex-col justify-end text-white z-10">
                     {card.title && (
                       <h3 className="text-xs min-[375px]:text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-1 leading-snug drop-shadow-md line-clamp-2">
@@ -187,12 +164,10 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                     )}
 
                     {card.description && (
-                      <p className="text-[11px] sm:text-xs text-gray-200 line-clamp-1 mb-1 drop-shadow">
+                      <p className=" text-[18px] sm:text-xs text-gray-200 line-clamp-1 mb-1 drop-shadow">
                         {card.description}
                       </p>
                     )}
-
-                    {/* CTA button — only shown when label exists */}
                     {card.ctaLabel && (
                       <span className="mt-1 sm:mt-2 inline-flex items-center gap-1 sm:gap-1.5 h-[28px] sm:h-[32px] md:h-[36px] w-fit rounded-full bg-[#CE9F2D] px-2.5 sm:px-4 text-[11px] sm:text-xs md:text-sm font-bold leading-none text-white shadow-md transition-colors duration-300 group-hover:bg-[#B88B22] group-hover:shadow-lg">
                         {card.ctaLabel}
@@ -202,8 +177,6 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                   </div>
                 </>
               );
-
-              // No URL → non-clickable div
               if (!hasLink) {
                 return (
                   <div key={index} className={cardClasses}>

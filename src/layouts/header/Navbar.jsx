@@ -1,3 +1,4 @@
+
 import { Fragment, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,12 +11,13 @@ import {
 } from "../../components/ui/button/static";
 import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
+import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
 
 import { fetchMe } from "../../features/user/userSlice";
 import { logout } from "../../modules/auth/slices/authSlice";
 import { notify } from "../../utils/notify";
 import { asArray, keyOr, textOr } from "../../utils/content";
-import { navbarIcons as navData } from "../.../../constants/header.constant/image.constant";
+import { navbarIcons as navData } from "../../constants/image.constant";
 
 import {
   baseAccountMenuItems,
@@ -45,15 +47,28 @@ export const Navbar = ({ icons: propIcons }) => {
   );
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const accountLabel = profileUser?.profile?.firstName
-    ? `${profileUser.profile.firstName} ${profileUser.profile.lastName || ""}`.trim()
-    : profileUser?.firstName || profileUser?.email?.split("@")[0] || "My Sam";
+    ? `${profileUser.profile.firstName} ${
+        profileUser.profile.lastName || ""
+      }`.trim()
+    : profileUser?.firstName ||
+      profileUser?.email?.split("@")[0] ||
+      "My Sam";
 
   const profileAvatar =
     profileUser?.profile?.avatarUrl ||
     profileUser?.profile?.avatar ||
     "/image/png/person.png";
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setShowLogoutModal(false);
+
+    notify.success("Logged out successfully");
+    navigate("/", { replace: true });
+  };
 
   const accountMenuItems = withIcons([
     ...baseAccountMenuItems.map((item) => {
@@ -61,13 +76,10 @@ export const Navbar = ({ icons: propIcons }) => {
         return {
           ...item,
           path: undefined,
-          action: () => {
-            dispatch(logout());
-            notify.success("Logged out successfully");
-            navigate("/", { replace: true });
-          },
+          action: () => setShowLogoutModal(true),
         };
       }
+
       return item;
     }),
   ]);
@@ -79,13 +91,17 @@ export const Navbar = ({ icons: propIcons }) => {
 
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
-  const cartItemsLength = useMemo(() => cart.items?.length || 0, [cart.items]);
+
+  const cartItemsLength = useMemo(
+    () => cart.items?.length || 0,
+    [cart.items],
+  );
+
   const wishlistCount = useMemo(
     () => (Array.isArray(cart.wishlist) ? cart.wishlist.length : 0),
     [cart.wishlist],
   );
 
-  // Fetch profile when user logs in
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchMe());
@@ -95,6 +111,7 @@ export const Navbar = ({ icons: propIcons }) => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const q = urlParams.get("q") || "";
+
     if (location.pathname === "/search") {
       setSearchQuery(q);
     } else {
@@ -104,6 +121,7 @@ export const Navbar = ({ icons: propIcons }) => {
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
+
     const categoryKey = category
       ? category.categoryKey ||
         category.key ||
@@ -117,6 +135,7 @@ export const Navbar = ({ icons: propIcons }) => {
     }
 
     let url = `/search?q=${encodeURIComponent(trimmedQuery)}`;
+
     if (category) {
       const catKey =
         category.categoryKey ||
@@ -125,172 +144,204 @@ export const Navbar = ({ icons: propIcons }) => {
         category.categoryId ||
         category.id ||
         category._id;
+
       const catName = category.title || category.name || category.label;
-      if (catKey) url += `&category=${encodeURIComponent(catKey)}`;
-      if (catName) url += `&categoryName=${encodeURIComponent(catName)}`;
+
+      if (catKey) {
+        url += `&category=${encodeURIComponent(catKey)}`;
+      }
+
+      if (catName) {
+        url += `&categoryName=${encodeURIComponent(catName)}`;
+      }
     }
+
     if (trimmedQuery || category) {
       navigate(url);
     }
   };
 
   return (
-    <header className="customer-container w-full">
-      <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
-        {/* Logo */}
-        <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6 group relative">
-          <Link to="/" aria-label="Sam Global Home">
-            <picture>
-              <source
-                srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x"
-                type="image/avif"
-              />
-              <source
-                srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x"
-                type="image/webp"
-              />
-              <img
-                loading="lazy"
-                src="/image/png/logo-small.webp"
-                alt="Sam Global"
-                width="130"
-                height="72"
-                fetchpriority="high"
-                className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
-              />
-            </picture>
-          </Link>
-          <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-            Menu
-          </span>
-        </div>
+    <>
+      <header className="customer-container w-full">
+        <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
+          {/* Logo */}
+          <div className="group relative order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
+            <Link to="/" aria-label="Sam Global Home">
+              <picture>
+                <source
+                  srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x"
+                  type="image/avif"
+                />
+                <source
+                  srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x"
+                  type="image/webp"
+                />
+                <img
+                  loading="lazy"
+                  src="/image/png/logo-small.webp"
+                  alt="Sam Global"
+                  width="130"
+                  height="72"
+                  fetchpriority="high"
+                  className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
+                />
+              </picture>
+            </Link>
 
-        {/* Search */}
-        <SearchBar
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onSearch={handleSearch}
-          enableCategoryDropdown
-          enableAutocomplete
-          autocompleteLimit={8}
-          autocompleteMinLength={1}
-          autocompleteDebounceMs={300}
-          placeholder="Search for Products, Brands and Categories..."
-          showButtonLabel={false}
-          className="order-3 w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:w-auto lg:max-w-[720px] lg:flex-1"
-        />
-
-        {/* Actions */}
-        <div className="order-2 flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:gap-4">
-          <div className="flex items-center gap-2 sm:gap-5">
-            {/* Utility icons from CMS / constants */}
-            {utilityIcons.map((item, iconIndex) => (
-              <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
-                <HeaderIconButton
-                  to={getNavbarIconPath(item)}
-                  aria-label={getNavbarIconLabel(item, navbarIconLabels)}
-                >
-                  <img
-                    loading="lazy"
-                    width="400"
-                    height="400"
-                    src={item?.img}
-                    alt={getNavbarIconLabel(item, navbarIconLabels)}
-                    className={`object-contain ${
-                      item?.name === "IN"
-                        ? "h-[22px] w-[24px]"
-                        : "h-[17px] w-[17px]"
-                    }`}
-                  />
-                  <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                    {getNavbarIconLabel(item, navbarIconLabels)}
-                  </span>
-                </HeaderIconButton>
-                {iconIndex < utilityIcons.length - 1 && (
-                  <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
-                )}
-              </Fragment>
-            ))}
-
-            {utilityIcons.length > 0 && (
-              <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
-            )}
-
-            {/* Cart */}
-            <HeaderIconButton
-              to="/cart"
-              className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
-              aria-label={`Cart with ${cartItemCount} ${cartItemCount === 1 ? "item" : "items"}`}
-            >
-              <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
-                  {cartItemCount > 99 ? "99+" : cartItemCount}
-                </span>
-              )}
-            </HeaderIconButton>
-
-            {/* Watchlist */}
-            <HeaderIconButton
-              to="/wishlist"
-              className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
-              aria-label={`Watchlist with ${wishlistCount} ${wishlistCount === 1 ? "item" : "items"}`}
-            >
-              <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
-                  {wishlistCount > 99 ? "99+" : wishlistCount}
-                </span>
-              )}
-            </HeaderIconButton>
+            <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+              Menu
+            </span>
           </div>
 
-          {/* Account dropdown OR Login button */}
-          {currentUser ? (
-            <HeaderDropdown
-              label={accountLabel}
-              ariaLabel="Open account menu"
-              iconOnly
-              showChevron
-              icon={
-                <div className="flex items-center gap-2.5">
-                  <img
-                    loading="lazy"
-                    width="400"
-                    height="400"
-                    src={profileAvatar}
-                    alt=""
-                    className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-12 md:w-12"
-                    onError={(event) => {
-                      event.currentTarget.src = "/image/png/person.png";
-                    }}
-                  />
-                  <span className="hidden min-w-0 flex-col text-left leading-tight lg:flex">
-                    <span className="max-w-[130px] truncate text-[16px] font-bold text-[#2E2E2E]">
-                      {accountLabel}
+          {/* Search */}
+          <SearchBar
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onSearch={handleSearch}
+            enableCategoryDropdown
+            enableAutocomplete
+            autocompleteLimit={8}
+            autocompleteMinLength={1}
+            autocompleteDebounceMs={300}
+            placeholder="Search for Products, Brands and Categories..."
+            showButtonLabel={false}
+            className="order-3 my-2 w-full min-w-0 lg:order-2 lg:my-0 lg:w-auto lg:max-w-[720px] lg:flex-1"
+          />
+
+          {/* Actions */}
+          <div className="order-2 flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+            <div className="flex items-center gap-2 sm:gap-5">
+              {/* Utility icons from CMS / constants */}
+              {utilityIcons.map((item, iconIndex) => (
+                <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
+                  <HeaderIconButton
+                    to={getNavbarIconPath(item)}
+                    aria-label={getNavbarIconLabel(item, navbarIconLabels)}
+                  >
+                    <img
+                      loading="lazy"
+                      width="400"
+                      height="400"
+                      src={item?.img}
+                      alt={getNavbarIconLabel(item, navbarIconLabels)}
+                      className={`object-contain ${
+                        item?.name === "IN"
+                          ? "h-[22px] w-[24px]"
+                          : "h-[17px] w-[17px]"
+                      }`}
+                    />
+
+                    <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                      {getNavbarIconLabel(item, navbarIconLabels)}
                     </span>
-                    <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
-                      {profileUser?.email || ""}
-                    </span>
+                  </HeaderIconButton>
+
+                  {iconIndex < utilityIcons.length - 1 && (
+                    <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
+                  )}
+                </Fragment>
+              ))}
+
+              {utilityIcons.length > 0 && (
+                <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
+              )}
+
+              {/* Cart */}
+              <HeaderIconButton
+                to="/cart"
+                className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+                aria-label={`Cart with ${cartItemCount} ${
+                  cartItemCount === 1 ? "item" : "items"
+                }`}
+              >
+                <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+
+                {cartItemCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                    {cartItemCount > 99 ? "99+" : cartItemCount}
                   </span>
-                </div>
-              }
-              path="/account/profile"
-              className="h-8 w-8 overflow-hidden rounded-full bg-white p-0 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
-              chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
-            >
-              <MenuDropdown title="My Account" items={accountMenuItems} />
-            </HeaderDropdown>
-          ) : (
-            <HeaderGoldButton
-              className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[18px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[16px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </HeaderGoldButton>
-          )}
+                )}
+              </HeaderIconButton>
+
+              {/* Watchlist */}
+              <HeaderIconButton
+                to="/wishlist"
+                className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+                aria-label={`Watchlist with ${wishlistCount} ${
+                  wishlistCount === 1 ? "item" : "items"
+                }`}
+              >
+                <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+
+                {wishlistCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                    {wishlistCount > 99 ? "99+" : wishlistCount}
+                  </span>
+                )}
+              </HeaderIconButton>
+            </div>
+
+            {/* Account dropdown OR Login button */}
+            {currentUser ? (
+              <HeaderDropdown
+                label={accountLabel}
+                ariaLabel="Open account menu"
+                iconOnly
+                showChevron
+                icon={
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      loading="lazy"
+                      width="400"
+                      height="400"
+                      src={profileAvatar}
+                      alt=""
+                      className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-12 md:w-12"
+                      onError={(event) => {
+                        event.currentTarget.src = "/image/png/person.png";
+                      }}
+                    />
+
+                    <span className="hidden min-w-0 flex-col text-left leading-tight lg:flex">
+                      <span className="max-w-[130px] truncate text-[16px] font-bold text-[#2E2E2E]">
+                        {accountLabel}
+                      </span>
+
+                      <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
+                        {profileUser?.email || ""}
+                      </span>
+                    </span>
+                  </div>
+                }
+                path="/account/profile"
+                className="h-8 w-8 overflow-hidden rounded-full bg-white p-0 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
+                chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
+              >
+                <MenuDropdown title="My Account" items={accountMenuItems} />
+              </HeaderDropdown>
+            ) : (
+              <HeaderGoldButton
+                className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[18px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[16px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </HeaderGoldButton>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <ConfirmModal
+        open={showLogoutModal}
+        title="Sign Out"
+        description="Are you sure you want to sign out of your account?"
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+      />
+    </>
   );
 };

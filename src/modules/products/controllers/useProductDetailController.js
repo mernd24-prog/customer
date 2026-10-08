@@ -471,7 +471,7 @@ export function useProductDetailController(
   const { preview: productTitlePreview, isTruncated: isProductTitleTruncated } =
     getShowMoreText(productTitle, {
       mode: "characters",
-      limit: 35,
+      limit: 60,
     });
 
   const rawRelated =

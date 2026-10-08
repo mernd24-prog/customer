@@ -60,10 +60,7 @@ const BrandOutletPage = lazy(
   () => import("../modules/catalog/pages/BrandOutletPage"),
 );
 
-const HomePage = lazyNamed(
-  () => import("../pages/customer/HomePage"),
-  "HomePage",
-);
+const HomePage = lazy(() => import("../modules/home/pages/HomePage").then(m => ({ default: m.HomePage })));
 const WatchlistPage = lazy(
   () => import("../modules/wishlist/pages/WatchListPage"),
 );
@@ -77,32 +74,18 @@ const ProductDetailPage = lazy(
 const ReviewDetailsPage = lazy(
   () => import("../pages/reviewAndRating/ReviewDetailsPage"),
 );
-const NewArrivalsPage = lazyNamed(
-  () => import("../pages/discovery/DiscoveryPages"),
-  "NewArrivalsPage",
-);
-const RecentlyUploadedPage = lazyNamed(
-  () => import("../pages/discovery/DiscoveryPages"),
-  "RecentlyUploadedPage",
-);
-const RelatedProductsPage = lazyNamed(
-  () => import("../pages/discovery/DiscoveryPages"),
-  "RelatedProductsPage",
-);
-const TrendingNowPage = lazyNamed(
-  () => import("../pages/discovery/DiscoveryPages"),
-  "TrendingNowPage",
-);
-const RecentlyViewedPage = lazyNamed(
-  () => import("../pages/discovery/DiscoveryPages"),
-  "RecentlyViewedPage",
-);
+const NewArrivalsPage = lazy(() => import("../modules/catalog/pages/NewArrivalsPage").then(m => ({ default: m.NewArrivalsPage })));
+const RecentlyUploadedPage = lazy(() => import("../modules/catalog/pages/RecentlyUploadedPage").then(m => ({ default: m.RecentlyUploadedPage })));
+const RelatedProductsPage = lazy(() => import("../modules/catalog/pages/RelatedProductsPage").then(m => ({ default: m.RelatedProductsPage })));
+const TrendingNowPage = lazy(() => import("../modules/catalog/pages/TrendingNowPage").then(m => ({ default: m.TrendingNowPage })));
+const RecentlyViewedPage = lazy(() => import("../modules/catalog/pages/RecentlyViewedPage").then(m => ({ default: m.RecentlyViewedPage })));
 const AboutPage = lazy(() => import("../pages/about/AboutPage"));
 const BrandPage = lazy(() => import("../modules/catalog/pages/BrandPage"));
 const CategoryPage = lazy(
   () => import("../modules/catalog/pages/CategoryPage"),
 );
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
+
 
 const AccountPage = lazy(() => import("../modules/account/pages/AccountPage"));
 const CartPage = lazy(() => import("../modules/cart/pages/CartPage"));
@@ -135,11 +118,11 @@ const WarrantyPage = lazyNamed(
   "WarrantyPage",
 );
 const NotificationsPage = lazyNamed(
-  () => import("../pages/notifications/NotificationsPage"),
+  () => import("../modules/notifications/pages/NotificationsPage"),
   "NotificationsPage",
 );
 const PreferencesPage = lazyNamed(
-  () => import("../pages/preferences/PreferencesPage"),
+  () => import("../modules/notifications/pages/PreferencesPage"),
   "PreferencesPage",
 );
 
@@ -286,7 +269,6 @@ export default function AppRoutes() {
             />
             <Route path="/categories/:categoryKey" element={<CategoryPage />} />
             <Route path="/brands/:brandSlug" element={<BrandPage />} />
-            <Route path="/cms/:slug" element={<CmsPage />} />
 
             <Route
               path="/profile"

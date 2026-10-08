@@ -16,7 +16,7 @@ export default function FilterDropdown({
   isLoading = false,
 }) {
   return (
-    <div className={cn("w-full sm:w-[210px] shrink-0", className)}>
+    <div className={cn(" w-full sm:w-[210px] shrink-0", className)}>
       <CustomDropdown
         options={options}
         value={value}

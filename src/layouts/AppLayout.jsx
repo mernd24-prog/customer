@@ -17,7 +17,6 @@ const DeliveryChecker = React.lazy(
   () => import("../modules/products/components/DeliveryChecker"),
 );
 import { closeAddedToCartModal } from "../modules/cart/slices/cartUiSlice";
-import { footerData } from "../data/footer";
 import { AUTH_ROUTES } from "../modules/auth/routes/apiRoutes";
 
 const LazyFooter = React.lazy(() =>
@@ -56,6 +55,7 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   "/faq",
   "/become-a-seller",
   "/seller-policies",
+  "/about-us"
 ];
 export default function AppLayout() {
   const dispatch = useDispatch();
@@ -149,7 +149,7 @@ const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some((route) => {
       </main>
 
       <Suspense fallback={<div className="h-[400px] w-full" />}>
-        <LazyFooter data={footerData} />
+        <LazyFooter/>
       </Suspense>
 
       <Suspense fallback={null}>

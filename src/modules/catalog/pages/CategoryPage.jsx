@@ -93,8 +93,6 @@ export default function CategoryPage() {
           filters are still available below.
         </div>
       )}
-
-      {/* ── Product listing with sidebar filters ────────────────────────── */}
       <div className="">
         {showSubCategoryStrip && (
           <SubCategoryStrip

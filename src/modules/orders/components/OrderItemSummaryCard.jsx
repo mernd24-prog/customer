@@ -205,7 +205,7 @@ export default function OrderItemSummaryCard({
   const isUnreviewed = !locallyReviewedProducts.has(productId) && !hasMyReview;
 
   return (
-    <article className="group relative overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-shadow duration-200 hover:shadow-[0_6px_18px_rgba(31,36,48,0.10)]">
+    <article className=" group relative overflow-hidden rounded-lg border border-[#e4ca8e] bg-white transition-shadow duration-200 hover:shadow-[0_6px_18px_rgba(31,36,48,0.10)]">
       {" "}
       <Link
         to={itemDetailPath}

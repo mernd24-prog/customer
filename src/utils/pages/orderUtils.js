@@ -567,7 +567,10 @@ export const resolveOrderItemDisplayStatus = (
           group.organizationId || group.organization_id || "default",
         ) === itemSellerKey,
     );
-    if (fulfillment?.returnLifecycle?.status) {
+    if (
+      fulfillment?.returnLifecycle?.status &&
+      (item.return_status || item.returnStatus || payoutStatus === "held")
+    ) {
       fulfillmentReturnStatus = fulfillment.returnLifecycle.status;
     }
   }

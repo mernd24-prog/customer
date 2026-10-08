@@ -84,6 +84,7 @@ export default function useDealsPageController() {
 
   const globalCategories = useSelector((state) => state.catalog?.globalCategories);
   const catalogList = useSelector((state) => state.catalog?.list);
+
   const catalogCategoryList = useMemo(
     () => [
       ...(Array.isArray(globalCategories) ? globalCategories : []),
@@ -91,6 +92,7 @@ export default function useDealsPageController() {
     ],
     [catalogList, globalCategories],
   );
+
   useEffect(() => {
     if (!catalogCategoryList.length) dispatch(fetchCategories());
   }, [catalogCategoryList.length, dispatch]);
@@ -102,9 +104,11 @@ export default function useDealsPageController() {
     );
   }, [catalogCategoryList, dealCategoryOptions]);
 
-  const brandOptions = dealBrandOptions.filter(
-    (option) => Number(option.count || 0) > 0,
-  );
+  const brandOptions = useMemo(() => {
+    return dealBrandOptions.filter(
+      (option) => Boolean(option?.label) && Number(option?.count || 0) > 0,
+    );
+  }, [dealBrandOptions]);
 
   const effectiveRatingCounts = Object.keys(dealRatingCounts).length
     ? dealRatingCounts

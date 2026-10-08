@@ -1,6 +1,5 @@
 import BaseModal from "./BaseModal";
 import Button from "../buttons/Button";
-
 export default function ConfirmModal({
   open,
   title = "Are you sure?",
@@ -13,6 +12,7 @@ export default function ConfirmModal({
   variant = "navy",
   image,
   children,
+  confirmClassName = "",
 }) {
   if (!open) return null;
 
@@ -21,10 +21,10 @@ export default function ConfirmModal({
 
   return (
     <BaseModal onClose={onCancel} maxWidth="max-w-md">
-      <div className="px-5 sm:px-6 pb-6 pt-6">
+      <div className="px-5 pb-6 pt-6 sm:px-6">
         <div className="flex items-start gap-4">
           {Boolean(imageUrl) && (
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-[#F8F9FA] border border-[#E7E7E7] p-2 shadow-sm">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[14px] border border-[#E7E7E7] bg-[#F8F9FA] p-2 shadow-sm">
               <img
                 src={imageUrl}
                 alt=""
@@ -36,10 +36,11 @@ export default function ConfirmModal({
             </div>
           )}
 
-          <div className="flex-1 min-w-0 pt-0.5">
-            <h2 className="text-[19px] sm:text-[20px] font-bold leading-snug text-[#1B1D60]">
+          <div className="min-w-0 flex-1 pt-0.5">
+            <h2 className="text-[19px] font-bold leading-snug text-[#1B1D60] sm:text-[20px]">
               {title}
             </h2>
+
             {description && (
               <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-black/60">
                 {description}
@@ -61,13 +62,14 @@ export default function ConfirmModal({
               {cancelLabel}
             </Button>
           )}
+
           <Button
             variant="custom"
             size="sm"
             onClick={onConfirm}
             disabled={confirmDisabled}
             iconPosition="left"
-            className="h-[42px] rounded-[10px] bg-[#CE9F2D] px-5 font-semibold text-[#1B1D60] hover:bg-[#B88200]"
+            className={`h-[42px] rounded-[10px] bg-[#CE9F2D] px-5 font-semibold text-[#1B1D60] hover:bg-[#B88200] ${confirmClassName}`}
           >
             {confirmLabel}
           </Button>
@@ -76,3 +78,4 @@ export default function ConfirmModal({
     </BaseModal>
   );
 }
+

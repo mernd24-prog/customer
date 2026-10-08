@@ -21,7 +21,7 @@ const decodeHtml = (html) => {
   }
   return html;
 };
-
+import { capitalizeFirst } from "../../../utils/stringUtils";
 function InfoTabs({ tabs, activeTab, onChange }) {
   const containerRef = useRef(null);
 
@@ -70,7 +70,7 @@ function InfoCard({ title, children, roundedClass = "rounded-xl" }) {
     <div
       className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}
     >
-      <div className="bg-[#EAD9B6] px-4 py-6">
+      <div className="bg-[#EAD9B6] px-4 py-4">
         <h2 className="text-sm md:text-lg font-bold text-[#2E2E2E]">{title}</h2>
       </div>
 
@@ -253,30 +253,28 @@ export default function ProductInfoSection({
                 <div className="mt-2 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed">
                   {effectiveWarranty.summary ||
                     effectiveWarranty.warrantySummary || (
-                      <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
-                        {warrantyPeriod && (
-                          <div>
-                            <span className="font-medium text-ink">
-                              Period:
-                            </span>{" "}
-                            {warrantyPeriod}
-                          </div>
-                        )}
-                        {effectiveWarranty.type && (
-                          <div>
-                            <span className="font-medium text-ink">Type:</span>{" "}
-                            {effectiveWarranty.type}
-                          </div>
-                        )}
-                        {effectiveWarranty.provider && (
-                          <div>
-                            <span className="font-medium text-ink">
-                              Provider:
-                            </span>{" "}
-                            {effectiveWarranty.provider}
-                          </div>
-                        )}
-                      </div>
+                     <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
+  {warrantyPeriod && (
+    <div>
+      <span className="font-medium text-ink">Period:</span>{" "}
+      {capitalizeFirst(warrantyPeriod)}
+    </div>
+  )}
+
+  {effectiveWarranty.type && (
+    <div>
+      <span className="font-medium text-ink">Type:</span>{" "}
+      {capitalizeFirst(effectiveWarranty.type)}
+    </div>
+  )}
+
+  {effectiveWarranty.provider && (
+    <div>
+      <span className="font-medium text-ink">Provider:</span>{" "}
+      {capitalizeFirst(effectiveWarranty.provider)}
+    </div>
+  )}
+</div>
                     )}
                 </div>
               </div>
@@ -322,7 +320,7 @@ export default function ProductInfoSection({
                 <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
                   <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
                     {returnPolicy.returnable === false
-                      ? "Non-returnable"
+                      ? "Non-Returnable"
                       : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 0}-day return window`}
                   </span>
                   {returnPolicy.resolution && (
@@ -392,125 +390,117 @@ export default function ProductInfoSection({
         )}
 
       {activeInfoTab === "seller" && (
-  <InfoCard title="Seller Information">
-    {product.seller || product.sellerName ? (
-      <div className="overflow-hidden">
-        {/* Seller Details */}
-        <div className="grid grid-cols-1 sm:grid-cols-3">
-          {/* Store Name */}
-          <div className="px-5 py-5 sm:px-6 sm:border-r border-border/70">
-            <span className="mb-1.5 block text-xs font-medium text-muted">
-              Store Name
-            </span>
+        <InfoCard title="Seller Information">
+          {product.seller || product.sellerName ? (
+            <div className="overflow-hidden">
+              {/* Seller Details */}
+              <div className="grid grid-cols-1 sm:grid-cols-3">
+                {/* Store Name */}
+                <div className="px-5 py-5 sm:px-6 sm:border-r border-border/70">
+                  <span className="mb-1.5 block text-xs font-medium text-muted">
+                    Store Name
+                  </span>
 
-            <p className="text-sm font-semibold text-ink">
-              {product.seller?.name ||
-                product.seller?.storeName ||
-                product.sellerName ||
-                "Seller"}
-            </p>
-          </div>
+                  <p className="text-sm font-semibold text-ink">
+                    {product.seller?.name ||
+                      product.seller?.storeName ||
+                      product.sellerName ||
+                      "Seller"}
+                  </p>
+                </div>
 
-          {/* Rating */}
-          <div className="px-5 py-5 sm:px-6 sm:border-r border-border/70">
-            <span className="mb-1.5 block text-xs font-medium text-muted">
-              Seller Rating
-            </span>
+                {/* Rating */}
+                <div className="px-5 py-5 sm:px-6 sm:border-r border-border/70">
+                  <span className="mb-1.5 block text-xs font-medium text-muted">
+                    Seller Rating
+                  </span>
 
-            <div className="flex items-center gap-2">
-              <div className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-2.5 py-1 text-white">
-                <Star
-                  size={12}
-                  className="fill-white text-white"
-                />
+                  <div className="flex items-center gap-2">
+                    <div className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-2.5 py-1 text-white">
+                      <Star size={12} className="fill-white text-white" />
 
-                <span className="text-xs font-bold leading-none">
-                  {Number(
-                    product.seller?.rating ??
-                      product.seller?.averageRating ??
-                      product.sellerRating ??
-                      0,
-                  ).toFixed(1)}
-                </span>
+                      <span className="text-xs font-bold leading-none">
+                        {Number(
+                          product.seller?.rating ??
+                            product.seller?.averageRating ??
+                            product.sellerRating ??
+                            0,
+                        ).toFixed(1)}
+                      </span>
+                    </div>
+
+                    <span className="text-xs text-muted">
+                      {product.seller?.reviewCount ??
+                        product.seller?.reviewsCount ??
+                        product.seller?.ratingsCount ??
+                        0}{" "}
+                      Ratings
+                    </span>
+                  </div>
+                </div>
+
+                {/* Joined Date */}
+                <div className="px-5 py-5 sm:px-6">
+                  <span className="mb-1.5 block text-xs font-medium text-muted">
+                    Joined SamGlobal
+                  </span>
+
+                  <p className="text-sm font-semibold text-ink">
+                    {(() => {
+                      const joinedDate =
+                        product.seller?.joinAt ||
+                        product.seller?.createdAt ||
+                        product.joinAt ||
+                        product.sellerCreatedAt ||
+                        product.createdAt;
+
+                      if (!joinedDate) return "N/A";
+
+                      const date = new Date(joinedDate);
+
+                      if (Number.isNaN(date.getTime())) return "N/A";
+
+                      return date.toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      });
+                    })()}
+                  </p>
+                </div>
               </div>
 
-              <span className="text-xs text-muted">
-                {product.seller?.reviewCount ??
-                  product.seller?.reviewsCount ??
-                  product.seller?.ratingsCount ??
-                  0}{" "}
-                ratings
-              </span>
-            </div>
-          </div>
+              {/* Trusted Seller Section */}
+              <div className="border-t border-border/70 bg-[#FAFCFA] px-5 py-3.5 sm:px-6">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  {/* Trusted Badge */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E9F7EC] text-[#1E8A38]">
+                      <ShieldCheck size={14} strokeWidth={2.5} />
+                    </div>
 
-          {/* Joined Date */}
-          <div className="px-5 py-5 sm:px-6">
-            <span className="mb-1.5 block text-xs font-medium text-muted">
-              Joined SamGlobal
-            </span>
+                    <span className="text-sm font-semibold text-[#1E8A38]">
+                      Trusted & Verified Seller
+                    </span>
+                  </div>
 
-            <p className="text-sm font-semibold text-ink">
-              {(() => {
-                const joinedDate =
-                  product.seller?.joinAt ||
-                  product.seller?.createdAt ||
-                  product.joinAt ||
-                  product.sellerCreatedAt ||
-                  product.createdAt;
+                  {/* Divider */}
+                  <span className="hidden text-[#C7C7C7] sm:inline">•</span>
 
-                if (!joinedDate) return "N/A";
-
-                const date = new Date(joinedDate);
-
-                if (Number.isNaN(date.getTime())) return "N/A";
-
-                return date.toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                });
-              })()}
-            </p>
-          </div>
-        </div>
-
-        {/* Trusted Seller Section */}
-        <div className="border-t border-border/70 bg-[#FAFCFA] px-5 py-3.5 sm:px-6">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            {/* Trusted Badge */}
-            <div className="flex items-center gap-2">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E9F7EC] text-[#1E8A38]">
-                <ShieldCheck
-                  size={14}
-                  strokeWidth={2.5}
-                />
+                  {/* Guarantee */}
+                  <span className="text-xs text-muted sm:text-sm">
+                    100% Genuine Products & Quality Assured on SamGlobal
+                  </span>
+                </div>
               </div>
-
-              <span className="text-sm font-semibold text-[#1E8A38]">
-                Trusted & Verified Seller
-              </span>
             </div>
-
-            {/* Divider */}
-            <span className="hidden text-[#C7C7C7] sm:inline">
-              •
-            </span>
-
-            {/* Guarantee */}
-            <span className="text-xs text-muted sm:text-sm">
-              100% Genuine Products & Quality Assured on SamGlobal
-            </span>
-          </div>
-        </div>
-      </div>
-    ) : (
-      <div className="px-5 py-5 text-sm text-black/90">
-        Seller Information Is Not Available.
-      </div>
-    )}
-  </InfoCard>
-)}
+          ) : (
+            <div className="px-5 py-5 text-sm text-black/90">
+              Seller Information Is Not Available.
+            </div>
+          )}
+        </InfoCard>
+      )}
 
       {isModalOpen &&
         createPortal(

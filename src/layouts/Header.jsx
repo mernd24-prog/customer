@@ -25,6 +25,7 @@ import {
   HeaderGoldButton,
   HeaderIconButton,
 } from "../components/ui/button/static";
+import ConfirmModal from "../components/ui/overlay/ConfirmModal";
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import { TopHeader } from "./header/TopHeader";
@@ -77,7 +78,10 @@ function getHeaderHeight() {
 function getCategoryKey(item = {}) {
   return keyOr(
     item?.categoryKey,
-    keyOr(item?.key, buildCategorySlug(textOr(item?.title, item?.name))),
+    keyOr(
+      item?.key,
+      buildCategorySlug(textOr(item?.title, item?.name)),
+    ),
   );
 }
 
@@ -92,8 +96,18 @@ function normalizeCategoryNode(item = {}, parentKey = null) {
     title,
     name: textOr(item?.name, title),
     parentKey: item?.parentKey ?? parentKey,
-    imageUrl: item?.imageUrl || item?.img || item?.image || item?.iconUrl || "",
-    image: item?.image || item?.imageUrl || item?.img || item?.iconUrl || "",
+    imageUrl:
+      item?.imageUrl ||
+      item?.img ||
+      item?.image ||
+      item?.iconUrl ||
+      "",
+    image:
+      item?.image ||
+      item?.imageUrl ||
+      item?.img ||
+      item?.iconUrl ||
+      "",
     slug: keyOr(item?.slug, categoryKey),
     children: [],
   };
@@ -102,12 +116,18 @@ function normalizeCategoryNode(item = {}, parentKey = null) {
 function buildCategoryTree(list = []) {
   const items = Array.isArray(list) ? list : [list].filter(Boolean);
   const byKey = new Map();
+
   const sortByOrder = (a, b) =>
     Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
 
   const visit = (item, parentKey = null) => {
     if (!item || typeof item !== "object") return;
-    const node = normalizeCategoryNode(item, item?.parentKey ?? parentKey);
+
+    const node = normalizeCategoryNode(
+      item,
+      item?.parentKey ?? parentKey,
+    );
+
     if (!node.categoryKey) return;
 
     byKey.set(node.categoryKey, {
@@ -116,7 +136,9 @@ function buildCategoryTree(list = []) {
       children: [],
     });
 
-    asArray(item?.children).forEach((child) => visit(child, node.categoryKey));
+    asArray(item?.children).forEach((child) =>
+      visit(child, node.categoryKey),
+    );
   };
 
   items.forEach((item) => visit(item, item?.parentKey ?? null));
@@ -147,16 +169,24 @@ function getCategoryListFromResponse(data) {
   if (Array.isArray(data?.items)) return data.items;
   if (Array.isArray(data?.list)) return data.list;
   if (Array.isArray(data?.categories)) return data.categories;
-  if (data?.category && typeof data.category === "object")
+
+  if (data?.category && typeof data.category === "object") {
     return [data.category];
+  }
+
   if (data?.data) return getCategoryListFromResponse(data.data);
+
   return [data];
 }
 
 function withIcons(items) {
   return asArray(items).map((item) => {
     const Icon = dropdownIconMap[item.icon];
-    return { ...item, icon: Icon ? <Icon size={18} /> : null };
+
+    return {
+      ...item,
+      icon: Icon ? <Icon size={18} /> : null,
+    };
   });
 }
 
@@ -165,44 +195,69 @@ export const Navbar = ({ icons: propIcons }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const prevPathnameRef = useRef(location.pathname);
+
   const currentUser = useSelector((s) => s.auth.current);
   const profileUser = useSelector((s) => s.user.current) || currentUser;
   const cartItems = useSelector((s) => s.cart.current?.items) || [];
+
   const displayIcons = propIcons || navData;
+
   const utilityIcons = asArray(displayIcons).filter(
     (item) => !["IN", "Word", "Account", "Cart"].includes(item?.name),
   );
+
   const [searchQuery, setSearchQuery] = useState("");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const accountLabel = profileUser?.profile?.firstName
-    ? `${profileUser.profile.firstName} ${profileUser.profile.lastName || ""}`.trim()
-    : profileUser?.firstName || profileUser?.email?.split("@")[0] || "My Sam";
+    ? `${profileUser.profile.firstName} ${
+        profileUser.profile.lastName || ""
+      }`.trim()
+    : profileUser?.firstName ||
+      profileUser?.email?.split("@")[0] ||
+      "My Sam";
+
   const profileAvatar =
     profileUser?.profile?.avatarUrl ||
     profileUser?.profile?.avatar ||
     "/image/png/person.png";
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setShowLogoutModal(false);
+
+    notify.success("Logged out successfully");
+    navigate("/", { replace: true });
+  };
+
   const accountMenuItems = withIcons([
     ...baseAccountMenuItems.map((item) => {
       if (item.path === "/sign-out" || item.label === "Sign Out") {
         return {
           ...item,
           path: undefined,
-          action: () => {
-            dispatch(logout());
-            notify.success("Logged out successfully");
-            navigate("/", { replace: true });
-          },
+          action: () => setShowLogoutModal(true),
         };
       }
+
       return item;
     }),
   ]);
+
   const cartItemCount = cartItems.reduce(
-    (total, item) => total + Math.max(1, Number(item?.quantity) || 1),
+    (total, item) =>
+      total + Math.max(1, Number(item?.quantity) || 1),
     0,
   );
+
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
-  const cartItemsLength = useMemo(() => cart.items?.length || 0, [cart.items]);
+
+  const cartItemsLength = useMemo(
+    () => cart.items?.length || 0,
+    [cart.items],
+  );
+
   const wishlistCount = useMemo(
     () => (Array.isArray(cart.wishlist) ? cart.wishlist.length : 0),
     [cart.wishlist],
@@ -217,6 +272,7 @@ export const Navbar = ({ icons: propIcons }) => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const q = urlParams.get("q") || "";
+
     if (location.pathname === "/search") {
       setSearchQuery(q);
     } else {
@@ -226,19 +282,25 @@ export const Navbar = ({ icons: propIcons }) => {
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
+
     const categoryKey = category
       ? category.categoryKey ||
         category.key ||
         category.slug ||
-        buildCategorySlug(textOr(category?.title, category?.name))
+        buildCategorySlug(
+          textOr(category?.title, category?.name),
+        )
       : "";
 
     if (!trimmedQuery && categoryKey) {
-      navigate(`/categories/${encodeURIComponent(categoryKey)}`);
+      navigate(
+        `/categories/${encodeURIComponent(categoryKey)}`,
+      );
       return;
     }
 
     let url = `/search?q=${encodeURIComponent(trimmedQuery)}`;
+
     if (category) {
       const catKey =
         category.categoryKey ||
@@ -247,177 +309,221 @@ export const Navbar = ({ icons: propIcons }) => {
         category.categoryId ||
         category.id ||
         category._id;
-      const catName = category.title || category.name || category.label;
-      if (catKey) url += `&category=${encodeURIComponent(catKey)}`;
-      if (catName) url += `&categoryName=${encodeURIComponent(catName)}`;
+
+      const catName =
+        category.title || category.name || category.label;
+
+      if (catKey) {
+        url += `&category=${encodeURIComponent(catKey)}`;
+      }
+
+      if (catName) {
+        url += `&categoryName=${encodeURIComponent(catName)}`;
+      }
     }
+
     if (trimmedQuery || category) {
       navigate(url);
     }
   };
 
   return (
-    <header className="customer-container w-full">
-      <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4  lg:h-[90px] lg:flex-nowrap lg:gap-5">
-        <div className="order-1  flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
-          <Link to="/" aria-label="Sam Global Home">
-            <picture>
-              <source
-                srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x"
-                type="image/avif"
-              />
-              <source
-                srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x"
-                type="image/webp"
-              />
-              <img
-                loading="lazy"
-                src="/image/png/logo-small.webp"
-                alt="Sam Global"
-                width="130"
-                height="72"
-                fetchpriority="high"
-                className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
-              />
-            </picture>
-          </Link>
+    <>
+      <header className="customer-container w-full">
+        <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
+          <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
+            <Link to="/" aria-label="Sam Global Home">
+              <picture>
+                <source
+                  srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x"
+                  type="image/avif"
+                />
 
-          <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-            Menu
-          </span>
-          {/* </HeaderIconButton> */}
-        </div>
-        <SearchBar
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onSearch={handleSearch}
-          enableCategoryDropdown
-          enableAutocomplete
-          autocompleteLimit={8}
-          autocompleteMinLength={1}
-          autocompleteDebounceMs={300}
-          placeholder="Search for Products, Brands and Categories..."
-          showButtonLabel={false}
-          className="order-3 w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:flex-1"
-        />
+                <source
+                  srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x"
+                  type="image/webp"
+                />
 
-        {/* Actions */}
-        <div className="order-2 flex  items-center gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:gap-4">
-          <div className="flex items-center gap-2 sm:gap-5">
-            {utilityIcons.map((item, iconIndex) => (
-              <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
-                <HeaderIconButton
-                  to={getNavbarIconPath(item)}
-                  aria-label={getNavbarIconLabel(item)}
-                >
-                  <img
-                    loading="lazy"
-                    width="400"
-                    height="400"
-                    src={item?.img}
-                    alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${
-                      item?.name === "IN"
-                        ? "h-[22px] w-[24px]"
-                        : "h-[17px] w-[17px]"
-                    }`}
-                  />
+                <img
+                  loading="lazy"
+                  src="/image/png/logo-small.webp"
+                  alt="Sam Global"
+                  width="130"
+                  height="72"
+                  fetchpriority="high"
+                  className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
+                />
+              </picture>
+            </Link>
 
-                  <span className=" pointer-events-none    absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                    {getNavbarIconLabel(item)}
-                  </span>
-                </HeaderIconButton>
-
-                {iconIndex < utilityIcons.length - 1 && (
-                  <div className="hidden  h-6 w-px bg-[var(--customer-border)]  lg:block" />
-                )}
-              </Fragment>
-            ))}
-
-            {utilityIcons.length > 0 && (
-              <div className="hidden h-6 w-px bg-[var(--customer-border)]  lg:block" />
-            )}
-            <HeaderIconButton
-              to="/cart"
-              className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60]  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
-                location.pathname === "/cart"
-                  ? "border border-[#1B1D6099]"
-                  : "border border-transparent"
-              }`}
-              aria-label={`Cart with ${cartItemCount} ${cartItemCount === 1 ? "item" : "items"}`}
-            >
-              <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
-
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
-                  {cartItemCount > 99 ? "99+" : cartItemCount}
-                </span>
-              )}
-            </HeaderIconButton>
-            <HeaderIconButton
-              to="/wishlist"
-              className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
-                location.pathname === "/wishlist"
-                  ? "border border-[#1B1D6099]"
-                  : "border border-transparent"
-              }`}
-              aria-label={`Watchlist with ${wishlistCount} ${wishlistCount === 1 ? "item" : "items"}`}
-            >
-              <Heart className="h-4 w-4 fill-current md:h-5 md:w-5 " />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
-                  {wishlistCount > 99 ? "99+" : wishlistCount}
-                </span>
-              )}
-            </HeaderIconButton>
+            <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+              Menu
+            </span>
           </div>
 
-          {currentUser ? (
-            <HeaderDropdown
-              label={accountLabel}
-              ariaLabel="Open account menu"
-              iconOnly
-              showChevron
-              icon={
-                <div className="flex items-center gap-2.5">
-                  <img
-                    loading="lazy"
-                    width="400"
-                    height="400"
-                    src={profileAvatar}
-                    alt=""
-                    className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
-                    onError={(event) => {
-                      event.currentTarget.src = "/image/png/person.png";
-                    }}
-                  />
-                  <span className="hidden min-w-0 flex-col text-left leading-tight lg:flex">
-                    <span className="max-w-[130px] truncate text-[16px] font-bold text-[#2E2E2E]">
-                      {accountLabel}
+          <SearchBar
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onSearch={handleSearch}
+            enableCategoryDropdown
+            enableAutocomplete
+            autocompleteLimit={8}
+            autocompleteMinLength={1}
+            autocompleteDebounceMs={300}
+            placeholder="Search for Products, Brands and Categories..."
+            showButtonLabel={false}
+            className="order-3 my-2 w-full min-w-0 lg:order-2 lg:my-0 lg:flex-1"
+          />
+
+          {/* Actions */}
+          <div className="order-2 flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+            <div className="flex items-center gap-2 sm:gap-5">
+              {utilityIcons.map((item, iconIndex) => (
+                <Fragment
+                  key={keyOr(
+                    item?.name,
+                    `icon-${iconIndex}`,
+                  )}
+                >
+                  <HeaderIconButton
+                    to={getNavbarIconPath(item)}
+                    aria-label={getNavbarIconLabel(item)}
+                  >
+                    <img
+                      loading="lazy"
+                      width="400"
+                      height="400"
+                      src={item?.img}
+                      alt={getNavbarIconLabel(item)}
+                      className={`object-contain ${
+                        item?.name === "IN"
+                          ? "h-[22px] w-[24px]"
+                          : "h-[17px] w-[17px]"
+                      }`}
+                    />
+
+                    <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                      {getNavbarIconLabel(item)}
                     </span>
-                    <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
-                      {capitalizeFirst(profileUser?.email || "")}
-                    </span>
+                  </HeaderIconButton>
+
+                  {iconIndex < utilityIcons.length - 1 && (
+                    <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
+                  )}
+                </Fragment>
+              ))}
+
+              {utilityIcons.length > 0 && (
+                <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
+              )}
+
+              <HeaderIconButton
+                to="/cart"
+                className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
+                  location.pathname === "/cart"
+                    ? "border border-[#1B1D6099]"
+                    : "border border-transparent"
+                }`}
+                aria-label={`Cart with ${cartItemCount} ${
+                  cartItemCount === 1 ? "item" : "items"
+                }`}
+              >
+                <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+
+                {cartItemCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                    {cartItemCount > 99 ? "99+" : cartItemCount}
                   </span>
-                </div>
-              }
-              path="/account/profile"
-              className="h-8 w-8 overflow-hidden rounded-full  bg-white p-0  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
-              chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
-            >
-              <MenuDropdown title="My Account" items={accountMenuItems} />
-            </HeaderDropdown>
-          ) : (
-            <HeaderGoldButton
-              className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[14px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </HeaderGoldButton>
-          )}
+                )}
+              </HeaderIconButton>
+
+              <HeaderIconButton
+                to="/wishlist"
+                className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
+                  location.pathname === "/wishlist"
+                    ? "border border-[#1B1D6099]"
+                    : "border border-transparent"
+                }`}
+                aria-label={`Watchlist with ${wishlistCount} ${
+                  wishlistCount === 1 ? "item" : "items"
+                }`}
+              >
+                <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+
+                {wishlistCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                    {wishlistCount > 99 ? "99+" : wishlistCount}
+                  </span>
+                )}
+              </HeaderIconButton>
+            </div>
+
+            {currentUser ? (
+              <HeaderDropdown
+                label={accountLabel}
+                ariaLabel="Open account menu"
+                iconOnly
+                showChevron
+                icon={
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      loading="lazy"
+                      width="400"
+                      height="400"
+                      src={profileAvatar}
+                      alt=""
+                      className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+                      onError={(event) => {
+                        event.currentTarget.src =
+                          "/image/png/person.png";
+                      }}
+                    />
+
+                    <span className="hidden min-w-0 flex-col text-left leading-tight lg:flex">
+                      <span className="max-w-[130px] truncate text-[16px] font-bold text-[#2E2E2E]">
+                        {accountLabel}
+                      </span>
+
+                      <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
+                        {capitalizeFirst(
+                          profileUser?.email || "",
+                        )}
+                      </span>
+                    </span>
+                  </div>
+                }
+                path="/account/profile"
+                className="h-8 w-8 overflow-hidden rounded-full bg-white p-0 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
+                chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
+              >
+                <MenuDropdown
+                  title="My Account"
+                  items={accountMenuItems}
+                />
+              </HeaderDropdown>
+            ) : (
+              <HeaderGoldButton
+                className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[14px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </HeaderGoldButton>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <ConfirmModal
+        open={showLogoutModal}
+        title="Sign Out"
+        description="Are you sure you want to sign out of your account?"
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+      />
+    </>
   );
 };
 
@@ -428,27 +534,39 @@ export const CategoryBar = ({
 }) => {
   const dispatch = useDispatch();
   const location = useLocation();
+
   const globalCategories = useSelector(
     (state) => state.catalog.globalCategories,
   );
+
   const catalogLoading = useSelector(
     (state) =>
-      state.catalog?.loading || state.catalog?.discoveryNavigationLoading,
+      state.catalog?.loading ||
+      state.catalog?.discoveryNavigationLoading,
   );
 
   const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
-    const list = getCategoryListFromResponse(globalCategories);
+    const list =
+      getCategoryListFromResponse(globalCategories);
+
     const actualCategories = list.filter(
-      (item) => item && (item.categoryKey || item.parentKey),
+      (item) =>
+        item && (item.categoryKey || item.parentKey),
     );
+
     setCategoriesList(actualCategories);
   }, [globalCategories]);
 
-  const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
+  const catalogCategories = useMemo(
+    () => categoriesList,
+    [categoriesList],
+  );
+
   const [activeMenu, setActiveMenu] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
+
   const categoryBarRef = useRef(null);
   const isPinnedRef = useRef(false);
   const openTimeoutRef = useRef(null);
@@ -457,8 +575,13 @@ export const CategoryBar = ({
   const handleCategoryMouseEnter = (item) => {
     if (window.innerWidth < 1024) return;
 
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+    }
+
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
 
     setActiveMenu(item);
   };
@@ -466,8 +589,13 @@ export const CategoryBar = ({
   const handleCategoryMouseLeave = () => {
     if (window.innerWidth < 1024) return;
 
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+    }
+
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
 
     closeTimeoutRef.current = setTimeout(() => {
       setActiveMenu(null);
@@ -493,31 +621,53 @@ export const CategoryBar = ({
       }
     };
 
-    document.addEventListener("pointerdown", handleDocumentPointerDown);
-    document.addEventListener("keydown", handleDocumentKeyDown);
+    document.addEventListener(
+      "pointerdown",
+      handleDocumentPointerDown,
+    );
+
+    document.addEventListener(
+      "keydown",
+      handleDocumentKeyDown,
+    );
 
     return () => {
-      document.removeEventListener("pointerdown", handleDocumentPointerDown);
-      document.removeEventListener("keydown", handleDocumentKeyDown);
+      document.removeEventListener(
+        "pointerdown",
+        handleDocumentPointerDown,
+      );
+
+      document.removeEventListener(
+        "keydown",
+        handleDocumentKeyDown,
+      );
     };
   }, [activeMenu]);
 
   useEffect(() => {
     return () => {
-      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      if (openTimeoutRef.current) {
+        clearTimeout(openTimeoutRef.current);
+      }
+
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
     };
   }, []);
 
   useEffect(() => {
     let ticking = false;
+
     const handleScroll = () => {
       if (!categoryBarRef.current) return;
 
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const headerOffset = getHeaderHeight();
-          const { bottom } = categoryBarRef.current.getBoundingClientRect();
+          const { bottom } =
+            categoryBarRef.current.getBoundingClientRect();
+
           const nextPinned = isPinnedRef.current
             ? bottom <= headerOffset + 16
             : bottom <= headerOffset - 8;
@@ -526,19 +676,37 @@ export const CategoryBar = ({
             isPinnedRef.current = nextPinned;
             setIsPinned(nextPinned);
           }
+
           ticking = false;
         });
+
         ticking = true;
       }
     };
 
     handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
+
+    window.addEventListener(
+      "scroll",
+      handleScroll,
+      { passive: true },
+    );
+
+    window.addEventListener(
+      "resize",
+      handleScroll,
+    );
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
+      window.removeEventListener(
+        "scroll",
+        handleScroll,
+      );
+
+      window.removeEventListener(
+        "resize",
+        handleScroll,
+      );
     };
   }, []);
 
@@ -549,35 +717,64 @@ export const CategoryBar = ({
 
   const categories = useMemo(() => {
     let result = [];
-    const headerCategories = getCategoryListFromResponse(headerData);
+
+    const headerCategories =
+      getCategoryListFromResponse(headerData);
+
     if (headerCategories.length) {
       result = buildCategoryTree(headerCategories);
     } else if (catalogTree.length) {
-      const fullTree = buildCategoryTree(globalCategories) || [];
+      const fullTree =
+        buildCategoryTree(globalCategories) || [];
+
       const findInTree = (nodes, key) => {
         if (!Array.isArray(nodes)) return null;
+
         for (const n of nodes) {
           if (n.categoryKey === key) return n;
-          if (n.children && n.children.length > 0) {
-            const found = findInTree(n.children, key);
+
+          if (
+            n.children &&
+            n.children.length > 0
+          ) {
+            const found = findInTree(
+              n.children,
+              key,
+            );
+
             if (found) return found;
           }
         }
+
         return null;
       };
 
       result = catalogTree.map((cat) => {
-        const globalNode = findInTree(fullTree, cat.categoryKey);
+        const globalNode = findInTree(
+          fullTree,
+          cat.categoryKey,
+        );
+
         const catChildren =
-          Array.isArray(globalNode?.children) && globalNode.children.length > 0
+          Array.isArray(globalNode?.children) &&
+          globalNode.children.length > 0
             ? globalNode.children
             : asArray(cat?.children);
 
         return {
           ...cat,
-          name: textOr(cat?.name, textOr(cat?.title, "Category")),
-          img: cat?.imageUrl || cat?.image || cat?.img,
-          slug: keyOr(cat?.slug, getCategoryKey(cat)),
+          name: textOr(
+            cat?.name,
+            textOr(cat?.title, "Category"),
+          ),
+          img:
+            cat?.imageUrl ||
+            cat?.image ||
+            cat?.img,
+          slug: keyOr(
+            cat?.slug,
+            getCategoryKey(cat),
+          ),
           categoryKey: getCategoryKey(cat),
           children: catChildren,
         };
@@ -585,7 +782,11 @@ export const CategoryBar = ({
     }
 
     return result;
-  }, [catalogTree, headerData, globalCategories]);
+  }, [
+    catalogTree,
+    headerData,
+    globalCategories,
+  ]);
 
   const visibleCategories = useMemo(
     () => asArray(categories).slice(0, 10),
@@ -599,19 +800,23 @@ export const CategoryBar = ({
       return (
         <nav
           aria-label="Category Navigation Loading"
-          style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-          className="fixed left-0 z-40 w-full bg-white border-b border-[var(--customer-border)]"
+          style={{
+            top: `var(${HEADER_HEIGHT_VAR}, 0px)`,
+          }}
+          className="fixed left-0 z-40 w-full border-b border-[var(--customer-border)] bg-white"
         >
-          <div className="customer-container mx-auto w-full relative">
-            <div className="w-full overflow-x-auto hide-scrollbar">
-              <div className="mx-auto flex h-[44px] w-max items-center gap-5 whitespace-nowrap px-4 sm:gap-7 sm:px-6 lg:h-[46px] animate-pulse">
-                {[64, 52, 58, 80, 48, 70, 46, 88, 68, 56].map((w, i) => (
-                  <div
-                    key={`compact-cat-skel-${i}`}
-                    className="h-3.5 sm:h-4 bg-slate-200/80 rounded-full"
-                    style={{ width: `${w}px` }}
-                  />
-                ))}
+          <div className="customer-container relative mx-auto w-full">
+            <div className="hide-scrollbar w-full overflow-x-auto">
+              <div className="mx-auto flex h-[44px] w-max animate-pulse items-center gap-5 whitespace-nowrap px-4 sm:gap-7 sm:px-6 lg:h-[46px]">
+                {[64, 52, 58, 80, 48, 70, 46, 88, 68, 56].map(
+                  (w, i) => (
+                    <div
+                      key={`compact-cat-skel-${i}`}
+                      className="h-3.5 rounded-full bg-slate-200/80 sm:h-4"
+                      style={{ width: `${w}px` }}
+                    />
+                  ),
+                )}
               </div>
             </div>
           </div>
@@ -620,22 +825,28 @@ export const CategoryBar = ({
     }
 
     return (
-      <header className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[140px]">
-        <div className="customer-container mx-auto w-full relative z-20 flex items-stretch px-2 sm:px-4">
-          <div className="w-full overflow-x-auto hide-scrollbar flex items-stretch">
-            <div className="mx-auto flex w-full min-w-max xl:min-w-0 items-stretch justify-between gap-1 sm:gap-1.5 lg:gap-2.5 py-3 sm:pt-4 sm:pb-2.5 lg:pt-4.5 lg:pb-3">
-              {[54, 46, 50, 68, 42, 58, 38, 72, 62, 58].map((w, index) => (
-                <div
-                  key={`category-skeleton-${index}`}
-                  className="flex-1 flex flex-col items-center justify-center px-1 sm:px-2 lg:px-3 min-w-[62px] sm:min-w-[88px] lg:min-w-[105px] animate-pulse"
-                >
-                  <div className="h-[44px] w-[48px] sm:h-[56px] sm:w-[60px] lg:h-[64px] lg:w-[68px] rounded-lg bg-[#EAD8B5]/60 flex items-center justify-center" />
+      <header className="relative left-1/2 right-1/2 mb-8 -ml-[50vw] -mr-[50vw] flex min-h-[85px] w-screen items-stretch border-b border-[#EAD8B5] bg-[#FFF8ED] sm:min-h-[112px] lg:min-h-[140px]">
+        <div className="customer-container relative z-20 mx-auto flex w-full items-stretch px-2 sm:px-4">
+          <div className="hide-scrollbar flex w-full items-stretch overflow-x-auto">
+            <div className="mx-auto flex w-full min-w-max items-stretch justify-between gap-1 py-3 sm:gap-1.5 sm:pb-2.5 sm:pt-4 lg:gap-2.5 lg:pb-3 lg:pt-4.5">
+              {[54, 46, 50, 68, 42, 58, 38, 72, 62, 58].map(
+                (w, index) => (
                   <div
-                    className="mt-3 sm:mt-4 lg:mt-4.5 h-2.5 sm:h-3 lg:h-3.5 rounded-full bg-[#EAD8B5]/75"
-                    style={{ width: `${w}px`, maxWidth: "85%" }}
-                  />
-                </div>
-              ))}
+                    key={`category-skeleton-${index}`}
+                    className="flex min-w-[62px] flex-1 flex-col items-center justify-center px-1 sm:min-w-[88px] sm:px-2 lg:min-w-[105px] lg:px-3"
+                  >
+                    <div className="flex h-[44px] w-[48px] items-center justify-center rounded-lg bg-[#EAD8B5]/60 sm:h-[56px] sm:w-[60px] lg:h-[64px] lg:w-[68px]" />
+
+                    <div
+                      className="mt-3 h-2.5 rounded-full bg-[#EAD8B5]/75 sm:mt-4 sm:h-3 lg:mt-4.5 lg:h-3.5"
+                      style={{
+                        width: `${w}px`,
+                        maxWidth: "85%",
+                      }}
+                    />
+                  </div>
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -645,46 +856,78 @@ export const CategoryBar = ({
 
   if (!categories.length) return null;
 
-  /* ── Compact mode: text-only bar for non-homepage pages ──────────── */
   if (compact) {
     return (
       <nav
         ref={categoryBarRef}
         aria-label="Category Navigation"
-        style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-        className="fixed left-0 z-40 w-full bg-white border-b border-[var(--customer-border)]"
+        style={{
+          top: `var(${HEADER_HEIGHT_VAR}, 0px)`,
+        }}
+        className="fixed left-0 z-40 w-full border-b border-[var(--customer-border)] bg-white"
       >
-        <div className="customer-container mx-auto w-full relative">
-          <div className="w-full overflow-x-auto hide-scrollbar">
+        <div className="customer-container relative mx-auto w-full">
+          <div className="hide-scrollbar w-full overflow-x-auto">
             <div className="mx-auto flex h-[44px] w-max items-center gap-5 whitespace-nowrap px-4 sm:gap-7 sm:px-6 lg:h-[46px]">
               {visibleCategories.map((item, index) => {
-                const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
+                const categoryHref = `/categories/${
+                  item?.categoryKey ||
+                  keyOr(
+                    item?.slug,
+                    buildCategorySlug(
+                      textOr(
+                        item?.name,
+                        "category",
+                      ),
+                    ),
+                  )
+                }`;
+
                 const isActive =
-                  activeMenu?.categoryKey === item?.categoryKey ||
+                  activeMenu?.categoryKey ===
+                    item?.categoryKey ||
                   location.pathname === categoryHref ||
-                  location.pathname.startsWith(categoryHref + "/");
+                  location.pathname.startsWith(
+                    categoryHref + "/",
+                  );
 
                 return (
                   <Link
-                    key={keyOr(item?.name, `compact-category-${index}`)}
+                    key={keyOr(
+                      item?.name,
+                      `compact-category-${index}`,
+                    )}
                     to={categoryHref}
-                    onMouseEnter={() => handleCategoryMouseEnter(item)}
-                    onMouseLeave={handleCategoryMouseLeave}
+                    onMouseEnter={() =>
+                      handleCategoryMouseEnter(item)
+                    }
+                    onMouseLeave={
+                      handleCategoryMouseLeave
+                    }
                     className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-                      isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
+                      isActive
+                        ? "text-[#03014D]"
+                        : "text-[#2E2E2E]"
                     }`}
                   >
-                    <span className="max-w-[250px] xl:max-w-none truncate">
-                      {textOr(item?.name, "Category")}
+                    <span className="max-w-[250px] truncate xl:max-w-none">
+                      {textOr(
+                        item?.name,
+                        "Category",
+                      )}
                     </span>
+
                     <span
                       className={`absolute bottom-0 left-0 h-[3px] rounded-md bg-[#CE9F2D] transition-all duration-300 ${
-                        isActive ? "w-full opacity-100" : "w-0 opacity-0"
+                        isActive
+                          ? "w-full opacity-100"
+                          : "w-0 opacity-0"
                       }`}
                     />
                   </Link>
                 );
               })}
+
               {categories.length > 10 && (
                 <Link
                   to="/categories"
@@ -695,9 +938,11 @@ export const CategoryBar = ({
                   }`}
                 >
                   More
+
                   <span
                     className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                      location.pathname === "/categories"
+                      location.pathname ===
+                      "/categories"
                         ? "w-full opacity-100"
                         : "w-0 opacity-0"
                     }`}
@@ -711,25 +956,44 @@ export const CategoryBar = ({
     );
   }
 
-  /* ── Full mode: visual header with icons (homepage) ─────────────── */
   return (
     <header
       ref={categoryBarRef}
-      className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[140px]"
+      className="relative left-1/2 right-1/2 mb-8 flex min-h-[85px] w-screen -ml-[50vw] -mr-[50vw] items-stretch border-b border-[#EAD8B5] bg-[#FFF8ED] sm:min-h-[112px] lg:min-h-[140px]"
     >
-      <div className="customer-container mx-auto w-full relative z-20 flex items-stretch px-2 sm:px-4">
-        <div className="w-full overflow-x-auto hide-scrollbar flex items-stretch">
-          <div className="mx-auto flex w-full min-w-max xl:min-w-0 items-stretch justify-between gap-1 sm:gap-1.5 lg:gap-2.5">
+      <div className="customer-container relative z-20 mx-auto flex w-full items-stretch px-2 sm:px-4">
+        <div className="hide-scrollbar flex w-full items-stretch overflow-x-auto">
+          <div className="mx-auto flex w-full min-w-max items-stretch justify-between gap-1 sm:gap-1.5 lg:gap-2.5 xl:min-w-0">
             {visibleCategories.map((item, index) => {
-              // Always use categoryKey first — it's the canonical route key from the DB
-              const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
-              const isActive =
-                activeMenu?.categoryKey === item?.categoryKey ||
-                location.pathname === categoryHref ||
-                location.pathname.startsWith(categoryHref + "/");
+              const categoryHref = `/categories/${
+                item?.categoryKey ||
+                keyOr(
+                  item?.slug,
+                  buildCategorySlug(
+                    textOr(
+                      item?.name,
+                      "category",
+                    ),
+                  ),
+                )
+              }`;
 
-              const rawName = textOr(item?.name, "Category");
-              const categoryTitle = /^beauty/i.test(rawName)
+              const isActive =
+                activeMenu?.categoryKey ===
+                  item?.categoryKey ||
+                location.pathname === categoryHref ||
+                location.pathname.startsWith(
+                  categoryHref + "/",
+                );
+
+              const rawName = textOr(
+                item?.name,
+                "Category",
+              );
+
+              const categoryTitle = /^beauty/i.test(
+                rawName,
+              )
                 ? "Beauty"
                 : /^food/i.test(rawName)
                   ? "Food"
@@ -737,14 +1001,21 @@ export const CategoryBar = ({
 
               return (
                 <div
-                  key={keyOr(item?.name, `category-${index}`)}
-                  className="relative flex-1 flex items-stretch h-full min-w-[62px] sm:min-w-[88px] lg:min-w-[105px]"
-                  onMouseEnter={() => handleCategoryMouseEnter(item)}
-                  onMouseLeave={handleCategoryMouseLeave}
+                  key={keyOr(
+                    item?.name,
+                    `category-${index}`,
+                  )}
+                  className="relative flex h-full min-w-[62px] flex-1 items-stretch sm:min-w-[88px] lg:min-w-[105px]"
+                  onMouseEnter={() =>
+                    handleCategoryMouseEnter(item)
+                  }
+                  onMouseLeave={
+                    handleCategoryMouseLeave
+                  }
                 >
                   <Link
                     to={categoryHref}
-                    className={`group relative flex w-full h-full flex-col items-center justify-center px-1 sm:px-2 lg:px-3 pt-3 sm:pt-4 lg:pt-4.5 pb-2 sm:pb-2.5 lg:pb-3 transition-all duration-200 ease-in-out ${
+                    className={`group relative flex h-full w-full flex-col items-center justify-center px-1 pb-2 pt-3 transition-all duration-200 ease-in-out sm:px-2 sm:pb-2.5 sm:pt-4 lg:px-3 lg:pb-3 lg:pt-4.5 ${
                       isActive
                         ? "bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]"
                         : "hover:bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]"
@@ -767,13 +1038,13 @@ export const CategoryBar = ({
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-[#2D347D]">
-                          <ShoppingBag className="w-8 h-8 sm:w-10 sm:h-10" />
+                          <ShoppingBag className="h-8 w-8 sm:h-10 sm:w-10" />
                         </div>
                       )}
                     </div>
 
                     <span
-                      className={`mt-3 sm:mt-2 text-center text-[11px] sm:text-[13px] md:text-[14px] lg:text-[15px] whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
+                      className={`mt-3 whitespace-normal text-center text-[11px] leading-tight transition-colors duration-200 sm:mt-2 sm:text-[13px] md:text-[14px] lg:text-[15px] 2xl:whitespace-nowrap ${
                         isActive
                           ? "font-bold text-[#1E204A]"
                           : "font-semibold text-[#2D2D2D] group-hover:text-[#1E204A]"
@@ -782,18 +1053,20 @@ export const CategoryBar = ({
                       {categoryTitle}
                     </span>
 
-                    {/* Active bottom line indicator touching bottom edge */}
                     {isActive && (
-                      <div className="absolute bottom-0 left-0 right-0 h-[3px] sm:h-[4px] bg-[#2D347D]" />
+                      <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2D347D] sm:h-[4px]" />
                     )}
                   </Link>
                 </div>
               );
             })}
+
             {categories.length > 10 && (
               <CategoryMoreButton
                 to="/categories"
-                active={location.pathname === "/categories"}
+                active={
+                  location.pathname === "/categories"
+                }
                 icon={moreImage}
               />
             )}
@@ -803,44 +1076,77 @@ export const CategoryBar = ({
 
       <nav
         aria-label="Sticky Category Navigation"
-        style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-        className={`fixed left-0 z-40 w-full bg-white shadow-[0_8px_18px_rgba(17,24,39,0.08)] transition-all duration-300 ease-in-out !block ${
+        style={{
+          top: `var(${HEADER_HEIGHT_VAR}, 0px)`,
+        }}
+        className={`fixed left-0 z-40 !block w-full bg-white shadow-[0_8px_18px_rgba(17,24,39,0.08)] transition-all duration-300 ease-in-out ${
           isPinned
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-full opacity-0"
         }`}
       >
-        <div className="customer-container mx-auto w-full relative">
-          <div className="w-full overflow-x-auto hide-scrollbar">
+        <div className="customer-container relative mx-auto w-full">
+          <div className="hide-scrollbar w-full overflow-x-auto">
             <div className="mx-auto flex h-[44px] w-max items-center gap-5 whitespace-nowrap px-4 sm:gap-7 sm:px-6 lg:h-[46px]">
               {visibleCategories.map((item, index) => {
-                const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
+                const categoryHref = `/categories/${
+                  item?.categoryKey ||
+                  keyOr(
+                    item?.slug,
+                    buildCategorySlug(
+                      textOr(
+                        item?.name,
+                        "category",
+                      ),
+                    ),
+                  )
+                }`;
+
                 const isActive =
-                  activeMenu?.categoryKey === item?.categoryKey ||
+                  activeMenu?.categoryKey ===
+                    item?.categoryKey ||
                   location.pathname === categoryHref ||
-                  location.pathname.startsWith(categoryHref + "/");
+                  location.pathname.startsWith(
+                    categoryHref + "/",
+                  );
 
                 return (
                   <Link
-                    key={keyOr(item?.name, `sticky-category-${index}`)}
+                    key={keyOr(
+                      item?.name,
+                      `sticky-category-${index}`,
+                    )}
                     to={categoryHref}
-                    onMouseEnter={() => handleCategoryMouseEnter(item)}
-                    onMouseLeave={handleCategoryMouseLeave}
+                    onMouseEnter={() =>
+                      handleCategoryMouseEnter(item)
+                    }
+                    onMouseLeave={
+                      handleCategoryMouseLeave
+                    }
                     className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-                      isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
+                      isActive
+                        ? "text-[#03014D]"
+                        : "text-[#2E2E2E]"
                     }`}
                   >
-                    <span className="max-w-[250px] xl:max-w-none truncate">
-                      {textOr(item?.name, "Category")}
+                    <span className="max-w-[250px] truncate xl:max-w-none">
+                      {textOr(
+                        item?.name,
+                        "Category",
+                      )}
                     </span>
+
                     <span
                       className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                        isActive ? "w-full opacity-100" : "w-0 opacity-0"
+                        isActive
+                          ? "w-full opacity-100"
+                          : "w-0 opacity-0"
                       }`}
                     />
                   </Link>
                 );
               })}
+
               {categories.length > 10 && (
                 <Link
                   to="/categories"
@@ -851,9 +1157,11 @@ export const CategoryBar = ({
                   }`}
                 >
                   More
+
                   <span
                     className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                      location.pathname === "/categories"
+                      location.pathname ===
+                      "/categories"
                         ? "w-full opacity-100"
                         : "w-0 opacity-0"
                     }`}
@@ -870,14 +1178,18 @@ export const CategoryBar = ({
 
 export const Header = () => {
   const headerRef = useRef(null);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const updateHeaderHeight = () => {
-      const height = headerRef.current?.offsetHeight || 0;
+      const height =
+        headerRef.current?.offsetHeight || 0;
+
       const currentHeight = Number.parseFloat(
-        document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR),
+        document.documentElement.style.getPropertyValue(
+          HEADER_HEIGHT_VAR,
+        ),
       );
+
       if (height !== currentHeight) {
         document.documentElement.style.setProperty(
           HEADER_HEIGHT_VAR,
@@ -888,16 +1200,32 @@ export const Header = () => {
 
     updateHeaderHeight();
 
-    if (!headerRef.current) return undefined;
+    if (!headerRef.current) {
+      return undefined;
+    }
 
-    const observer = new ResizeObserver(updateHeaderHeight);
+    const observer = new ResizeObserver(
+      updateHeaderHeight,
+    );
+
     observer.observe(headerRef.current);
-    window.addEventListener("resize", updateHeaderHeight);
+
+    window.addEventListener(
+      "resize",
+      updateHeaderHeight,
+    );
 
     return () => {
       observer.disconnect();
-      window.removeEventListener("resize", updateHeaderHeight);
-      document.documentElement.style.removeProperty(HEADER_HEIGHT_VAR);
+
+      window.removeEventListener(
+        "resize",
+        updateHeaderHeight,
+      );
+
+      document.documentElement.style.removeProperty(
+        HEADER_HEIGHT_VAR,
+      );
     };
   }, []);
 

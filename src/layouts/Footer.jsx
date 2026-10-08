@@ -1,460 +1,155 @@
-import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 import { asArray, hrefOr } from "../utils/content";
-import { footerData } from "../data/footer";
 import { SocialIcons } from "../components/ui";
 import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
-import { Link, useLocation } from "react-router-dom";
-import { CUSTOMER_ROUTES } from "../constants/routes";
-import {
-  getBrandName,
-  getBrandProductCount,
-  getBrandRouteKey,
-} from "../utils/pages/brandUtils";
-import {
-  fetchCategories,
-  fetchBrands,
-  setGlobalBrands,
-} from "../features/catalog/catalogSlice";
-import { brandToSlug } from "../utils/ecommerce/brand";
+import { FALLBACK_FOOTER } from "../data/fallbackCmsData";
+import { useFooterData } from "./footer/useFooterData";
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
+/* -------------------------------------------------------------------------- */
+/* FooterLinkGroups — renders one column per group + social icons            */
+/* -------------------------------------------------------------------------- */
 
-const buildCategorySlug = (name = "category") =>
-  String(name)
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-");
-
-const getCategoryKey = (item = {}) =>
-  item?.categoryKey ||
-  item?.key ||
-  item?.slug ||
-  buildCategorySlug(item?.title || item?.name);
-
-function getCategoryListFromResponse(data) {
-  if (Array.isArray(data)) return data;
-
-  if (!data || typeof data !== "object") return [];
-
-  if (Array.isArray(data?.items)) return data.items;
-
-  if (Array.isArray(data?.list)) return data.list;
-
-  if (Array.isArray(data?.categories)) return data.categories;
-
-  if (data?.category && typeof data.category === "object") {
-    return [data.category];
-  }
-
-  if (data?.data) {
-    return getCategoryListFromResponse(data.data);
-  }
-
-  return [data];
-}
-
-function getBrandListFromResponse(data) {
-  const payload = data?.data ?? data;
-
-  if (Array.isArray(payload)) return payload;
-
-  if (!payload || typeof payload !== "object") return [];
-
-  return (
-    [payload.brands, payload.items, payload.list, payload.results].find(
-      Array.isArray,
-    ) || []
-  );
-}
-
-function getRootCategories(categories = []) {
-  const byKey = new Map();
-
-  const visit = (category, parentKey = null) => {
-    if (!category || typeof category !== "object") return;
-
-    const categoryKey = getCategoryKey(category);
-
-    if (!categoryKey) return;
-
-    const normalized = {
-      ...category,
-      categoryKey,
-      parentKey: category?.parentKey ?? parentKey,
-    };
-
-    byKey.set(categoryKey, normalized);
-
-    asArray(category?.children).forEach((child) =>
-      visit(child, categoryKey),
-    );
-
-    asArray(category?.subCategories).forEach((child) =>
-      visit(child, categoryKey),
-    );
-  };
-
-  asArray(categories).forEach((category) =>
-    visit(category, category?.parentKey ?? null),
-  );
-
-  return Array.from(byKey.values()).filter((category) => {
-    const count = category?.productCount ?? category?.count;
-    const hasExplicitZeroCount =
-      count !== undefined &&
-      count !== null &&
-      count !== "" &&
-      Number(count) < 1;
-
-    return (
-      (category.parentKey === null ||
-        category.parentKey === undefined ||
-        !byKey.has(category.parentKey) ||
-        Number(category.level || 0) === 0) &&
-      !hasExplicitZeroCount
-    );
-  });
-}
-
-// ─── FooterLinkGroups ─────────────────────────────────────────────────────────
-
-function FooterLinkGroups({
-  groups = [],
-  socialLinks = [],
-  hasDynamicGroups = false,
-}) {
+function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = false }) {
   const location = useLocation();
 
-  if (!groups.length) return null;
+  if (!groups.length && !socialLinks.length) return null;
 
   return (
     <div className="customer-container">
-      <div
-        className={
-          hasDynamicGroups
-            ? "grid grid-cols-2 gap-6 md:gap-10 xl:gap-24 border-t border-white/25 pt-8 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
-            : "grid w-full grid-cols-1 gap-6 border-t border-white/25 pt-8 sm:grid-cols-2 lg:grid-cols-3"
-        }
-      >
-        {groups.map((group, groupIndex) => (
-          <div key={group?.title || `group-${groupIndex}`}>
-            <h2 className="mb-4 border-l-2 font-semibold text-lg md:text-2xl pl-2 border-[var(--customer-gold)] text-white">
-              {group?.title}
-            </h2>
+      {groups.length > 0 && (
+        <div
+          className={
+            hasDynamicGroups
+              ? "grid grid-cols-2 gap-6 border-t border-white/25 pt-8 md:grid-cols-3 md:gap-10 lg:grid-cols-4 xl:gap-24 2xl:grid-cols-5"
+              : "grid w-full grid-cols-1 gap-6 border-t border-white/25 pt-8 sm:grid-cols-2 lg:grid-cols-3"
+          }
+        >
+          {groups.map((group, groupIndex) => {
+            const links = asArray(group?.links).filter(
+              (link) => link?.label && link?.href,
+            );
+            if (!links.length) return null;
 
-            {group?.isLoading ? (
-              <div className="flex flex-col gap-2 md:gap-3 py-1">
-                <SkeletonBox
-                  width="75%"
-                  height="16px"
-                  className="!bg-white/10 rounded"
-                />
-                <SkeletonBox
-                  width="55%"
-                  height="16px"
-                  className="!bg-white/10 rounded"
-                />
-                <SkeletonBox
-                  width="80%"
-                  height="16px"
-                  className="!bg-white/10 rounded"
-                />
-                <SkeletonBox
-                  width="60%"
-                  height="16px"
-                  className="!bg-white/10 rounded"
-                />
-                <SkeletonBox
-                  width="45%"
-                  height="16px"
-                  className="!bg-white/10 rounded"
-                />
-              </div>
-            ) : (
-              <ul className="grid gap-1 md:gap-3">
-                {(Array.isArray(group?.links) ? group.links : []).map(
-                  (link, linkIndex) => {
-                    const toPath = hrefOr(link?.href);
+            return (
+              <div key={group?.title || `group-${groupIndex}`}>
+                <h2 className="mb-4 border-l-2 border-[var(--customer-gold)] pl-2 text-lg font-semibold text-white md:text-2xl">
+                  {group?.title}
+                </h2>
 
-                    return (
-                      <li key={link?.label || `link-${linkIndex}`}>
-                        <Link
-                          to={toPath}
-                          target={link?.target}
-                          rel={
-                            link?.target === "_blank"
-                              ? "noopener noreferrer"
-                              : undefined
-                          }
-                          onClick={() => {
-                            if (location.pathname === toPath) {
-                              window.scrollTo({
-                                top: 0,
-                                behavior: "smooth",
-                              });
-                            }
-                          }}
-                          className="text-sm md:text-base text-white/70 transition-all duration-300 ease-in-out font-medium hover:text-white"
-                        >
-                          {link?.label}
-                        </Link>
-                      </li>
-                    );
-                  },
+                {group?.isLoading ? (
+                  <div className="flex flex-col gap-2 py-1 md:gap-3">
+                    <SkeletonBox width="75%" height="16px" className="rounded !bg-white/10" />
+                    <SkeletonBox width="55%" height="16px" className="rounded !bg-white/10" />
+                    <SkeletonBox width="80%" height="16px" className="rounded !bg-white/10" />
+                    <SkeletonBox width="60%" height="16px" className="rounded !bg-white/10" />
+                    <SkeletonBox width="45%" height="16px" className="rounded !bg-white/10" />
+                  </div>
+                ) : (
+                  <ul className="grid gap-1 md:gap-3">
+                    {links.map((link, linkIndex) => {
+                      const toPath = hrefOr(link?.href);
+                      const isExternal =
+                        /^https?:\/\//i.test(toPath) || link?.target === "_blank";
+
+                      return (
+                        <li key={`${link?.label}-${link?.href}-${linkIndex}`}>
+                          {isExternal ? (
+                            <a
+                              href={toPath}
+                              target={link?.target || "_blank"}
+                              rel="noopener noreferrer"
+                              className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-base"
+                            >
+                              {link?.label}
+                            </a>
+                          ) : (
+                            <Link
+                              to={toPath}
+                              onClick={() => {
+                                if (location.pathname === toPath) {
+                                  window.scrollTo({ top: 0, behavior: "smooth" });
+                                }
+                              }}
+                              className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-base"
+                            >
+                              {link?.label}
+                            </Link>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
                 )}
-              </ul>
-            )}
-          </div>
-        ))}
-      </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
-      <div className="flex flex-wrap gap-4 py-6">
-        {socialLinks.map((social, index) => (
-          <SocialIcons
-            key={social?.label || `social-${index}`}
-            data={social}
-          />
-        ))}
-      </div>
+      {socialLinks.length > 0 && (
+        <div className="flex flex-wrap gap-4 py-6">
+          {socialLinks.map((social, index) => (
+            <SocialIcons
+              key={social?.label || social?.href || `social-${index}`}
+              data={social}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
+/* -------------------------------------------------------------------------- */
+/* Footer                                                                     */
+/* -------------------------------------------------------------------------- */
 
-const emptyArray = [];
-
-export function Footer({ data = footerData }) {
-  const dispatch = useDispatch();
+function Footer({ data }) {
   const location = useLocation();
-
-  // ── Redux state ─────────────────────────────────────────────────────────────
-
-  const catalogLoading = useSelector((state) =>
-    Boolean(state.catalog.loading),
+  const { footer, resolvedLinkGroups, hasDynamicGroups } = useFooterData(
+    data || FALLBACK_FOOTER,
   );
 
-  const catalogCategoryList = useSelector(
-    (state) =>
-      state.catalog.globalCategories ||
-      state.catalog.list ||
-      emptyArray,
-  );
-
-  const globalBrands = useSelector(
-    (state) => state.catalog.globalBrands || emptyArray,
-  );
-  const displayableGlobalBrands = useMemo(
-    () => asArray(globalBrands).filter((brand) => getBrandName(brand)),
-    [globalBrands],
-  );
-  const needsBrandRefresh =
-    !displayableGlobalBrands.length ||
-    displayableGlobalBrands.length !== asArray(globalBrands).length;
-
-  const [categoriesFetched, setCategoriesFetched] = useState(false);
-  const [brandsFetched, setBrandsFetched] = useState(false);
-
-  // ── Fetch categories ────────────────────────────────────────────────────────
-
-  useEffect(() => {
-    const categoryList =
-      getCategoryListFromResponse(catalogCategoryList);
-
-    if (!categoryList.length) {
-      dispatch(fetchCategories()).finally(() =>
-        setCategoriesFetched(true),
-      );
-    } else {
-      setCategoriesFetched(true);
-    }
-  }, [dispatch, catalogCategoryList]);
-
-  // ── Fetch brands ────────────────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (needsBrandRefresh) {
-      dispatch(
-        fetchBrands({
-          limit: 100,
-          active: true,
-          hasProducts: true,
-        }),
-      )
-        .unwrap()
-        .then((result) => {
-          const brands = getBrandListFromResponse(result);
-
-          const brandsWithProducts = brands
-            .filter((brand) => {
-            const count = getBrandProductCount(brand);
-            return count === undefined || count >= 1;
-          })
-            .slice(0, 5);
-
-          dispatch(setGlobalBrands(brandsWithProducts));
-        })
-        .catch(() => {})
-        .finally(() => setBrandsFetched(true));
-    } else {
-      setBrandsFetched(true);
-    }
-  }, [dispatch, needsBrandRefresh]);
-
-  const footer = data || footerData;
-
-  const {
-    copyright = footerData.copyright,
-    extrapages = footerData.extrapages,
-  } = footer;
-
-  const benefits = asArray(footer.benefits);
-  const socialLinks = asArray(footer.socialLinks);
-  const extraPages = asArray(extrapages);
-
-  const appDownload = footer.appDownload || {};
-  const appDownloadLinks = asArray(appDownload.links);
-
-  // ── Categories ──────────────────────────────────────────────────────────────
-
-  const catalogCategories = useMemo(
-    () =>
-      getRootCategories(
-        getCategoryListFromResponse(catalogCategoryList),
-      ),
-    [catalogCategoryList],
-  );
-
-  const apiCategoryLinks = useMemo(
-    () =>
-      catalogCategories.slice(0, 5).map((cat) => ({
-        label:
-          cat?.title ||
-          cat?.name ||
-          getCategoryKey(cat),
-        href: CUSTOMER_ROUTES.category(
-          getCategoryKey(cat),
-        ),
-      })),
-    [catalogCategories],
-  );
-
-  // ── Brands ──────────────────────────────────────────────────────────────────
-
-  const apiBrandLinks = useMemo(
-    () =>
-      displayableGlobalBrands
-        .slice(0, 5)
-        .map((brand) => {
-          const name = getBrandName(brand);
-
-          const slug =
-            getBrandRouteKey(brand) || brandToSlug(name);
-
-          return {
-            label: name,
-            href: CUSTOMER_ROUTES.brand(slug),
-          };
-        }),
-    [displayableGlobalBrands],
-  );
-
-  // ── Loading states ──────────────────────────────────────────────────────────
-
-  const isCategoriesLoading =
-    (!categoriesFetched || catalogLoading) &&
-    !apiCategoryLinks.length;
-
-  const isBrandsLoading =
-    (!brandsFetched || catalogLoading) &&
-    !apiBrandLinks.length;
-
-  const staticGroups = asArray(footer.linkGroups);
-
-  // ── Footer groups ───────────────────────────────────────────────────────────
-
-  const resolvedLinkGroups = useMemo(() => {
-    const REPLACED_TITLES = new Set(["buy", "brands"]);
-
-    const remainingStatic = staticGroups.filter(
-      (group) =>
-        !REPLACED_TITLES.has(
-          String(group?.title || "").toLowerCase(),
-        ),
-    );
-
-    const dynamicGroups = [];
-
-    // Show Categories only when actual category links exist.
-    if (apiCategoryLinks.length > 0) {
-      dynamicGroups.push({
-        title: "Categories",
-        links: apiCategoryLinks,
-      });
-    }
-
-    // Show Brands only when actual brand links exist.
-    if (apiBrandLinks.length > 0) {
-      dynamicGroups.push({
-        title: "Brands",
-        links: apiBrandLinks,
-      });
-    }
-
-    return [
-      ...dynamicGroups,
-      ...remainingStatic,
-    ];
-  }, [
-    staticGroups,
-    apiCategoryLinks,
-    apiBrandLinks,
-    categoriesFetched,
-    brandsFetched,
-    catalogLoading,
-  ]);
-
-  /*
-   * If Categories OR Brands are available:
-   *     Keep the OLD footer grid UI.
-   *
-   * If neither Categories nor Brands are available:
-   *     Use the NEW 3-column footer UI.
-   */
-  const hasDynamicGroups =
-    apiCategoryLinks.length > 0 ||
-    apiBrandLinks.length > 0;
-
-  // ───────────────────────────────────────────────────────────────────────────
+  const benefits = asArray(footer?.benefits);
+  const socialLinks = asArray(footer?.socialLinks);
+  const appDownload = footer?.appDownload || {};
+  const appDownloadLinks = asArray(appDownload?.links);
+  const extraPages = asArray(footer?.extrapages || footer?.extraPages);
 
   return (
-    <footer className="w-full bg-[#1C1C1C] h-auto text-white">
+    <footer className="h-auto w-full bg-[#1C1C1C] text-white">
+      {/* Benefits */}
+
       {benefits.length > 0 && (
-        <div className="bg-[#F5F8FB] border-t-2 border-[#1B1D6033]">
-          <div className="flex flex-col lg:flex-row justify-between customer-container">
+        <div className="border-t-2 border-[#1B1D6033] bg-[#F5F8FB]">
+          <div className="customer-container flex flex-col justify-between lg:flex-row">
             {benefits.map((item, index) => (
               <div
                 key={item?.title || `benefit-${index}`}
-                className="flex items-center gap-3.5 py-3.5 my-1"
+                className="my-1 flex items-center gap-3.5 py-3.5"
               >
-                <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2.5 shadow-sm">
-                  <img
-                    loading="lazy"
-                    width="400"
-                    height="400"
-                    className="h-6 w-6 shrink-0 object-contain"
-                    src={item?.icon}
-                    alt={item?.alt || item?.title || "Benefit"}
-                  />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2.5 shadow-sm sm:h-14 sm:w-14">
+                  {item?.icon ? (
+                    <img
+                      loading="lazy"
+                      width="400"
+                      height="400"
+                      className="h-6 w-6 shrink-0 object-contain"
+                      src={item.icon}
+                      alt={item?.alt || item?.title || "Benefit"}
+                    />
+                  ) : (
+                    <span className="h-6 w-6" aria-hidden="true" />
+                  )}
                 </div>
 
                 <div>
-                  <h2 className="mb-0 text-base xl:text-lg font-bold text-[#1B1D60]">
+                  <h2 className="mb-0 text-base font-bold text-[#1B1D60] xl:text-lg">
                     {item?.title}
                   </h2>
-
-                  <p className="text-xs sm:text-sm xl:text-base font-light text-[#2E2E2E]">
+                  <p className="text-xs font-light text-[#2E2E2E] sm:text-sm xl:text-base">
                     {item?.description}
                   </p>
                 </div>
@@ -464,67 +159,88 @@ export function Footer({ data = footerData }) {
         </div>
       )}
 
-      <div className="customer-container pt-4 sm:pt-0 flex flex-col gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
-        <div className="flex my-2 md:items-center gap-3">
-          <Link to="/">
-            <picture>
-              <source
-                srcSet="/image/webp/logoWithName-small.webp 1x, /image/webp/logoWithName.webp 2x"
-                type="image/webp"
-              />
+      {/* Logo + App Download */}
 
-              <img
-                src="/image/webp/logoWithName.webp"
-                alt="Sam Global"
-                width="290"
-                height="50"
-                loading="lazy"
-                className="h-9 sm:h-12 lg:h-16 xl:h-[60px] w-[290px] rounded object-contain"
-              />
-            </picture>
+      <div className="customer-container flex flex-col justify-between gap-2 pt-4 sm:pt-0 md:flex-row md:gap-16 lg:gap-4">
+        <div className="my-2 flex gap-3 md:items-center">
+          <Link to="/">
+            <img
+              loading="lazy"
+              width="290"
+              height="60"
+              className="h-9 w-[290px] rounded object-contain sm:h-12 lg:h-16 xl:h-[60px]"
+              src={footer?.logo || "/image/webp/logoWithName.webp"}
+              alt={footer?.logoAlt || "Sam Global"}
+            />
           </Link>
         </div>
 
-        {/* App download Section */}
         {(appDownload.title || appDownloadLinks.length > 0) && (
           <div className="md:py-4">
-            <h2 className="max-w-sm lg:!w-full text-sm font-medium text-white/85">
-              {appDownload.title}
-            </h2>
+            {appDownload.title && (
+              <h2 className="max-w-sm text-sm font-medium text-white/85 lg:!w-full">
+                {appDownload.title}
+              </h2>
+            )}
 
-            <div className="my-4 flex flex-wrap gap-6 lg:my-6">
-              {appDownloadLinks.map((app, index) => {
-                const toPath = hrefOr(app?.href);
+            {appDownloadLinks.length > 0 && (
+              <div className="my-4 flex flex-wrap gap-6 lg:my-6">
+                {appDownloadLinks.map((app, index) => {
+                  if (!app?.image) return null;
 
-                return (
-                  <Link
-                    key={app?.label || `app-link-${index}`}
-                    to={toPath}
-                    onClick={() => {
-                      if (location.pathname === toPath) {
-                        window.scrollTo({
-                          top: 0,
-                          behavior: "smooth",
-                        });
-                      }
-                    }}
-                    aria-label={app?.label || "App link"}
-                  >
+                  const toPath = hrefOr(app?.href || "/mobile-app");
+                  const isExternal =
+                    /^https?:\/\//i.test(toPath) || app?.target === "_blank";
+
+                  const content = (
                     <img
                       loading="lazy"
-                      className="h-10 lg:h-[50px] w-auto"
-                      src={app?.image}
+                      className="h-10 w-auto lg:h-[50px]"
+                      src={app.image}
                       alt={app?.alt || app?.label || "App"}
                       width="150"
                       height="50"
                     />
-                  </Link>
-                );
-              })}
-            </div>
+                  );
+
+                  if (isExternal) {
+                    return (
+                      <a
+                        key={`${app?.label}-${app?.href}-${index}`}
+                        href={toPath}
+                        target={app?.target || "_blank"}
+                        rel="noopener noreferrer"
+                        aria-label={app?.label || "App link"}
+                      >
+                        {content}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={`${app?.label}-${app?.href}-${index}`}
+                      to={toPath}
+                      target={app?.target}
+                      rel={app?.target === "_blank" ? "noopener noreferrer" : undefined}
+                      onClick={() => {
+                        if (location.pathname === toPath) {
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }
+                      }}
+                      aria-label={app?.label || "App link"}
+                    >
+                      {content}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>
+
+      {/* Footer Links + Social */}
 
       <FooterLinkGroups
         groups={resolvedLinkGroups}
@@ -532,38 +248,53 @@ export function Footer({ data = footerData }) {
         hasDynamicGroups={hasDynamicGroups}
       />
 
-      <section className="bg-black py-2">
-        <div className="customer-container flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
-          <p className="text-center">{copyright}</p>
+      {/* Extra Pages */}
 
-          <div className="flex items-center justify-center gap-2 md:gap-8">
-            {extraPages.map((item, index) => {
-              const toPath = hrefOr(item?.links);
+      {extraPages.length > 0 && (
+        <div className="customer-container flex flex-wrap justify-center gap-4 pb-4 text-sm text-white/70">
+          {extraPages.map((page, index) => {
+            const label = page?.label || page?.title || "";
+            const href = page?.href || page?.url || "";
+            if (!label || !href) return null;
 
+            const toPath = hrefOr(href);
+            const isExternal =
+              /^https?:\/\//i.test(toPath) || page?.target === "_blank";
+
+            if (isExternal) {
               return (
-                <Link
-                  key={
-                    item?.labels ||
-                    `extra-page-${index}`
-                  }
-                  to={toPath}
-                  onClick={() => {
-                    if (location.pathname === toPath) {
-                      window.scrollTo({
-                        top: 0,
-                        behavior: "smooth",
-                      });
-                    }
-                  }}
-                  className="transition-colors duration-300 hover:text-[#CE9F2D]"
+                <a
+                  key={`${label}-${href}-${index}`}
+                  href={toPath}
+                  target={page?.target || "_blank"}
+                  rel="noopener noreferrer"
+                  className="hover:text-white"
                 >
-                  {item.labels}
-                </Link>
+                  {label}
+                </a>
               );
-            })}
-          </div>
+            }
+
+            return (
+              <Link
+                key={`${label}-${href}-${index}`}
+                to={toPath}
+                className="hover:text-white"
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+      <section className="bg-black py-2">
+        <div className="customer-container flex flex-col justify-center gap-2 text-xs text-white md:text-base lg:flex-row lg:gap-10">
+          <p className="text-center">{footer?.copyright}</p>
         </div>
       </section>
     </footer>
   );
 }
+
+export { Footer };
+export default Footer;

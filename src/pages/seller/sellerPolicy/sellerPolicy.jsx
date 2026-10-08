@@ -1,671 +1,491 @@
-  import { Link } from "react-router-dom";
-  import {
-    ShieldCheck,
-    PackageCheck,
-    Truck,
-    Wallet,
-    BadgeCheck,
-    FileCheck2,
-    ClipboardList,
-    Box,
-    Headphones,
-    BarChart3,
-    TriangleAlert,
-    Sparkles,
-  } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  ShieldCheck,
+  PackageCheck,
+  Truck,
+  Wallet,
+  BadgeCheck,
+  FileCheck2,
+  ClipboardList,
+  Box,
+  Headphones,
+  BarChart3,
+  TriangleAlert,
+  Sparkles,
+} from "lucide-react";
 
-  import Seo from "../../../components/ui/Seo";
-  import ApiState from "../../../components/ui/ApiState";
-  import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
-  import { useCmsRecord } from "../../../hooks/useCmsRecord";
-  import { FALLBACK_SELLER_POLICY } from "../../../data/fallbackCmsData";
+import Seo from "../../../components/ui/Seo";
+import ApiState from "../../../components/ui/ApiState";
+import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
+import { useCmsRecord } from "../../../hooks/useCmsRecord";
+import { FALLBACK_SELLER_POLICY } from "../../../data/fallbackCmsData";
 
-  const highlightIcons = [
-    ShieldCheck,
-    ClipboardList,
-    Truck,
-    Wallet,
-    BadgeCheck,
-    FileCheck2,
-  ];
+const highlightIcons = [
+  ShieldCheck,
+  ClipboardList,
+  Truck,
+  Wallet,
+  BadgeCheck,
+  FileCheck2,
+];
 
-  const responsibilityIcons = [
-    PackageCheck,
-    ClipboardList,
-    Box,
-    Headphones,
-  ];
+const responsibilityIcons = [PackageCheck, ClipboardList, Box, Headphones];
 
-  const complianceIcons = [
-    ShieldCheck,
-    BarChart3,
-    TriangleAlert,
-  ];
+const complianceIcons = [ShieldCheck, BarChart3, TriangleAlert];
 
-  const getCmsPayload = (page) =>
-    page?.metadata?.data ||
-    page?.metadata?.content ||
-    page?.data ||
-    page?.content ||
-    page;
+const getCmsPayload = (page) =>
+  page?.metadata?.data ||
+  page?.metadata?.content ||
+  page?.data ||
+  page?.content ||
+  page;
 
-  const getPlainText = (value = "") =>
-    String(value || "")
-      .replace(/<[^>]+>/g, "")
+const getPlainText = (value = "") =>
+  String(value || "")
+    .replace(/<[^>]+>/g, "")
+    .trim();
+
+const findSection = (sections, matchers, fallbackIndex) => {
+  if (!Array.isArray(sections)) {
+    return null;
+  }
+
+  return (
+    sections.find((section) => {
+      const type = String(section?.type || "").toLowerCase();
+      const title = String(section?.title || "").toLowerCase();
+
+      return matchers.some(
+        (matcher) => type === matcher || title.includes(matcher),
+      );
+    }) ||
+    sections[fallbackIndex] ||
+    null
+  );
+};
+
+/*
+ * Section cards use frontend Lucide icons.
+ * No images are read from CMS/backend points.
+ */
+const mapSectionPoints = (section, icons) => {
+  if (!Array.isArray(section?.points)) {
+    return [];
+  }
+
+  return section.points
+    .filter((point) => point?.title || point?.description)
+    .map((point, index) => ({
+      icon: icons[index % icons.length],
+      title: point?.title || "",
+      desc: point?.description || "",
+    }));
+};
+
+export default function SellerPolicy() {
+  const { page: policyRecord, loading: policyLoading } =
+    useCmsRecord("seller-policy");
+
+  const { page: policiesRecord, loading: policiesLoading } =
+    useCmsRecord("seller-policies");
+
+  const cmsPolicy = getCmsPayload(policyRecord);
+  const cmsPolicies = getCmsPayload(policiesRecord);
+
+  const page = cmsPolicy || cmsPolicies || FALLBACK_SELLER_POLICY;
+
+  const cmsRecord = policyRecord || policiesRecord || {};
+
+  const loading = policyLoading || policiesLoading;
+
+  /* =========================================================
+     HERO
+  ========================================================= */
+
+  const heroTitle = page?.title || "";
+
+  const badgeText = page?.excerpt || page?.category || "";
+
+  const heroDesc = page?.description || getPlainText(page?.body) || "";
+
+  const heroImg =
+    cmsRecord?.image?.url ||
+    cmsRecord?.heroImage ||
+    cmsRecord?.coverImage ||
+    page?.image?.url ||
+    page?.heroImage ||
+    page?.coverImage ||
+    "";
+
+  const primaryCtaLabel = page?.cta?.label || "Become a Seller";
+
+  const primaryCtaUrl = page?.cta?.url || "/become-a-seller";
+
+  const secondaryCtaLabel = "Contact Support";
+
+  const secondaryCtaUrl = "/contact-us";
+
+  /* =========================================================
+     SECTIONS
+  ========================================================= */
+
+  const sections = Array.isArray(page?.sections) ? page.sections : [];
+
+  const section1 = findSection(
+    sections,
+    [
+      "policy-guidelines",
+      "policy-highlights",
+      "confidently",
+      "guidelines",
+      "highlights",
+    ],
+    0,
+  );
+
+  const section2 = findSection(
+    sections,
+    ["seller-responsibilities", "responsibilities", "commitment"],
+    1,
+  );
+
+  const section3 = findSection(
+    sections,
+    ["account-compliance", "compliance", "healthy", "account"],
+    2,
+  );
+
+  /* =========================================================
+     SECTION 1
+  ========================================================= */
+
+  const highlightBadge =
+    section1?.cta?.label ||
+    String(section1?.type || "")
+      .replace(/-/g, " ")
       .trim();
 
-  const findSection = (
-    sections,
-    matchers,
-    fallbackIndex,
-  ) => {
-    if (!Array.isArray(sections)) {
-      return null;
-    }
+  const highlightTitle = section1?.title || "";
 
-    return (
-      sections.find((section) => {
-        const type = String(
-          section?.type || "",
-        ).toLowerCase();
+  const highlightDesc = section1?.description || "";
 
-        const title = String(
-          section?.title || "",
-        ).toLowerCase();
+  const highlights = mapSectionPoints(section1, highlightIcons);
 
-        return matchers.some(
-          (matcher) =>
-            type === matcher ||
-            title.includes(matcher),
-        );
-      }) ||
-      sections[fallbackIndex] ||
-      null
-    );
-  };
+  /* =========================================================
+     SECTION 2
+  ========================================================= */
 
-  /*
-  * Section cards use frontend Lucide icons.
-  * No images are read from CMS/backend points.
-  */
-  const mapSectionPoints = (
-    section,
-    icons,
-  ) => {
-    if (!Array.isArray(section?.points)) {
-      return [];
-    }
+  const respBadge =
+    section2?.cta?.label ||
+    String(section2?.type || "")
+      .replace(/-/g, " ")
+      .trim();
 
-    return section.points
-      .filter(
-        (point) =>
-          point?.title ||
-          point?.description,
-      )
-      .map((point, index) => ({
-        icon: icons[index % icons.length],
-        title: point?.title || "",
-        desc: point?.description || "",
-      }));
-  };
+  const respTitle = section2?.title || "";
 
-  export default function SellerPolicy() {
-    const {
-      page: policyRecord,
-      loading: policyLoading,
-    } = useCmsRecord("seller-policy");
+  const respDesc = section2?.description || "";
 
-    const {
-      page: policiesRecord,
-      loading: policiesLoading,
-    } = useCmsRecord("seller-policies");
+  const responsibilities = mapSectionPoints(section2, responsibilityIcons);
 
-    const cmsPolicy =
-      getCmsPayload(policyRecord);
+  /* =========================================================
+     SECTION 3
+  ========================================================= */
 
-    const cmsPolicies =
-      getCmsPayload(policiesRecord);
+  const compBadge =
+    section3?.cta?.label ||
+    String(section3?.type || "")
+      .replace(/-/g, " ")
+      .trim();
 
-    const page =
-      cmsPolicy ||
-      cmsPolicies ||
-      FALLBACK_SELLER_POLICY;
+  const compTitle = section3?.title || "";
 
-    const cmsRecord =
-      policyRecord ||
-      policiesRecord ||
-      {};
+  const compDesc = section3?.description || "";
 
-    const loading =
-      policyLoading ||
-      policiesLoading;
+  const compliance = mapSectionPoints(section3, complianceIcons);
 
-    /* =========================================================
-      HERO
-    ========================================================= */
+  return (
+    <div className="full-banner overflow-hidden bg-white">
+      <Seo
+        title={
+          page?.seo?.metaTitle ||
+          (heroTitle
+            ? `${heroTitle} - Sam Global`
+            : "Seller Policy - Sam Global")
+        }
+        metaDescription={
+          page?.seo?.metaDescription ||
+          heroDesc ||
+          "Read our Seller Policy to understand the guidelines, responsibilities, and standards for selling on our platform."
+        }
+      />
 
-    const heroTitle =
-      page?.title || "";
-
-    const badgeText =
-      page?.excerpt ||
-      page?.category ||
-      "";
-
-    const heroDesc =
-      page?.description ||
-      getPlainText(page?.body) ||
-      "";
-
-    /*
-    * Hero/banner image is still supported.
-    * Only section point images have been removed.
-    */
-    const heroImg =
-      cmsRecord?.image?.url ||
-      cmsRecord?.heroImage ||
-      cmsRecord?.coverImage ||
-      page?.image?.url ||
-      page?.heroImage ||
-      page?.coverImage ||
-      "";
-
-    const primaryCtaLabel =
-      page?.cta?.label ||
-      "Become a Seller";
-
-    const primaryCtaUrl =
-      page?.cta?.url ||
-      "/become-a-seller";
-
-    const secondaryCtaLabel =
-      "Contact Support";
-
-    const secondaryCtaUrl =
-      "/contact-us";
-
-    /* =========================================================
-      SECTIONS
-    ========================================================= */
-
-    const sections = Array.isArray(
-      page?.sections,
-    )
-      ? page.sections
-      : [];
-
-    const section1 = findSection(
-      sections,
-      [
-        "policy-guidelines",
-        "policy-highlights",
-        "confidently",
-        "guidelines",
-        "highlights",
-      ],
-      0,
-    );
-
-    const section2 = findSection(
-      sections,
-      [
-        "seller-responsibilities",
-        "responsibilities",
-        "commitment",
-      ],
-      1,
-    );
-
-    const section3 = findSection(
-      sections,
-      [
-        "account-compliance",
-        "compliance",
-        "healthy",
-        "account",
-      ],
-      2,
-    );
-
-    /* =========================================================
-      SECTION 1
-    ========================================================= */
-
-    const highlightBadge =
-      section1?.cta?.label ||
-      String(
-        section1?.type || "",
-      )
-        .replace(/-/g, " ")
-        .trim();
-
-    const highlightTitle =
-      section1?.title || "";
-
-    const highlightDesc =
-      section1?.description || "";
-
-    const highlights =
-      mapSectionPoints(
-        section1,
-        highlightIcons,
-      );
-
-    /* =========================================================
-      SECTION 2
-    ========================================================= */
-
-    const respBadge =
-      section2?.cta?.label ||
-      String(
-        section2?.type || "",
-      )
-        .replace(/-/g, " ")
-        .trim();
-
-    const respTitle =
-      section2?.title || "";
-
-    const respDesc =
-      section2?.description || "";
-
-    const responsibilities =
-      mapSectionPoints(
-        section2,
-        responsibilityIcons,
-      );
-
-    /* =========================================================
-      SECTION 3
-    ========================================================= */
-
-    const compBadge =
-      section3?.cta?.label ||
-      String(
-        section3?.type || "",
-      )
-        .replace(/-/g, " ")
-        .trim();
-
-    const compTitle =
-      section3?.title || "";
-
-    const compDesc =
-      section3?.description || "";
-
-    const compliance =
-      mapSectionPoints(
-        section3,
-        complianceIcons,
-      );
-
-    return (
-      <div
-        className="w-[100vw] overflow-x-hidden"
-        style={{
-          marginLeft:
-            "calc(-50vw + 50%)",
-        }}
+      <ApiState
+        loading={loading && !cmsPolicy && !cmsPolicies}
+        skeletonLayout={SKELETON_PRESETS.POLICY_PAGE}
       >
-        <Seo
-          title={
-            page?.seo?.metaTitle ||
-            (heroTitle
-              ? `${heroTitle} - Sam Global`
-              : "Seller Policy - Sam Global")
-          }
-          metaDescription={
-            page?.seo?.metaDescription ||
-            heroDesc ||
-            "Read our Seller Policy to understand the guidelines, responsibilities, and standards for selling on our platform."
-          }
-        />
+        {/* =====================================================
+            HERO
+        ===================================================== */}
 
-        <ApiState
-          loading={
-            loading &&
-            !cmsPolicy &&
-            !cmsPolicies
-          }
-          skeletonLayout={
-            SKELETON_PRESETS.POLICY_PAGE
-          }
-        >
-          {/* =====================================================
-              HERO
-          ===================================================== */}
+        <section className="relative isolate overflow-hidden bg-[#FAF8F3]">
+          {heroImg && (
+            <img
+              loading="lazy"
+              width="400"
+              height="400"
+              src={heroImg}
+              alt={heroTitle || "Seller Policy"}
+              className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
+            />
+          )}
 
-          <section className="relative isolate w-full overflow-hidden bg-[#FAF8F3]">
-            {heroImg && (
-              <img
-                loading="lazy"
-                width="400"
-                height="400"
-                src={heroImg}
-                alt={
-                  heroTitle ||
-                  "Seller Policy"
-                }
-                className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
-              />
-            )}
+          <div
+            className="
+              absolute inset-0 -z-10
+              bg-gradient-to-r
+              from-[#FAF8F3]/95
+              via-[#FAF8F3]/75
+              to-transparent
+              lg:from-[#FAF8F3]/90
+              lg:via-[#FAF8F3]/30
+              lg:to-transparent
+            "
+          />
 
-            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#FAF8F3]/95 via-[#FAF8F3]/75 to-transparent" />
+          <div className="customer-container flex min-h-[570px] items-center py-12 sm:py-16 lg:min-h-[780px] lg:py-20">
+            <div className="max-w-3xl">
+              {badgeText && (
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#D4A52A]/30 bg-[#D4A52A]/15 px-3.5 py-1.5 text-sm font-medium text-[#18156D] backdrop-blur-sm sm:mb-6 sm:px-4 sm:py-2">
+                  <Sparkles size={16} className="text-[#efc75f]" />
 
-            <div className="customer-container flex min-h-[570px] items-center py-16 lg:min-h-[780px] lg:py-20">
-              <div className="max-w-3xl">
-                {badgeText && (
-                  <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#D4A52A]/30 bg-[#D4A52A]/15 px-4 py-2 text-sm font-medium text-[#18156D] backdrop-blur-sm">
-                    <Sparkles
-                      size={16}
-                      className="text-[#efc75f]"
-                    />
-
-                    <span>
-                      {badgeText}
-                    </span>
-                  </div>
-                )}
-
-                {heroTitle && (
-                  <h1 className="banner-heading font-bold text-[#18156D]">
-                    {heroTitle}
-                  </h1>
-                )}
-
-                {heroDesc && (
-                  <p className="mt-6 max-w-xl text-base text-gray-700 sm:text-lg">
-                    {heroDesc}
-                  </p>
-                )}
-
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  {primaryCtaLabel && (
-                    <Link
-                      to={primaryCtaUrl}
-                      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#D4A52A] px-7 font-bold text-[#18156D] transition-colors duration-200 hover:bg-[#e5b738]"
-                    >
-                      {primaryCtaLabel}
-                    </Link>
-                  )}
-
-                  {secondaryCtaLabel && (
-                    <Link
-                      to={secondaryCtaUrl}
-                      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-7 font-bold text-[#18156D] backdrop-blur transition-colors duration-200 hover:bg-white"
-                    >
-                      {secondaryCtaLabel}
-                    </Link>
-                  )}
+                  <span>{badgeText}</span>
                 </div>
+              )}
+
+              {heroTitle && (
+                <h1 className="banner-heading font-bold text-[#18156D]">
+                  {heroTitle}
+                </h1>
+              )}
+
+              {heroDesc && (
+                <p className="mt-5 max-w-xl text-base text-gray-700 sm:mt-6 sm:text-lg">
+                  {heroDesc}
+                </p>
+              )}
+
+              <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
+                {primaryCtaLabel && (
+                  <Link
+                    to={primaryCtaUrl}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#D4A52A] px-6 font-bold text-[#18156D] transition-colors duration-200 hover:bg-[#e5b738] sm:px-7"
+                  >
+                    {primaryCtaLabel}
+                  </Link>
+                )}
+
+                {secondaryCtaLabel && (
+                  <Link
+                    to={secondaryCtaUrl}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] backdrop-blur transition-colors duration-200 hover:bg-white sm:px-7"
+                  >
+                    {secondaryCtaLabel}
+                  </Link>
+                )}
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* =====================================================
+            POLICY HIGHLIGHTS
+        ===================================================== */}
+
+        {section1 && (highlights.length > 0 || highlightTitle) && (
+          <section className="bg-[#FAF8F3] py-12 sm:py-16 lg:py-24">
+            <div className="customer-container">
+              <div className="mx-auto max-w-3xl text-center">
+                {highlightBadge && (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
+                    <ShieldCheck size={14} />
+
+                    {highlightBadge}
+                  </span>
+                )}
+
+                {highlightTitle && (
+                  <h2 className="mt-4 text-[24px] font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
+                    {highlightTitle}
+                  </h2>
+                )}
+
+                {highlightDesc && (
+                  <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-6 text-gray-600 sm:mt-4 md:text-[17px] md:leading-7">
+                    {highlightDesc}
+                  </p>
+                )}
+              </div>
+
+              {highlights.length > 0 && (
+                <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
+                  {highlights.map((item, index) => {
+                    const Icon = item.icon;
+
+                    return (
+                      <div
+                        key={item.title || index}
+                        className="rounded-2xl border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                      >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#18156D]/10 text-[#18156D]">
+                          {Icon && <Icon size={24} strokeWidth={2} />}
+                        </div>
+
+                        {item.title && (
+                          <h3 className="mt-4 text-[18px] font-bold leading-6 text-[#18156D] sm:mt-6">
+                            {item.title}
+                          </h3>
+                        )}
+
+                        {item.desc && (
+                          <p className="mt-2.5 text-[14px] leading-6 text-gray-600 md:mt-3 md:text-[15px]">
+                            {item.desc}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </section>
+        )}
 
-          {/* =====================================================
-              POLICY HIGHLIGHTS
-          ===================================================== */}
+        {/* =====================================================
+            SELLER RESPONSIBILITIES
+        ===================================================== */}
 
-          {section1 &&
-            (highlights.length > 0 ||
-              highlightTitle) && (
-              <section className="bg-[#FAF8F3] py-20 lg:py-24">
-                <div className="mx-auto max-w-7xl px-6">
-                  <div className="mx-auto max-w-3xl text-center">
-                    {highlightBadge && (
-                      <span className="inline-flex items-center gap-2 rounded-full bg-[#F5E9C6] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400]">
-                        <ShieldCheck
-                          size={14}
-                        />
+        {section2 && (responsibilities.length > 0 || respTitle) && (
+          <section className="bg-white py-12 sm:py-16 lg:py-24">
+            <div className="customer-container">
+              <div className="mx-auto max-w-3xl text-center">
+                {respBadge && (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#18156D]/5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#18156D] sm:px-4 sm:py-2">
+                    <ClipboardList size={14} />
 
-                        {highlightBadge}
-                      </span>
-                    )}
+                    {respBadge}
+                  </span>
+                )}
 
-                    {highlightTitle && (
-                      <h2 className="mt-5 text-[24px] font-bold leading-[32px] text-[#18156D] md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
-                        {highlightTitle}
-                      </h2>
-                    )}
+                {respTitle && (
+                  <h2 className="mt-4 text-[24px] font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
+                    {respTitle}
+                  </h2>
+                )}
 
-                    {highlightDesc && (
-                      <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-6 text-gray-600 md:text-[17px] md:leading-7">
-                        {highlightDesc}
-                      </p>
-                    )}
-                  </div>
+                {respDesc && (
+                  <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-6 text-gray-600 sm:mt-4 md:text-[17px] md:leading-7">
+                    {respDesc}
+                  </p>
+                )}
+              </div>
 
-                  {highlights.length > 0 && (
-                    <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                      {highlights.map(
-                        (
-                          item,
-                          index,
-                        ) => {
-                          const Icon =
-                            item.icon;
+              {responsibilities.length > 0 && (
+                <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  {responsibilities.map((item, index) => {
+                    const Icon = item.icon;
 
-                          return (
-                            <div
-                              key={
-                                item.title ||
-                                index
-                              }
-                              className="rounded-2xl border border-[#E8E1D4] bg-white p-7 shadow-sm transition-colors duration-200 hover:border-[#D4A52A]"
-                            >
-                              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#18156D]/10 text-[#18156D]">
-                                {Icon && (
-                                  <Icon
-                                    size={24}
-                                    strokeWidth={
-                                      2
-                                    }
-                                  />
-                                )}
-                              </div>
+                    return (
+                      <div
+                        key={item.title || index}
+                        className="rounded-2xl border border-[#ECE7DD] bg-[#FCFBF8] p-5 transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                      >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#18156D] text-white">
+                          {Icon && <Icon size={23} strokeWidth={2} />}
+                        </div>
 
-                              {item.title && (
-                                <h3 className="mt-6 text-[18px] font-bold leading-6 text-[#18156D]">
-                                  {
-                                    item.title
-                                  }
-                                </h3>
-                              )}
+                        {item.title && (
+                          <h3 className="mt-4 text-[17px] font-bold leading-6 text-[#18156D] sm:mt-6 md:text-[18px]">
+                            {item.title}
+                          </h3>
+                        )}
 
-                              {item.desc && (
-                                <p className="mt-3 text-[14px] leading-6 text-gray-600 md:text-[15px]">
-                                  {
-                                    item.desc
-                                  }
-                                </p>
-                              )}
-                            </div>
-                          );
-                        },
-                      )}
-                    </div>
-                  )}
+                        {item.desc && (
+                          <p className="mt-2.5 text-[14px] leading-6 text-gray-600 md:mt-3">
+                            {item.desc}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              </section>
-            )}
+              )}
+            </div>
+          </section>
+        )}
 
-          {/* =====================================================
-              SELLER RESPONSIBILITIES
-          ===================================================== */}
+        {/* =====================================================
+            COMPLIANCE
+        ===================================================== */}
 
-          {section2 &&
-            (responsibilities.length >
-              0 ||
-              respTitle) && (
-              <section className="bg-white py-20 lg:py-24">
-                <div className="mx-auto max-w-7xl px-6">
-                  <div className="mx-auto max-w-3xl text-center">
-                    {respBadge && (
-                      <span className="inline-flex items-center gap-2 rounded-full bg-[#18156D]/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#18156D]">
-                        <ClipboardList
-                          size={14}
-                        />
+        {section3 && (compliance.length > 0 || compTitle) && (
+          <section className="bg-[#F7F5EF] py-12 sm:py-16 lg:py-24">
+            <div className="customer-container">
+              <div className="mx-auto max-w-3xl text-center">
+                {compBadge && (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
+                    <BadgeCheck size={14} />
 
-                        {respBadge}
-                      </span>
-                    )}
+                    {compBadge}
+                  </span>
+                )}
 
-                    {respTitle && (
-                      <h2 className="mt-5 text-[24px] font-bold leading-[32px] text-[#18156D] md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
-                        {respTitle}
-                      </h2>
-                    )}
+                {compTitle && (
+                  <h2 className="mt-4 text-[24px] font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
+                    {compTitle}
+                  </h2>
+                )}
 
-                    {respDesc && (
-                      <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-6 text-gray-600 md:text-[17px] md:leading-7">
-                        {respDesc}
-                      </p>
-                    )}
-                  </div>
+                {compDesc && (
+                  <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-6 text-gray-600 sm:mt-4 md:text-[17px] md:leading-7">
+                    {compDesc}
+                  </p>
+                )}
+              </div>
 
-                  {responsibilities.length >
-                    0 && (
-                    <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                      {responsibilities.map(
-                        (
-                          item,
-                          index,
-                        ) => {
-                          const Icon =
-                            item.icon;
+              {compliance.length > 0 && (
+                <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 lg:grid-cols-3">
+                  {compliance.map((item, index) => {
+                    const Icon = item.icon;
 
-                          return (
-                            <div
-                              key={
-                                item.title ||
-                                index
-                              }
-                              className="rounded-2xl border border-[#ECE7DD] bg-[#FCFBF8] p-7 transition-colors duration-200 hover:border-[#D4A52A]"
-                            >
-                              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#18156D] text-white">
-                                {Icon && (
-                                  <Icon
-                                    size={23}
-                                    strokeWidth={
-                                      2
-                                    }
-                                  />
-                                )}
-                              </div>
+                    return (
+                      <div
+                        key={item.title || index}
+                        className="rounded-2xl border border-[#18156D]/10 bg-[#18156D] p-5 transition-colors duration-200 hover:bg-[#211d78] sm:p-6 lg:p-8"
+                      >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-[#F2D37A]">
+                          {Icon && <Icon size={24} strokeWidth={2} />}
+                        </div>
 
-                              {item.title && (
-                                <h3 className="mt-6 text-[17px] font-bold leading-6 text-[#18156D] md:text-[18px]">
-                                  {
-                                    item.title
-                                  }
-                                </h3>
-                              )}
+                        {item.title && (
+                          <h3 className="mt-4 text-[18px] font-bold leading-6 text-white sm:mt-6 md:text-[20px]">
+                            {item.title}
+                          </h3>
+                        )}
 
-                              {item.desc && (
-                                <p className="mt-3 text-[14px] leading-6 text-gray-600">
-                                  {
-                                    item.desc
-                                  }
-                                </p>
-                              )}
-                            </div>
-                          );
-                        },
-                      )}
-                    </div>
-                  )}
+                        {item.desc && (
+                          <p className="mt-2.5 text-[14px] leading-6 text-white/70 md:mt-3 md:text-[15px]">
+                            {item.desc}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              </section>
-            )}
-
-          {/* =====================================================
-              COMPLIANCE
-          ===================================================== */}
-
-          {section3 &&
-            (compliance.length > 0 ||
-              compTitle) && (
-              <section className="bg-[#F7F5EF] py-20 lg:py-24">
-                <div className="mx-auto max-w-7xl px-6">
-                  <div className="mx-auto max-w-3xl text-center">
-                    {compBadge && (
-                      <span className="inline-flex items-center gap-2 rounded-full bg-[#F5E9C6] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400]">
-                        <BadgeCheck
-                          size={14}
-                        />
-
-                        {compBadge}
-                      </span>
-                    )}
-
-                    {compTitle && (
-                      <h2 className="mt-5 text-[24px] font-bold leading-[32px] text-[#18156D] md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
-                        {compTitle}
-                      </h2>
-                    )}
-
-                    {compDesc && (
-                      <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-6 text-gray-600 md:text-[17px] md:leading-7">
-                        {compDesc}
-                      </p>
-                    )}
-                  </div>
-
-                  {compliance.length >
-                    0 && (
-                    <div className="mt-12 grid gap-6 lg:grid-cols-3">
-                      {compliance.map(
-                        (
-                          item,
-                          index,
-                        ) => {
-                          const Icon =
-                            item.icon;
-
-                          return (
-                            <div
-                              key={
-                                item.title ||
-                                index
-                              }
-                              className="rounded-2xl border border-[#18156D]/10 bg-[#18156D] p-8 transition-colors duration-200 hover:bg-[#211d78]"
-                            >
-                              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-[#F2D37A]">
-                                {Icon && (
-                                  <Icon
-                                    size={24}
-                                    strokeWidth={
-                                      2
-                                    }
-                                  />
-                                )}
-                              </div>
-
-                              {item.title && (
-                                <h3 className="mt-6 text-[18px] font-bold leading-6 text-white md:text-[20px]">
-                                  {
-                                    item.title
-                                  }
-                                </h3>
-                              )}
-
-                              {item.desc && (
-                                <p className="mt-3 text-[14px] leading-6 text-white/70 md:text-[15px]">
-                                  {
-                                    item.desc
-                                  }
-                                </p>
-                              )}
-                            </div>
-                          );
-                        },
-                      )}
-                    </div>
-                  )}
-                </div>
-              </section>
-            )}
-        </ApiState>
-      </div>
-    );
-  }
+              )}
+            </div>
+          </section>
+        )}
+      </ApiState>
+    </div>
+  );
+}

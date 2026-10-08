@@ -187,7 +187,7 @@ export default function OrderListPage() {
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
                       placeholder="Search by order ID, product name or tracking number"
-                      className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-shadow duration-200 focus:bg-white focus:outline-none focus:shadow-[0_4px_14px_rgba(31,36,48,0.08)]"
+                      className=" h-11 w-full rounded-lg border border-[#e4ca8e] bg-white pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-shadow duration-200 focus:bg-white focus:outline-none focus:shadow-[0_4px_14px_rgba(31,36,48,0.08)]"
                     />
 
                     {Boolean(query) && (
@@ -202,7 +202,7 @@ export default function OrderListPage() {
                     )}
                   </label>
 
-                  <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
+                  <div className=" flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
                     <FilterDropdown
                       options={[
                         {

@@ -1,10 +1,5 @@
-/**
- * skeletonPresets - Predefined layout configurations for common e-commerce UI components.
- * These can be passed directly to the 'layout' prop of SkeletonLoader.
- */
 
 export const SKELETON_PRESETS = {
-  // 1. Product Card (Vertical)
   PRODUCT_CARD: [
     {
       type: "col",
@@ -330,7 +325,6 @@ export const SKELETON_PRESETS = {
     },
   ],
 
-  // 8. Order Detail Card
   ORDER_DETAIL: [
     {
       type: "row",
@@ -350,7 +344,6 @@ export const SKELETON_PRESETS = {
     },
   ],
 
-  // 9. Footer Links Section
   FOOTER_LINKS: [
     {
       type: "col",
@@ -364,8 +357,6 @@ export const SKELETON_PRESETS = {
       ],
     },
   ],
-
-  // 10. Footer Action Links Section
   FOOTER_ACTIONS: [
     {
       type: "row",
@@ -391,12 +382,9 @@ export const SKELETON_PRESETS = {
     { type: "box", width: "100%", height: "48px", className: "rounded-[12px] mt-4" },
   ],
 
-  // 11. Social Icons
   SOCIAL_ICONS: [
     { type: "box", width: "40px", height: "40px", variant: "circle", count: 3 },
   ],
-
-  // 12. Hero/Banner Cards
   HERO_CARDS: [
     {
       type: "col",
@@ -408,12 +396,10 @@ export const SKELETON_PRESETS = {
           width: "70%",
           height: "24px",
           className: "absolute bottom-6 left-6",
-        }, // Title overlay
+        }, 
       ],
     },
   ],
-
-  // 13. Brand Logo (for horizontal scrolling/swiper)
   BRAND_LOGO: [
     {
       type: "box",
@@ -559,13 +545,11 @@ export const SKELETON_PRESETS = {
   },
 ],
 
-  // Dedicated Order Details Page Skeleton
   ORDER_DETAIL_PAGE: [
     {
       type: "col",
       className: "w-full gap-6 py-4 sm:py-6",
       children: [
-        // Top row: Breadcrumbs & Header buttons
         {
           type: "row",
           className: "flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#EAEFF5] pb-6",
@@ -581,21 +565,20 @@ export const SKELETON_PRESETS = {
             },
           ],
         },
-        // 4-tile Info Grid
         {
           type: "grid",
-          className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4",
+          className: " grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ",
           children: [
             {
               type: "col",
               count: 4,
-              className: "p-4.5 rounded-2xl border border-[#E7D9B8]/60 bg-white gap-2.5 shadow-sm",
+              className: "p-4 rounded-2xl border border-[#E7D9B8]/60 bg-white gap-2.5 shadow-sm",
               children: [
                 {
                   type: "row",
-                  className: "items-center gap-3 mb-1",
+                  className: "d items-center gap-3 mb-1",
                   children: [
-                    { type: "box", width: "36px", height: "36px", rounded: "rounded-xl" },
+                    { type: "box", width: "36px", height: "14px", rounded: "rounded-xl" },
                     { type: "box", width: "100px", height: "14px", rounded: "rounded-md" },
                   ],
                 },
@@ -605,7 +588,6 @@ export const SKELETON_PRESETS = {
             },
           ],
         },
-        // Main 2-column layout (Items & Tracker on left, Summary on right)
         {
           type: "grid",
           className: "grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-2",

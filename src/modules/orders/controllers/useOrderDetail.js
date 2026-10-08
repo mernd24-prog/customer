@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrderById } from "../slices/orderSlice";
 import { fetchReturnByOrder } from "../../returns/slices/returnsSlice";
-import { fetchNotifications } from "../../../features/notification/notificationSlice";
+import { fetchNotifications } from "../../notifications/slices/notificationSlice";
 import { getProductTitle } from "../../../utils/ecommerce";
 
 import { useOrderPayment } from "./actions/useOrderPayment";
@@ -206,10 +206,67 @@ export function useOrderDetail({ orderId, track }) {
       item.returnPolicySnapshot?.eligibleUntil;
     return !deadline || new Date(deadline).getTime() >= Date.now();
   });
+  const hasReturnableItemsRemaining = returnableItems.some((item) => {
+    const returnDeadline =
+      item.return_eligible_until ||
+      item.returnEligibleUntil ||
+      item.return_policy_snapshot?.eligibleUntil ||
+      item.returnPolicySnapshot?.eligibleUntil;
+    const isWindowOpen =
+      !returnDeadline || new Date(returnDeadline).getTime() >= Date.now();
+    const returnedQty = returns.reduce((sum, returnRequest) => {
+      const returnStatus = String(returnRequest.status || "").toLowerCase();
+      const refundStatus = String(
+        returnRequest.refund?.status ||
+          returnRequest.refundStatus ||
+          returnRequest.refund_status ||
+          "",
+      ).toLowerCase();
+      if (["rejected", "qc_failure_upheld"].includes(returnStatus)) return sum;
+      if (
+        returnStatus === "closed" &&
+        !["completed", "not_required"].includes(refundStatus)
+      )
+        return sum;
+      return (
+        sum +
+        (returnRequest.items || [])
+          .filter((returnItem) => returnItemMatchesOrderItem(returnItem, item))
+          .reduce(
+            (itemSum, returnItem) =>
+              itemSum +
+              Number(
+                returnItem.receivedQuantity ??
+                  returnItem.received_quantity ??
+                  returnItem.approvedQuantity ??
+                  returnItem.approved_quantity ??
+                  returnItem.requestedQuantity ??
+                  returnItem.requested_quantity ??
+                  returnItem.quantity ??
+                  0,
+              ),
+            0,
+          )
+      );
+    }, 0);
+    const returnableQty = Math.max(
+      0,
+      Number(item.quantity || 0) - returnedQty,
+    );
+    return isWindowOpen && returnableQty > 0;
+  });
+
   const canRequestReturn =
-    ["delivered", "fulfilled", "partially_returned"].includes(status) &&
-    returnWindowOpen &&
-    returnableItems.length > 0;
+    ([
+      "delivered",
+      "fulfilled",
+      "partially_returned",
+      "return_requested",
+    ].includes(status) ||
+      ["delivered", "fulfilled", "completed"].includes(
+        String(order?.delivery_status || order?.deliveryStatus || "").toLowerCase(),
+      )) &&
+    hasReturnableItemsRemaining;
 
   const selectedItemReturnPolicy = selectedOrderItem
     ? selectedOrderItem.return_policy_snapshot ||
@@ -276,6 +333,22 @@ export function useOrderDetail({ orderId, track }) {
       )
     : 0;
 
+  const isSelectedItemDelivered = [
+    "delivered",
+    "fulfilled",
+    "completed",
+  ].includes(
+    String(
+      selectedOrderItem?.delivery_status ||
+        selectedOrderItem?.deliveryStatus ||
+        selectedOrderItem?.effective_status ||
+        selectedOrderItem?.effectiveStatus ||
+        selectedItemShipment?.status ||
+        selectedItemStatus ||
+        "",
+    ).toLowerCase(),
+  );
+
   const selectedItemCanReturn = Boolean(
     selectedOrderItem &&
     selectedItemReturnableQuantity > 0 &&
@@ -284,14 +357,7 @@ export function useOrderDetail({ orderId, track }) {
       selectedItemReturnPolicy.returnable ??
       selectedItemReturnPolicy.eligible ??
       true) === true &&
-    ["delivered", "fulfilled", "completed"].includes(
-      String(
-        selectedOrderItem.delivery_status ||
-          selectedOrderItem.deliveryStatus ||
-          selectedItemStatus ||
-          "",
-      ).toLowerCase(),
-    ),
+    isSelectedItemDelivered,
   );
   const visibleOrderItems = selectedOrderItem ? [selectedOrderItem] : items;
 

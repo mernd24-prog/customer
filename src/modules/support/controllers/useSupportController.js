@@ -7,17 +7,13 @@ import { normalizeSupportQueries } from "../utils/supportUtils";
 
 export const useSupportController = () => {
   const dispatch = useDispatch();
-  
-  // Modals state from Redux
-  const raiseTicketModalState = useSelector((state) => state.support?.modals?.raiseTicket) || {};
+    const raiseTicketModalState = useSelector((state) => state.support?.modals?.raiseTicket) || {};
   const ticketSuccessModalState = useSelector((state) => state.support?.modals?.ticketSuccess) || {};
 
   const [supportQueries, setSupportQueries] = useState([]);
   const [supportLoading, setSupportLoading] = useState(false);
   const [supportError, setSupportError] = useState("");
   const [supportSubmitting, setSupportSubmitting] = useState(false);
-
-  // --- Modal Handlers ---
   const handleOpenRaiseTicketModal = useCallback((data = null) => {
     dispatch(openModal({ modalId: "raiseTicket", data }));
   }, [dispatch]);
@@ -33,8 +29,6 @@ export const useSupportController = () => {
   const handleCloseSuccessModal = useCallback(() => {
     dispatch(closeModal({ modalId: "ticketSuccess" }));
   }, [dispatch]);
-
-  // --- API Handlers ---
   const loadSupportQueries = useCallback(async (selectedCategory = "") => {
     setSupportLoading(true);
     setSupportError("");
