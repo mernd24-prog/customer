@@ -1,3 +1,4 @@
+import useProfileImage from "../hooks/useProfileImage";
 import { Fragment, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -217,10 +218,11 @@ export const Navbar = ({ icons: propIcons }) => {
       profileUser?.email?.split("@")[0] ||
       "My Sam";
 
-  const profileAvatar =
+  const profileAvatar = useProfileImage(
     profileUser?.profile?.avatarUrl ||
     profileUser?.profile?.avatar ||
-    "/image/png/person.png";
+    "/image/png/person.png", profileUser?.updatedAt
+  );
 
   const handleLogout = () => {
     dispatch(logout());

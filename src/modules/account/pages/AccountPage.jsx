@@ -1,3 +1,4 @@
+import useProfileImage from "../../../hooks/useProfileImage";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -534,6 +535,9 @@ export default function AccountPage({ tab = "profile" }) {
   const [avatarError, setAvatarError] = useState("");
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const displayedAvatar = useProfileImage(avatarPreview, user?.updatedAt);
+  const displayedAvatarUrl = useProfileImage(avatarUrl, user?.updatedAt);
+
 
   useEffect(() => {
     if (!user) {
@@ -673,7 +677,7 @@ export default function AccountPage({ tab = "profile" }) {
         <AccountSidebar
           user={user}
           name={name}
-          avatar={avatarPreview}
+          avatar={displayedAvatar}
           avatarError={avatarError}
           fileInputRef={fileInputRef}
           onAvatarChange={handleAvatarChange}
@@ -709,7 +713,7 @@ export default function AccountPage({ tab = "profile" }) {
                 tab={tab}
                 user={user}
                 avatarFile={avatarFile}
-                avatarUrl={avatarUrl}
+                avatarUrl={displayedAvatarUrl}
               />
             </ApiState>
           </div>

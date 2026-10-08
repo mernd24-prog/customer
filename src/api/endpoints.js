@@ -12,7 +12,7 @@ const pathParam = (value = "") => {
 };
 
 export const FILE_UPLOAD_MODULES = {
-  profiles: "PROFILES",
+  profiles: "customer-profiles",
 };
 
 export const endpoints = {

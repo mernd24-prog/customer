@@ -221,12 +221,12 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
-    publishServiceAvailability(true);
+    if (!response.config?._skipServiceAvailability) publishServiceAvailability(true);
     return response;
   },
   async (error) => {
     const failureKind = getServiceFailureKind(error);
-    if (failureKind) {
+    if (failureKind && !error.config?._skipServiceAvailability) {
       publishServiceAvailability(false, {
         kind: failureKind,
         retryAfter: Number(error?.response?.headers?.["retry-after"] || 0),
