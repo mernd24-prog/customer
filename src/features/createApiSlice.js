@@ -112,6 +112,24 @@ export function createApiSlice({
               state.entities = Object.fromEntries(
                 data.orders.map((item, index) => [idOf(item) ?? index, item]),
               );
+            } else if (data?.returns && Array.isArray(data.returns)) {
+              state.list = data.returns;
+              state.current = data;
+              state.entities = Object.fromEntries(
+                data.returns.map((item, index) => [idOf(item) ?? index, item]),
+              );
+            } else if (data?.returnRequests && Array.isArray(data.returnRequests)) {
+              state.list = data.returnRequests;
+              state.current = data;
+              state.entities = Object.fromEntries(
+                data.returnRequests.map((item, index) => [idOf(item) ?? index, item]),
+              );
+            } else if (data?.return_requests && Array.isArray(data.return_requests)) {
+              state.list = data.return_requests;
+              state.current = data;
+              state.entities = Object.fromEntries(
+                data.return_requests.map((item, index) => [idOf(item) ?? index, item]),
+              );
             } else if (idOf(data) !== undefined && idOf(data) !== null) {
               state.current = data;
               const keys = [
@@ -132,6 +150,8 @@ export function createApiSlice({
               Array.isArray(data?.results) ||
               Array.isArray(data?.hits) ||
               Array.isArray(data?.products) ||
+              Array.isArray(data?.returns) ||
+              Array.isArray(data?.returnRequests) ||
               Array.isArray(data?.list)
             ) {
               const list =
@@ -139,6 +159,8 @@ export function createApiSlice({
                 data.results ||
                 data.hits ||
                 data.products ||
+                data.returns ||
+                data.returnRequests ||
                 data.list ||
                 [];
               state.list = list;

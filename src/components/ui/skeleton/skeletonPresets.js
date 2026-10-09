@@ -576,7 +576,7 @@ export const SKELETON_PRESETS = {
               children: [
                 {
                   type: "row",
-                  className: "d items-center gap-3 mb-1",
+                  className: " items-center gap-3 mb-1",
                   children: [
                     { type: "box", width: "36px", height: "14px", rounded: "rounded-xl" },
                     { type: "box", width: "100px", height: "14px", rounded: "rounded-md" },

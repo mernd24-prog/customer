@@ -4,13 +4,24 @@ import Seo from "../../../components/ui/Seo";
 import OrderDetailPage from "./OrderDetailPage";
 import OrderListPage from "./OrderListPage";
 import { decodeRouteToken, getOpaqueOrderPath } from "../../../utils/routeTokens";
+import { RETURNS_ROUTES } from "../../returns/routes/apiRoutes";
 
-export default function OrdersPage({ detail = false, track = false }) {
+/**
+ * Wrapper/layout page – decides whether to show Order List or Order Detail.
+ * Actual order listing lives in OrderListPage.jsx.
+ */
+export default function OrdersPageLayout({ detail = false, track = false, returnOnly = false }) {
   const { orderId, orderToken } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const tokenPayload = decodeRouteToken(orderToken, "order");
   const resolvedOrderId = tokenPayload?.id || orderId;
+
+  const isReturnOnly = Boolean(
+    returnOnly ||
+    location.pathname === "/returns-refunds" ||
+    location.pathname === RETURNS_ROUTES?.returnsRefunds,
+  );
 
   useEffect(() => {
     if (!orderId || !resolvedOrderId) return;
@@ -34,10 +45,14 @@ export default function OrdersPage({ detail = false, track = false }) {
   return (
     <>
       <Seo 
-        title="My Orders - Sam Global" 
-        metaDescription="View and manage all your past and current orders." 
+        title={isReturnOnly ? "Return & Refund - Sam Global" : "My Orders - Sam Global"} 
+        metaDescription={
+          isReturnOnly
+            ? "View and track all your return and refund requests."
+            : "View and manage all your past and current orders."
+        } 
       />
-      <OrderListPage />
+      <OrderListPage returnOnly={isReturnOnly} />
     </>
   );
 }

@@ -1,3 +1,4 @@
+
 function DetailSectionCard({
   title,
   children,
@@ -11,15 +12,15 @@ function DetailSectionCard({
 }) {
   return (
     <section
-      className={`flex flex-col overflow-hidden rounded-[15px] border ${borderClassName} bg-white ${className}`}
+      className={`flex flex-col overflow-hidden rounded-lg border ${borderClassName} bg-white ${className}`}
     >
       {title || headerContent ? (
         <div
-          className={` flex  min-h-[81px]  items-center justify-between rounded-t-[15px] bg-[#EAD9B6] px-[20px] md:py-[25px] ${headerClassName}`}
-        >
+  className={`flex min-h-[60px] items-center justify-between rounded-t-lg bg-[#EAD9B6] px-[20px] ${headerClassName}`}
+>
           {title ? (
             <TitleTag
-              className={`font-sans  text-h6 font-bold  text-[#2E2E2E] ${titleClassName}`}
+              className={`font-sans text-h6 font-bold text-[#2E2E2E] ${titleClassName}`}
             >
               {title}
             </TitleTag>
@@ -27,7 +28,10 @@ function DetailSectionCard({
           {headerContent}
         </div>
       ) : null}
-      <div className={`flex-1 ${bodyClassName}`}>{children} </div>
+
+      <div className={`flex-1 ${bodyClassName}`}>
+        {children}
+      </div>
     </section>
   );
 }

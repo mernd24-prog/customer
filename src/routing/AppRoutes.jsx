@@ -60,54 +60,109 @@ const BrandOutletPage = lazy(
   () => import("../modules/catalog/pages/BrandOutletPage"),
 );
 
-const HomePage = lazy(() => import("../modules/home/pages/HomePage").then(m => ({ default: m.HomePage })));
+const HomePage = lazy(() =>
+  import("../modules/home/pages/HomePage").then((m) => ({
+    default: m.HomePage,
+  })),
+);
+
 const WatchlistPage = lazy(
   () => import("../modules/wishlist/pages/WatchListPage"),
 );
+
 const SearchPage = lazy(() => import("../modules/catalog/pages/SearchPage"));
+
 const ProductsPage = lazy(
   () => import("../modules/products/pages/ProductsPage"),
 );
+
 const ProductDetailPage = lazy(
   () => import("../modules/products/pages/ProductDetailPage"),
 );
+
 const ReviewDetailsPage = lazy(
   () => import("../pages/reviewAndRating/ReviewDetailsPage"),
 );
-const NewArrivalsPage = lazy(() => import("../modules/catalog/pages/NewArrivalsPage").then(m => ({ default: m.NewArrivalsPage })));
-const RecentlyUploadedPage = lazy(() => import("../modules/catalog/pages/RecentlyUploadedPage").then(m => ({ default: m.RecentlyUploadedPage })));
-const RelatedProductsPage = lazy(() => import("../modules/catalog/pages/RelatedProductsPage").then(m => ({ default: m.RelatedProductsPage })));
-const TrendingNowPage = lazy(() => import("../modules/catalog/pages/TrendingNowPage").then(m => ({ default: m.TrendingNowPage })));
-const RecentlyViewedPage = lazy(() => import("../modules/catalog/pages/RecentlyViewedPage").then(m => ({ default: m.RecentlyViewedPage })));
+
+const NewArrivalsPage = lazy(() =>
+  import("../modules/catalog/pages/NewArrivalsPage").then((m) => ({
+    default: m.NewArrivalsPage,
+  })),
+);
+
+const RecentlyUploadedPage = lazy(() =>
+  import("../modules/catalog/pages/RecentlyUploadedPage").then((m) => ({
+    default: m.RecentlyUploadedPage,
+  })),
+);
+
+const RelatedProductsPage = lazy(() =>
+  import("../modules/catalog/pages/RelatedProductsPage").then((m) => ({
+    default: m.RelatedProductsPage,
+  })),
+);
+
+const TrendingNowPage = lazy(() =>
+  import("../modules/catalog/pages/TrendingNowPage").then((m) => ({
+    default: m.TrendingNowPage,
+  })),
+);
+
+const RecentlyViewedPage = lazy(() =>
+  import("../modules/catalog/pages/RecentlyViewedPage").then((m) => ({
+    default: m.RecentlyViewedPage,
+  })),
+);
+
 const AboutPage = lazy(() => import("../pages/about/AboutPage"));
-const BrandPage = lazy(() => import("../modules/catalog/pages/BrandPage"));
+
+const BrandPage = lazy(
+  () => import("../modules/catalog/pages/BrandPage"),
+);
+
 const CategoryPage = lazy(
   () => import("../modules/catalog/pages/CategoryPage"),
 );
+
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 
+const AccountPage = lazy(
+  () => import("../modules/account/pages/AccountPage"),
+);
 
-const AccountPage = lazy(() => import("../modules/account/pages/AccountPage"));
-const CartPage = lazy(() => import("../modules/cart/pages/CartPage"));
+const CartPage = lazy(
+  () => import("../modules/cart/pages/CartPage"),
+);
+
 const CheckoutPage = lazy(
   () => import("../modules/checkout/pages/CheckoutPage"),
 );
+
 const PaymentResultPage = lazyNamed(
   () => import("../modules/checkout/pages/PaymentResultPage"),
   "PaymentResultPage",
 );
-const OrdersPage = lazy(() => import("../modules/orders/pages/OrdersPage"));
-const ReturnsRefundsPage = lazy(
-  () => import("../modules/returns/pages/ReturnsRefundsPage.jsx"),
+
+const OrdersPageLayout = lazy(
+  () => import("../modules/orders/pages/OrdersPageLayout"),
 );
+
+// Temporarily kept commented out.
+// Old Returns & Refunds UI is not removed yet.
+// const ReturnsRefundsPage = lazy(
+//   () => import("../modules/returns/pages/ReturnsRefundsPage.jsx"),
+// );
+
 const WalletPage = lazyNamed(
   () => import("../modules/wallet/pages/WalletPage"),
   "WalletPage",
 );
+
 const PaymentsPage = lazyNamed(
   () => import("../modules/wallet/pages/PaymentsPage"),
   "PaymentsPage",
 );
+
 const SubscriptionPage = lazyNamed(
   () => import("../pages/subscription/SubscriptionPage"),
   "SubscriptionPage",
@@ -117,10 +172,12 @@ const WarrantyPage = lazyNamed(
   () => import("../pages/warranty/WarrantyPage"),
   "WarrantyPage",
 );
+
 const NotificationsPage = lazyNamed(
   () => import("../modules/notifications/pages/NotificationsPage"),
   "NotificationsPage",
 );
+
 const PreferencesPage = lazyNamed(
   () => import("../modules/notifications/pages/PreferencesPage"),
   "PreferencesPage",
@@ -144,14 +201,17 @@ export default function AppRoutes() {
           {/* ── Auth routes (guest only) ───────────────────────────────── */}
           <Route element={<GuestRoute />}>
             <Route path={AUTH_ROUTES.login} element={<LoginPage />} />
+
             <Route
               path={AUTH_ROUTES.register}
               element={<BuyerRegisterPage />}
             />
+
             <Route
               path={AUTH_ROUTES.registerOtp}
               element={<RegisterOtpPage />}
             />
+
             <Route
               path={AUTH_ROUTES.verifyRegistration}
               element={<VerifyRegistrationPage />}
@@ -161,25 +221,31 @@ export default function AppRoutes() {
               path={AUTH_ROUTES.forgotPassword}
               element={<ForgotPasswordPage />}
             />
+
             <Route
               path={AUTH_ROUTES.resetPassword}
               element={<ResetPasswordPage />}
             />
           </Route>
+
           <Route path="/contact-us" element={<ContactUs />} />
 
           <Route path="/faq" element={<FAQPage />} />
 
           {/* Not working */}
           <Route path="/contact-us" element={<ContactUs />} />
+
           <Route path="/support" element={<SupportHelpCenter />} />
+
           <Route
             path="/support/tickets/:ticketId"
             element={<SupportTicketDetailsPage />}
           />
 
           <Route path="/deals" element={<DealsPage />} />
+
           <Route path="/brand-outlet" element={<BrandOutletPage />} />
+
           <Route
             path="/who-we-are"
             element={<CmsPage slugOverride="who-we-are" />}
@@ -189,181 +255,320 @@ export default function AppRoutes() {
 
           <Route
             path="/shipping-policy"
-            element={<PolicyPage slugOverride="shipping-delivery-policy" />}
+            element={
+              <PolicyPage slugOverride="shipping-delivery-policy" />
+            }
           />
 
           <Route
             path="/refund-policy"
-            element={<PolicyPage slugOverride="return-refund-policy" />}
+            element={
+              <PolicyPage slugOverride="return-refund-policy" />
+            }
           />
+
           <Route
             path="/terms-of-use"
             element={<PolicyPage slugOverride="terms-of-use" />}
           />
 
-          <Route path="/become-a-seller" element={<BecomeASeller />} />
+          <Route
+            path="/become-a-seller"
+            element={<BecomeASeller />}
+          />
 
-          <Route path="/seller-policies" element={<SellerPolicy />} />
-          <Route path="/seller-policy" element={<SellerPolicy />} />
+          <Route
+            path="/seller-policies"
+            element={<SellerPolicy />}
+          />
+
+          <Route
+            path="/seller-policy"
+            element={<SellerPolicy />}
+          />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
             <Route index element={<HomePage />} />
-            <Route path="/wishlist" element={<WatchlistPage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/products/pr" element={<ProductsPage />} />
-            <Route path="/new-arrivals" element={<NewArrivalsPage />} />
+
+            <Route
+              path="/wishlist"
+              element={<WatchlistPage />}
+            />
+
+            <Route
+              path="/search"
+              element={<SearchPage />}
+            />
+
+            <Route
+              path="/products"
+              element={<ProductsPage />}
+            />
+
+            <Route
+              path="/products/pr"
+              element={<ProductsPage />}
+            />
+
+            <Route
+              path="/new-arrivals"
+              element={<NewArrivalsPage />}
+            />
+
             <Route
               path={PRODUCT_ROUTES.recentlyUploaded}
               element={<RecentlyUploadedPage />}
             />
+
             <Route
               path={PRODUCT_ROUTES.relatedProducts}
               element={<RelatedProductsPage />}
             />
+
             <Route
               path={PRODUCT_ROUTES.trendingNow}
               element={<TrendingNowPage />}
             />
+
             <Route
               path={PRODUCT_ROUTES.recentlyViewed}
               element={<RecentlyViewedPage />}
             />
+
             <Route
               path="/products/i/:productToken"
               element={<ProductDetailPage />}
             />
+
             <Route
               path="/products/:productId"
               element={<ProductDetailPage />}
             />
+
             <Route
               path="/products/:slug/p/:publicCode"
               element={<ProductDetailPage />}
             />
+
             <Route
               path="/products/i/:productToken/reviews"
               element={<ReviewDetailsPage />}
             />
+
             <Route
               path="/products/:productId/reviews"
               element={<ReviewDetailsPage />}
             />
+
             <Route
               path="/products/:slug/p/:publicCode/reviews"
               element={<ReviewDetailsPage />}
             />
-            <Route path="/about-us" element={<AboutPage />} />
 
-            <Route path="/categories/brand" element={<BrandOutletPage />} />
-            <Route path="/categories" element={<CategoryListingPage />} />
-            <Route path="/category" element={<CategoryListingPage />} />
+            <Route
+              path="/about-us"
+              element={<AboutPage />}
+            />
+
+            <Route
+              path="/categories/brand"
+              element={<BrandOutletPage />}
+            />
+
+            <Route
+              path="/categories"
+              element={<CategoryListingPage />}
+            />
+
+            <Route
+              path="/category"
+              element={<CategoryListingPage />}
+            />
+
             <Route
               path="/categories/brand/:brandSlug"
               element={<BrandPage />}
             />
+
             <Route
               path="/categories/brands/:brandSlug"
               element={<BrandPage />}
             />
-            <Route path="/categories/:categoryKey" element={<CategoryPage />} />
-            <Route path="/brands/:brandSlug" element={<BrandPage />} />
+
+            <Route
+              path="/categories/:categoryKey"
+              element={<CategoryPage />}
+            />
+
+            <Route
+              path="/brands/:brandSlug"
+              element={<BrandPage />}
+            />
 
             <Route
               path="/profile"
-              element={<Navigate to="/account/profile" replace />}
+              element={
+                <Navigate
+                  to="/account/profile"
+                  replace
+                />
+              }
             />
+
             <Route
               path="/settings"
-              element={<Navigate to="/notification-preferences" replace />}
+              element={
+                <Navigate
+                  to="/notification-preferences"
+                  replace
+                />
+              }
             />
+
             {/* Cart & Checkout */}
-            <Route path={CART_ROUTES.cart} element={<CartPage />} />
-            <Route path={CHECKOUT_ROUTES.checkout} element={<CheckoutPage />} />
+            <Route
+              path={CART_ROUTES.cart}
+              element={<CartPage />}
+            />
+
+            <Route
+              path={CHECKOUT_ROUTES.checkout}
+              element={<CheckoutPage />}
+            />
           </Route>
+
           {/* ── Protected buyer routes (must be logged in) ────────────── */}
           <Route element={<ProtectedRoute />}>
             <Route element={<BuyerOnlyRoute />}>
               {/* Account */}
               <Route
                 path="/account"
-                element={<Navigate to="/account/profile" replace />}
+                element={
+                  <Navigate
+                    to="/account/profile"
+                    replace
+                  />
+                }
               />
+
               <Route
                 path="/account/profile"
                 element={<AccountPage tab="profile" />}
               />
+
               <Route
                 path="/account/addresses"
                 element={<AccountPage tab="addresses" />}
               />
+
               <Route
                 path="/account/security"
                 element={<AccountPage tab="security" />}
               />
-              <Route path="/account/kyc" element={<AccountPage tab="kyc" />} />
+
+              <Route
+                path="/account/kyc"
+                element={<AccountPage tab="kyc" />}
+              />
 
               {/* Payment results */}
               <Route
                 path={CHECKOUT_ROUTES.success}
                 element={<PaymentResultPage />}
               />
+
               <Route
                 path={CHECKOUT_ROUTES.failed}
                 element={<PaymentResultPage failed />}
               />
 
               {/* Orders */}
-              <Route path="/orders" element={<OrdersPage />} />
+              <Route
+                path="/orders"
+                element={<OrdersPageLayout />}
+              />
+
               <Route
                 path="/orders/i/:orderToken"
-                element={<OrdersPage detail />}
+                element={<OrdersPageLayout detail />}
               />
+
               <Route
                 path="/orders/i/:orderToken/track"
-                element={<OrdersPage detail track />}
+                element={<OrdersPageLayout detail track />}
               />
-              <Route path="/orders/:orderId" element={<OrdersPage detail />} />
+
+              <Route
+                path="/orders/:orderId"
+                element={<OrdersPageLayout detail />}
+              />
+
               <Route
                 path={ORDER_ROUTES.track()}
-                element={<OrdersPage detail track />}
+                element={<OrdersPageLayout detail track />}
               />
 
               {/* Returns */}
-              <Route path={RETURNS_ROUTES.returns} element={<ReturnsPage />} />
+              <Route
+                path={RETURNS_ROUTES.returns}
+                element={<ReturnsPage />}
+              />
+
               <Route
                 path="/returns/request/i/:orderToken"
                 element={<ReturnsPage request />}
               />
+
               <Route
                 path="/returns/request/:orderId"
                 element={<ReturnsPage request />}
               />
+
               {/* Returns & Refunds */}
               <Route
                 path={RETURNS_ROUTES.returnsRefunds}
-                element={<ReturnsRefundsPage />}
+                element={<OrdersPageLayout returnOnly />}
               />
 
               {/* Financial */}
-              <Route path="/wallet" element={<WalletPage />} />
-              <Route path="/payments" element={<PaymentsPage />} />
-              <Route path="/subscriptions" element={<SubscriptionPage />} />
+              <Route
+                path="/wallet"
+                element={<WalletPage />}
+              />
+
+              <Route
+                path="/payments"
+                element={<PaymentsPage />}
+              />
+
+              <Route
+                path="/subscriptions"
+                element={<SubscriptionPage />}
+              />
 
               {/* Warranty */}
-              <Route path="/warranty" element={<WarrantyPage />} />
+              <Route
+                path="/warranty"
+                element={<WarrantyPage />}
+              />
+
               <Route
                 path="/warranty/i/:warrantyToken"
                 element={<WarrantyPage detail />}
               />
+
               <Route
                 path="/warranty/:warrantyId"
                 element={<WarrantyPage detail />}
               />
 
               {/* Notifications */}
-              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route
+                path="/notifications"
+                element={<NotificationsPage />}
+              />
+
               <Route
                 path="/notification-preferences"
                 element={<PreferencesPage />}
@@ -372,8 +577,12 @@ export default function AppRoutes() {
 
             {/* ── Seller-only routes ─────────────────────────────────── */}
           </Route>
+
           {/* ── 404 catch-all ─────────────────────────────────────────── */}
-          <Route path="*" element={<NotFoundPage />} />
+          <Route
+            path="*"
+            element={<NotFoundPage />}
+          />
         </Route>
       </Routes>
     </Suspense>

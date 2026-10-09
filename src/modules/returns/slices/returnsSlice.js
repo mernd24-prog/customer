@@ -1,5 +1,7 @@
 import { createApiSlice, defaultInitialState } from "../../../features/createApiSlice";
+
 import { returnsThunks } from "../../../features/domainThunks";
+
 export const {
   requestReturn,
   fetchMyReturns,
@@ -18,4 +20,8 @@ export const {
   createReplacement,
   closeReturn,
 } = returnsThunks;
-export default createApiSlice({ name: "returns", thunks: returnsThunks }).reducer;
+
+export default createApiSlice({
+  name: "returns",
+  thunks: returnsThunks,
+}).reducer;

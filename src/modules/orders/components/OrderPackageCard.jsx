@@ -304,16 +304,10 @@ export function OrderPackageCard({
   return (
     <div
       key={group.key}
-      className="grid rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] w-full min-w-0  xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1.2fr)_360px] overflow-hidden"
+      className="flex flex-col rounded-lg border border-[#E7D9B8] bg-[#FFFDF8] w-full min-w-0 overflow-hidden"
     >
-      {/* Left Column: Items and Courier */}
       <div className="flex flex-col gap-3 p-4 sm:p-5 min-w-0 w-full">
-        <div className="-mx-4 lg:-ml-5 lg:-mr-6 flex items-center justify-between gap-4 border-b border-[#ede4cf] px-4 lg:pl-5 lg:pr-6 pb-4">
-          <h3 className="font-bold text-[#1B1D60] text-base md:text-lg truncate flex-1 min-w-0">
-            {group.items
-              .map((i) => itemProps.getProductTitle(i).split(" - ")[0])
-              .join(", ")}
-          </h3>
+        {/* <div className="flex items-center justify-end">
           <span
             className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
               resolvedCancellationStatus === "cancellation_approved"
@@ -332,8 +326,8 @@ export function OrderPackageCard({
           >
             {label(resolvedCancellationStatus)}
           </span>
-        </div>
-
+        </div> */}
+       
         <div className="grid gap-4">
           {group.items.map((item, index) => {
             const policy = getItemReturnPolicy(item);
@@ -366,6 +360,36 @@ export function OrderPackageCard({
                   delivered={Boolean(fulfillment.delivered)}
                   effectiveStatus={fulfillment.status}
                 />
+
+                   <div>
+                    {shipment.tracking_url && (
+          <div className="flex justify-start mb-4">
+            <a
+              href={shipment.tracking_url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#1B1D60] hover:underline"
+            >
+              <span>Track on courier site</span>
+              <ExternalLink size={16} className="shrink-0" />
+            </a>
+          </div>
+        )}
+          <OrderTimeline
+            isCancelled={isCancelled}
+            isReturned={isReturned}
+            groupCancellation={groupCancellation}
+            resolvedGroupReturn={resolvedGroupReturn}
+            group={group}
+            events={events}
+            currentRank={currentRank}
+            shipment={shipment}
+            expectedDelivery={expectedDelivery}
+            {...itemProps}
+          />
+          
+        </div>
+
                 {fulfillment.delivered &&
                   returnedQuantity === 0 &&
                   Boolean(getReviewProductId(item)) &&
@@ -397,7 +421,7 @@ export function OrderPackageCard({
             );
           })}
         </div>
-
+          
         {/* Courier Info */}
         {!isCancelled && (
           <div className="mt-2">
@@ -437,45 +461,15 @@ export function OrderPackageCard({
         />
       </div>
 
-      {/* Right Column: Tracking Timeline */}
-      <div className="flex flex-col gap-4 border-t border-[#E7D9B8] xl:border-t-0 xl:border-l p-4 sm:p-5 min-w-0 w-full">
-        <div className="-mx-4 sm:-mx-5 flex items-center justify-between gap-3 border-b border-[#ede4cf] px-4 sm:px-5 pb-4">
-          <h3 className="font-bold text-[#1B1D60] text-base md:text-lg whitespace-nowrap">
-            Tracking Timeline
-          </h3>
-          {shipment.tracking_url && (
-            <a
-              href={shipment.tracking_url}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-1.5 text-sm text-[#1B1D60] font-medium hover:underline shrink-0"
-            >
-              <span className="truncate max-w-[120px] sm:max-w-none">
-                Track on courier site
-              </span>{" "}
-              <ExternalLink size={16} className="shrink-0" />
-            </a>
-          )}
-        </div>
 
-        <div>
-          <OrderTimeline
-            isCancelled={isCancelled}
-            isReturned={isReturned}
-            groupCancellation={groupCancellation}
-            resolvedGroupReturn={resolvedGroupReturn}
-            group={group}
-            events={events}
-            currentRank={currentRank}
-            shipment={shipment}
-            expectedDelivery={expectedDelivery}
-            {...itemProps}
-          />
-        </div>
+      <div className=" sm:p-5 ">
+        
+
+        
 
         {hasPackageReview &&
           (itemProps.invoicesLoading || packageDocuments.length > 0) && (
-            <div className="mt-4 border-t border-[#ede4cf] pt-4 flex flex-col gap-3">
+            <div className=" flex flex-col gap-3">
               <h4 className="font-bold text-[#1B1D60] flex items-center gap-2 text-sm">
                 <FileText size={16} className="text-[#3E4093]" /> Package
                 Documents

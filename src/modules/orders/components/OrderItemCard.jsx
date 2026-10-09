@@ -195,6 +195,17 @@ export function OrderItemCard({
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col justify-center">
+            <h3 className="mb-1.5 text-sm font-bold leading-snug text-[#1F2430] sm:text-base">
+              <ShowMoreText
+                text={getProductTitle(item)}
+                mode="characters"
+                limit={65}
+                moreLabel="more"
+                lessLabel="less"
+                textClassName="inline"
+                buttonClassName="ml-1 text-xs font-semibold text-[#201B78] hover:underline sm:text-sm"
+              />
+            </h3>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-semibold text-[#1F2430]">
               {variantAttributes.map(([key, value]) => (
                 <span key={key} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">

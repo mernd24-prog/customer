@@ -35,7 +35,6 @@ import { getProductPublicPath } from "../../../utils/ecommerce";
 import useReturnsRefunds from "../controllers/useReturnsRefunds";
 import { PageContainer } from "../../../components/ui/layout";
 import EmptyState from "../../../components/ui/feedback/EmptyState";
-/* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [
   { value: "all", label: "All Returns" },
   { value: "requested", label: "Requested" },
@@ -64,14 +63,11 @@ const STATUS_FILTERS = [
   { value: "closed", label: "Closed" },
 ];
 
-/* exact-match filter — value is the raw API status string */
 const matchesFilter = (status, filter) => {
   if (filter === "all") return true;
   return String(status || "") === filter;
 };
 
-/* ─── Tracking-step builder (unchanged) ───────────────────────────────── */
-/* ─── Tracking-step builder ───────────────────────────────── */
 const buildTrackingSteps = (ret) => {
   if (!ret) return [];
   const timeline = Array.isArray(ret.timeline) ? ret.timeline : [];

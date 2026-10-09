@@ -1,110 +1,106 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import Seo from "../../components/ui/Seo";
+
 import AboutBanner from "./components/AboutBanner";
 import InfoSection from "./components/InfoSection";
 import OurStory from "./components/OurStory";
 import ValuesSection from "./components/ValuesSection";
 import BrandCarousel from "./components/BrandSection";
 import WhyChooseSection from "./components/WhyChooseSection";
+
 import { FALLBACK_ABOUT } from "../../data/fallbackCmsData";
 
 export default function AboutPage() {
-  const location = useLocation();
+const location = useLocation();
 
-  const { page: bannerPage } = useCmsRecord("about-banner");
-  const { page: storyPage } = useCmsRecord("about-sam-global");
-  const { page: valuesPage } = useCmsRecord("our-values");
-  const { page: brandsPage } = useCmsRecord("indian-brand");
-  const { page: missionPage } = useCmsRecord("our-mission");
-  const { page: choosePage } = useCmsRecord("why-choose-us");
+const { page: bannerPage } = useCmsRecord("about-banner");
+const { page: storyPage } = useCmsRecord("about-sam-global");
+const { page: valuesPage } = useCmsRecord("our-values");
+const { page: brandsPage } = useCmsRecord("indian-brand");
+const { page: missionPage } = useCmsRecord("our-mission");
+const { page: choosePage } = useCmsRecord("why-choose-us");
 
-  const bannerSection =
-    bannerPage?.sections?.[0] || FALLBACK_ABOUT;
+const bannerSection =
+bannerPage?.sections?.[0] || FALLBACK_ABOUT.banner;
 
-  const aboutSamGlobalSection =
-    storyPage?.sections?.[0] || FALLBACK_ABOUT.story;
+const aboutSamGlobalSection =
+storyPage?.sections?.[0] || FALLBACK_ABOUT.story;
 
-  const valuesSection =
-    valuesPage?.sections?.[0] || FALLBACK_ABOUT.values;
+const valuesSection =
+valuesPage?.sections?.[0] || FALLBACK_ABOUT.values;
 
-  const brandSection =
-    brandsPage?.sections?.[0] || FALLBACK_ABOUT.brands;
+const brandSection =
+brandsPage?.sections?.[0] || FALLBACK_ABOUT.brands;
 
-  const missionSection =
-    missionPage?.sections?.[0] || FALLBACK_ABOUT.mission;
+const missionSection =
+missionPage?.sections?.[0] || FALLBACK_ABOUT.mission;
 
-  const chooseSection =
-    choosePage?.sections?.[0] || FALLBACK_ABOUT.whyChoose;
+const chooseSection =
+choosePage?.sections?.[0] || FALLBACK_ABOUT.whyChoose;
 
-  useEffect(() => {
-    if (!location.hash) return;
+useEffect(() => {
+if (!location.hash) return;
 
-    const id = location.hash.replace("#", "");
 
-    const scrollToElement = () => {
-      const element = document.getElementById(id);
+const id = location.hash.slice(1);
 
-      if (element) {
-        element.scrollIntoView({
-          behavior: "smooth",
-        });
-      }
-    };
-    const t1 = setTimeout(scrollToElement, 100);
-    const t2 = setTimeout(scrollToElement, 700);
+const scrollToElement = () => {
+  document.getElementById(id)?.scrollIntoView({
+    behavior: "smooth",
+  });
+};
 
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [
-    location.hash,
-    location.key,
-    aboutSamGlobalSection,
-    valuesSection,
-    chooseSection,
-  ]);
+const t1 = setTimeout(scrollToElement, 100);
+const t2 = setTimeout(scrollToElement, 700);
 
-  return (
-    <>
-      <Seo
-        title="About Us - Sam Global"
-        metaDescription="Learn more about Sam Global, our story, our values, and our mission."
-      />
+return () => {
+  clearTimeout(t1);
+  clearTimeout(t2);
+};
 
-      <AboutBanner
-        image={
-          bannerSection?.image?.url ||
-          FALLBACK_ABOUT.bannerImage
-        }
-      />
 
-      <div
-        id="who-we-are"
-        style={{ scrollMarginTop: "160px" }}
-      >
-        <OurStory data={aboutSamGlobalSection} />
-      </div>
+}, [
+location.hash,
+location.key,
+aboutSamGlobalSection,
+valuesSection,
+chooseSection,
+]);
 
-      <div
-        id="our-values"
-        style={{ scrollMarginTop: "160px" }}
-      >
-        <ValuesSection data={valuesSection} />
-      </div>
+return (
+<> <Seo
+     title="About Us - Sam Global"
+     metaDescription="Learn more about Sam Global, our story, our values, and our mission."
+   />
 
-      <BrandCarousel data={brandSection} />
+```
+  <AboutBanner
+    image={
+      bannerSection?.image?.url ||
+      FALLBACK_ABOUT.banner.image
+    }
+  />
 
-      <InfoSection data={missionSection} />
+  <div id="who-we-are" style={{ scrollMarginTop: "160px" }}>
+    <OurStory data={aboutSamGlobalSection} />
+  </div>
 
-      <div
-        id="why-choose-us"
-        style={{ scrollMarginTop: "160px" }}
-      >
-        <WhyChooseSection data={chooseSection} />
-      </div>
-    </>
-  );
+  <div id="our-values" style={{ scrollMarginTop: "160px" }}>
+    <ValuesSection data={valuesSection} />
+  </div>
+
+  <BrandCarousel data={brandSection} />
+
+  <InfoSection data={missionSection} />
+
+  <div id="why-choose-us" style={{ scrollMarginTop: "160px" }}>
+    <WhyChooseSection data={chooseSection} />
+  </div>
+</>
+
+
+);
 }

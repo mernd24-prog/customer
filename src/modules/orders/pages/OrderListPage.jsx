@@ -1,5 +1,6 @@
+
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Search,
   X,
@@ -34,6 +35,11 @@ import {
   ORDER_BREADCRUMBS,
 } from "../../../data/orderPage";
 
+const RETURN_BREADCRUMBS = [
+  { label: "Home", href: "/" },
+  { label: "Return & Refund", href: "/returns-refunds" },
+];
+
 import { ORDER_LIST_SKELETON } from "../../../components/ui/skeleton/layouts";
 
 import { fetchMyOrders } from "../slices/orderSlice";
@@ -55,18 +61,35 @@ const getStatusIcon = (value) => {
       return <AllOrdersIcon size={16} className={iconClass} />;
 
     case "on_the_way":
+    case "in_transit":
+    case "in_reverse_transit":
+    case "pickup_scheduled":
+    case "reverse_pickup_scheduled":
       return <Truck size={16} className={iconClass} />;
 
     case "delivered":
+    case "approved":
+    case "return_approved":
+    case "qc_passed":
+    case "return_qc_passed":
+    case "refunded":
       return <CheckCircle2 size={16} className={iconClass} />;
 
     case "cancelled":
+    case "rejected":
+    case "return_rejected":
+    case "qc_failed":
+    case "refund_failed":
+    case "pickup_failed":
       return <XCircle size={16} className={iconClass} />;
 
     case "returned":
+    case "return_requested":
+    case "requested":
       return <RotateCcw size={16} className={iconClass} />;
 
     case "payment_failed":
+    case "refund_pending":
       return <AlertCircle size={16} className={iconClass} />;
 
     default:
@@ -81,7 +104,13 @@ const orderHelpItems = items.map((item) => ({
   path: "/contact-us",
 }));
 
-export default function OrderListPage() {
+export default function OrderListPage({ returnOnly = false }) {
+  const location = useLocation();
+  const isReturnOnly = Boolean(
+    returnOnly ||
+    location.pathname === "/returns-refunds",
+  );
+
   const {
     state,
     navigate,
@@ -101,7 +130,7 @@ export default function OrderListPage() {
     currentPage,
     setCurrentPage,
     totalPages,
-  } = useOrderList();
+  } = useOrderList({ returnOnly: isReturnOnly });
 
   const dispatch = useDispatch();
 
@@ -120,15 +149,16 @@ export default function OrderListPage() {
     if (orderItemsList?.length > 0) {
       const reviewsToFetch = new Map();
 
-      orderItemsList.forEach(({ order, item }) => {
+      orderItemsList.forEach(({ order, item, itemStatus }) => {
         const status = String(
-          resolveOrderItemDisplayStatus(
-            item,
-            getOrderStatus(order),
-            order?.relations?.shipments || order?.shipments || [],
-            [],
-            order?.relations?.cancellations || order?.cancellations || [],
-          ),
+          itemStatus ||
+            resolveOrderItemDisplayStatus(
+              item,
+              getOrderStatus(order),
+              order?.relations?.shipments || order?.shipments || [],
+              [],
+              order?.relations?.cancellations || order?.cancellations || [],
+            ),
         ).toLowerCase();
 
         const canReview = ["delivered", "completed"].includes(status);
@@ -166,12 +196,12 @@ export default function OrderListPage() {
 
   return (
     <>
-      <Seo title="My Orders | Sam Global" />
+      <Seo title={isReturnOnly ? "Return & Refund | Sam Global" : "My Orders | Sam Global"} />
 
       <PageContainer>
         <Breadcrumbs
-          items={ORDER_BREADCRUMBS}
-          className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+          items={isReturnOnly ? RETURN_BREADCRUMBS : ORDER_BREADCRUMBS}
+          
         />
 
         <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
@@ -188,7 +218,11 @@ export default function OrderListPage() {
                     <input
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Search by order ID, product name or tracking number"
+                      placeholder={
+                        isReturnOnly
+                          ? "Search returns by order ID, product name or tracking number"
+                          : "Search by order ID, product name or tracking number"
+                      }
                       className=" h-11 w-full rounded-lg border border-[#e4ca8e] bg-white pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-shadow duration-200 focus:bg-white focus:outline-none focus:shadow-[0_4px_14px_rgba(31,36,48,0.08)]"
                     />
 
@@ -237,7 +271,7 @@ export default function OrderListPage() {
                       options={[
                         {
                           value: "all",
-                          label: "All Orders",
+                          label: isReturnOnly ? "All Returns" : "All Orders",
                           icon: getStatusIcon("all"),
                         },
                         ...availableStatusFilters.map((filter) => ({
@@ -259,7 +293,7 @@ export default function OrderListPage() {
                         }
                         setCurrentPage(1);
                       }}
-                      placeholder="Status"
+                      placeholder={isReturnOnly ? "Return Status" : "Status"}
                     />
                   </div>
                 </div>
@@ -273,15 +307,21 @@ export default function OrderListPage() {
               skeletonLayout={ORDER_LIST_SKELETON}
               skeletonContainerClass=""
               emptyTitle={
-                isFilteredOrSearched ? "No orders found" : "No orders yet"
+                isFilteredOrSearched
+                  ? (isReturnOnly ? "No returns found" : "No orders found")
+                  : (isReturnOnly ? "No returns yet" : "No orders yet")
               }
               emptyText={
                 isFilteredOrSearched
                   ? "Try adjusting your filters."
-                  : "Once you place an order, it will appear here."
+                  : (isReturnOnly
+                      ? "You haven't requested any returns or refunds yet."
+                      : "Once you place an order, it will appear here.")
               }
               emptyActionLabel={
-                isFilteredOrSearched ? "Clear Filters" : "Continue Shopping"
+                isFilteredOrSearched
+                  ? "Clear Filters"
+                  : (isReturnOnly ? "View My Orders" : "Continue Shopping")
               }
               onEmptyAction={() => {
                 if (isFilteredOrSearched) {
@@ -289,20 +329,26 @@ export default function OrderListPage() {
                   setTimeFilters([]);
                   setQuery("");
                 } else {
-                  navigate("/products");
+                  navigate(isReturnOnly ? "/orders" : "/products");
                 }
               }}
             >
               <div className="flex flex-col gap-3">
-                {orderItemsList.map(({ order, item }) => (
-                  <OrderItemSummaryCard
-                    key={`${getOrderId(order)}:${getOrderItemId(item)}`}
-                    order={order}
-                    item={item}
-                    locallyReviewedProducts={locallyReviewedProducts}
-                    onReviewClick={handleReviewClick}
-                  />
-                ))}
+                {orderItemsList.map((entry) => {
+                  const order = entry?.order;
+                  const item = entry?.item || entry;
+                  return (
+                    <OrderItemSummaryCard
+                      key={`${getOrderId(order)}:${getOrderItemId(item)}`}
+                      order={order}
+                      item={item}
+                      status={entry?.itemStatus}
+                      returns={entry?.returns}
+                      locallyReviewedProducts={locallyReviewedProducts}
+                      onReviewClick={handleReviewClick}
+                    />
+                  );
+                })}
               </div>
 
               {orderItemsList.length > 0 && (

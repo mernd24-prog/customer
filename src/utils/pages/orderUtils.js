@@ -540,6 +540,7 @@ export const resolveOrderItemDisplayStatus = (
   shipments = [],
   fulfillmentGroups = [],
   cancellations = [],
+  returns = [],
 ) => {
   const cancellation = getCancellationForItem(cancellations, item);
   const shipment = findShipmentForOrderItem(shipments, item);
@@ -552,15 +553,104 @@ export const resolveOrderItemDisplayStatus = (
     return fallback;
   }
 
+  let actualFulfillmentGroups = Array.isArray(fulfillmentGroups) ? fulfillmentGroups : [];
+  let actualReturns = Array.isArray(returns) ? returns : [];
+
+  if (actualFulfillmentGroups.length > 0) {
+    const isReturnsArray = actualFulfillmentGroups.some(
+      (entry) =>
+        entry?.returnId ||
+        entry?.returnNumber ||
+        entry?.return_number ||
+        entry?.returnStatus ||
+        entry?.return_status ||
+        entry?.reason ||
+        Array.isArray(entry?.returnItems),
+    );
+
+    if (isReturnsArray && !actualReturns.length) {
+      actualReturns = actualFulfillmentGroups;
+      actualFulfillmentGroups = [];
+    }
+  }
+
+  if (!actualReturns.length) {
+    if (Array.isArray(item?.returns)) actualReturns = item.returns;
+    else if (Array.isArray(item?.returnRequests)) actualReturns = item.returnRequests;
+  }
+
+  const matchingReturn = actualReturns.find((returnReq) => {
+    const returnItems = Array.isArray(returnReq?.items)
+      ? returnReq.items
+      : Array.isArray(returnReq?.returnItems)
+        ? returnReq.returnItems
+        : [];
+    if (returnItems.length > 0) {
+      return returnItems.some((retItem) =>
+        returnItemMatchesOrderItem(retItem, item),
+      );
+    }
+    if (
+      returnReq?.orderItemId ||
+      returnReq?.order_item_id ||
+      returnReq?.itemId ||
+      returnReq?.item_id ||
+      returnReq?.productId ||
+      returnReq?.product_id ||
+      returnReq?.item ||
+      returnReq?.orderItem
+    ) {
+      return (
+        returnItemMatchesOrderItem(returnReq, item) ||
+        (returnReq?.item && returnItemMatchesOrderItem(returnReq.item, item)) ||
+        (returnReq?.orderItem && returnItemMatchesOrderItem(returnReq.orderItem, item))
+      );
+    }
+    return true;
+  });
+
+  let resolvedReturnStatus = "";
+  if (matchingReturn) {
+    const retStatus = String(
+      matchingReturn.status ||
+        matchingReturn.returnStatus ||
+        matchingReturn.return_status ||
+        "",
+    ).toLowerCase();
+
+    const refundStatus = String(
+      matchingReturn.refund?.status ||
+        matchingReturn.refundStatus ||
+        matchingReturn.refund_status ||
+        "",
+    ).toLowerCase();
+
+    if (refundStatus === "completed" || retStatus === "refunded") {
+      resolvedReturnStatus = "refunded";
+    } else if (retStatus === "partially_refunded") {
+      resolvedReturnStatus = "partially_refunded";
+    } else if (["pending", "provider_pending", "manual_review"].includes(refundStatus)) {
+      resolvedReturnStatus = "refund_pending";
+    } else if (refundStatus === "failed") {
+      resolvedReturnStatus = "refund_failed";
+    } else if (retStatus) {
+      if (["requested", "approved", "rejected", "completed", "qc_passed"].includes(retStatus)) {
+        resolvedReturnStatus = `return_${retStatus}`;
+      } else {
+        resolvedReturnStatus = retStatus;
+      }
+    }
+  }
+
   const forwardItemStatus = mostAdvancedForwardItemStatus(item, shipment);
 
   let fulfillmentReturnStatus = "";
-  if (fulfillmentGroups && fulfillmentGroups.length > 0) {
+  if (actualFulfillmentGroups && actualFulfillmentGroups.length > 0) {
     const itemSellerKey = getSellerGroupKey(
       item.seller_id || item.sellerId || "platform",
       item.organization_id || item.organizationId || "default",
     );
-    const fulfillment = fulfillmentGroups.find(
+    const fulfillment = actualFulfillmentGroups.find(
       (group) =>
         getSellerGroupKey(
           group.sellerId || group.seller_id || "platform",
@@ -602,6 +692,7 @@ export const resolveOrderItemDisplayStatus = (
           item.cancellationStatus ||
           timelineCancellationStatus ||
           (isFullyCancelled ? "cancelled" : "") ||
+          resolvedReturnStatus ||
           item.return_status ||
           item.returnStatus ||
           fulfillmentReturnStatus ||

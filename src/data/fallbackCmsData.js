@@ -387,23 +387,17 @@ export const FALLBACK_SELLER_PAGE = {
     })),
   };
 /* -------------------------------------------------------------------------- */ /* About                                                                      */ /* -------------------------------------------------------------------------- */ 
-export const FALLBACK_ABOUT =
-  {
-    banner: {
+export const FALLBACK_ABOUT = {
+  banner: {
     image: "/image/png/fallback/become-a-seller/About-banner.png",
-
     badge: "Your Next Chapter Starts Here",
-
     title: "Grow Your Business With Sam Global",
-
     description:
       "Reach more customers, manage orders easily, and grow with reliable support.",
-
     cta: {
       label: "Learn More",
       href: "#who-we-are",
     },
-
     highlights: [
       "Simple onboarding",
       "Secure payouts",
@@ -414,85 +408,89 @@ export const FALLBACK_ABOUT =
   story: {
     description:
       "Sam Global is built on years of retail and distribution experience, with a clear focus on disciplined execution, customer trust, and sustainable growth across India.",
-    image: image(
-      "/image/png/fallback/become-a-seller/outStory.png",
-      "Sam Global story",
+    image: image("/image/png/ourStory.png", "Sam Global story"),
+  },
+
+  values: {
+    title: "Our Values",
+    points: [
+      {
+        title: "Execution Excellence",
+        description:
+          "Every customer interaction and process is driven by performance and discipline.",
+        image: image("/image/png/excellence.png"),
+      },
+      {
+        title: "Customer First",
+        description:
+          "We focus on consistent, high-quality retail experiences for Indian consumers.",
+        image: image("/image/png/customer.png"),
+      },
+      {
+        title: "Scalable Growth",
+        description:
+          "We build systems that support sustainable long-term expansion.",
+        image: image("/image/png/growth.png"),
+      },
+    ],
+  },
+
+  brands: {
+    title: "Indian Brands",
+    description: "Experience Across Leading Global Brands",
+    points: ["zara", "gq", "lacoste", "gucci", "prada", "vogue"].map(
+      (brand) => ({
+        title: brand.toUpperCase(),
+        image: image(`/image/png/brands/${brand}.png`),
+      }),
     ),
   },
 
-    values: {
-      title: "Our Values",
-      points: [
-        [
-          "Execution Excellence",
-          "Every customer interaction and process is driven by performance and discipline.",
-          "excellence.png",
-        ],
-        [
-          "Customer First",
-          "We focus on consistent, high-quality retail experiences for Indian consumers.",
-          "customer.png",
-        ],
-        [
-          "Scalable Growth",
-          "We build systems that support sustainable long-term expansion.",
-          "growth.png",
-        ],
-      ].map(([title, description, file]) => ({
-        title,
-        description,
-        image: image(`/image/png/fallback/icons/${file}`),
-      })),
-    },
-    brands: {
-      title: "Indian Brands",
-      description: "Experience Across Leading Global Brands",
-      points: ["zara", "gq", "lacoste", "gucci", "prada", "vogue"].map(
-        (brand) => ({
-          title: brand.toUpperCase(),
-          image: image(`/image/png/fallback/brands/${brand}.png`),
-        }),
-      ),
-    },
-    mission: {
-      title: "Our Mission",
-      description:
-        "Our mission is to build an execution-focused retail network that delivers dependable stores, strong brand experiences, and long-term value for customers and partners.",
-      image: image(
-        "/image/png/fallback/become-a-seller/hand.png",
-        "Our mission",
-      ),
-    },
-    whyChoose: {
-      title: "Why Choose Us",
-      description:
-        "A strong retail partner focused on execution, growth, and long-term success.",
-      points: [
-        [
-          "Global Brand Experience",
-          "Retail expertise shaped by leading global brands.",
-        ],
-        ["Financial Discipline", "Strong governance and structured planning."],
-        [
-          "Strong Retail Execution",
-          "Disciplined operations that drive consistency.",
-        ],
-        ["Structured Expansion", "Scalable systems for multi-city growth."],
-        [
-          "Consumer Understanding",
-          "Deep insight into customer needs and choices.",
-        ],
-        [
-          "Long-Term Partnerships",
-          "Built for trusted and sustainable collaboration.",
-        ],
-      ].map(([title, description], index) => ({
-        title,
-        description,
-        image: image(`/image/png/fallback/icons/dummy${index || ""}.png`),
-      })),
-    },
-  };
+  mission: {
+    title: "Our Mission",
+    description:
+      "Our mission is to build an execution-focused retail network that delivers dependable stores, strong brand experiences, and long-term value for customers and partners.",
+    image: image("/image/png/hand.png", "Our mission"),
+  },
+
+  whyChoose: {
+    title: "Why Choose Us",
+    description:
+      "A strong retail partner focused on execution, growth, and long-term success.",
+    points: [
+      {
+        title: "Global Brand Experience",
+        description: "Retail expertise shaped by leading global brands.",
+        image: image("/image/png/dummy.png"),
+      },
+      {
+        title: "Financial Discipline",
+        description: "Strong governance and structured planning.",
+        image: image("/image/png/dummy1.png"),
+      },
+      {
+        title: "Strong Retail Execution",
+        description: "Disciplined operations that drive consistency.",
+        image: image("/image/png/dummy2.png"),
+      },
+      {
+        title: "Structured Expansion",
+        description: "Scalable systems for multi-city growth.",
+        image: image("/image/png/dummy3.png"),
+      },
+      {
+        title: "Consumer Understanding",
+        description: "Deep insight into customer needs and choices.",
+        image: image("/image/png/dummy4.png"),
+      },
+      {
+        title: "Long-Term Partnerships",
+        description: "Built for trusted and sustainable collaboration.",
+        image: image("/image/png/dummy5.png"),
+      },
+    ],
+  },
+};
 export const FALLBACK_POLICY_DATA = {
   shipping: {
     title: "Shipping & Delivery Policy",

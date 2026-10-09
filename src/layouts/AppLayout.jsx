@@ -140,7 +140,7 @@ const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some((route) => {
 
       <main
         className={`main-content customer-container pt-[var(--customer-header-height,0px)] ${
-          showCategoryBar ? "mt-[46px]" : ""
+          showCategoryBar ? "mt-[30px]" : ""
         }`}
       >
         {showCategoryBar && <CategoryBar compact />}
