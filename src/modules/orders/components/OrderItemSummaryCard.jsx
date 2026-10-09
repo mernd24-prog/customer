@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { PiStarThin, PiStarFill } from "react-icons/pi";
 import { Package } from "lucide-react";
 import { useSelector } from "react-redux";
+import { orderReviewKey } from "../../../features/review/reviewSlice";
 import ShowMoreText from "../../../utils/showMore";
 import { getOpaqueOrderPath } from "../../../utils/routeTokens";
 import { formatMoney } from "../../../utils/ecommerce";
-import { getReviewProductId } from "../utils/orderItems";
+import { getReviewProductId, getReviewOrderItemId } from "../utils/orderItems";
 import {
   getOrderId,
   getOrderStatus,
@@ -123,8 +124,9 @@ export default function OrderItemSummaryCard({
   if (!order || !item) return null;
 
   const productId = getReviewProductId(item);
+  const reviewKey = orderReviewKey({ productId, orderId: getOrderId(order), orderItemId: getReviewOrderItemId(item) });
   const myReview = useSelector(
-    (state) => state.review?.myReviewByProduct?.[productId],
+    (state) => state.review?.myReviewByOrderItem?.[reviewKey],
   );
 
   const id = getOrderId(order);
@@ -202,7 +204,7 @@ export default function OrderItemSummaryCard({
     myReview &&
     (myReview._id || myReview.id || myReview.rating !== undefined) &&
     isReviewForThisItem;
-  const isUnreviewed = !locallyReviewedProducts.has(productId) && !hasMyReview;
+  const isUnreviewed = !locallyReviewedProducts.has(reviewKey) && !hasMyReview;
 
   return (
     <article className=" group relative overflow-hidden rounded-lg border border-[#e4ca8e] bg-white transition-shadow duration-200 hover:shadow-[0_6px_18px_rgba(31,36,48,0.10)]">

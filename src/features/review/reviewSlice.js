@@ -9,10 +9,14 @@ export const {
   deleteMyReview,
 } = reviewThunks;
 
+export const orderReviewKey = ({ productId, orderId, orderItemId } = {}) =>
+  JSON.stringify([String(productId || ""), String(orderId || ""), String(orderItemId || "")]);
+
 const initialState = {
   reviewsByProduct: {},
   statsByProduct: {},
   myReviewByProduct: {},
+  myReviewByOrderItem: {},
   submitting: false,
   submitError: null,
   submitSuccess: false,
@@ -67,11 +71,19 @@ const reviewSlice = createSlice({
     builder
       .addCase(fetchMyProductReview.fulfilled, (state, action) => {
         const pid = action.meta.arg?.productId;
-        if (pid) state.myReviewByProduct[pid] = action.payload?.data || null;
+        if (!pid) return;
+        const scope = action.meta.arg;
+        if (scope.orderId || scope.orderItemId) {
+          state.myReviewByOrderItem[orderReviewKey(scope)] = action.payload?.data || null;
+        } else state.myReviewByProduct[pid] = action.payload?.data || null;
       })
       .addCase(fetchMyProductReview.rejected, (state, action) => {
         const pid = action.meta.arg?.productId;
-        if (pid) state.myReviewByProduct[pid] = null;
+        if (!pid) return;
+        const scope = action.meta.arg;
+        if (scope.orderId || scope.orderItemId) {
+          state.myReviewByOrderItem[orderReviewKey(scope)] = null;
+        } else state.myReviewByProduct[pid] = null;
       });
 
     // Submit review
@@ -115,6 +127,11 @@ const reviewSlice = createSlice({
         if (bucket) {
           bucket.items = bucket.items.filter((r) => (r._id || r.id) !== rid);
           bucket.total = Math.max(0, bucket.total - 1);
+        }
+        for (const [key, review] of Object.entries(state.myReviewByOrderItem)) {
+          if (String(review?._id || review?.id || "") === String(rid)) {
+            state.myReviewByOrderItem[key] = null;
+          }
         }
         state.myReviewByProduct[pid] = null;
       });

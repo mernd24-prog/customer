@@ -4,9 +4,12 @@ import { getActiveDealPrice, getActiveDealOriginalPrice } from "../../../utils/p
 export function useProductDetailPricing({ product, selectedVariant, dynamicState, productId }) {
   const selectedVariantPrice = getVariantPrice(selectedVariant);
   const productPrice = getProductPrice(product);
-  const activeDealPrice = getActiveDealPrice(product);
-  const activeDealOriginalPrice = getActiveDealOriginalPrice(product);
-  const activeDealBadge =
+  const dealMatchesVariant = Boolean(product?.deal && (product.deal.variantId || product.deal.variantSku) && selectedVariant &&
+    ((!product.deal.variantId || String(product.deal.variantId) === String(selectedVariant._id || selectedVariant.id)) &&
+      (!product.deal.variantSku || String(product.deal.variantSku) === String(selectedVariant.sku))));
+  const activeDealPrice = dealMatchesVariant ? getActiveDealPrice(product) : undefined;
+  const activeDealOriginalPrice = dealMatchesVariant ? getActiveDealOriginalPrice(product) : undefined;
+  const activeDealBadge = !dealMatchesVariant ? "" :
     product?.deal?.badge ||
     product?.metadata?.dealBadge ||
     (activeDealPrice ? "Deal" : "");

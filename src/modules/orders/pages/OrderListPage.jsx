@@ -26,7 +26,7 @@ import { ReviewModal } from "../components/OrderItemReview";
 import OrderItemSummaryCard from "../components/OrderItemSummaryCard";
 
 import { getOpaqueOrderPath } from "../../../utils/routeTokens";
-import { getReviewProductId } from "../utils/orderItems";
+import { getReviewProductId, getReviewOrderItemId } from "../utils/orderItems";
 
 import {
   COMPACT_STATUS_BADGE,
@@ -37,7 +37,7 @@ import {
 import { ORDER_LIST_SKELETON } from "../../../components/ui/skeleton/layouts";
 
 import { fetchMyOrders } from "../slices/orderSlice";
-import { fetchMyProductReview } from "../../../features/review/reviewSlice";
+import { fetchMyProductReview, orderReviewKey } from "../../../features/review/reviewSlice";
 
 import {
   getOrderId,
@@ -118,7 +118,7 @@ export default function OrderListPage() {
 
   useEffect(() => {
     if (orderItemsList?.length > 0) {
-      const productIdsToFetch = new Set();
+      const reviewsToFetch = new Map();
 
       orderItemsList.forEach(({ order, item }) => {
         const status = String(
@@ -137,14 +137,16 @@ export default function OrderListPage() {
         if (canReview && isUnreviewed) {
           const productId = getReviewProductId(item);
 
-          if (productId && !locallyReviewedProducts.has(productId)) {
-            productIdsToFetch.add(productId);
+          const scope = { productId, orderId: getOrderId(order), orderItemId: getReviewOrderItemId(item) };
+          const key = orderReviewKey(scope);
+          if (productId && scope.orderId && scope.orderItemId && !locallyReviewedProducts.has(key)) {
+            reviewsToFetch.set(key, scope);
           }
         }
       });
 
-      productIdsToFetch.forEach((productId) => {
-        dispatch(fetchMyProductReview({ productId }));
+      reviewsToFetch.forEach((scope) => {
+        dispatch(fetchMyProductReview(scope));
       });
     }
   }, [orderItemsList, dispatch, locallyReviewedProducts]);
@@ -353,7 +355,11 @@ export default function OrderListPage() {
 
             if (productId) {
               setLocallyReviewedProducts(
-                (previous) => new Set([...previous, productId]),
+                (previous) => new Set([...previous, orderReviewKey({
+                  productId,
+                  orderId: getOrderId(reviewModalState.order),
+                  orderItemId: res?.orderItemId || getReviewOrderItemId(reviewModalState.item),
+                })]),
               );
             }
           }}

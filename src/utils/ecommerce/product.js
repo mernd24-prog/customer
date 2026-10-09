@@ -348,17 +348,15 @@ export function getVariantMrp(variant) {
 
 export function getProductDealPrice(product) {
   return firstMoneyValue(
-    product?.deal?.dealPrice,
-    product?.dealPrice,
-    product?.metadata?.dealPrice,
+    product?.deal?.sellingPrice,
   );
 }
 
 export function getProductPrice(product) {
-  const defaultVariant = getDefaultVariant(product);
+  const defaultVariant = product?.selectedVariant || getDefaultVariant(product);
   return firstMoneyValue(
-    getProductDealPrice(product),
     getVariantPrice(defaultVariant),
+    getProductDealPrice(product),
     optionalDiscountPrice(product?.salePrice),
     optionalDiscountPrice(product?.sale_price),
     product?.sellingPrice,
@@ -371,10 +369,10 @@ export function getProductPrice(product) {
 }
 
 export function getProductMrp(product) {
-  const defaultVariant = getDefaultVariant(product);
+  const defaultVariant = product?.selectedVariant || getDefaultVariant(product);
   return firstMoneyValue(
-    product?.deal?.originalPrice,
     getVariantMrp(defaultVariant),
+    product?.deal?.catalogPrice,
     product?.mrp,
     product?.compareAtPrice,
     product?.compare_at_price,
@@ -453,7 +451,7 @@ export function getProductAvailableStock(product) {
     return getAvailableStock(product.selectedVariant);
   }
 
-  const defaultVariant = getDefaultVariant(product);
+  const defaultVariant = product?.selectedVariant || getDefaultVariant(product);
   if (defaultVariant) {
     return getAvailableStock(defaultVariant);
   }

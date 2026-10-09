@@ -40,14 +40,12 @@ export const firstImageSource = (...values) =>
 
 export const getActiveDealPrice = (product = {}) =>
   firstMoneyValue(
-    product?.deal?.dealPrice,
-    product?.dealPrice,
-    product?.metadata?.dealPrice,
+    product?.deal?.sellingPrice,
   );
 
 export const getActiveDealOriginalPrice = (product = {}) =>
   firstMoneyValue(
-    product?.deal?.originalPrice,
+    product?.deal?.catalogPrice,
     product?.originalPrice,
     product?.compareAtPrice,
     product?.mrp,

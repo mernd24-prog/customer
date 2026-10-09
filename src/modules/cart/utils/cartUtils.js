@@ -44,9 +44,9 @@ export function adaptItemForCard(item, fullProduct = null) {
   const activeDealPrice =
     getProductDealPrice(item) ?? getProductDealPrice(product);
   const activeDealOriginalPrice =
-    item?.deal?.originalPrice ??
+    item?.deal?.catalogPrice ??
     item?.deal?.original_price ??
-    product?.deal?.originalPrice ??
+    product?.deal?.catalogPrice ??
     product?.deal?.original_price;
 
   const variantId = item.variantId || item.variantSku;
