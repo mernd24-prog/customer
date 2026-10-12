@@ -342,12 +342,10 @@ function ReviewModal({
     </BaseModal>
   );
 }
-
 function OrderItemReviewAction({
   item,
   orderId,
   canReview,
-  existingReview,
   reviewChecked,
   onReviewClick,
 }) {
@@ -355,24 +353,16 @@ function OrderItemReviewAction({
 
   if (!reviewChecked) {
     return (
-      <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
+      <span className="inline-flex min-h-9 items-center rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold text-[#1B1D60] sm:text-sm">
         Checking review...
       </span>
-    );
-  }
-
-  if (existingReview) {
-    return (
-      <div className="w-full">
-        <ExistingReviewCard review={existingReview} />
-      </div>
     );
   }
 
   return (
     <button
       type="button"
-      className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
+      className="inline-flex min-h-9 items-center justify-center rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm"
       onClick={() => onReviewClick(item)}
       disabled={!orderId}
     >
