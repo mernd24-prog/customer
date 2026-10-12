@@ -1,5 +1,9 @@
+
 import { Check, X } from "lucide-react";
+import { useMemo } from "react";
+
 import { ShowMoreText } from "../../../utils/showMore";
+
 import {
   dateTime,
   TIMELINE_STEPS,
@@ -7,7 +11,6 @@ import {
   getCancellationSteps,
   getReturnSteps,
 } from "../utils/orderTimelineUtils";
-import { useMemo } from "react";
 
 export function OrderTimeline({
   isCancelled,
@@ -34,6 +37,7 @@ export function OrderTimeline({
           isCodOrder,
         );
       }
+
       return getReturnSteps(
         resolvedGroupReturn,
         group,
@@ -42,6 +46,7 @@ export function OrderTimeline({
         isCodOrder,
       );
     }
+
     return null;
   }, [
     isCancelled,
@@ -54,14 +59,16 @@ export function OrderTimeline({
     isCodOrder,
   ]);
 
+  // Cancelled and returned order timeline
   if (stepsToRender) {
     return (
-      <>
+      <div className="md:flex md:items-start">
         {stepsToRender.map((step, stepIndex) => {
           const isCompleted = step.completed;
           const isCancelledStep =
             step.status === "cancelled" ||
             step.status === "cancellation_requested";
+
           const isLast = stepIndex === stepsToRender.length - 1;
           const lineDelay = `${stepIndex * 0.35}s`;
           const ballDelay = `${stepIndex * 0.35}s`;
@@ -74,25 +81,32 @@ export function OrderTimeline({
           const nextIsCancelled =
             stepIndex < stepsToRender.length - 1 &&
             (stepsToRender[stepIndex + 1].status === "cancelled" ||
-              stepsToRender[stepIndex + 1].status === "cancellation_requested");
+              stepsToRender[stepIndex + 1].status ===
+                "cancellation_requested");
 
-          const lineColor = nextIsCancelled ? "bg-[#E53935]" : "bg-[#26A541]";
+          const lineColor = nextIsCancelled
+            ? "bg-[#E53935]"
+            : "bg-[#26A541]";
 
           return (
-            <div key={step.status} className="relative pb-6 pl-7 last:pb-0">
+            <div
+              key={step.status}
+              className="relative min-w-0 pb-6 pl-7 last:pb-0 md:flex-1 md:pb-0 md:pl-0 md:pt-7"
+            >
               {!isLast && (
-                <span className="absolute left-[7px] top-[10px] bottom-[-14px] w-[2px] bg-[#E0E0E0] z-0" />
+                <span className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] bg-[#E0E0E0] md:bottom-auto md:left-[8px] md:right-0 md:top-[7px] md:h-[2px] md:w-auto" />
               )}
+
               {!isLast && isCompleted && isNextStepCompleted && (
                 <span
-                  className={`absolute left-[7px] top-[10px] bottom-[-14px] w-[2px] ${lineColor} origin-top animate-timeline-line z-0`}
+                  className={`absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] origin-top animate-timeline-line md:bottom-auto md:left-[8px] md:right-0 md:top-[7px] md:h-[2px] md:w-auto md:origin-left ${lineColor}`}
                   style={{ animationDelay: lineDelay }}
                 />
               )}
 
               {isCompleted ? (
                 <span
-                  className={`absolute left-0 top-0.5 z-10 h-4 w-4 rounded-full flex items-center justify-center ${
+                  className={`absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full ${
                     isCancelledStep
                       ? "animate-ball-fill-red"
                       : "animate-ball-fill-green"
@@ -100,7 +114,7 @@ export function OrderTimeline({
                     isLast || !isNextStepCompleted
                       ? "animate-timeline-pulse"
                       : ""
-                  }`}
+                  } md:left-0 md:top-0`}
                   style={{ animationDelay: ballDelay }}
                 >
                   {isCancelledStep ? (
@@ -110,12 +124,12 @@ export function OrderTimeline({
                   )}
                 </span>
               ) : (
-                <span className="absolute left-0 top-0.5 z-10 h-4 w-4 rounded-full border border-[#D7D7D7] bg-[#F5F5F5] flex items-center justify-center">
+                <span className="absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full border border-[#D7D7D7] bg-[#F5F5F5] md:left-0 md:top-0">
                   <Check className="h-2.5 w-2.5 stroke-[2] text-[#B0B0B0]" />
                 </span>
               )}
 
-              <div>
+              <div className="min-w-0 md:pr-3">
                 <p
                   className={`text-sm font-semibold ${
                     isCompleted
@@ -139,7 +153,7 @@ export function OrderTimeline({
                     limit={1}
                     className="mt-1 block"
                     textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                    buttonClassName="text-[11px] font-semibold text-[#26A541] hover:underline ml-1"
+                    buttonClassName="ml-1 text-[11px] font-semibold text-[#26A541] hover:underline"
                     moreLabel="Show more"
                     lessLabel="Show less"
                   />
@@ -154,12 +168,13 @@ export function OrderTimeline({
             </div>
           );
         })}
-      </>
+      </div>
     );
   }
 
+  // Regular order tracking timeline
   return (
-    <>
+    <div className="md:flex md:items-start">
       {TIMELINE_STEPS.map((step, stepIndex) => {
         const stepRank = STATUS_RANK[step.status];
         const isCompleted = currentRank >= stepRank;
@@ -197,61 +212,75 @@ export function OrderTimeline({
                     e.to_status === "confirmed")),
             )
           : null;
+
         const displayTime = matchingEvent
           ? dateTime(matchingEvent.event_time || matchingEvent.created_at)
           : null;
 
         const isExpectedDelivery =
-          step.status === "delivered" || step.status === "out_for_delivery";
+          step.status === "delivered" ||
+          step.status === "out_for_delivery";
+
         const showExpected =
           !isCompleted && isExpectedDelivery && expectedDelivery;
 
         const isNextStepCompleted =
           stepIndex < TIMELINE_STEPS.length - 1 &&
-          currentRank >= STATUS_RANK[TIMELINE_STEPS[stepIndex + 1].status];
+          currentRank >=
+            STATUS_RANK[TIMELINE_STEPS[stepIndex + 1].status];
+
         const isLast = stepIndex === TIMELINE_STEPS.length - 1;
         const lineDelay = `${stepIndex * 0.35}s`;
         const ballDelay = `${stepIndex * 0.35}s`;
-        const isCurrentActive = isCompleted && (!isNextStepCompleted || isLast);
+        const isCurrentActive =
+          isCompleted && (!isNextStepCompleted || isLast);
 
         let fallbackTime = shipment?.updated_at || group?.expectedDeliveryAt;
-        if (step.status === "confirmed")
+
+        if (step.status === "confirmed") {
           fallbackTime = group?.items?.[0]?.created_at || fallbackTime;
+        }
 
         return (
-          <div key={step.status} className="relative pb-6 pl-7 last:pb-0">
+          <div
+            key={step.status}
+            className="relative min-w-0 pb-6 pl-7 last:pb-0 md:flex-1 md:pb-0 md:pl-0 md:pt-7"
+          >
             {!isLast && (
-              <span className="absolute left-[7px] top-[10px] bottom-[-14px] w-[2px] bg-[#E0E0E0] z-0" />
+              <span className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] bg-[#E0E0E0] md:bottom-auto md:left-[8px] md:right-0 md:top-[7px] md:h-[2px] md:w-auto" />
             )}
+
             {!isLast && isCompleted && isNextStepCompleted && (
               <span
-                className="absolute left-[7px] top-[10px] bottom-[-14px] w-[2px] bg-[#26A541] origin-top animate-timeline-line z-0"
+                className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] origin-top animate-timeline-line bg-[#26A541] md:bottom-auto md:left-[8px] md:right-0 md:top-[7px] md:h-[2px] md:w-auto md:origin-left"
                 style={{ animationDelay: lineDelay }}
               />
             )}
 
             {isCompleted ? (
               <span
-                className={`absolute left-0 top-0.5 z-10 h-4 w-4 rounded-full flex items-center justify-center animate-ball-fill-green ${
+                className={`absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full animate-ball-fill-green ${
                   isCurrentActive ? "animate-timeline-pulse" : ""
-                }`}
+                } md:left-0 md:top-0`}
                 style={{ animationDelay: ballDelay }}
               >
                 <Check className="h-2.5 w-2.5 stroke-[3] text-current" />
               </span>
             ) : (
-              <span className="absolute left-0 top-0.5 z-10 h-4 w-4 rounded-full border border-[#D7D7D7] bg-[#F5F5F5] flex items-center justify-center">
+              <span className="absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full border border-[#D7D7D7] bg-[#F5F5F5] md:left-0 md:top-0">
                 <Check className="h-2.5 w-2.5 stroke-[2] text-[#B0B0B0]" />
               </span>
             )}
 
-            <div>
+            <div className="min-w-0 md:pr-3">
               <p
-                className={`text-sm font-semibold ${isCompleted ? "text-[#2E2E2E]" : "text-[#6F7480]"}`}
+                className={`text-sm font-semibold ${
+                  isCompleted ? "text-[#2E2E2E]" : "text-[#6F7480]"
+                }`}
               >
                 {step.label}
               </p>
-
+{/* 
               {matchingEvent?.note ? (
                 <ShowMoreText
                   text={
@@ -263,7 +292,7 @@ export function OrderTimeline({
                   limit={1}
                   className="mt-1 block"
                   textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="text-[11px] font-semibold text-[#CE9F2D] hover:underline ml-1"
+                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -274,7 +303,7 @@ export function OrderTimeline({
                   limit={1}
                   className="mt-1 block"
                   textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="text-[11px] font-semibold text-[#CE9F2D] hover:underline ml-1"
+                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -285,7 +314,7 @@ export function OrderTimeline({
                   limit={1}
                   className="mt-1 block"
                   textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="text-[11px] font-semibold text-[#CE9F2D] hover:underline ml-1"
+                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -296,11 +325,11 @@ export function OrderTimeline({
                   limit={1}
                   className="mt-1 block"
                   textClassName="text-xs text-[#6F7480] whitespace-pre-wrap"
-                  buttonClassName="text-[11px] font-semibold text-[#CE9F2D] hover:underline ml-1"
+                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
-              ) : null}
+              ) : null} */}
 
               {isCompleted ? (
                 <p className="mt-1 text-xs font-medium text-[#1B1D60]">
@@ -315,6 +344,6 @@ export function OrderTimeline({
           </div>
         );
       })}
-    </>
+    </div>
   );
 }
