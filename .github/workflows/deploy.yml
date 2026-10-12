@@ -1,4 +1,4 @@
-
+```yaml
 name: Deploy Customer Staging
 
 on:
@@ -43,10 +43,34 @@ jobs:
           STAGING_HOST: ${{ secrets.STAGING_HOST }}
         run: |
           set -eu
+
+          test -n "$STAGING_SSH_KEY" || {
+            echo "ERROR: STAGING_SSH_KEY secret is empty or unavailable"
+            exit 1
+          }
+
+          test -n "$STAGING_HOST" || {
+            echo "ERROR: STAGING_HOST secret is empty or unavailable"
+            exit 1
+          }
+
           install -m 700 -d ~/.ssh
+
           printf '%s\n' "$STAGING_SSH_KEY" > ~/.ssh/staging_key
           chmod 600 ~/.ssh/staging_key
-          ssh-keyscan -H "$STAGING_HOST" >> ~/.ssh/known_hosts
+
+          ssh-keygen -y -f ~/.ssh/staging_key > /dev/null || {
+            echo "ERROR: SSH private key is invalid"
+            exit 1
+          }
+
+          touch ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+          ssh-keyscan -T 10 -H "$STAGING_HOST" >> ~/.ssh/known_hosts 2>/dev/null || {
+            echo "ERROR: Unable to retrieve SSH host key. Check STAGING_HOST and network access."
+            exit 1
+          }
 
       - name: Upload build to staging
         env:
@@ -54,17 +78,39 @@ jobs:
           STAGING_USER: ${{ secrets.STAGING_USER }}
         run: |
           set -eu
-          test -f dist/index.html
+
+          test -n "$STAGING_HOST" || {
+            echo "ERROR: STAGING_HOST secret is empty or unavailable"
+            exit 1
+          }
+
+          test -n "$STAGING_USER" || {
+            echo "ERROR: STAGING_USER secret is empty or unavailable"
+            exit 1
+          }
+
+          test -f dist/index.html || {
+            echo "ERROR: dist/index.html not found"
+            exit 1
+          }
+
+          echo "Checking SSH connection..."
 
           ssh -i ~/.ssh/staging_key \
             -o IdentitiesOnly=yes \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
             "$STAGING_USER@$STAGING_HOST" \
             'mkdir -p /home/ubuntu/ecommerce/customer/dist-new'
 
+          echo "Uploading staging build..."
+
           rsync -az --delete \
-            -e "ssh -i ~/.ssh/staging_key -o IdentitiesOnly=yes" \
+            -e "ssh -i $HOME/.ssh/staging_key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes" \
             dist/ \
             "$STAGING_USER@$STAGING_HOST:/home/ubuntu/ecommerce/customer/dist-new/"
+
+          echo "Build uploaded successfully."
 
       - name: Deploy staging build
         env:
@@ -73,24 +119,47 @@ jobs:
         run: |
           set -eu
 
+          test -n "$STAGING_HOST" || {
+            echo "ERROR: STAGING_HOST secret is empty or unavailable"
+            exit 1
+          }
+
+          test -n "$STAGING_USER" || {
+            echo "ERROR: STAGING_USER secret is empty or unavailable"
+            exit 1
+          }
+
           ssh -i ~/.ssh/staging_key \
             -o IdentitiesOnly=yes \
-            "$STAGING_USER@$STAGING_HOST" '
-              set -eu
-              APP=/home/ubuntu/ecommerce/customer
-              test -f "$APP/dist-new/index.html"
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            "$STAGING_USER@$STAGING_HOST" 'bash -se' <<'REMOTE'
+          set -eu
 
-              BACKUP="$APP/dist-backup-$(date +%Y%m%d-%H%M%S)"
-              if [ -d "$APP/dist" ]; then
-                mv "$APP/dist" "$BACKUP"
-              fi
+          APP=/home/ubuntu/ecommerce/customer
+          NEW="$APP/dist-new"
+          BACKUP="$APP/dist-backup-$(date +%Y%m%d-%H%M%S)"
 
-              if mv "$APP/dist-new" "$APP/dist"; then
-                echo "Staging deployment successful"
-              else
-                if [ -d "$BACKUP" ]; then
-                  mv "$BACKUP" "$APP/dist"
-                fi
-                exit 1
-              fi
-            '
+          test -f "$NEW/index.html" || {
+            echo "ERROR: Uploaded build is missing index.html"
+            exit 1
+          }
+
+          if [ -d "$APP/dist" ]; then
+            mv "$APP/dist" "$BACKUP"
+          fi
+
+          if mv "$NEW" "$APP/dist"; then
+            echo "Staging deployment successful."
+            echo "Previous build backup: $BACKUP"
+          else
+            echo "ERROR: Deployment failed. Restoring previous build."
+
+            if [ -d "$BACKUP" ]; then
+              mv "$BACKUP" "$APP/dist"
+            fi
+
+            exit 1
+          fi
+          REMOTE
+```
