@@ -15,6 +15,8 @@ export default function VerifyRegistrationPage() {
     errors,
     isValid,
     loading,
+    verifying,
+    resending,
     error,
     submit,
     deliveryMessage,
@@ -70,7 +72,7 @@ export default function VerifyRegistrationPage() {
 
           <Button
             type="submit"
-            loading={loading}
+            loading={verifying}
             className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!isValid || loading}
           >
@@ -85,7 +87,7 @@ export default function VerifyRegistrationPage() {
               onClick={handleResendOtp}
               disabled={loading}
             >
-              Resend OTP
+              {resending ? "Sending OTP…" : "Resend OTP"}
             </button>
           </p>
         </form>

@@ -99,7 +99,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid items-start gap-3 sm:grid-cols-2">
         <FormField
           id="password"
           label="Password"

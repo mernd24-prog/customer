@@ -21,7 +21,10 @@ export default function useVerifyRegistration() {
   const location = useLocation();
   const [deliveryMessage, setDeliveryMessage] = useState(registrationOtpMessage());
   const run = useToastThunk();
-  const { loading, error } = useSelector((s) => s.auth);
+  const { error } = useSelector((s) => s.auth);
+  const [verifying, setVerifying] = useState(false);
+  const [resending, setResending] = useState(false);
+  const loading = verifying || resending;
 
   useEffect(() => {
     dispatch(clearError());
@@ -40,24 +43,39 @@ export default function useVerifyRegistration() {
   });
 
   const submit = async (values) => {
-    await run(
-      dispatch,
-      verifyRegistration({ email: values.email, otp: values.otp }),
-      "Account verified! Welcome.",
-    );
-    navigate(AUTH_ROUTES.home);
+    if (loading) return;
+    setVerifying(true);
+    try {
+      await run(
+        dispatch,
+        verifyRegistration({ email: values.email, otp: values.otp }),
+        "Account verified! Welcome.",
+      );
+      navigate(AUTH_ROUTES.home);
+    } catch {
+      // The thunk and toast expose the error; keep the form available for retry.
+    } finally {
+      setVerifying(false);
+    }
   };
 
   const handleResendOtp = async () => {
     const email = watch("email");
-    if (!email) return;
-    const result = await run(
-      dispatch,
-      resendOtp({ email, purpose: "registration" }),
-    );
-    const message = registrationOtpMessage(result);
-    setDeliveryMessage(message);
-    notify.success(message);
+    if (!email || loading) return;
+    setResending(true);
+    try {
+      const result = await run(
+        dispatch,
+        resendOtp({ email, purpose: "registration" }),
+      );
+      const message = registrationOtpMessage(result);
+      setDeliveryMessage(message);
+      notify.success(message);
+    } catch {
+      // Keep resend available after a rejected request.
+    } finally {
+      setResending(false);
+    }
   };
 
   return {
@@ -68,6 +86,8 @@ export default function useVerifyRegistration() {
     errors,
     isValid,
     loading,
+    verifying,
+    resending,
     error,
     submit,
     deliveryMessage,

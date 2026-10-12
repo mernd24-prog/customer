@@ -61,6 +61,7 @@ export function makeThunk(type, config) {
             ? config.cacheKey(arg)
             : config.cacheKey || arg?.cacheKey,
       });
+      if (config.onSuccess) await config.onSuccess(result);
       return { ...result, arg };
     } catch (error) {
       return rejectWithValue(error.message);

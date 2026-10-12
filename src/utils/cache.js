@@ -1,4 +1,43 @@
 const DEFAULT_TTL = 1000 * 60 * 10;
+const MAX_API_CACHE_CHARS = 500000;
+const MAX_API_CACHE_ENTRIES = 50;
+const isDisposableCacheKey = (key) =>
+  ["api:", "search-autocomplete-", "search-list-"].some((prefix) =>
+    key?.startsWith(prefix),
+  );
+
+function cacheEntries(storage) {
+  return Array.from({ length: storage.length }, (_, index) => storage.key(index))
+    .filter(isDisposableCacheKey)
+    .map((key) => ({ key, raw: storage.getItem(key) || "" }));
+}
+
+// Only API/search caches are disposable; preserve auth and shopping data.
+export function clearDisposableCache() {
+  const storage = getStorage();
+  if (!storage) return;
+  cacheEntries(storage).forEach(({ key }) => storage.removeItem(key));
+}
+
+function pruneCache(storage, incomingKey, incomingSize) {
+  let entries = cacheEntries(storage).filter(({ key, raw }) => {
+    try {
+      const payload = JSON.parse(raw);
+      if (key !== incomingKey && (!payload.expiresAt || payload.expiresAt >= now())) {
+        return true;
+      }
+    } catch {}
+    storage.removeItem(key);
+    return false;
+  });
+  let size = entries.reduce((total, entry) => total + entry.key.length + entry.raw.length, 0);
+  entries.sort((a, b) => (JSON.parse(a.raw).expiresAt || Infinity) - (JSON.parse(b.raw).expiresAt || Infinity));
+  while (entries.length && (entries.length >= MAX_API_CACHE_ENTRIES || size + incomingSize > MAX_API_CACHE_CHARS)) {
+    const entry = entries.shift();
+    storage.removeItem(entry.key);
+    size -= entry.key.length + entry.raw.length;
+  }
+}
 
 function now() {
   return Date.now();
@@ -14,10 +53,10 @@ export function createCacheKey(namespace, keyParts = []) {
   return [namespace, ...parts.map((part) => JSON.stringify(part))].join(":");
 }
 
-function isQuotaExceededError(error) {
+export function isQuotaExceededError(error) {
   if (!error) return false;
   return (
-    (error instanceof DOMException &&
+    (typeof DOMException !== "undefined" && error instanceof DOMException &&
       (error.name === "QuotaExceededError" ||
         error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
         error.name === "QuotaExceededError")) ||
@@ -40,11 +79,17 @@ export function setCache(key, value, options = {}) {
   };
 
   try {
-    storage.setItem(key, JSON.stringify(payload));
+    const serialized = JSON.stringify(payload);
+    if (isDisposableCacheKey(key)) {
+      const size = key.length + serialized.length;
+      pruneCache(storage, key, size);
+      if (size > MAX_API_CACHE_CHARS) return;
+    }
+    storage.setItem(key, serialized);
   } catch (error) {
     if (isQuotaExceededError(error)) {
       try {
-        storage.removeItem(key);
+        cacheEntries(storage).forEach(({ key: cacheKey }) => storage.removeItem(cacheKey));
         storage.setItem(key, JSON.stringify(payload));
       } catch (innerError) {
         // Swallow quota errors to avoid app crash when localStorage is full.

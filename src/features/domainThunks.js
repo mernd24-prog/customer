@@ -1,5 +1,15 @@
 import { FILE_UPLOAD_MODULES, endpoints } from "../api/endpoints";
 import { makeThunk } from "./createApiSlice";
+import { tokenStorage } from "../api/tokenStorage";
+
+const makeAuthThunk = (type, config) => makeThunk(type, {
+  ...config,
+  onSuccess: (result) => {
+    const session = result.data || {};
+    const tokens = session.tokens || session.session?.tokens || session;
+    if (tokens.accessToken || tokens.refreshToken) tokenStorage.setTokens(tokens);
+  },
+});
 
 const q = (arg) => arg?.params || arg;
 const body = (arg) => arg?.data || arg;
@@ -12,72 +22,72 @@ const profileImageFormData = ({ file }) => {
 };
 
 export const authThunks = {
-  registerUser: makeThunk("auth/registerUser", {
+  registerUser: makeAuthThunk("auth/registerUser", {
     method: "post",
     url: endpoints.auth.register,
     data: body,
   }),
-  registerUserWithOtp: makeThunk("auth/registerUserWithOtp", {
+  registerUserWithOtp: makeAuthThunk("auth/registerUserWithOtp", {
     method: "post",
     url: endpoints.auth.registerOtp,
     data: body,
   }),
-  verifyRegistration: makeThunk("auth/verifyRegistration", {
+  verifyRegistration: makeAuthThunk("auth/verifyRegistration", {
     method: "post",
     url: endpoints.auth.verifyRegistration,
     data: body,
   }),
-  loginUser: makeThunk("auth/loginUser", {
+  loginUser: makeAuthThunk("auth/loginUser", {
     method: "post",
     url: endpoints.auth.login,
     data: body,
   }),
-  socialLogin: makeThunk("auth/socialLogin", {
+  socialLogin: makeAuthThunk("auth/socialLogin", {
     method: "post",
     url: endpoints.auth.social,
     data: body,
   }),
-  refreshSession: makeThunk("auth/refreshSession", {
+  refreshSession: makeAuthThunk("auth/refreshSession", {
     method: "post",
     url: endpoints.auth.refresh, 
     data: body,
   }),
-  sendOtp: makeThunk("auth/sendOtp", {
+  sendOtp: makeAuthThunk("auth/sendOtp", {
     method: "post",
     url: endpoints.auth.sendOtp,
     data: body,
   }),
-  verifyOtp: makeThunk("auth/verifyOtp", {
+  verifyOtp: makeAuthThunk("auth/verifyOtp", {
     method: "post",
     url: endpoints.auth.verifyOtp,
     data: body,
   }),
-  resendOtp: makeThunk("auth/resendOtp", {
+  resendOtp: makeAuthThunk("auth/resendOtp", {
     method: "post",
     url: endpoints.auth.resendOtp,
     data: body,
   }),
-  otpAuth: makeThunk("auth/otpAuth", {
+  otpAuth: makeAuthThunk("auth/otpAuth", {
     method: "post",
     url: endpoints.auth.otpAuth,
     data: body,
   }),
-  forgotPassword: makeThunk("auth/forgotPassword", {
+  forgotPassword: makeAuthThunk("auth/forgotPassword", {
     method: "post",
     url: endpoints.auth.forgotPassword,
     data: body,
   }),
-  resetPassword: makeThunk("auth/resetPassword", {
+  resetPassword: makeAuthThunk("auth/resetPassword", {
     method: "post",
     url: endpoints.auth.resetPassword,
     data: body,
   }),
-  changePassword: makeThunk("auth/changePassword", {
+  changePassword: makeAuthThunk("auth/changePassword", {
     method: "post",
     url: endpoints.auth.changePassword,
     data: body,
   }),
-  checkAuthStatus: makeThunk("auth/checkAuthStatus", {
+  checkAuthStatus: makeAuthThunk("auth/checkAuthStatus", {
     url: endpoints.auth.status,
   }),
 };

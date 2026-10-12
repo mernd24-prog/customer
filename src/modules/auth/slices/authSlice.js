@@ -60,8 +60,6 @@ const authSlice = createSlice({
         })
         .addCase(thunk.fulfilled, (state, action) => {
           const session = action.payload.data || {};
-          const tokens = extractTokens(session);
-          if (tokens?.accessToken || tokens?.refreshToken) tokenStorage.setTokens(tokens);
           state.loading = false;
           state.meta = action.payload.meta;
           state.lastFetchedAt = Date.now();
