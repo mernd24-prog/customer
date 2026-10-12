@@ -1,0 +1,96 @@
+
+name: Deploy Customer Staging
+
+on:
+  push:
+    branches:
+      - development
+
+permissions:
+  contents: read
+
+concurrency:
+  group: customer-staging
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build staging application
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: https://staging.samglobal1.com
+          VITE_API_URL: https://staging.samglobal1.com
+          VITE_SITE_URL: https://staging.samglobal1.com
+
+      - name: Configure SSH
+        env:
+          STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+        run: |
+          set -eu
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$STAGING_SSH_KEY" > ~/.ssh/staging_key
+          chmod 600 ~/.ssh/staging_key
+          ssh-keyscan -H "$STAGING_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload build to staging
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+        run: |
+          set -eu
+          test -f dist/index.html
+
+          ssh -i ~/.ssh/staging_key \
+            -o IdentitiesOnly=yes \
+            "$STAGING_USER@$STAGING_HOST" \
+            'mkdir -p /home/ubuntu/ecommerce/customer/dist-new'
+
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/staging_key -o IdentitiesOnly=yes" \
+            dist/ \
+            "$STAGING_USER@$STAGING_HOST:/home/ubuntu/ecommerce/customer/dist-new/"
+
+      - name: Deploy staging build
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+        run: |
+          set -eu
+
+          ssh -i ~/.ssh/staging_key \
+            -o IdentitiesOnly=yes \
+            "$STAGING_USER@$STAGING_HOST" '
+              set -eu
+              APP=/home/ubuntu/ecommerce/customer
+              test -f "$APP/dist-new/index.html"
+
+              BACKUP="$APP/dist-backup-$(date +%Y%m%d-%H%M%S)"
+              if [ -d "$APP/dist" ]; then
+                mv "$APP/dist" "$BACKUP"
+              fi
+
+              if mv "$APP/dist-new" "$APP/dist"; then
+                echo "Staging deployment successful"
+              else
+                if [ -d "$BACKUP" ]; then
+                  mv "$BACKUP" "$APP/dist"
+                fi
+                exit 1
+              fi
+            '
