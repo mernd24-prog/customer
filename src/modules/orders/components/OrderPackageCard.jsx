@@ -1,35 +1,20 @@
 import { useMemo } from "react";
-import {
-  Truck,
-  Package,
-  ExternalLink,
-  Check,
-  X,
-  Download,
-  FileText,
-} from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
 import { OrderTimeline } from "./OrderTimeline";
 import { ReturnStatus } from "./ReturnStatus";
 import { OrderItemCard } from "./OrderItemCard";
-import { OrderItemReviewAction, ExistingReviewCard } from "./OrderItemReview";
-import { ShowMoreText } from "../../../utils/showMore";
+import { ExistingReviewCard } from "./OrderItemReview";
 import {
   getReviewProductId,
   reviewKeyForItem,
   getItemId,
   resolveReturnForItem,
-  label,
   getItemReturnPolicy,
   getReturnedQuantityForItem,
   getReturnableQuantityForItem,
-
 } from "../utils/orderItems";
-import {
-  STATUS_RANK,
-} from "../utils/orderTimelineUtils";
-import { capitalizeFirst } from "../../../utils/stringUtils";
-
+import { STATUS_RANK } from "../utils/orderTimelineUtils";
 export function OrderPackageCard({
   group,
   groupIndex,
@@ -99,48 +84,59 @@ export function OrderPackageCard({
 
     const currentRank = Math.max(
       0,
-      ...allStatuses.map((s) => STATUS_RANK[s] || 0),
+      ...allStatuses.map((status) => STATUS_RANK[status] || 0),
     );
     const isDelivered = currentRank >= 5;
 
-    const groupCancellation = cancellations.find((c) =>
-      c.items?.some((ci) =>
-        items.some((gi) => (gi.id || gi._id) === ci.orderItemId),
-      ),
-    );
-    const groupReturn = returns.find((r) =>
-      r.items?.some((ri) =>
+    const groupCancellation = cancellations.find((cancellation) =>
+      cancellation.items?.some((cancellationItem) =>
         items.some(
-          (gi) =>
-            (gi.id || gi._id) ===
-            (ri.orderItemId || ri.order_item_id || ri.itemId || ri.item_id),
+          (groupItem) =>
+            (groupItem.id || groupItem._id) === cancellationItem.orderItemId,
         ),
       ),
     );
+
+    const groupReturn = returns.find((returnItem) =>
+      returnItem.items?.some((returnRequestItem) =>
+        items.some(
+          (groupItem) =>
+            (groupItem.id || groupItem._id) ===
+            (returnRequestItem.orderItemId ||
+              returnRequestItem.order_item_id ||
+              returnRequestItem.itemId ||
+              returnRequestItem.item_id),
+        ),
+      ),
+    );
+    
+   
 
     const orderedGroupQuantity = items.reduce(
       (sum, item) => sum + Number(item?.quantity || 0),
       0,
     );
+
     const cancelledGroupQuantity = items.reduce(
       (sum, item) =>
         sum + Number(item?.cancelled_quantity || item?.cancelledQuantity || 0),
       0,
     );
+
     const isFullyCancelled =
       orderedGroupQuantity > 0 &&
       cancelledGroupQuantity >= orderedGroupQuantity;
 
     const hasCancellationEvent = items.some(
-      (gi) =>
-        gi?.cancellation_status ||
-        gi?.cancellationStatus ||
-        gi?.cancellation_lifecycle ||
-        gi?.timeline?.some(
-          (t) =>
-            t.source === "cancellation" ||
-            t.status?.includes("cancellation") ||
-            t.to_status?.includes("cancellation"),
+      (groupItem) =>
+        groupItem?.cancellation_status ||
+        groupItem?.cancellationStatus ||
+        groupItem?.cancellation_lifecycle ||
+        groupItem?.timeline?.some(
+          (timelineEvent) =>
+            timelineEvent.source === "cancellation" ||
+            timelineEvent.status?.includes("cancellation") ||
+            timelineEvent.to_status?.includes("cancellation"),
         ),
     );
 
@@ -157,43 +153,45 @@ export function OrderPackageCard({
         groupCancellation?.status === "approved" ||
         groupCancellation?.status === "completed" ||
         groupCancellation?.status === "cancellation_approved" ||
-        items.some((i) => i?.effective_status === "cancellation_approved")
+        items.some((item) => item?.effective_status === "cancellation_approved")
         ? "cancellation_approved"
         : groupCancellation?.status === "manual_review" ||
             groupCancellation?.status === "requested"
           ? "cancellation_requested"
           : groupCancellation?.status ||
-            items.find((i) => i?.cancellation_status)?.cancellation_status ||
+            items.find((item) => item?.cancellation_status)
+              ?.cancellation_status ||
             items
-              .flatMap((i) => i?.timeline || [])
+              .flatMap((item) => item?.timeline || [])
               .find(
-                (t) =>
-                  t.source === "cancellation" ||
-                  t.status?.includes("cancellation"),
+                (timelineEvent) =>
+                  timelineEvent.source === "cancellation" ||
+                  timelineEvent.status?.includes("cancellation"),
               )?.status ||
             "cancellation_approved"
       : group?.status || "confirmed";
 
-    const isPartiallyCancelled =
-      cancelledGroupQuantity > 0 && !isFullyCancelled;
     const returnedGroupQuantity = items.reduce(
       (sum, item) => sum + getReturnedQuantityForItem(returns, item),
       0,
     );
+
     const nonCancelledGroupQuantity = Math.max(
       orderedGroupQuantity - cancelledGroupQuantity,
       0,
     );
+
     const isFullyReturned =
       nonCancelledGroupQuantity > 0 &&
       returnedGroupQuantity >= nonCancelledGroupQuantity;
+
     const resolvedGroupReturn =
       groupReturn ||
       items
         .map(
-          (i) =>
-            group?.returnByItem?.get(getItemId(i)) ||
-            resolveReturnForItem(returns, i),
+          (item) =>
+            group?.returnByItem?.get(getItemId(item)) ||
+            resolveReturnForItem(returns, item),
         )
         .find(Boolean);
 
@@ -202,11 +200,12 @@ export function OrderPackageCard({
       group?.status === "returned" ||
       Boolean(group?.status?.includes("return")) ||
       items.some((item) => {
-        const returnReq =
+        const returnRequest =
           group?.returnByItem?.get(getItemId(item)) ||
           resolveReturnForItem(returns, item);
+
         return (
-          Boolean(returnReq) ||
+          Boolean(returnRequest) ||
           Boolean(item?.return_lifecycle) ||
           Boolean(item?.return_status)
         );
@@ -214,12 +213,13 @@ export function OrderPackageCard({
 
     const isReturned = hasReturnRequest || isFullyReturned;
 
-    const packageItemIds = items.map((i) => String(getItemId(i)));
+    const packageItemIds = items.map((item) => String(getItemId(item)));
 
     const packageDocuments = (itemProps.downloadableDocuments || []).filter(
-      (doc) => {
+      (document) => {
         const isTaxOrReceipt =
-          doc.type === "tax_invoice" || doc.type === "order_receipt";
+          document.type === "tax_invoice" || document.type === "order_receipt";
+
         if (isTaxOrReceipt && !isDelivered) {
           return false;
         }
@@ -227,42 +227,67 @@ export function OrderPackageCard({
         if (totalGroups === 1) {
           return true;
         }
-        if (doc.type === "platform_fee" || doc.type === "order_receipt") {
+
+        if (
+          document.type === "platform_fee" ||
+          document.type === "order_receipt"
+        ) {
           return false;
         }
-        if (doc.type === "tax_invoice") {
+
+        if (document.type === "tax_invoice") {
           if (!isDelivered) {
             return false;
           }
+
           const coveredItemIds = (
-            doc.invoice?.metadata?.items ||
-            doc.invoice?.metadata?.lineItems ||
+            document.invoice?.metadata?.items ||
+            document.invoice?.metadata?.lineItems ||
             []
-          ).map((i) =>
-            String(i.orderItemId || i.order_item_id || i.id || i._id),
+          ).map((invoiceItem) =>
+            String(
+              invoiceItem.orderItemId ||
+                invoiceItem.order_item_id ||
+                invoiceItem.id ||
+                invoiceItem._id,
+            ),
           );
+
           if (coveredItemIds.length > 0) {
             return packageItemIds.some((id) => coveredItemIds.includes(id));
-          } else {
-            const docSellerName =
-              doc.invoice?.sellerName ||
-              doc.invoice?.metadata?.seller?.businessName ||
-              doc.invoice?.metadata?.seller?.displayName;
-            return docSellerName === group?.sellerName;
           }
+
+          const docSellerName =
+            document.invoice?.sellerName ||
+            document.invoice?.metadata?.seller?.businessName ||
+            document.invoice?.metadata?.seller?.displayName;
+
+          return docSellerName === group?.sellerName;
         }
-        if (doc.type === "return_reverse") {
-          const returnItemIds = (doc.returnRequest?.items || []).map((i) =>
-            String(i.orderItemId || i.order_item_id || i.itemId || i.item_id),
+
+        if (document.type === "return_reverse") {
+          const returnItemIds = (document.returnRequest?.items || []).map(
+            (returnRequestItem) =>
+              String(
+                returnRequestItem.orderItemId ||
+                  returnRequestItem.order_item_id ||
+                  returnRequestItem.itemId ||
+                  returnRequestItem.item_id,
+              ),
           );
+
           return packageItemIds.some((id) => returnItemIds.includes(id));
         }
-        if (doc.type === "cancellation_reverse") {
-          const cancelItemIds = (doc.cancellation?.items || []).map((i) =>
-            String(i.orderItemId || i.order_item_id),
+
+        if (document.type === "cancellation_reverse") {
+          const cancelItemIds = (document.cancellation?.items || []).map(
+            (cancelItem) =>
+              String(cancelItem.orderItemId || cancelItem.order_item_id),
           );
+
           return packageItemIds.some((id) => cancelItemIds.includes(id));
         }
+
         return false;
       },
     );
@@ -304,50 +329,61 @@ export function OrderPackageCard({
   return (
     <div
       key={group.key}
-      className="flex flex-col rounded-lg border border-[#E7D9B8] bg-[#FFFDF8] w-full min-w-0 overflow-hidden"
+      className="flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-[#E7D9B8] bg-[#FFFDF8]"
     >
-      <div className="flex flex-col gap-3 p-4 sm:p-5 min-w-0 w-full">
-        {/* <div className="flex items-center justify-end">
-          <span
-            className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-              resolvedCancellationStatus === "cancellation_approved"
-                ? "bg-[#bae0c5] text-[#0D652D]"
-                : isCancelled ||
-                    group.status === "cancelled" ||
-                    group.status === "cancellation_requested"
-                  ? "bg-[#e1b8b8] text-[#991B1B]"
-                  : isReturned || group.status === "returned"
-                    ? "bg-[#e1cfa4] text-[#7e735a]"
-                    : group.status === "delivered" ||
-                        group.status === "fulfilled"
-                      ? "bg-[#bdeaca] text-[#0D652D]"
-                      : "bg-[#F0F1FF] text-[#201B78]"
-            }`}
-          >
-            {label(resolvedCancellationStatus)}
-          </span>
-        </div> */}
-       
+      <div className="flex w-full min-w-0 flex-col gap-3 p-4 sm:p-5">
         <div className="grid gap-4">
           {group.items.map((item, index) => {
-            const policy = getItemReturnPolicy(item);
             const itemId = getItemId(item);
             const fulfillment = itemFulfillment.get(itemId) || {};
+
             const returnRequest =
               group.returnByItem.get(itemId) ||
               resolveReturnForItem(returns, item);
+
             const returnedQuantity = getReturnedQuantityForItem(returns, item);
+
+            const policy = getItemReturnPolicy(item);
             const returnableQuantity = getReturnableQuantityForItem(
               returns,
               item,
             );
 
+            const reviewKey = reviewKeyForItem(orderId, item);
+            const reviewEntry = reviewByItem?.[reviewKey];
+
+            const existingReview =
+              reviewEntry?.review ||
+              reviewEntry?.data?.review ||
+              reviewEntry?.data ||
+              reviewEntry;
+
+            const hasExistingReview = Boolean(
+              existingReview &&
+              typeof existingReview === "object" &&
+              !existingReview.alreadyReviewed,
+            );
+
+            const canShowExistingReview =
+              Boolean(fulfillment.delivered) &&
+              returnedQuantity === 0 &&
+              Boolean(getReviewProductId(item)) &&
+              hasExistingReview;
+
             return (
-              <div key={item.id || item._id || index} className="grid gap-3">
+              <div
+                key={item.id || item._id || index}
+                className="grid min-w-0 gap-3"
+              >
                 <OrderItemCard
                   item={item}
                   {...itemProps}
                   compact={true}
+                  shipment={shipment}
+                  isCancelled={isCancelled}
+                  isReturned={Boolean(returnRequest) || isReturned}
+                  cancellationDetails={groupCancellation}
+                  returnDetails={returnRequest || resolvedGroupReturn}
                   expectedDeliveryAt={
                     group.expectedDeliveryAt ||
                     shipment.expected_delivery_at ||
@@ -359,98 +395,38 @@ export function OrderPackageCard({
                   returnedQuantity={returnedQuantity}
                   delivered={Boolean(fulfillment.delivered)}
                   effectiveStatus={fulfillment.status}
+                  orderId={orderId}
+                  reviewByItem={reviewByItem}
+                  checkedReviewKeys={checkedReviewKeys}
+                  onReviewClick={setReviewTarget}
                 />
 
-                   <div>
-                    {shipment.tracking_url && (
-          <div className="flex justify-start mb-4">
-            <a
-              href={shipment.tracking_url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#1B1D60] hover:underline"
-            >
-              <span>Track on courier site</span>
-              <ExternalLink size={16} className="shrink-0" />
-            </a>
-          </div>
-        )}
-          <OrderTimeline
-            isCancelled={isCancelled}
-            isReturned={isReturned}
-            groupCancellation={groupCancellation}
-            resolvedGroupReturn={resolvedGroupReturn}
-            group={group}
-            events={events}
-            currentRank={currentRank}
-            shipment={shipment}
-            expectedDelivery={expectedDelivery}
-            {...itemProps}
-          />
-          
-        </div>
+                <div className="min-w-0 rounded-lg border border-[#E7D9B8] bg-[#FAF6EE] p-3 sm:p-4 md:p-5">
+                  <OrderTimeline
+                    isCancelled={isCancelled}
+                    isReturned={isReturned}
+                    groupCancellation={groupCancellation}
+                    resolvedGroupReturn={resolvedGroupReturn}
+                    group={group}
+                    events={events}
+                    currentRank={currentRank}
+                    shipment={shipment}
+                    expectedDelivery={expectedDelivery}
+                    {...itemProps}
+                  />
+                </div>
 
-                {fulfillment.delivered &&
-                  returnedQuantity === 0 &&
-                  Boolean(getReviewProductId(item)) &&
-                  !reviewByItem[reviewKeyForItem(orderId, item)] && (
-                    <div className="flex flex-wrap items-center justify-end gap-4 w-full">
-                      <OrderItemReviewAction
-                        item={item}
-                        orderId={orderId}
-                        canReview
-                        existingReview={null}
-                        reviewChecked={Boolean(
-                          checkedReviewKeys[reviewKeyForItem(orderId, item)],
-                        )}
-                        onReviewClick={setReviewTarget}
-                      />
-                    </div>
-                  )}
-                {fulfillment.delivered &&
-                  returnedQuantity === 0 &&
-                  Boolean(getReviewProductId(item)) &&
-                  reviewByItem[reviewKeyForItem(orderId, item)] && (
-                    <div className="w-full">
-                      <ExistingReviewCard
-                        review={reviewByItem[reviewKeyForItem(orderId, item)]}
-                      />
-                    </div>
-                  )}
+                {canShowExistingReview && (
+                  <div className="min-w-0">
+                    <ExistingReviewCard review={existingReview} />
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
-          
-        {/* Courier Info */}
-        {!isCancelled && (
-          <div className="mt-2">
-            <div className="grid grid-cols-2 items-center gap-4 sm:gap-6 rounded-lg bg-white p-3 border border-[#E7D9B8]">
-              <div className="flex items-center gap-3">
-                <Truck size={20} className="text-[#6F7480] shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-xs text-[#6F7480]">Courier</p>
-                  <p className="text-sm font-semibold text-[#1B1D60] truncate">
-                    {capitalizeFirst(shipment.courier_name || "Seller Delivery")}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Package size={20} className="text-[#6F7480] shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-xs text-[#6F7480]">Tracking ID</p>
-                  <p className="text-sm font-semibold text-[#1B1D60] truncate">
-                    {shipment.tracking_number ||
-                      shipment.awb_number ||
-                      "Will be added after dispatch"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        <ReturnStatus
+        {/* <ReturnStatus
           isCancelled={isCancelled}
           isReturned={isReturned}
           groupCancellation={groupCancellation}
@@ -458,115 +434,48 @@ export function OrderPackageCard({
           group={group}
           formatMoney={itemProps.formatMoney}
           currency={itemProps.currency}
-        />
+        /> */}
       </div>
 
-
-      <div className=" sm:p-5 ">
-        
-
-        
-
-        {hasPackageReview &&
-          (itemProps.invoicesLoading || packageDocuments.length > 0) && (
-            <div className=" flex flex-col gap-3">
-              <h4 className="font-bold text-[#1B1D60] flex items-center gap-2 text-sm">
-                <FileText size={16} className="text-[#3E4093]" /> Package
-                Documents
-              </h4>
-              <div className="flex flex-col gap-2">
-                {itemProps.invoicesLoading
-                  ? [1, 2].map((i) => (
-                      <div
-                        key={`skeleton-${i}`}
-                        className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
-                      >
-                        <div className="min-w-0 flex items-center gap-1.5">
-                          <div className="w-4 h-4 rounded bg-[#E7D9B8] shrink-0" />
-                          <div className="h-4 bg-[#E7D9B8] rounded w-24" />
-                        </div>
-                        <div className="h-7 w-20 bg-[#E7D9B8] rounded shrink-0" />
-                      </div>
-                    ))
-                  : packageDocuments.map((document) => (
-                      <div
-                        key={`${document.title}-${document.id}`}
-                        className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80]"
-                      >
-                        <div className="min-w-0 flex items-center gap-1.5">
-                          <FileText
-                            size={15}
-                            className="text-[#3E4093] shrink-0"
-                          />
-                          <span className="font-semibold text-[13px] text-[#2E2E2E] truncate">
-                            {document.title}
-                          </span>
-                        </div>
-                        {document.pending ? (
-                          <span className="rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D] shrink-0">
-                            Pending
-                          </span>
-                        ) : (
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            loading={
-                              itemProps.downloadingId === document.downloadPath
-                            }
-                            onClick={() =>
-                              itemProps.handleDownload(
-                                document.downloadPath,
-                                document.filename,
-                              )
-                            }
-                            className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
-                          >
-                            <Download size={12} /> Download
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-              </div>
-            </div>
-          )}
-      </div>
-
-      {!hasPackageReview &&
+      {hasPackageReview &&
         (itemProps.invoicesLoading || packageDocuments.length > 0) && (
-          <div className="col-span-full border-t border-[#E7D9B8] p-3 sm:p-4 bg-[#FFFDF8] rounded-b-xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 w-full">
+          <div className="flex flex-col gap-3 p-3 sm:p-4">
+            <h4 className="flex items-center gap-2 text-sm font-bold text-[#1B1D60]">
+              <FileText size={16} className="text-[#3E4093]" />
+              Package Documents
+            </h4>
+
+            <div className="flex flex-col gap-2">
               {itemProps.invoicesLoading
                 ? [1, 2].map((i) => (
                     <div
                       key={`skeleton-${i}`}
                       className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
                     >
-                      <div className="min-w-0 flex items-center gap-2 flex-1">
-                        <div className="w-4 h-4 rounded bg-[#E7D9B8] shrink-0" />
-                        <div className="h-4 bg-[#E7D9B8] rounded w-24" />
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <div className="h-4 w-4 shrink-0 rounded bg-[#E7D9B8]" />
+                        <div className="h-4 w-24 rounded bg-[#E7D9B8]" />
                       </div>
-                      <div className="h-7 w-20 bg-[#E7D9B8] rounded shrink-0" />
+                      <div className="h-7 w-20 shrink-0 rounded bg-[#E7D9B8]" />
                     </div>
                   ))
                 : packageDocuments.map((document) => (
                     <div
                       key={`${document.title}-${document.id}`}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-all hover:border-[#CE9F2D80]"
+                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-colors hover:border-[#CE9F2D80]"
                     >
-                      <div className="min-w-0 flex items-center gap-2 flex-1">
+                      <div className="flex min-w-0 items-center gap-1.5">
                         <FileText
                           size={15}
-                          className="text-[#3E4093] shrink-0"
+                          className="shrink-0 text-[#3E4093]"
                         />
-                        <span
-                          title={document.title}
-                          className="font-semibold text-[13px] text-[#2E2E2E] truncate"
-                        >
+                        <span className="truncate text-[13px] font-semibold text-[#2E2E2E]">
                           {document.title}
                         </span>
                       </div>
+
                       {document.pending ? (
-                        <span className="rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D] shrink-0">
+                        <span className="shrink-0 rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D]">
                           Pending
                         </span>
                       ) : (
@@ -582,9 +491,74 @@ export function OrderPackageCard({
                               document.filename,
                             )
                           }
-                          className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0 gap-1.5"
+                          className="h-7 shrink-0 border-[#CE9F2D] px-3 text-xs font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
                         >
-                          <Download size={12} /> Download
+                          <Download size={12} />
+                          Download
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+            </div>
+          </div>
+        )}
+
+      {!hasPackageReview &&
+        (itemProps.invoicesLoading || packageDocuments.length > 0) && (
+          <div className="col-span-full rounded-b-xl border-t border-[#E7D9B8] bg-[#FFFDF8] p-3 sm:p-4">
+            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {itemProps.invoicesLoading
+                ? [1, 2].map((i) => (
+                    <div
+                      key={`skeleton-${i}`}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
+                    >
+                      <div className="flex min-w-0 flex-1 items-center gap-2">
+                        <div className="h-4 w-4 shrink-0 rounded bg-[#E7D9B8]" />
+                        <div className="h-4 w-24 rounded bg-[#E7D9B8]" />
+                      </div>
+                      <div className="h-7 w-20 shrink-0 rounded bg-[#E7D9B8]" />
+                    </div>
+                  ))
+                : packageDocuments.map((document) => (
+                    <div
+                      key={`${document.title}-${document.id}`}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-colors hover:border-[#CE9F2D80]"
+                    >
+                      <div className="flex min-w-0 flex-1 items-center gap-2">
+                        <FileText
+                          size={15}
+                          className="shrink-0 text-[#3E4093]"
+                        />
+                        <span
+                          title={document.title}
+                          className="truncate text-[13px] font-semibold text-[#2E2E2E]"
+                        >
+                          {document.title}
+                        </span>
+                      </div>
+
+                      {document.pending ? (
+                        <span className="shrink-0 rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D]">
+                          Pending
+                        </span>
+                      ) : (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          loading={
+                            itemProps.downloadingId === document.downloadPath
+                          }
+                          onClick={() =>
+                            itemProps.handleDownload(
+                              document.downloadPath,
+                              document.filename,
+                            )
+                          }
+                          className="h-7 shrink-0 gap-1.5 border-[#CE9F2D] px-3 text-xs font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
+                        >
+                          <Download size={12} />
+                          Download
                         </Button>
                       )}
                     </div>

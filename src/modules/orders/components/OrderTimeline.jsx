@@ -1,4 +1,3 @@
-
 import { Check, X } from "lucide-react";
 import { useMemo } from "react";
 
@@ -62,7 +61,7 @@ export function OrderTimeline({
   // Cancelled and returned order timeline
   if (stepsToRender) {
     return (
-      <div className="md:flex md:items-start">
+      <div className="flex min-w-0 flex-col md:flex-row md:items-start md:justify-center">
         {stepsToRender.map((step, stepIndex) => {
           const isCompleted = step.completed;
           const isCancelledStep =
@@ -91,15 +90,15 @@ export function OrderTimeline({
           return (
             <div
               key={step.status}
-              className="relative min-w-0 pb-6 pl-7 last:pb-0 md:flex-1 md:pb-0 md:pl-0 md:pt-7"
+              className="relative min-w-0 pb-6 pl-7 last:pb-0 md:flex-1 md:pb-0 md:pl-0 md:pt-7 md:text-center"
             >
               {!isLast && (
-                <span className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] bg-[#E0E0E0] md:bottom-auto md:left-[8px] md:right-0 md:top-[7px] md:h-[2px] md:w-auto" />
+                <span className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] bg-[#E0E0E0] md:bottom-auto md:left-1/2 md:right-[-50%] md:top-[7px] md:h-[2px] md:w-auto" />
               )}
 
               {!isLast && isCompleted && isNextStepCompleted && (
                 <span
-                  className={`absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] origin-top animate-timeline-line md:bottom-auto md:left-[8px] md:right-0 md:top-[7px] md:h-[2px] md:w-auto md:origin-left ${lineColor}`}
+                  className={`absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] origin-top animate-timeline-line md:bottom-auto md:left-1/2 md:right-[-50%] md:top-[7px] md:h-[2px] md:w-auto md:origin-left ${lineColor}`}
                   style={{ animationDelay: lineDelay }}
                 />
               )}
@@ -114,7 +113,7 @@ export function OrderTimeline({
                     isLast || !isNextStepCompleted
                       ? "animate-timeline-pulse"
                       : ""
-                  } md:left-0 md:top-0`}
+                  } md:left-1/2 md:top-0 md:-translate-x-1/2`}
                   style={{ animationDelay: ballDelay }}
                 >
                   {isCancelledStep ? (
@@ -124,14 +123,14 @@ export function OrderTimeline({
                   )}
                 </span>
               ) : (
-                <span className="absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full border border-[#D7D7D7] bg-[#F5F5F5] md:left-0 md:top-0">
+                <span className="absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full border border-[#D7D7D7] bg-[#F5F5F5] md:left-1/2 md:top-0 md:-translate-x-1/2">
                   <Check className="h-2.5 w-2.5 stroke-[2] text-[#B0B0B0]" />
                 </span>
               )}
 
-              <div className="min-w-0 md:pr-3">
+              <div className="min-w-0 md:px-2">
                 <p
-                  className={`text-sm font-semibold ${
+                  className={`text-sm font-semibold md:text-center ${
                     isCompleted
                       ? isCancelledStep
                         ? "text-[#E53935]"
@@ -160,7 +159,7 @@ export function OrderTimeline({
                 )}
 
                 {isCompleted && displayTime && (
-                  <p className="mt-1 text-xs font-medium text-[#6F7480]">
+                  <p className="mt-1 text-xs font-medium text-[#6F7480] md:text-center">
                     {displayTime}
                   </p>
                 )}
@@ -174,7 +173,7 @@ export function OrderTimeline({
 
   // Regular order tracking timeline
   return (
-    <div className="md:flex md:items-start">
+    <div className="flex min-w-0 flex-col md:flex-row md:items-start md:justify-center">
       {TIMELINE_STEPS.map((step, stepIndex) => {
         const stepRank = STATUS_RANK[step.status];
         const isCompleted = currentRank >= stepRank;
@@ -244,15 +243,15 @@ export function OrderTimeline({
         return (
           <div
             key={step.status}
-            className="relative min-w-0 pb-6 pl-7 last:pb-0 md:flex-1 md:pb-0 md:pl-0 md:pt-7"
+            className="relative min-w-0 pb-6 pl-7 last:pb-0 md:flex-1 md:pb-0 md:pl-0 md:pt-7 md:text-center"
           >
             {!isLast && (
-              <span className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] bg-[#E0E0E0] md:bottom-auto md:left-[8px] md:right-0 md:top-[7px] md:h-[2px] md:w-auto" />
+              <span className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] bg-[#E0E0E0] md:bottom-auto md:left-1/2 md:right-[-50%] md:top-[7px] md:h-[2px] md:w-auto" />
             )}
 
             {!isLast && isCompleted && isNextStepCompleted && (
               <span
-                className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] origin-top animate-timeline-line bg-[#26A541] md:bottom-auto md:left-[8px] md:right-0 md:top-[7px] md:h-[2px] md:w-auto md:origin-left"
+                className="absolute left-[7px] top-[10px] bottom-[-14px] z-0 w-[2px] origin-top animate-timeline-line bg-[#26A541] md:bottom-auto md:left-1/2 md:right-[-50%] md:top-[7px] md:h-[2px] md:w-auto md:origin-left"
                 style={{ animationDelay: lineDelay }}
               />
             )}
@@ -261,26 +260,27 @@ export function OrderTimeline({
               <span
                 className={`absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full animate-ball-fill-green ${
                   isCurrentActive ? "animate-timeline-pulse" : ""
-                } md:left-0 md:top-0`}
+                } md:left-1/2 md:top-0 md:-translate-x-1/2`}
                 style={{ animationDelay: ballDelay }}
               >
                 <Check className="h-2.5 w-2.5 stroke-[3] text-current" />
               </span>
             ) : (
-              <span className="absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full border border-[#D7D7D7] bg-[#F5F5F5] md:left-0 md:top-0">
+              <span className="absolute left-0 top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full border border-[#D7D7D7] bg-[#F5F5F5] md:left-1/2 md:top-0 md:-translate-x-1/2">
                 <Check className="h-2.5 w-2.5 stroke-[2] text-[#B0B0B0]" />
               </span>
             )}
 
-            <div className="min-w-0 md:pr-3">
+            <div className="min-w-0 md:px-2">
               <p
-                className={`text-sm font-semibold ${
+                className={`text-sm font-semibold md:text-center ${
                   isCompleted ? "text-[#2E2E2E]" : "text-[#6F7480]"
                 }`}
               >
                 {step.label}
               </p>
-{/* 
+
+              {/*
               {matchingEvent?.note ? (
                 <ShowMoreText
                   text={
@@ -332,11 +332,11 @@ export function OrderTimeline({
               ) : null} */}
 
               {isCompleted ? (
-                <p className="mt-1 text-xs font-medium text-[#1B1D60]">
+                <p className="mt-1 text-xs font-medium text-[#1B1D60] md:text-center">
                   {displayTime || dateTime(fallbackTime)}
                 </p>
               ) : showExpected ? (
-                <p className="mt-1 text-xs font-medium text-[#1B1D60]">
+                <p className="mt-1 text-xs font-medium text-[#1B1D60] md:text-center">
                   Expected by {expectedDelivery}
                 </p>
               ) : null}
