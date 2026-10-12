@@ -1,4 +1,3 @@
-```yaml
 name: Deploy Customer Staging
 
 on:
@@ -162,4 +161,3 @@ jobs:
             exit 1
           fi
           REMOTE
-```
