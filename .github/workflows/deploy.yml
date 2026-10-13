@@ -15,6 +15,7 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -36,6 +37,12 @@ jobs:
           VITE_API_URL: https://staging.samglobal1.com
           VITE_SITE_URL: https://staging.samglobal1.com
 
+      - name: Validate build
+        run: |
+          set -eu
+          test -s dist/index.html
+          echo "Build validation successful."
+
       - name: Configure SSH
         env:
           STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
@@ -44,30 +51,26 @@ jobs:
           set -eu
 
           test -n "$STAGING_SSH_KEY" || {
-            echo "ERROR: STAGING_SSH_KEY secret is empty or unavailable"
+            echo "ERROR: STAGING_SSH_KEY secret is missing."
             exit 1
           }
 
           test -n "$STAGING_HOST" || {
-            echo "ERROR: STAGING_HOST secret is empty or unavailable"
+            echo "ERROR: STAGING_HOST secret is missing."
             exit 1
           }
 
           install -m 700 -d ~/.ssh
-
           printf '%s\n' "$STAGING_SSH_KEY" > ~/.ssh/staging_key
           chmod 600 ~/.ssh/staging_key
 
-          ssh-keygen -y -f ~/.ssh/staging_key > /dev/null || {
-            echo "ERROR: SSH private key is invalid"
-            exit 1
-          }
+          ssh-keygen -y -f ~/.ssh/staging_key > /dev/null
 
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
           ssh-keyscan -T 10 -H "$STAGING_HOST" >> ~/.ssh/known_hosts 2>/dev/null || {
-            echo "ERROR: Unable to retrieve SSH host key. Check STAGING_HOST and network access."
+            echo "ERROR: Could not retrieve SSH host key."
             exit 1
           }
 
@@ -75,87 +78,91 @@ jobs:
         env:
           STAGING_HOST: ${{ secrets.STAGING_HOST }}
           STAGING_USER: ${{ secrets.STAGING_USER }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           set -eu
 
-          test -n "$STAGING_HOST" || {
-            echo "ERROR: STAGING_HOST secret is empty or unavailable"
-            exit 1
-          }
+          test -n "$STAGING_HOST"
+          test -n "$STAGING_USER"
 
-          test -n "$STAGING_USER" || {
-            echo "ERROR: STAGING_USER secret is empty or unavailable"
-            exit 1
-          }
+          RELEASE="/home/ubuntu/ecommerce/customer/releases/$GITHUB_SHA"
 
-          test -f dist/index.html || {
-            echo "ERROR: dist/index.html not found"
-            exit 1
-          }
+          SSH="ssh -i $HOME/.ssh/staging_key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes"
 
-          echo "Checking SSH connection..."
+          "$SSH" "$STAGING_USER@$STAGING_HOST" \
+            "set -eu; test \"\$(hostname)\" = 'samglobal'; mkdir -p '$RELEASE'"
+
+          rsync -az --delete \
+            -e "ssh -i $HOME/.ssh/staging_key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes" \
+            dist/ \
+            "$STAGING_USER@$STAGING_HOST:$RELEASE/"
+
+          echo "Build uploaded to release directory."
+
+      - name: Deploy and verify staging
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set -eu
 
           ssh -i ~/.ssh/staging_key \
             -o IdentitiesOnly=yes \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
             "$STAGING_USER@$STAGING_HOST" \
-            'mkdir -p /home/ubuntu/ecommerce/customer/dist-new'
-
-          echo "Uploading staging build..."
-
-          rsync -az --delete \
-            -e "ssh -i $HOME/.ssh/staging_key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes" \
-            dist/ \
-            "$STAGING_USER@$STAGING_HOST:/home/ubuntu/ecommerce/customer/dist-new/"
-
-          echo "Build uploaded successfully."
-
-      - name: Deploy staging build
-        env:
-          STAGING_HOST: ${{ secrets.STAGING_HOST }}
-          STAGING_USER: ${{ secrets.STAGING_USER }}
-        run: |
-          set -eu
-
-          test -n "$STAGING_HOST" || {
-            echo "ERROR: STAGING_HOST secret is empty or unavailable"
-            exit 1
-          }
-
-          test -n "$STAGING_USER" || {
-            echo "ERROR: STAGING_USER secret is empty or unavailable"
-            exit 1
-          }
-
-          ssh -i ~/.ssh/staging_key \
-            -o IdentitiesOnly=yes \
-            -o BatchMode=yes \
-            -o StrictHostKeyChecking=yes \
-            "$STAGING_USER@$STAGING_HOST" 'bash -se' <<'REMOTE'
+            "GITHUB_SHA='$GITHUB_SHA' bash -se" <<'REMOTE'
           set -eu
 
           APP=/home/ubuntu/ecommerce/customer
-          NEW="$APP/dist-new"
-          BACKUP="$APP/dist-backup-$(date +%Y%m%d-%H%M%S)"
+          RELEASE="$APP/releases/$GITHUB_SHA"
+          BACKUP="$APP/dist-backup-$GITHUB_SHA"
+          FAILED="$APP/dist-failed-$GITHUB_SHA"
 
-          test -f "$NEW/index.html" || {
-            echo "ERROR: Uploaded build is missing index.html"
+          test -f "$RELEASE/index.html" || {
+            echo "ERROR: Uploaded release has no index.html."
             exit 1
           }
 
-          if [ -d "$APP/dist" ]; then
-            mv "$APP/dist" "$BACKUP"
+          test ! -e "$BACKUP" || {
+            echo "ERROR: Backup path already exists."
+            exit 1
+          }
+
+          test ! -e "$FAILED" || {
+            echo "ERROR: Failed-release path already exists."
+            exit 1
+          }
+
+          test -d "$APP/dist" || {
+            echo "ERROR: Current staging dist directory is missing."
+            exit 1
+          }
+
+          mv "$APP/dist" "$BACKUP"
+
+          if ! mv "$RELEASE" "$APP/dist"; then
+            mv "$BACKUP" "$APP/dist"
+            echo "ERROR: Deploy failed; previous build restored."
+            exit 1
           fi
 
-          if mv "$NEW" "$APP/dist"; then
-            echo "Staging deployment successful."
+          if curl -fsS --max-time 20 \
+            https://staging.samglobal1.com/ -o /dev/null; then
+            echo "Staging deployment and HTTP health check successful."
             echo "Previous build backup: $BACKUP"
           else
-            echo "ERROR: Deployment failed. Restoring previous build."
+            echo "ERROR: Health check failed; rolling back."
 
-            if [ -d "$BACKUP" ]; then
-              mv "$BACKUP" "$APP/dist"
+            mv "$APP/dist" "$FAILED"
+            mv "$BACKUP" "$APP/dist"
+
+            if curl -fsS --max-time 20 \
+              https://staging.samglobal1.com/ -o /dev/null; then
+              echo "Rollback successful; previous staging build is serving."
+            else
+              echo "ERROR: Rollback completed but health check still fails."
             fi
 
             exit 1
