@@ -1,8 +1,8 @@
+
 import { useMemo } from "react";
-import { Download, FileText } from "lucide-react";
-import Button from "../../../components/ui/buttons/Button";
+import OrderActions from "./OrderActions";
+import OrderDocuments from "./OrderDocuments";
 import { OrderTimeline } from "./OrderTimeline";
-import { ReturnStatus } from "./ReturnStatus";
 import { OrderItemCard } from "./OrderItemCard";
 import { ExistingReviewCard } from "./OrderItemReview";
 import {
@@ -10,11 +10,10 @@ import {
   reviewKeyForItem,
   getItemId,
   resolveReturnForItem,
-  getItemReturnPolicy,
   getReturnedQuantityForItem,
-  getReturnableQuantityForItem,
 } from "../utils/orderItems";
 import { STATUS_RANK } from "../utils/orderTimelineUtils";
+
 export function OrderPackageCard({
   group,
   groupIndex,
@@ -28,6 +27,17 @@ export function OrderPackageCard({
   orderStatus,
   returns = [],
   cancellations = [],
+  order,
+  status,
+  canCancelOrder,
+  retrying,
+  handleRetryPayment,
+  openCancellation,
+  hasCancellableQuantity,
+  canRequestReturn,
+  selectedItemCanReturn,
+  selectedOrderItem,
+  getOrderItemId,
   ...itemProps
 }) {
   const {
@@ -36,20 +46,18 @@ export function OrderPackageCard({
     events,
     currentRank,
     isDelivered,
-    resolvedCancellationStatus,
     isCancelled,
-    isReturned,
     resolvedGroupReturn,
     groupCancellation,
-    groupReturn,
     packageDocuments,
-    hasPackageReview,
   } = useMemo(() => {
     const shipment = group?.shipments?.[0] || {};
     const expectedDelivery = group?.expectedDeliveryAt;
     const items = group?.items || [];
 
-    const groupItemTimelineEvents = items.flatMap((i) => i?.timeline || []);
+    const groupItemTimelineEvents = items.flatMap(
+      (item) => item?.timeline || [],
+    );
     const parentTimelineEvents =
       itemProps.orderTimeline || itemProps.timeline || [];
     const shipmentEvents = shipment.trackingEvents || [];
@@ -67,50 +75,55 @@ export function OrderPackageCard({
     const allStatuses = [
       group?.status,
       shipment.status,
-      ...items.flatMap((i) => [
-        i?.status,
-        i?.effective_status,
-        i?.delivery_status,
-        i?.deliveryStatus,
-        i?.cancellation_status,
+      ...items.flatMap((item) => [
+        item?.status,
+        item?.effective_status,
+        item?.delivery_status,
+        item?.deliveryStatus,
+        item?.cancellation_status,
       ]),
-      ...events.flatMap((e) => [
-        e?.status,
-        e?.to_status,
-        e?.toStatus,
-        e?.reason,
+      ...events.flatMap((event) => [
+        event?.status,
+        event?.to_status,
+        event?.toStatus,
+        event?.reason,
       ]),
     ].filter(Boolean);
 
     const currentRank = Math.max(
       0,
-      ...allStatuses.map((status) => STATUS_RANK[status] || 0),
+      ...allStatuses.map((itemStatus) => STATUS_RANK[itemStatus] || 0),
     );
+
     const isDelivered = currentRank >= 5;
 
     const groupCancellation = cancellations.find((cancellation) =>
       cancellation.items?.some((cancellationItem) =>
         items.some(
           (groupItem) =>
-            (groupItem.id || groupItem._id) === cancellationItem.orderItemId,
+            String(groupItem.id || groupItem._id) ===
+            String(
+              cancellationItem.orderItemId ||
+                cancellationItem.order_item_id,
+            ),
         ),
       ),
     );
 
-    const groupReturn = returns.find((returnItem) =>
-      returnItem.items?.some((returnRequestItem) =>
+    const groupReturn = returns.find((returnRequest) =>
+      returnRequest.items?.some((returnRequestItem) =>
         items.some(
           (groupItem) =>
-            (groupItem.id || groupItem._id) ===
-            (returnRequestItem.orderItemId ||
-              returnRequestItem.order_item_id ||
-              returnRequestItem.itemId ||
-              returnRequestItem.item_id),
+            String(groupItem.id || groupItem._id) ===
+            String(
+              returnRequestItem.orderItemId ||
+                returnRequestItem.order_item_id ||
+                returnRequestItem.itemId ||
+                returnRequestItem.item_id,
+            ),
         ),
       ),
     );
-    
-   
 
     const orderedGroupQuantity = items.reduce(
       (sum, item) => sum + Number(item?.quantity || 0),
@@ -119,7 +132,8 @@ export function OrderPackageCard({
 
     const cancelledGroupQuantity = items.reduce(
       (sum, item) =>
-        sum + Number(item?.cancelled_quantity || item?.cancelledQuantity || 0),
+        sum +
+        Number(item?.cancelled_quantity || item?.cancelledQuantity || 0),
       0,
     );
 
@@ -128,15 +142,15 @@ export function OrderPackageCard({
       cancelledGroupQuantity >= orderedGroupQuantity;
 
     const hasCancellationEvent = items.some(
-      (groupItem) =>
-        groupItem?.cancellation_status ||
-        groupItem?.cancellationStatus ||
-        groupItem?.cancellation_lifecycle ||
-        groupItem?.timeline?.some(
-          (timelineEvent) =>
-            timelineEvent.source === "cancellation" ||
-            timelineEvent.status?.includes("cancellation") ||
-            timelineEvent.to_status?.includes("cancellation"),
+      (item) =>
+        item?.cancellation_status ||
+        item?.cancellationStatus ||
+        item?.cancellation_lifecycle ||
+        item?.timeline?.some(
+          (event) =>
+            event.source === "cancellation" ||
+            event.status?.includes("cancellation") ||
+            event.to_status?.includes("cancellation"),
         ),
     );
 
@@ -147,29 +161,6 @@ export function OrderPackageCard({
       Boolean(groupCancellation) ||
       hasCancellationEvent ||
       isFullyCancelled;
-
-    const resolvedCancellationStatus = isCancelled
-      ? groupCancellation?.metadata?.approvedAt ||
-        groupCancellation?.status === "approved" ||
-        groupCancellation?.status === "completed" ||
-        groupCancellation?.status === "cancellation_approved" ||
-        items.some((item) => item?.effective_status === "cancellation_approved")
-        ? "cancellation_approved"
-        : groupCancellation?.status === "manual_review" ||
-            groupCancellation?.status === "requested"
-          ? "cancellation_requested"
-          : groupCancellation?.status ||
-            items.find((item) => item?.cancellation_status)
-              ?.cancellation_status ||
-            items
-              .flatMap((item) => item?.timeline || [])
-              .find(
-                (timelineEvent) =>
-                  timelineEvent.source === "cancellation" ||
-                  timelineEvent.status?.includes("cancellation"),
-              )?.status ||
-            "cancellation_approved"
-      : group?.status || "confirmed";
 
     const returnedGroupQuantity = items.reduce(
       (sum, item) => sum + getReturnedQuantityForItem(returns, item),
@@ -211,14 +202,13 @@ export function OrderPackageCard({
         );
       });
 
-    const isReturned = hasReturnRequest || isFullyReturned;
-
     const packageItemIds = items.map((item) => String(getItemId(item)));
 
     const packageDocuments = (itemProps.downloadableDocuments || []).filter(
       (document) => {
         const isTaxOrReceipt =
-          document.type === "tax_invoice" || document.type === "order_receipt";
+          document.type === "tax_invoice" ||
+          document.type === "order_receipt";
 
         if (isTaxOrReceipt && !isDelivered) {
           return false;
@@ -257,22 +247,22 @@ export function OrderPackageCard({
             return packageItemIds.some((id) => coveredItemIds.includes(id));
           }
 
-          const docSellerName =
+          const documentSellerName =
             document.invoice?.sellerName ||
             document.invoice?.metadata?.seller?.businessName ||
             document.invoice?.metadata?.seller?.displayName;
 
-          return docSellerName === group?.sellerName;
+          return documentSellerName === group?.sellerName;
         }
 
         if (document.type === "return_reverse") {
           const returnItemIds = (document.returnRequest?.items || []).map(
-            (returnRequestItem) =>
+            (item) =>
               String(
-                returnRequestItem.orderItemId ||
-                  returnRequestItem.order_item_id ||
-                  returnRequestItem.itemId ||
-                  returnRequestItem.item_id,
+                item.orderItemId ||
+                  item.order_item_id ||
+                  item.itemId ||
+                  item.item_id,
               ),
           );
 
@@ -280,22 +270,19 @@ export function OrderPackageCard({
         }
 
         if (document.type === "cancellation_reverse") {
-          const cancelItemIds = (document.cancellation?.items || []).map(
-            (cancelItem) =>
-              String(cancelItem.orderItemId || cancelItem.order_item_id),
+          const cancellationItemIds = (
+            document.cancellation?.items || []
+          ).map((item) =>
+            String(item.orderItemId || item.order_item_id),
           );
 
-          return packageItemIds.some((id) => cancelItemIds.includes(id));
+          return packageItemIds.some((id) =>
+            cancellationItemIds.includes(id),
+          );
         }
 
         return false;
       },
-    );
-
-    const hasPackageReview = items.some(
-      (item) =>
-        isSingleItemView &&
-        Boolean(reviewByItem?.[reviewKeyForItem(orderId, item)]),
     );
 
     return {
@@ -304,22 +291,20 @@ export function OrderPackageCard({
       events,
       currentRank,
       isDelivered,
-      resolvedCancellationStatus,
       isCancelled,
-      isReturned,
       resolvedGroupReturn,
       groupCancellation,
-      groupReturn,
       packageDocuments,
-      hasPackageReview,
+      isFullyReturned,
+      hasReturnRequest,
     };
   }, [
     group,
     itemProps.orderTimeline,
     itemProps.timeline,
+    itemProps.downloadableDocuments,
     returns,
     cancellations,
-    itemProps.downloadableDocuments,
     totalGroups,
     reviewByItem,
     orderId,
@@ -327,28 +312,18 @@ export function OrderPackageCard({
   ]);
 
   return (
-    <div
-      key={group.key}
-      className="flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-[#E7D9B8] bg-[#FFFDF8]"
-    >
+    <div className="flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-[#E7D9B8] bg-[#FFFDF8]">
       <div className="flex w-full min-w-0 flex-col gap-3 p-4 sm:p-5">
         <div className="grid gap-4">
-          {group.items.map((item, index) => {
+          {(group.items || []).map((item, index) => {
             const itemId = getItemId(item);
             const fulfillment = itemFulfillment.get(itemId) || {};
 
             const returnRequest =
-              group.returnByItem.get(itemId) ||
+              group.returnByItem?.get(itemId) ||
               resolveReturnForItem(returns, item);
 
             const returnedQuantity = getReturnedQuantityForItem(returns, item);
-
-            const policy = getItemReturnPolicy(item);
-            const returnableQuantity = getReturnableQuantityForItem(
-              returns,
-              item,
-            );
-
             const reviewKey = reviewKeyForItem(orderId, item);
             const reviewEntry = reviewByItem?.[reviewKey];
 
@@ -360,8 +335,8 @@ export function OrderPackageCard({
 
             const hasExistingReview = Boolean(
               existingReview &&
-              typeof existingReview === "object" &&
-              !existingReview.alreadyReviewed,
+                typeof existingReview === "object" &&
+                !existingReview.alreadyReviewed,
             );
 
             const canShowExistingReview =
@@ -378,10 +353,10 @@ export function OrderPackageCard({
                 <OrderItemCard
                   item={item}
                   {...itemProps}
-                  compact={true}
+                  compact
                   shipment={shipment}
                   isCancelled={isCancelled}
-                  isReturned={Boolean(returnRequest) || isReturned}
+                  isReturned={Boolean(returnRequest)}
                   cancellationDetails={groupCancellation}
                   returnDetails={returnRequest || resolvedGroupReturn}
                   expectedDeliveryAt={
@@ -404,7 +379,7 @@ export function OrderPackageCard({
                 <div className="min-w-0 rounded-lg border border-[#E7D9B8] bg-[#FAF6EE] p-3 sm:p-4 md:p-5">
                   <OrderTimeline
                     isCancelled={isCancelled}
-                    isReturned={isReturned}
+                    isReturned={Boolean(resolvedGroupReturn)}
                     groupCancellation={groupCancellation}
                     resolvedGroupReturn={resolvedGroupReturn}
                     group={group}
@@ -425,147 +400,42 @@ export function OrderPackageCard({
             );
           })}
         </div>
-
-        {/* <ReturnStatus
-          isCancelled={isCancelled}
-          isReturned={isReturned}
-          groupCancellation={groupCancellation}
-          groupReturn={groupReturn}
-          group={group}
-          formatMoney={itemProps.formatMoney}
-          currency={itemProps.currency}
-        /> */}
       </div>
 
-      {hasPackageReview &&
-        (itemProps.invoicesLoading || packageDocuments.length > 0) && (
-          <div className="flex flex-col gap-3 p-3 sm:p-4">
-            <h4 className="flex items-center gap-2 text-sm font-bold text-[#1B1D60]">
-              <FileText size={16} className="text-[#3E4093]" />
-              Package Documents
-            </h4>
+    
+{(itemProps.invoicesLoading || packageDocuments.length > 0) && (
+  <div className="flex min-w-0 flex-col gap-3 border-t border-[#E7D9B8] p-3 sm:p-4">
+    {/* Invoice documents: full width in their own row */}
+    <div className="w-full min-w-0">
+      <OrderDocuments
+        documents={packageDocuments}
+        loading={itemProps.invoicesLoading}
+        downloadingId={itemProps.downloadingId}
+        handleDownload={itemProps.handleDownload}
+      />
+    </div>
 
-            <div className="flex flex-col gap-2">
-              {itemProps.invoicesLoading
-                ? [1, 2].map((i) => (
-                    <div
-                      key={`skeleton-${i}`}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
-                    >
-                      <div className="flex min-w-0 items-center gap-1.5">
-                        <div className="h-4 w-4 shrink-0 rounded bg-[#E7D9B8]" />
-                        <div className="h-4 w-24 rounded bg-[#E7D9B8]" />
-                      </div>
-                      <div className="h-7 w-20 shrink-0 rounded bg-[#E7D9B8]" />
-                    </div>
-                  ))
-                : packageDocuments.map((document) => (
-                    <div
-                      key={`${document.title}-${document.id}`}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-colors hover:border-[#CE9F2D80]"
-                    >
-                      <div className="flex min-w-0 items-center gap-1.5">
-                        <FileText
-                          size={15}
-                          className="shrink-0 text-[#3E4093]"
-                        />
-                        <span className="truncate text-[13px] font-semibold text-[#2E2E2E]">
-                          {document.title}
-                        </span>
-                      </div>
+    {/* Action buttons: separate full-width row */}
+    <div className="w-full min-w-0 border-t border-[#E7D9B8] pt-3">
+      <OrderActions
+        order={order}
+        orderId={orderId}
+        status={status || orderStatus}
+        canCancelOrder={canCancelOrder}
+        retrying={retrying}
+        handleRetryPayment={handleRetryPayment}
+        openCancellation={openCancellation}
+        selectedOrderItem={selectedOrderItem}
+        hasCancellableQuantity={hasCancellableQuantity}
+        canRequestReturn={canRequestReturn}
+        selectedItemCanReturn={selectedItemCanReturn}
+        getOrderItemId={getOrderItemId}
+      />
+    </div>
+  </div>
+)}
 
-                      {document.pending ? (
-                        <span className="shrink-0 rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D]">
-                          Pending
-                        </span>
-                      ) : (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          loading={
-                            itemProps.downloadingId === document.downloadPath
-                          }
-                          onClick={() =>
-                            itemProps.handleDownload(
-                              document.downloadPath,
-                              document.filename,
-                            )
-                          }
-                          className="h-7 shrink-0 border-[#CE9F2D] px-3 text-xs font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
-                        >
-                          <Download size={12} />
-                          Download
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-            </div>
-          </div>
-        )}
 
-      {!hasPackageReview &&
-        (itemProps.invoicesLoading || packageDocuments.length > 0) && (
-          <div className="col-span-full rounded-b-xl border-t border-[#E7D9B8] bg-[#FFFDF8] p-3 sm:p-4">
-            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {itemProps.invoicesLoading
-                ? [1, 2].map((i) => (
-                    <div
-                      key={`skeleton-${i}`}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 animate-pulse"
-                    >
-                      <div className="flex min-w-0 flex-1 items-center gap-2">
-                        <div className="h-4 w-4 shrink-0 rounded bg-[#E7D9B8]" />
-                        <div className="h-4 w-24 rounded bg-[#E7D9B8]" />
-                      </div>
-                      <div className="h-7 w-20 shrink-0 rounded bg-[#E7D9B8]" />
-                    </div>
-                  ))
-                : packageDocuments.map((document) => (
-                    <div
-                      key={`${document.title}-${document.id}`}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-colors hover:border-[#CE9F2D80]"
-                    >
-                      <div className="flex min-w-0 flex-1 items-center gap-2">
-                        <FileText
-                          size={15}
-                          className="shrink-0 text-[#3E4093]"
-                        />
-                        <span
-                          title={document.title}
-                          className="truncate text-[13px] font-semibold text-[#2E2E2E]"
-                        >
-                          {document.title}
-                        </span>
-                      </div>
-
-                      {document.pending ? (
-                        <span className="shrink-0 rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D]">
-                          Pending
-                        </span>
-                      ) : (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          loading={
-                            itemProps.downloadingId === document.downloadPath
-                          }
-                          onClick={() =>
-                            itemProps.handleDownload(
-                              document.downloadPath,
-                              document.filename,
-                            )
-                          }
-                          className="h-7 shrink-0 gap-1.5 border-[#CE9F2D] px-3 text-xs font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
-                        >
-                          <Download size={12} />
-                          Download
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-            </div>
-          </div>
-        )}
     </div>
   );
 }

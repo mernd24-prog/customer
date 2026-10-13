@@ -28,7 +28,6 @@ import {
   getCancellationForItem,
 } from "../utils/orderItems";
 
-
 function OrderItemsSection({
   items = [],
   selectedOrderItem,
@@ -38,14 +37,22 @@ function OrderItemsSection({
   sellerFulfillmentGroups = [],
   returns = [],
   cancellations = [],
+  order,
+  canCancelOrder,
+  retrying,
+  handleRetryPayment,
+  openCancellation,
+  hasCancellableQuantity,
+  canRequestReturn,
+  selectedItemCanReturn,
+  getOrderItemId,
   ...itemProps
 }) {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const requestedItemParam = searchParams.get("item") || searchParams.get("orderItemId");
-  const isSingleItemView = Boolean(
-    selectedOrderItem || requestedItemParam,
-  );
+  const requestedItemParam =
+    searchParams.get("item") || searchParams.get("orderItemId");
+  const isSingleItemView = Boolean(selectedOrderItem || requestedItemParam);
   const [reviewTarget, setReviewTarget] = useState(null);
   const [expandedItemId, setExpandedItemId] = useState("");
   const [reviewByItem, setReviewByItem] = useState({});
@@ -258,7 +265,7 @@ function OrderItemsSection({
       }
       grouped.get(key).items.push(item);
     });
-    
+
     let result = Array.from(grouped.values()).map((group) => {
       const itemStatuses = group.items
         .map((item) => itemFulfillment.get(getItemId(item))?.status)
@@ -269,17 +276,27 @@ function OrderItemsSection({
         status: uniqueStatuses.length === 1 ? uniqueStatuses[0] : group.status,
       };
     });
-    
+
     if (requestedItemParam) {
-      const matchItem = (i) => String(getItemId(i)) === String(requestedItemParam) || String(getReviewProductId(i)) === String(requestedItemParam) || String(getItemProductId(i)) === String(requestedItemParam);
-      result = result.filter(g => g.items.some(matchItem));
-      result.forEach(g => {
+      const matchItem = (i) =>
+        String(getItemId(i)) === String(requestedItemParam) ||
+        String(getReviewProductId(i)) === String(requestedItemParam) ||
+        String(getItemProductId(i)) === String(requestedItemParam);
+      result = result.filter((g) => g.items.some(matchItem));
+      result.forEach((g) => {
         g.items = g.items.filter(matchItem);
       });
     }
-    
+
     return result;
-  }, [itemFulfillment, items, returns, sellerFulfillmentGroups, shipments, requestedItemParam]);
+  }, [
+    itemFulfillment,
+    items,
+    returns,
+    sellerFulfillmentGroups,
+    shipments,
+    requestedItemParam,
+  ]);
 
   const handleSubmitted = (review) => {
     if (!reviewTarget) return;
@@ -291,24 +308,37 @@ function OrderItemsSection({
 
   return (
     <section className="grid gap-5 w-full">
-      {packageGroups.map((group, groupIndex) => (
-        <OrderPackageCard
-          key={group.key}
-          group={group}
-          groupIndex={groupIndex}
-          totalGroups={packageGroups.length}
-          itemFulfillment={itemFulfillment}
-          isSingleItemView={isSingleItemView}
-          reviewByItem={reviewByItem}
-          checkedReviewKeys={checkedReviewKeys}
-          setReviewTarget={setReviewTarget}
-          orderId={orderId}
-          orderStatus={orderStatus}
-          returns={returns}
-          cancellations={cancellations}
-          {...itemProps}
-        />
-      ))}
+
+{packageGroups.map((group, groupIndex) => (
+  <OrderPackageCard
+    key={group.key}
+    group={group}
+    groupIndex={groupIndex}
+    totalGroups={packageGroups.length}
+    itemFulfillment={itemFulfillment}
+    isSingleItemView={isSingleItemView}
+    reviewByItem={reviewByItem}
+    checkedReviewKeys={checkedReviewKeys}
+    setReviewTarget={setReviewTarget}
+    orderId={orderId}
+    orderStatus={orderStatus}
+    returns={returns}
+    cancellations={cancellations}
+    order={order}
+    status={orderStatus}
+    canCancelOrder={canCancelOrder}
+    retrying={retrying}
+    handleRetryPayment={handleRetryPayment}
+    openCancellation={openCancellation}
+    hasCancellableQuantity={hasCancellableQuantity}
+    canRequestReturn={canRequestReturn}
+    selectedItemCanReturn={selectedItemCanReturn}
+    selectedOrderItem={selectedOrderItem}
+    getOrderItemId={getOrderItemId}
+    {...itemProps}
+  />
+))}
+
 
       {reviewTarget && (
         <ReviewModal
