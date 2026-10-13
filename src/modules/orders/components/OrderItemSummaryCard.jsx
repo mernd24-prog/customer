@@ -192,8 +192,8 @@ export default function OrderItemSummaryCard({
       "returned",
       "refunded",
       "payment_failed",
-      "cancellation_approved",
       "cancellation_rejected",
+      "cancellation_failed",
     ].includes(status)
   ) {
     statusDotColor = "bg-[#FF6161]";
@@ -222,7 +222,17 @@ export default function OrderItemSummaryCard({
   const orderDate = formatOrderDate(createdAt);
 
   const statusDescription =
-    status === "cancelled"
+    status === "cancellation_requested"
+      ? "Your cancellation request is awaiting review."
+      : status === "cancellation_approved"
+        ? "Your cancellation request has been approved."
+        : status === "cancellation_processing"
+          ? "Your cancellation is being processed."
+          : status === "refund_pending"
+            ? "Your refund is being processed."
+            : status === "cancellation_rejected"
+              ? "Your cancellation request was not approved."
+              : status === "cancelled"
       ? "Your order was cancelled as per your request."
       : status === "delivered" || status === "completed"
         ? "Your item has been delivered."
@@ -406,4 +416,3 @@ export default function OrderItemSummaryCard({
     </article>
   );
 }
-

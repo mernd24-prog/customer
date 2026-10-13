@@ -67,6 +67,7 @@ export const STATUS_LABELS = {
   cancelled: "Cancelled",
   cancellation_requested: "Cancellation Requested",
   cancellation_approved: "Cancellation Approved",
+  cancellation_processing: "Cancellation Processing",
   cancellation_rejected: "Cancellation Rejected",
   cancellation_failed: "Cancellation Failed",
   return_completed: "Return Completed",
@@ -79,6 +80,26 @@ export const label = (value = "") => {
   if (STATUS_LABELS[normalized]) return STATUS_LABELS[normalized];
   const formatted = text.replace(/_/g, " ");
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
+
+export const getCancellationDisplayStatus = (cancellation = {}, item = {}) => {
+  const status = String(cancellation?.status || "").toLowerCase();
+  const refundStatus = String(
+    cancellation?.refund_status || cancellation?.refundStatus || "",
+  ).toLowerCase();
+  if (status === "requested") return "cancellation_requested";
+  if (status === "approved") return "cancellation_approved";
+  if (status === "processing") return "cancellation_processing";
+  if (status === "rejected") return "cancellation_rejected";
+  if (status === "failed" || refundStatus === "failed") return "cancellation_failed";
+  if (status === "completed") {
+    return item?.cancellation_status || item?.cancellationStatus || "cancelled";
+  }
+  if (
+    ["refund_pending", "manual_review"].includes(status) ||
+    ["pending", "provider_pending", "manual_review"].includes(refundStatus)
+  ) return "refund_pending";
+  return status ? `cancellation_${status}` : "";
 };
 
 export const formatDate = (value) => {
@@ -126,22 +147,7 @@ export const resolveItemStatus = ({
   orderStatus = "",
 }) => {
   if (cancellationRequest?.status) {
-    if (cancellationRequest.status === "requested") return "cancellation_requested";
-    if (
-      cancellationRequest.status === "approved" ||
-      cancellationRequest.status === "completed" ||
-      cancellationRequest.status === "cancellation_approved" ||
-      cancellationRequest.metadata?.approvedAt
-    )
-      return "cancellation_approved";
-    if (cancellationRequest.status === "rejected") return "cancellation_rejected";
-    if (cancellationRequest.status === "failed") return "cancellation_failed";
-    if (cancellationRequest.status === "manual_review") {
-      return cancellationRequest.metadata?.approvedAt
-        ? "cancellation_approved"
-        : "cancellation_requested";
-    }
-    return `cancellation_${cancellationRequest.status}`;
+    return getCancellationDisplayStatus(cancellationRequest, item);
   }
 
   let timelineCancellationStatus = "";

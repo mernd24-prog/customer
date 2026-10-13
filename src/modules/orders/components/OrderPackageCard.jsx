@@ -13,6 +13,7 @@ import {
   getItemReturnPolicy,
   getReturnedQuantityForItem,
   getReturnableQuantityForItem,
+  getCancellationDisplayStatus,
 } from "../utils/orderItems";
 import { STATUS_RANK } from "../utils/orderTimelineUtils";
 export function OrderPackageCard({
@@ -149,26 +150,20 @@ export function OrderPackageCard({
       isFullyCancelled;
 
     const resolvedCancellationStatus = isCancelled
-      ? groupCancellation?.metadata?.approvedAt ||
-        groupCancellation?.status === "approved" ||
-        groupCancellation?.status === "completed" ||
-        groupCancellation?.status === "cancellation_approved" ||
-        items.some((item) => item?.effective_status === "cancellation_approved")
-        ? "cancellation_approved"
-        : groupCancellation?.status === "manual_review" ||
-            groupCancellation?.status === "requested"
-          ? "cancellation_requested"
-          : groupCancellation?.status ||
-            items.find((item) => item?.cancellation_status)
-              ?.cancellation_status ||
-            items
-              .flatMap((item) => item?.timeline || [])
-              .find(
-                (timelineEvent) =>
-                  timelineEvent.source === "cancellation" ||
-                  timelineEvent.status?.includes("cancellation"),
-              )?.status ||
-            "cancellation_approved"
+      ? groupCancellation
+        ? getCancellationDisplayStatus(groupCancellation, items[0])
+        : items.find((item) => item?.effective_status)?.effective_status ||
+          group?.status ||
+          items.find((item) => item?.cancellation_status)
+            ?.cancellation_status ||
+          items
+            .flatMap((item) => item?.timeline || [])
+            .find(
+              (timelineEvent) =>
+                timelineEvent.source === "cancellation" ||
+                timelineEvent.status?.includes("cancellation"),
+            )?.status ||
+          "cancelled"
       : group?.status || "confirmed";
 
     const returnedGroupQuantity = items.reduce(

@@ -37,9 +37,9 @@ import { PageContainer } from "../../../components/ui/layout";
 import EmptyState from "../../../components/ui/feedback/EmptyState";
 const STATUS_FILTERS = [
   { value: "all", label: "All Returns" },
-  { value: "requested", label: "Requested" },
-  { value: "approved", label: "Approved" },
-  { value: "rejected", label: "Rejected" },
+  { value: "requested", label: "Return Requested" },
+  { value: "approved", label: "Return Approved" },
+  { value: "rejected", label: "Return Rejected" },
   { value: "reverse_pickup_scheduled", label: "Reverse Pickup Scheduled" },
   { value: "pickup_failed", label: "Pickup Failed" },
   { value: "manual_ship_back", label: "Manual Ship Back" },

@@ -355,6 +355,7 @@ export const STATUS_LABELS = {
   return_completed: "Return Completed",
   cancellation_requested: "Cancellation Requested",
   cancellation_approved: "Cancellation Approved",
+  cancellation_processing: "Cancellation Processing",
   cancellation_rejected: "Cancellation Rejected",
 };
 
@@ -365,6 +366,26 @@ export const humanize = (value, fallback = "N/A") => {
   return String(value)
     .replace(/_/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase());
+};
+
+export const getCancellationDisplayStatus = (cancellation = {}, item = {}) => {
+  const status = String(cancellation?.status || "").toLowerCase();
+  const refundStatus = String(
+    cancellation?.refund_status || cancellation?.refundStatus || "",
+  ).toLowerCase();
+  if (status === "requested") return "cancellation_requested";
+  if (status === "approved") return "cancellation_approved";
+  if (status === "processing") return "cancellation_processing";
+  if (status === "rejected") return "cancellation_rejected";
+  if (status === "failed" || refundStatus === "failed") return "cancellation_failed";
+  if (status === "completed") {
+    return item?.cancellation_status || item?.cancellationStatus || "cancelled";
+  }
+  if (
+    ["refund_pending", "manual_review"].includes(status) ||
+    ["pending", "provider_pending", "manual_review"].includes(refundStatus)
+  ) return "refund_pending";
+  return status ? `cancellation_${status}` : "";
 };
 export function getOrderItemColor(item) {
   const found = getItemAttributes(item).find(([key]) =>
@@ -682,13 +703,9 @@ export const resolveOrderItemDisplayStatus = (
     Number(item.quantity || 0) <=
       Number(item.cancelled_quantity || item.cancelledQuantity || 0);
 
-  return cancellation?.status === "requested"
-    ? "cancellation_requested"
-    : cancellation?.status === "approved"
-      ? "cancellation_approved"
-      : cancellation?.status === "rejected"
-        ? "cancellation_rejected"
-        : item.cancellation_status ||
+  return cancellation?.status
+    ? getCancellationDisplayStatus(cancellation, item)
+    : item.cancellation_status ||
           item.cancellationStatus ||
           timelineCancellationStatus ||
           (isFullyCancelled ? "cancelled" : "") ||
