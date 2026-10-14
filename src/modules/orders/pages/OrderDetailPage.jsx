@@ -168,34 +168,44 @@ export default function OrderDetailPage({ orderId }) {
               sidebarClass="w-full lg:w-[320px] xl:w-[350px] 2xl:w-[380px]"
               mainClass=" w-full flex min-w-0 flex-1 flex-col"
               mainContent={
-                <OrderItemsSection
-                  items={visibleOrderItems}
-                  order={order}
-                  selectedOrderItem={selectedOrderItem}
-                  orderId={orderId}
-                  orderStatus={status}
-                  shipments={shipments}
-                  sellerFulfillmentGroups={
-                    order?.relations?.sellerFulfillmentGroups || []
-                  }
-                  returns={visibleReturns}
-                  cancellations={visibleCancellations}
-                  currency={currency}
-                  getItemImage={getItemImage}
-                  getProductTitle={getProductTitle}
-                  getItemProductPath={getItemProductPath}
-                  getOrderItemColor={getOrderItemColor}
-                  getItemLineTotal={getItemLineTotal}
-                  formatMoney={formatMoney}
-                  isCodOrder={isCodOrder}
-                  downloadableDocuments={downloadableDocuments}
-                  visiblePendingSellerDocuments={visiblePendingSellerDocuments}
-                  invoiceDownloadAvailable={invoiceDownloadAvailable}
-                  customerInvoices={customerInvoices}
-                  getInvoiceUrl={getInvoiceUrl}
-                  downloadingId={downloadingId}
-                  handleDownload={handleDownload}
-                />
+               
+<OrderItemsSection
+  items={visibleOrderItems}
+  order={order}
+  selectedOrderItem={selectedOrderItem}
+  orderId={orderId}
+  orderStatus={status}
+  shipments={shipments}
+  sellerFulfillmentGroups={
+    order?.relations?.sellerFulfillmentGroups || []
+  }
+  returns={visibleReturns}
+  cancellations={visibleCancellations}
+  currency={currency}
+  getItemImage={getItemImage}
+  getProductTitle={getProductTitle}
+  getItemProductPath={getItemProductPath}
+  getOrderItemColor={getOrderItemColor}
+  getItemLineTotal={getItemLineTotal}
+  formatMoney={formatMoney}
+  isCodOrder={isCodOrder}
+  downloadableDocuments={downloadableDocuments}
+  visiblePendingSellerDocuments={visiblePendingSellerDocuments}
+  invoiceDownloadAvailable={invoiceDownloadAvailable}
+  customerInvoices={customerInvoices}
+  getInvoiceUrl={getInvoiceUrl}
+  downloadingId={downloadingId}
+  handleDownload={handleDownload}
+  canCancelOrder={canCancelOrder}
+  retrying={retrying}
+  handleRetryPayment={handleRetryPayment}
+  openCancellation={openCancellation}
+  hasCancellableQuantity={hasCancellableQuantity}
+  canRequestReturn={canRequestReturn}
+  selectedItemCanReturn={selectedItemCanReturn}
+  getOrderItemId={getOrderItemId}
+/>
+
               }
               sidebarContent={
                 (subtotal !== undefined || items.length > 0) && (
@@ -289,62 +299,7 @@ export default function OrderDetailPage({ orderId }) {
               }
             />
           </div>
-          <div>
-            {(status === "pending_payment" || status === "payment_failed") && (
-              <Button
-                variant="secondary"
-                className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-3 rounded-lg border border-[#CE9F2D] bg-white px-5 py-2.5 transition-colors hover:bg-[#FFF9EA] active:bg-[#F2E5C5]"
-                loading={retrying}
-                onClick={handleRetryPayment}
-              >
-                <RefreshCw size={16} className="text-[#CE9F2D]" />
-                <div className="w-[1px] h-4 bg-[#CE9F2D]/30" />
-                <span className="text-sm font-semibold text-[#1B1D60]">
-                  Retry Payment
-                </span>
-              </Button>
-            )}
-
-            {status !== "pending_payment" &&
-              status !== "payment_failed" &&
-              canCancelOrder(order) &&
-              hasCancellableQuantity && (
-                <Button
-                  variant="secondary"
-                  className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-3 rounded-[10px] border border-[#CE9F2D] bg-white px-5 py-2.5 transition-colors hover:bg-[#FFF9EA] active:bg-[#F2E5C5]"
-                  onClick={openCancellation}
-                >
-                  <XCircle size={16} className="text-[#CE9F2D]" />
-                  <div className="w-[1px] h-4 bg-[#CE9F2D]/30" />
-                  <span className="text-sm font-semibold text-[#1B1D60]">
-                    {selectedOrderItem ? "Cancel Item" : "Cancel Order"}
-                  </span>
-                </Button>
-              )}
-
-            {((Boolean(selectedOrderItem) && selectedItemCanReturn) ||
-              (!selectedOrderItem && canRequestReturn)) && (
-              <Link
-                to={
-                  selectedOrderItem
-                    ? `/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`
-                    : `/returns/request/${orderId}`
-                }
-                className="block w-full sm:w-auto mt-4"
-              >
-                <Button
-                  variant="secondary"
-                  className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-3 rounded-[10px] border border-[#CE9F2D] bg-white px-5 py-2.5 transition-colors hover:bg-[#FFF9EA] active:bg-[#F2E5C5]"
-                >
-                  <RotateCcw size={16} className="text-[#CE9F2D]" />
-                  <div className="w-[1px] h-4 bg-[#CE9F2D]/30" />
-                  <span className="text-sm font-semibold text-[#1B1D60]">
-                    Request Return
-                  </span>
-                </Button>
-              </Link>
-            )}
-          </div>
+        
         </ApiState>
       </PageContainer>
 
