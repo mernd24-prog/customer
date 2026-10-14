@@ -141,7 +141,7 @@ export function OrderTimeline({
                   {step.label}
                 </p>
 
-                {step.note && (
+                {/* {step.note && (
                   <ShowMoreText
                     text={
                       typeof step.note === "string"
@@ -156,7 +156,7 @@ export function OrderTimeline({
                     moreLabel="Show more"
                     lessLabel="Show less"
                   />
-                )}
+                )} */}
 
                 {isCompleted && displayTime && (
                   <p className="mt-1 text-xs font-medium text-[#6F7480] md:text-center">

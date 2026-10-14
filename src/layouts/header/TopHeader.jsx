@@ -99,6 +99,7 @@ export const TopHeader = () => {
         cancelLabel="Cancel"
         onConfirm={handleLogout}
         onCancel={() => setShowLogoutModal(false)}
+        maxWidth="max-w-md"
         confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
       />
     </>

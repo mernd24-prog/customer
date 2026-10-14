@@ -23,6 +23,41 @@ const idOf = (item) =>
   item?.data?.cmsKey ||
   item?.categoryKey;
 
+const unwrapListPayload = (value) => {
+  if (Array.isArray(value)) return value;
+  if (!value || typeof value !== "object") return [];
+
+  const candidates = [
+    value.items,
+    value.list,
+    value.categories,
+    value.results,
+    value.hits,
+    value.products,
+    value.returns,
+    value.returnRequests,
+    value.return_requests,
+    value.category,
+    value.children,
+    value.childCategories,
+    value.data,
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) return candidate;
+    if (candidate && typeof candidate === "object") {
+      const nested = unwrapListPayload(candidate);
+      if (nested.length) return nested;
+    }
+  }
+
+  if (value.category && typeof value.category === "object") {
+    return [value.category];
+  }
+
+  return [];
+};
+
 export function makeThunk(type, config) {
   return createAsyncThunk(type, async (arg = {}, { rejectWithValue }) => {
     try {
@@ -88,7 +123,6 @@ export function createApiSlice({
     },
     extraReducers: (builder) => {
       Object.values(thunks).forEach((thunk) => {
-        // Skip if thunk doesn't have a valid action creator
         if (!thunk || !thunk.pending) return;
 
         builder
@@ -146,33 +180,19 @@ export function createApiSlice({
               keys.forEach((key) => {
                 state.entities[key] = data;
               });
-            } else if (
-              Array.isArray(data?.items) ||
-              Array.isArray(data?.results) ||
-              Array.isArray(data?.hits) ||
-              Array.isArray(data?.products) ||
-              Array.isArray(data?.returns) ||
-              Array.isArray(data?.returnRequests) ||
-              Array.isArray(data?.list)
-            ) {
-              const list =
-                data.items ||
-                data.results ||
-                data.hits ||
-                data.products ||
-                data.returns ||
-                data.returnRequests ||
-                data.list ||
-                [];
-              state.list = list;
-              if (setCurrentFromList) {
+            } else {
+              const list = unwrapListPayload(data);
+              if (list.length) {
+                state.list = list;
+                if (setCurrentFromList) {
+                  state.current = data;
+                }
+                state.entities = Object.fromEntries(
+                  list.map((item, index) => [idOf(item) ?? index, item]),
+                );
+              } else if (data !== undefined && data !== null) {
                 state.current = data;
               }
-              state.entities = Object.fromEntries(
-                list.map((item, index) => [idOf(item) ?? index, item]),
-              );
-            } else if (data !== undefined && data !== null) {
-              state.current = data;
             }
           })
           .addCase(thunk.rejected, (state, action) => {

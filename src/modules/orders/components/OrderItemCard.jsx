@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Package, ExternalLink } from "lucide-react";
 import ShowMoreText from "../../../utils/showMore";
@@ -84,10 +83,7 @@ export function OrderItemCard({
     ),
   );
 
-  const nonCancelledQuantity = Math.max(
-    orderedQuantity - cancelledQuantity,
-    0,
-  );
+  const nonCancelledQuantity = Math.max(orderedQuantity - cancelledQuantity, 0);
 
   const returnedQuantity = Math.min(
     nonCancelledQuantity,
@@ -98,8 +94,7 @@ export function OrderItemCard({
     ? Math.max(nonCancelledQuantity - returnedQuantity, 0)
     : 0;
 
-  const showQuantityBreakdown =
-    cancelledQuantity > 0 || returnedQuantity > 0;
+  const showQuantityBreakdown = cancelledQuantity > 0 || returnedQuantity > 0;
 
   const reviewKey = reviewKeyForItem(orderId, item);
   const reviewChecked = Boolean(checkedReviewKeys[reviewKey]);
@@ -113,8 +108,8 @@ export function OrderItemCard({
 
   const hasExistingReview = Boolean(
     existingReview &&
-      typeof existingReview === "object" &&
-      !existingReview.alreadyReviewed,
+    typeof existingReview === "object" &&
+    !existingReview.alreadyReviewed,
   );
 
   const canReview =
@@ -349,9 +344,7 @@ export function OrderItemCard({
           {returnReason && (
             <p className="break-words">
               <span>Reason:</span>{" "}
-              <span className="font-medium text-[#1F2430]">
-                {returnReason}
-              </span>
+              <span className="font-medium text-[#1F2430]">{returnReason}</span>
             </p>
           )}
         </>
@@ -379,29 +372,7 @@ export function OrderItemCard({
         )}
 
         {canReview && !hasExistingReview && (
-          <div
-            className={[
-              "flex min-w-0 max-w-full items-center",
-              "[&_button]:!inline-flex [&_button]:!min-h-9",
-              "[&_button]:!max-w-full [&_button]:!items-center",
-              "[&_button]:!justify-center [&_button]:!gap-1.5",
-              "[&_button]:!rounded-md [&_button]:!border",
-              "[&_button]:!border-[#CE9F2D] [&_button]:!bg-[#FFF9EA]",
-              "[&_button]:!px-3 [&_button]:!py-2",
-              "[&_button]:!text-xs [&_button]:!font-semibold",
-              "[&_button]:!leading-none [&_button]:!text-[#1B1D60]",
-              "[&_button:hover]:!bg-[#F8EDCF]",
-              "[&_a]:!inline-flex [&_a]:!min-h-9",
-              "[&_a]:!max-w-full [&_a]:!items-center",
-              "[&_a]:!justify-center [&_a]:!gap-1.5",
-              "[&_a]:!rounded-md [&_a]:!border",
-              "[&_a]:!border-[#CE9F2D] [&_a]:!bg-[#FFF9EA]",
-              "[&_a]:!px-3 [&_a]:!py-2",
-              "[&_a]:!text-xs [&_a]:!font-semibold",
-              "[&_a]:!leading-none [&_a]:!text-[#1B1D60]",
-              "[&_a:hover]:!bg-[#F8EDCF]",
-            ].join(" ")}
-          >
+          <div className="flex min-w-0 max-w-full items-center">
             {renderReviewAction()}
           </div>
         )}
@@ -516,9 +487,7 @@ export function OrderItemCard({
   return (
     <div className="w-full min-w-0">
       <div className="flex w-full min-w-0 items-start gap-3 sm:gap-4 lg:gap-6">
-        {renderProductImage(
-          "w-[85px] sm:w-[130px] md:w-[150px] lg:w-[170px]",
-        )}
+        {renderProductImage("w-[85px] sm:w-[130px] md:w-[150px] lg:w-[170px]")}
 
         <div className="flex min-w-0 flex-1 flex-col pt-1 sm:pt-2">
           <div className="flex w-full min-w-0 flex-wrap items-start gap-x-3 gap-y-2">
@@ -550,9 +519,7 @@ export function OrderItemCard({
 
           {renderShipmentAndRequestDetails()}
 
-          {quantityBreakdown && (
-            <div className="mt-2">{quantityBreakdown}</div>
-          )}
+          {quantityBreakdown && <div className="mt-2">{quantityBreakdown}</div>}
 
           {deliveryDateStr && (
             <p className="mt-2 break-words text-xs font-medium text-[#6F7480]">

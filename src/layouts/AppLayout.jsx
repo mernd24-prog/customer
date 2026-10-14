@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,6 +18,7 @@ const DeliveryChecker = React.lazy(
 );
 import { closeAddedToCartModal } from "../modules/cart/slices/cartUiSlice";
 import { AUTH_ROUTES } from "../modules/auth/routes/apiRoutes";
+import { fetchCategories } from "../features/catalog/catalogSlice";
 
 const LazyFooter = React.lazy(() =>
   import("./Footer").then((module) => ({ default: module.Footer })),
@@ -67,6 +68,9 @@ export default function AppLayout() {
   const addedModalOpen = useSelector((state) => state.cartUi.addedModalOpen);
 
   const addedProduct = useSelector((state) => state.cartUi.addedProduct);
+  const catalogCategories = useSelector(
+    (state) => state.catalog?.globalCategories || state.catalog?.list || [],
+  );
 
   const cart = useSelector((state) => state.cart.current || {});
 
@@ -85,6 +89,12 @@ const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some((route) => {
     (route !== "/" && location.pathname.startsWith(`${route}/`))
   );
 });
+  useEffect(() => {
+    if (catalogCategories.length === 0) {
+      dispatch(fetchCategories({ navigation: true })).catch(() => {});
+    }
+  }, [catalogCategories.length, dispatch]);
+
   const handleCloseAddedToCartModal = () => {
     dispatch(closeAddedToCartModal());
   };

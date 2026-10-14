@@ -13,6 +13,8 @@ export default function ConfirmModal({
   image,
   children,
   confirmClassName = "",
+  maxWidth = "max-w-md",
+  modalClassName = "",
 }) {
   if (!open) return null;
 
@@ -20,7 +22,7 @@ export default function ConfirmModal({
     typeof image === "string" ? image : image?.url || image?.src || "";
 
   return (
-    <BaseModal onClose={onCancel} maxWidth="max-w-md">
+    <BaseModal onClose={onCancel} maxWidth={maxWidth} className={modalClassName}>
       <div className="px-5 pb-6 pt-6 sm:px-6">
         <div className="flex items-start gap-4">
           {Boolean(imageUrl) && (
@@ -37,12 +39,12 @@ export default function ConfirmModal({
           )}
 
           <div className="min-w-0 flex-1 pt-0.5">
-            <h2 className="text-[19px] font-bold leading-snug text-[#1B1D60] sm:text-[20px]">
+            <h2 className="text-[24px] font-bold leading-[1.2] text-[#1B1D60] sm:text-[20px]">
               {title}
             </h2>
 
             {description && (
-              <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-black/60">
+              <p className="mt-4 whitespace-pre-line text-[15px] leading-[1.5] text-[#1B1D60]">
                 {description}
               </p>
             )}
@@ -57,7 +59,7 @@ export default function ConfirmModal({
               variant="outline"
               size="sm"
               onClick={onCancel}
-              className="h-[42px] rounded-[10px] border-[#1B1D60] px-5 font-semibold text-[#1B1D60]"
+              className="h-[40px] min-w-[96px] rounded-lg border-[#1B1D60] bg-white px-4 text-[15px] font-semibold text-[#1B1D60] transition-colors hover:bg-[#f4f6ff]"
             >
               {cancelLabel}
             </Button>
@@ -69,7 +71,7 @@ export default function ConfirmModal({
             onClick={onConfirm}
             disabled={confirmDisabled}
             iconPosition="left"
-            className={`h-[42px] rounded-[10px] bg-[#CE9F2D] px-5 font-semibold text-[#1B1D60] hover:bg-[#B88200] ${confirmClassName}`}
+            className={`h-[40px] min-w-[96px] rounded-lg bg-[#D93C3C] px-4 font-semibold  text-[15px] text-white hover:bg-[#B88200] transition-colors hover:bg-[#c52f2f]${confirmClassName}`}
           >
             {confirmLabel}
           </Button>
