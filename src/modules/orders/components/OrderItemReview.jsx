@@ -128,7 +128,7 @@ function ExistingReviewCard({ review }) {
         <ShowMoreText
           text={reviewObj.title}
           mode="characters"
-          limit={65}
+          line={1}
           moreLabel="more"
           lessLabel="less"
           textClassName="inline text-sm sm:text-base font-semibold text-[#22232B] break-words"
@@ -138,7 +138,7 @@ function ExistingReviewCard({ review }) {
         <ShowMoreText
           text={reviewText}
           mode="characters"
-          limit={65}
+          line={1}
           moreLabel="more"
           lessLabel="less"
           textClassName="inline max-w-full break-words text-sm leading-relaxed text-[#4E505C]"
@@ -353,7 +353,7 @@ function OrderItemReviewAction({
 
   if (!reviewChecked) {
     return (
-      <span className="inline-flex min-h-9 items-center rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold text-[#1B1D60] sm:text-sm">
+      <span className="inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm">
         Checking review...
       </span>
     );
@@ -362,8 +362,7 @@ function OrderItemReviewAction({
   return (
     <button
       type="button"
-      className="inline-flex min-h-9 items-center justify-center rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm"
-      onClick={() => onReviewClick(item)}
+className="inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm"      onClick={() => onReviewClick(item)}
       disabled={!orderId}
     >
       Write Review

@@ -182,12 +182,18 @@ export const getReturnSteps = (
   isCodOrder,
 ) => {
   const steps = [];
+  const requestTime =
+    returnRequest?.created_at ||
+    returnRequest?.createdAt ||
+    returnRequest?.updated_at ||
+    returnRequest?.updatedAt ||
+    null;
 
   steps.push({
     label: "Return requested",
     completed: true,
     status: "requested",
-    time: null,
+    time: requestTime,
     note: returnRequest?.reason || "Not specified",
   });
 
@@ -244,7 +250,11 @@ export const getReturnSteps = (
     label: "Return approved",
     completed: isApproved,
     status: "approved",
-    time: null,
+    time:
+      returnRequest?.approved_at ||
+      returnRequest?.approvedAt ||
+      returnRequest?.metadata?.approvedAt ||
+      requestTime,
     note: null,
   });
 
@@ -320,7 +330,13 @@ export const getReturnSteps = (
     label: "Returned",
     completed: isReturned,
     status: "returned",
-    time: null,
+    time:
+      returnRequest?.received_at ||
+      returnRequest?.receivedAt ||
+      returnRequest?.metadata?.receivedAt ||
+      returnRequest?.updated_at ||
+      returnRequest?.updatedAt ||
+      requestTime,
     note: null,
   });
 
@@ -347,7 +363,13 @@ export const getReturnSteps = (
     label: isQcCompleted ? qcLabel : "QC Pending",
     completed: isQcCompleted,
     status: "qc",
-    time: null,
+    time:
+      returnRequest?.qc_completed_at ||
+      returnRequest?.qcCompletedAt ||
+      returnRequest?.metadata?.qcCompletedAt ||
+      returnRequest?.updated_at ||
+      returnRequest?.updatedAt ||
+      requestTime,
     note: null,
   });
 
@@ -361,7 +383,14 @@ export const getReturnSteps = (
     label: "Refund processed",
     completed: isRefundProcessed,
     status: "refund_processed",
-    time: null,
+    time:
+      returnRequest?.refund?.processed_at ||
+      returnRequest?.refund?.processedAt ||
+      returnRequest?.refund?.updated_at ||
+      returnRequest?.refund?.updatedAt ||
+      returnRequest?.updated_at ||
+      returnRequest?.updatedAt ||
+      requestTime,
     note: null,
   });
 

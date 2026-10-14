@@ -6,7 +6,7 @@ import { SocialIcons } from "../components/ui";
 import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
 import { FALLBACK_FOOTER } from "../data/fallbackCmsData";
 import { useFooterData } from "./footer/useFooterData";
-
+import { capitalizeFirst } from "../utils/stringUtils";
 /* -------------------------------------------------------------------------- */
 /* FooterLinkGroups — renders one column per group + social icons            */
 /* -------------------------------------------------------------------------- */
@@ -62,7 +62,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
                               rel="noopener noreferrer"
                               className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-base"
                             >
-                              {link?.label}
+                            {capitalizeFirst(link?.label)}
                             </a>
                           ) : (
                             <Link
@@ -74,7 +74,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
                               }}
                               className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-base"
                             >
-                              {link?.label}
+                              {capitalizeFirst(link?.label)}
                             </Link>
                           )}
                         </li>

@@ -250,32 +250,46 @@ export default function ProductInfoSection({
                 <h3 className="text-base font-bold text-ink">
                   Warranty Summary
                 </h3>
+
                 <div className="mt-2 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed">
                   {effectiveWarranty.summary ||
-                    effectiveWarranty.warrantySummary || (
-                     <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
-  {warrantyPeriod && (
-    <div>
-      <span className="font-medium text-ink">Period:</span>{" "}
-      {capitalizeFirst(warrantyPeriod)}
-    </div>
-  )}
+                  effectiveWarranty.warrantySummary ? (
+                    capitalizeFirst(
+                      (
+                        effectiveWarranty.summary ||
+                        effectiveWarranty.warrantySummary
+                      ).replace(/_/g, " "),
+                    )
+                  ) : (
+                    <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
+                      {warrantyPeriod && (
+                        <div>
+                          <span className="font-medium text-ink">Period:</span>{" "}
+                          {capitalizeFirst(warrantyPeriod)}
+                        </div>
+                      )}
 
-  {effectiveWarranty.type && (
-    <div>
-      <span className="font-medium text-ink">Type:</span>{" "}
-      {capitalizeFirst(effectiveWarranty.type)}
-    </div>
-  )}
+                      {effectiveWarranty.type && (
+                        <div>
+                          <span className="font-medium text-ink">Type:</span>{" "}
+                          {capitalizeFirst(
+                            effectiveWarranty.type.replace(/_/g, " "),
+                          )}
+                        </div>
+                      )}
 
-  {effectiveWarranty.provider && (
-    <div>
-      <span className="font-medium text-ink">Provider:</span>{" "}
-      {capitalizeFirst(effectiveWarranty.provider)}
-    </div>
-  )}
-</div>
-                    )}
+                      {effectiveWarranty.provider && (
+                        <div>
+                          <span className="font-medium text-ink">
+                            Provider:
+                          </span>{" "}
+                          {capitalizeFirst(
+                            effectiveWarranty.provider.replace(/_/g, " "),
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

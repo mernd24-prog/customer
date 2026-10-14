@@ -13,6 +13,7 @@ import {
 import Price from "./Price";
 import Rating from "./Rating";
 import WishlistButton from "../../wishlist/components/WishlistButton";
+import { capitalizeFirst } from "../../../utils/stringUtils";
 
 import {
   getProductPublicPath,
@@ -485,7 +486,7 @@ export default function ProductCard({
                 onClick={handleBrandClick}
                 className="text-left text-[11px] font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
-                {brand}
+                  {capitalizeFirst(brand)}
               </button>
             )}
 
@@ -790,7 +791,7 @@ export default function ProductCard({
               className="mt-1.5 truncate text-xs font-bold tracking-tight text-[#2E2E2E] sm:mt-2 sm:text-base"
               title={brand}
             >
-              {brand}
+             {capitalizeFirst(brand)}
             </div>
           )}
 

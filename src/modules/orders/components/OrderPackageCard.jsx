@@ -313,7 +313,7 @@ export function OrderPackageCard({
 
   return (
     <div className="flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-[#E7D9B8] bg-[#FFFDF8]">
-      <div className="flex w-full min-w-0 flex-col gap-3 p-4 sm:p-5">
+      <div className="flex w-full min-w-0 flex-col gap-3 p-2 sm:p-3 md:p-4 lg:p-5">
         <div className="grid gap-4">
           {(group.items || []).map((item, index) => {
             const itemId = getItemId(item);
@@ -402,21 +402,18 @@ export function OrderPackageCard({
         </div>
       </div>
 
-    
-{(itemProps.invoicesLoading || packageDocuments.length > 0) && (
-  <div className="flex min-w-0 flex-col gap-3 border-t border-[#E7D9B8] p-3 sm:p-4">
-    {/* Invoice documents: full width in their own row */}
-    <div className="w-full min-w-0">
-      <OrderDocuments
-        documents={packageDocuments}
-        loading={itemProps.invoicesLoading}
-        downloadingId={itemProps.downloadingId}
-        handleDownload={itemProps.handleDownload}
-      />
-    </div>
+    <div className="flex min-w-0 flex-col gap-3 border-t border-[#E7D9B8] p-3 sm:p-4">
+      {(itemProps.invoicesLoading || packageDocuments.length > 0) && (
+        <div className="w-full min-w-0">
+          <OrderDocuments
+            documents={packageDocuments}
+            loading={itemProps.invoicesLoading}
+            downloadingId={itemProps.downloadingId}
+            handleDownload={itemProps.handleDownload}
+          />
+        </div>
+      )}
 
-    {/* Action buttons: separate full-width row */}
-    <div className="w-full min-w-0 border-t border-[#E7D9B8] pt-3">
       <OrderActions
         order={order}
         orderId={orderId}
@@ -432,9 +429,6 @@ export function OrderPackageCard({
         getOrderItemId={getOrderItemId}
       />
     </div>
-  </div>
-)}
-
 
     </div>
   );

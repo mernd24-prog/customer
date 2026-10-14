@@ -236,8 +236,12 @@ export function ShowMoreText({
 
   if (!showMore.text) return null;
 
+  const wrapperClassName = className
+    ? `${className} inline-flex flex-wrap items-baseline gap-1`
+    : "inline-flex flex-wrap items-baseline gap-1";
+
   const defaultButtonClass =
-    "ml-0.5 inline font-semibold text-[#0B63F6] hover:underline";
+    "inline font-semibold text-[#0B63F6] hover:underline";
   const finalButtonClass = resolvedButtonClassName || defaultButtonClass;
 
   let finalPreview = showMore.preview;
@@ -256,7 +260,7 @@ export function ShowMoreText({
     expanded || !isTruncated ? showMore.text : `${finalPreview}${ellipsis}`;
 
   return (
-    <span className={className}>
+    <span className={wrapperClassName}>
       {isHtml ? (
         <span
           ref={isLineMode ? lineTextRef : null}

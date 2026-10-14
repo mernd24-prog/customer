@@ -41,6 +41,7 @@ const GuestOtpAuthModal = lazy(
   () => import("../../../components/ui/overlay/GuestOtpAuthModal"),
 );
 const SizeChartSidebar = lazy(() => import("../components/SizeChartSidebar"));
+import { capitalizeFirst } from "../../../utils/stringUtils";
 
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import ApiState from "../../../components/ui/ApiState";
@@ -184,23 +185,26 @@ export default function ProductDetailPage() {
 
                 {product?.parentCategory &&
                   !/^[a-f\d]{24}$/i.test(String(product.parentCategory)) && (
-                  <>
-                    <Link
-                      to={CUSTOMER_ROUTES.category(product.parentCategory)}
-                      className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
-                    >
-                      {(product.parentCategory || "").replace(/-/g, " ")}
-                    </Link>
-
-                    <span>{">"}</span>
-                  </>
-                )}
-
-                {getProductCategoryName(product) &&
-                  (product.categoryKey || product.category) !== product.parentCategory && (
                     <>
                       <Link
-                        to={CUSTOMER_ROUTES.category(product.categoryKey || product.category)}
+                        to={CUSTOMER_ROUTES.category(product.parentCategory)}
+                        className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
+                      >
+                        {(product.parentCategory || "").replace(/-/g, " ")}
+                      </Link>
+
+                      <span>{">"}</span>
+                    </>
+                  )}
+
+                {getProductCategoryName(product) &&
+                  (product.categoryKey || product.category) !==
+                    product.parentCategory && (
+                    <>
+                      <Link
+                        to={CUSTOMER_ROUTES.category(
+                          product.categoryKey || product.category,
+                        )}
                         className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
                       >
                         {getProductCategoryName(product)}
@@ -245,7 +249,7 @@ export default function ProductDetailPage() {
                         to={`/brands/${encodeURIComponent(brand)}`}
                         className="w-fit text-xl sm:text-2xl font-extrabold tracking-tight text-[#1B1D60] hover:text-[#CE9F2D] transition-colors leading-tight mb-0.5"
                       >
-                        {brand}
+                        {capitalizeFirst(brand)}
                       </Link>
                     )}
 
@@ -263,7 +267,6 @@ export default function ProductDetailPage() {
                         buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#CE9F2D] hover:underline"
                       />
                     </h1>
-
                     {Number(product.rating || 0) > 0 && (
                       <div className="flex items-center pt-0.5">
                         <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
@@ -295,7 +298,6 @@ export default function ProductDetailPage() {
                         </span>
                       </div>
                     )}
-
                     <div className="pt-0.5">
                       <ProductStockStatus
                         inStock={inStock}
