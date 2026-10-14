@@ -82,14 +82,23 @@ jobs:
         run: |
           set -eu
 
-          test -n "$STAGING_HOST"
-          test -n "$STAGING_USER"
+          test -n "$STAGING_HOST" || {
+            echo "ERROR: STAGING_HOST secret is missing."
+            exit 1
+          }
+
+          test -n "$STAGING_USER" || {
+            echo "ERROR: STAGING_USER secret is missing."
+            exit 1
+          }
 
           RELEASE="/home/ubuntu/ecommerce/customer/releases/$GITHUB_SHA"
 
-          SSH="ssh -i $HOME/.ssh/staging_key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes"
-
-          "$SSH" "$STAGING_USER@$STAGING_HOST" \
+          ssh -i "$HOME/.ssh/staging_key" \
+            -o IdentitiesOnly=yes \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            "$STAGING_USER@$STAGING_HOST" \
             "set -eu; test \"\$(hostname)\" = 'samglobal'; mkdir -p '$RELEASE'"
 
           rsync -az --delete \
@@ -107,7 +116,7 @@ jobs:
         run: |
           set -eu
 
-          ssh -i ~/.ssh/staging_key \
+          ssh -i "$HOME/.ssh/staging_key" \
             -o IdentitiesOnly=yes \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
