@@ -1,19 +1,20 @@
 import { useEffect, useMemo } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Calendar, Clock, Tag } from "lucide-react";
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
-import BrandButton from "../../components/ui/buttons/Button";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
+import PageContainer from "../../components/ui/layout/PageContainer";
+import PolicySection from "../../components/policy/PolicySection";
 import { fetchCmsPageBySlug } from "../../features/cms/cmsSlice";
 import { isNotFoundApiError } from "../../utils/apiErrors";
+import { FALLBACK_CMS_PAGE_CONTENT } from "../../data/fallbackCmsData";
 
 function CmsContent({ body }) {
   if (!body) return null;
   return (
     <div
-      className=" cms-content  leading-relaxed text-muted [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]: [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-ink [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]: [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-ink [&_h3]:mt-5 [&_h3]:mb-2 [&_h3]: [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-ink [&_h4]:mt-4 [&_h4]:mb-2 [&_h4]: [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-ink [&_p]:mb-4 [&_p]:leading-7 [&_a]:font-semibold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-gold-dark [&_strong]:font-bold [&_strong]:text-ink [&_em]:italic [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_blockquote]:my-4 [&_blockquote]:rounded-r-[8px] [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:bg-cream [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:italic [&_img]:my-6 [&_img]:max-w-full [&_img]:rounded-[12px] [&_hr]:my-8 [&_hr]:border-border [&_table]:my-4 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-border [&_th]:bg-cream [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]: [&_th]:font-semibold [&_th]:text-ink [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_code]:rounded [&_code]:bg-gold-soft [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:text-gold-dark [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-[8px] [&_pre]:bg-ink [&_pre]:p-4 [&_pre]:text-white"
+      className="cms-content leading-relaxed text-muted [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-ink [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-ink [&_h3]:mt-5 [&_h3]:mb-2 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-ink [&_h4]:mt-4 [&_h4]:mb-2 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-ink [&_p]:mb-4 [&_p]:leading-7 [&_a]:font-semibold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-gold-dark [&_strong]:font-bold [&_strong]:text-ink [&_em]:italic [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_blockquote]:my-4 [&_blockquote]:rounded-r-[8px] [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:bg-cream [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:italic [&_img]:my-6 [&_img]:max-w-full [&_img]:rounded-[12px] [&_hr]:my-8 [&_hr]:border-border [&_table]:my-4 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-border [&_th]:bg-cream [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_th]:text-ink [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_code]:rounded [&_code]:bg-gold-soft [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:text-gold-dark [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-[8px] [&_pre]:bg-ink [&_pre]:p-4 [&_pre]:text-white"
       dangerouslySetInnerHTML={{ __html: body }}
     />
   );
@@ -34,6 +35,82 @@ const getCmsPayload = (page) =>
   page?.data ||
   page?.content ||
   page;
+
+function stripNumberPrefix(value = "") {
+  return String(value || "")
+    .replace(/^\s*\d+[.)]\s+/g, "")
+    .replace(/^\s*[-–•]\s*/g, "")
+    .trim();
+}
+
+function parseBodySections(body = "") {
+  if (!body || typeof body !== "string") return [];
+
+  const doc = new DOMParser().parseFromString(body, "text/html");
+  const headings = Array.from(doc.body.querySelectorAll("h2, h3, h4"));
+
+  if (!headings.length) return [];
+
+  return headings
+    .map((heading) => {
+      const title = stripNumberPrefix(heading.textContent || "");
+      if (!title) return null;
+
+      const nodes = [];
+      let current = heading.nextSibling;
+
+      while (current) {
+        if (current.nodeType === 1 && current.matches?.("h2, h3, h4")) {
+          break;
+        }
+        if (current.nodeType === 1 || current.nodeType === 3) {
+          nodes.push(current.cloneNode(true));
+        }
+        current = current.nextSibling;
+      }
+
+      const blockHtml = nodes.map((node) => node.outerHTML || node.textContent || "").join("");
+      if (!blockHtml.trim()) return null;
+
+      const blockDoc = new DOMParser().parseFromString(blockHtml, "text/html");
+      const paragraphs = Array.from(blockDoc.body.querySelectorAll("p, li"));
+
+      const points = paragraphs
+        .map((paragraph) => {
+          const rawText = String(paragraph.textContent || "").trim();
+          const text = rawText.replace(/^\s*\d+[.)]\s*/g, "").replace(/!\[[^\]]*\]\([^)]*\)/g, "").trim();
+          if (!text) return null;
+
+          const strongNode = paragraph.querySelector("strong, b");
+          const strongText = strongNode ? stripNumberPrefix(strongNode.textContent || "") : "";
+          const plainText = strongText
+            ? text.replace(strongText, "").replace(/^\s*[:\-–]\s*/, "").trim()
+            : text;
+
+          const titleText = strongText || "";
+          const descriptionText = plainText || text;
+
+          if (!titleText && !descriptionText) return null;
+
+          return {
+            title: titleText,
+            description: descriptionText,
+          };
+        })
+        .filter(Boolean);
+
+      const description = paragraphs[0]
+        ? String(paragraphs[0].outerHTML || "").trim()
+        : "";
+
+      return {
+        title,
+        description: description || (points[0]?.description ? points[0].description : ""),
+        points: points.slice(0, 1).length ? points.slice(1) : points,
+      };
+    })
+    .filter(Boolean);
+}
 
 export default function CmsPage({ slugOverride = "" }) {
   const { slug: slugFromParams } = useParams();
@@ -60,7 +137,7 @@ export default function CmsPage({ slugOverride = "" }) {
       candidates.find((item) => cmsRecordKey(getCmsPayload(item)) === slug) ||
       null;
 
-    return getCmsPayload(matchedPage);
+    return getCmsPayload(matchedPage) || FALLBACK_CMS_PAGE_CONTENT?.[slug] || null;
   }, [currentPage, entities, list, slug]);
 
   useEffect(() => {
@@ -71,216 +148,87 @@ export default function CmsPage({ slugOverride = "" }) {
 
   const title = page?.metadata?.seoTitle || page?.title || slug;
   const description = page?.metadata?.seoDescription || page?.excerpt || "";
-  const publishedAt = page?.publishedAt || page?.createdAt;
-  const updatedAt = page?.updatedAt;
-  const category = page?.category || page?.type;
-  const coverImage =
-    page?.coverImage ||
-    page?.heroImage ||
-    page?.thumbnailUrl ||
-    page?.metadata?.coverImage ||
-    page?.metadata?.heroImage ||
-    page?.metadata?.thumbnailUrl;
-  const points = Array.isArray(page?.points) ? page.points : [];
-  const galleryImages = Array.isArray(page?.galleryImages)
-    ? page.galleryImages
-    : [];
-  const author = page?.author;
-  const readTime = page?.readTime || page?.metadata?.readTime;
+  const rawContent = page?.body || page?.content || "";
+  const parsedSections = useMemo(() => {
+    if (!page) return [];
+
+    if (Array.isArray(page.sections) && page.sections.length > 0) {
+      return page.sections;
+    }
+
+    const htmlSections = parseBodySections(rawContent);
+    if (htmlSections.length > 0) return htmlSections;
+
+    const points = Array.isArray(page.points) ? page.points : [];
+    if (!points.length) return [];
+
+    return [
+      {
+        title: page.title || title,
+        description: page.description || page.excerpt || description,
+        points,
+      },
+    ];
+  }, [description, page, rawContent, title]);
   const pageUnavailable =
     !page && !cmsLoading && (!cmsError || isNotFoundApiError(cmsError));
+  const showCmsError = !page && !!cmsError && !isNotFoundApiError(cmsError);
 
   return (
     <AppErrorBoundary>
       <Seo title={`${title} | Sam Global`} description={description} />
 
-      {/* Page header band */}
-      <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
-        <div className="w-container">
-          <nav className="mb-2 flex items-center gap-1  text-xs text-gray">
-            <Link to="/" className="transition-colors duration-200 hover:text-[#CE9F2D]">
-              Home
-            </Link>
-            <span>/</span>
-            {category && (
-              <>
-                <span className="capitalize text-muted">{category}</span>
-                <span>/</span>
-              </>
-            )}
-            <span className="line-clamp-1 text-ink">{title}</span>
-          </nav>
+      <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-10 md:py-12 lg:py-14">
+        <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
+          <h1 className="text-center text-2xl font-bold text-white md:text-3xl lg:text-[32px]">
+            {title}
+          </h1>
         </div>
-      </div>
+      </section>
 
-      <div className="w-container  py-8">
-        <ApiState
-          loading={cmsLoading && !page}
-          error={pageUnavailable ? null : cmsError}
-          empty={pageUnavailable}
-          emptyTitle="Coming soon"
-          emptyText="This content page is being prepared and will be available soon."
-        >
-          {page && (
-            <div className="mx-auto max-w-3xl ">
-              {/* Cover image */}
-              {coverImage && (
-                <div className="mb-8 overflow-hidden  rounded-[var(--customer-radius)]">
-                  <img loading="lazy" width="400" height="400"
-                    src={coverImage}
-                    alt={title}
-                    className="max-h-[420px] w-full object-cover"
+      <section className="w-full pt-3 pb-10 md:pb-12">
+        <PageContainer>
+          <ApiState
+            loading={cmsLoading && !page}
+            error={showCmsError ? cmsError : null}
+            empty={pageUnavailable}
+            emptyTitle="Coming soon"
+            emptyText="This content page is being prepared and will be available soon."
+          >
+            {page && (
+              <div className="w-full">
+                {(description || page?.description || page?.excerpt) && (
+                  <p
+                    className="mb-8 text-[14px] leading-relaxed text-muted md:text-base"
+                    dangerouslySetInnerHTML={{ __html: description || page?.description || page?.excerpt || "" }}
                   />
-                </div>
-              )}
-
-              {/* Category badge */}
-              {category && (
-                <span className="chip mb-3 inline-block text-xs font-semibold uppercase tracking-normal">
-                  {category}
-                </span>
-              )}
-
-              {/* Title */}
-              <h1 className="  text-3xl font-bold leading-tight text-ink sm:text-[36px]">
-                {page.title}
-              </h1>
-
-              {/* Excerpt */}
-              {(page.excerpt || page.description) && (
-                <p className="mt-3   text-[17px] leading-relaxed text-muted">
-                  {page.excerpt || page.description}
-                </p>
-              )}
-
-              {/* Meta row */}
-              <div className="mt-5  flex flex-wrap items-center gap-4 border-b border-border pb-6">
-                {author && (
-                  <div className="flex items-center gap-2 ">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold  text-xs font-bold text-white">
-                      {(typeof author === "string"
-                        ? author
-                        : author?.name || "A")[0]?.toUpperCase()}
-                    </div>
-                    <span className=" text-sm font-medium text-ink">
-                      {typeof author === "string"
-                        ? author
-                        : author?.name || "Admin"}
-                    </span>
-                  </div>
                 )}
-                {publishedAt && (
-                  <div className="flex items-center gap-1  text-xs text-gray">
-                    <Calendar size={13} />
-                    {new Date(publishedAt).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </div>
-                )}
-                {readTime && (
-                  <div className="flex items-center gap-1  text-xs text-gray">
-                    <Clock size={13} />
-                    {readTime} Min Read
-                  </div>
-                )}
-                {updatedAt && updatedAt !== publishedAt && (
-                  <span className=" text-xs text-gray">
-                    Updated {new Date(updatedAt).toLocaleDateString("en-IN")}
-                  </span>
-                )}
-              </div>
 
-              {/* Body content */}
-              <div className="mt-8">
-                <CmsContent body={page.body || page.content} />
-              </div>
-
-              {points.length > 0 && (
-                <div className="mt-8 rounded-[12px] border border-border bg-surface-soft p-5">
-                  <h2 className="mb-3  text-xl font-semibold text-ink">
-                    Highlights
-                  </h2>
-                  <div className="space-y-3">
-                    {points.map((point, idx) => (
-                      <div
-                        key={`${point?.title || "point"}-${idx}`}
-                        className="flex gap-3"
-                      >
-                        {point?.image ? (
-                          <img loading="lazy" width="400" height="400"
-                            src={point.image}
-                            alt={point?.title || "point"}
-                            className="h-12 w-12 rounded object-cover"
-                          />
-                        ) : null}
-                        <div>
-                          <p className=" text-sm font-semibold text-ink">
-                            {point?.title}
-                          </p>
-                          {point?.description ? (
-                            <p className=" text-sm text-muted">
-                              {point.description}
-                            </p>
-                          ) : null}
-                        </div>
-                      </div>
+                {parsedSections.length > 0 && (
+                  <div className="space-y-7 md:space-y-8">
+                    {parsedSections.map((section, index) => (
+                      <PolicySection
+                        key={
+                          section?.cmsKey ||
+                          section?.id ||
+                          `${section?.title || "section"}-${index}`
+                        }
+                        title={section?.title || title}
+                        description={section?.description || ""}
+                        points={Array.isArray(section?.points) ? section.points : []}
+                      />
                     ))}
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Gallery */}
-              {galleryImages.length > 0 && (
-                <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {galleryImages.map((imageUrl) => (
-                    <img loading="lazy" width="400" height="400"
-                      key={imageUrl}
-                      src={imageUrl}
-                      alt={page.title}
-                      className="h-28 w-full rounded-[10px] object-cover sm:h-36"
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Tags */}
-              {page.tags?.length > 0 && (
-                <div className="mt-10 flex flex-wrap items-center gap-2 border-t border-border pt-6">
-                  <Tag size={13} className="text-gray" />
-                  {page.tags.map((tag) => (
-                    <span key={tag} className="chip text-xs font-medium">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* CTA block */}
-              <div className="mt-10 rounded-[var(--customer-radius)] bg-ink px-8 py-10 text-center">
-                <p className=" text-xl font-bold text-white">
-                  Ready to Start Shopping?
-                </p>
-                <p className="mt-1  text-sm text-gray">
-                  Discover Thousands of Products at Sam Global.
-                </p>
-                <div className="mt-5 flex justify-center">
-                  <Link to="/products">
-                    <BrandButton
-                      variant="primary"
-                      rounded
-                      label="Browse Products"
-                      size="md"
-                      className="h-11 px-8 text-sm font-semibold"
-                    />
-                  </Link>
-                </div>
+                {!parsedSections.length && rawContent && (
+                  <CmsContent body={rawContent} />
+                )}
               </div>
-            </div>
-          )}
-        </ApiState>
-      </div>
+            )}
+          </ApiState>
+        </PageContainer>
+      </section>
     </AppErrorBoundary>
   );
 }

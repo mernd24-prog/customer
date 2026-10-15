@@ -9,8 +9,8 @@ export const REGEX = Object.freeze({
   postalCode: /^[A-Za-z0-9][A-Za-z0-9\s-]{2,11}$/,
   // Enforce exactly 6 digits for Indian PIN codes
   indianPostalCode: /^\d{6}$/,
-  lettersOnly: /^[A-Za-z]+$/,
-  name: /^[A-Za-z]+(?:[ '.-][A-Za-z]+)*$/,
+  lettersOnly: /^[A-Za-z]+(?:[ .'-][A-Za-z]+)*$/,
+  name: /^[A-Za-z]+(?:[ .'-][A-Za-z]+)*$/,
   safeText: /^[A-Za-z0-9\s.,'’"()/&:+#-]+$/,
   addressLine: /^[A-Za-z0-9\s.,'’/#()-]+$/,
   slug: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,

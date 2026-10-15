@@ -20,6 +20,7 @@ import {
 
 import Seo from "../../../components/ui/Seo";
 import Loader from "../../../components/ui/Loader";
+import FallbackImage from "../../../components/ui/FallbackImage";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
@@ -103,7 +104,7 @@ export default function BecomeASeller() {
 
   const heroDesc = sellerPage?.excerpt || "";
 
-  const heroImg = sellerPage?.image?.url || "";
+  const heroImg = sellerPage?.image?.url || FALLBACK_SELLER_PAGE.image.url;
 
   const storySection = sellerPage?.sections?.[0];
 
@@ -170,11 +171,12 @@ export default function BecomeASeller() {
 
           <section className="relative isolate overflow-hidden bg-[#17145f] text-white">
             {heroImg && (
-              <img
+              <FallbackImage
                 loading="lazy"
                 width="400"
                 height="400"
                 src={heroImg}
+                fallbackSrc={FALLBACK_SELLER_PAGE.image.url}
                 alt="Sam Global Seller Growing His Online Business"
                 className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
               />

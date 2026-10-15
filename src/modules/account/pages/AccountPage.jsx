@@ -102,13 +102,14 @@ function AccountProfileCard({
       className="
         min-w-0
         w-full
-        rounded-[20px]
+        rounded-lg
         border
         border-gold
         bg-[#FFFDF8]
         p-4
         sm:p-6
-        2xl:p-8
+        2xl:p-6
+        mt-2
       "
     >
       <div
@@ -197,7 +198,7 @@ function AccountProfileCard({
         </button>
 
         <div className="min-w-0 flex-1">
-          <div className="min-w-0 truncate text-h3 font-bold text-[#3E4093]">
+          <div className="min-w-0 truncate text-lg font-bold text-[#3E4093] sm:text-xl lg:text-2xl 2xl:text-h3">
             {name}
           </div>
 
@@ -209,11 +210,12 @@ function AccountProfileCard({
                 max-w-full
                 items-start
                 gap-1.5
-                text-sm
+                text-xs
                 font-medium
                 text-[#2E2E2E]
                 sm:gap-2
-                sm:text-[18px]
+                sm:text-sm
+                lg:text-[18px]
                 2xl:text-[20px]
               "
             >
@@ -230,7 +232,7 @@ function AccountProfileCard({
                 aria-hidden="true"
               />
 
-              <span className="min-w-0 flex-1 break-all leading-5">
+              <span className="min-w-0 flex-1 break-all text-xs leading-5 sm:text-sm lg:text-[18px] 2xl:text-[20px]">
                 {user?.email || "—"}
               </span>
             </div>
@@ -243,10 +245,12 @@ function AccountProfileCard({
                 items-start
                 gap-1.5
                 py-1
-                text-small
+                text-xs
                 font-medium
                 text-[#2E2E2E]
                 sm:gap-2
+                sm:text-sm
+                lg:text-[18px]
               "
             >
               <MdOutlineLocalPhone
@@ -262,9 +266,21 @@ function AccountProfileCard({
                 aria-hidden="true"
               />
 
-              <span className="min-w-0 flex-1 break-words leading-5">
+              <span className="min-w-0 flex-1 break-words text-xs leading-5 sm:text-sm lg:text-[18px] 2xl:text-[20px]">
                 {user?.phone || "—"}
               </span>
+            </div>
+
+            <div className="mt-2 grid min-w-0 grid-cols-1 gap-2 text-xs text-[#4E4E4E] sm:grid-cols-2 sm:text-sm xl:grid-cols-3">
+              {(user?.profile?.businessWebsite || user?.businessWebsite) && (
+                <div className="min-w-0">
+                  <span className="font-semibold text-[#1B1D60]">Website: </span>
+                  <span className="break-all">
+                    {user?.profile?.businessWebsite || user?.businessWebsite}
+                  </span>
+                </div>
+              )}
+             
             </div>
           </div>
         </div>
@@ -280,7 +296,7 @@ function AccountProfileCard({
               items-center
               justify-center
               gap-2
-              rounded-full
+              rounded-lg
               border
               border-[#343B91]
               bg-[#F3F1F0]
@@ -335,7 +351,7 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
         className={
           isMobile
             ? "flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] lg:size-12"
-            : "flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] text-[#1B1D60] xl:size-[50px] lg:size-12"
+            : "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60] xl:size-[50px] lg:size-12"
         }
       >
         {typeof item.icon === "string" ? (
@@ -371,7 +387,7 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
           className={
             isMobile
               ? "block text-sm font-semibold"
-              : "block text-sm font-semibold text-[#2E2E2E] sm:text-xl"
+              : "block text-sm font-semibold text-[#2E2E2E] sm:text-base lg:text-xl"
           }
         >
           {item.label}
@@ -380,8 +396,8 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
         <span
           className={
             isMobile
-              ? "mt-0.5 block text-xs text-[#4E4E4E]"
-              : "mt-0.5 block text-sm text-[#4E4E4E] sm:text-lg"
+              ? "mt-0.5 block text-[11px] text-[#4E4E4E]"
+              : "mt-0.5 block text-xs text-[#4E4E4E] sm:text-sm lg:text-base"
           }
         >
           {item.description}
@@ -410,7 +426,7 @@ function AccountMobileMenu({
           min-w-0
           items-center
           justify-between
-          rounded-[14px]
+          rounded-lg
           border
           border-gold
           bg-white
@@ -422,7 +438,7 @@ function AccountMobileMenu({
         "
       >
         <span className="min-w-0 truncate">
-          {activeMenuItem?.label || "Account menu"}
+          {activeMenuItem?.label || "Account Menu"}
         </span>
 
         <ChevronDown
@@ -433,7 +449,7 @@ function AccountMobileMenu({
       </button>
 
       {isOpen && (
-        <nav className="absolute left-0 top-[calc(100%+6px)] z-50 flex w-full min-w-0 flex-col items-start overflow-hidden rounded-[14px] border border-gold bg-white shadow-lg">
+        <nav className="absolute left-0 top-[calc(100%+6px)] z-50 flex w-full min-w-0 flex-col items-start overflow-hidden rounded-lg border border-gold bg-white shadow-lg">
           {items.map((item) => (
             <AccountMenuItem
               key={item.id}
@@ -450,7 +466,7 @@ function AccountMobileMenu({
 
 function AccountDesktopMenu({ items }) {
   return (
-    <nav className="hidden w-full min-w-0 flex-col items-start rounded-[20px] border border-gold py-4 xl:flex">
+    <nav className="hidden w-full min-w-0 flex-col items-start rounded-lg  border border-gold py-4 xl:flex">
       {items.map((item) => (
         <AccountMenuItem key={item.id} item={item} variant="desktop" />
       ))}
@@ -470,31 +486,36 @@ function AccountSidebar({
   setIsMobileMenuOpen,
   tab,
   isAvatarUploading,
+  showProfileCard = true,
+  showMenu = true,
 }) {
   return (
-    <aside className="relative z-30 min-w-0 space-y-5 lg:sticky lg:top-24 lg:self-start">
-      <AccountProfileCard
-        user={user}
-        name={name}
-        avatar={avatar}
-        avatarError={avatarError}
-        fileInputRef={fileInputRef}
-        onAvatarChange={onAvatarChange}
-        showEditButton={tab !== "profile"}
-        isAvatarUploading={isAvatarUploading}
-      />
-
-      <div className="min-w-0">
-        <AccountMobileMenu
-          items={MENU_ITEMS}
-          activeMenuItem={activeMenuItem}
-          isOpen={isMobileMenuOpen}
-          onToggle={() => setIsMobileMenuOpen((open) => !open)}
-          onClose={() => setIsMobileMenuOpen(false)}
+    <aside className={`relative z-30 w-full min-w-0 ${showMenu ? "space-y-5" : ""}`}>
+      {showProfileCard && (
+        <AccountProfileCard
+          user={user}
+          name={name}
+          avatar={avatar}
+          avatarError={avatarError}
+          fileInputRef={fileInputRef}
+          onAvatarChange={onAvatarChange}
+          showEditButton={tab !== "profile"}
+          isAvatarUploading={isAvatarUploading}
         />
+      )}
 
-        <AccountDesktopMenu items={MENU_ITEMS} />
-      </div>
+      {showMenu && (
+        <div className="min-w-0">
+          <AccountMobileMenu
+            items={MENU_ITEMS}
+            activeMenuItem={activeMenuItem}
+            isOpen={isMobileMenuOpen}
+            onToggle={() => setIsMobileMenuOpen((open) => !open)}
+            onClose={() => setIsMobileMenuOpen(false)}
+          />
+          <AccountDesktopMenu items={MENU_ITEMS} />
+        </div>
+      )}
     </aside>
   );
 }
@@ -662,18 +683,8 @@ export default function AccountPage({ tab = "profile" }) {
         } | Sam Global`}
       />
 
-      <div
-        className="
-          grid
-          min-w-0
-          gap-5
-          py-4
-          sm:py-8
-          lg:gap-5
-          lg:py-10
-          xl:grid-cols-[minmax(280px,0.72fr)_minmax(0,1fr)]
-        "
-      >
+      <div className="min-w-0 space-y-5 py-4 sm:space-y-6 sm:py-8 lg:py-10">
+        {/* Full-width profile summary */}
         <AccountSidebar
           user={user}
           name={name}
@@ -686,36 +697,57 @@ export default function AccountPage({ tab = "profile" }) {
           setIsMobileMenuOpen={setIsMobileMenuOpen}
           tab={tab}
           isAvatarUploading={isAvatarUploading}
+          showProfileCard
+          showMenu={false}
         />
 
-        <div className="relative z-0 min-w-0 w-full">
-          <div
-            className="
-              min-h-fit
-              w-full
-              min-w-0
-              rounded-[14px]
-              border
-              border-gold
-              bg-[#F8F9FF]
-              p-3
-              shadow-sm
-              sm:p-6
-              lg:p-7
-            "
-          >
-            <ApiState
-              loading={userState.loading && !user}
-              error={userState.error}
-              empty={false}
+        {/* Account pages start below the profile card */}
+        <div className="grid min-w-0 grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(260px,0.34fr)_minmax(0,1fr)] xl:gap-6">
+          <AccountSidebar
+            user={user}
+            name={name}
+            avatar={displayedAvatar}
+            avatarError={avatarError}
+            fileInputRef={fileInputRef}
+            onAvatarChange={handleAvatarChange}
+            activeMenuItem={activeMenuItem}
+            isMobileMenuOpen={isMobileMenuOpen}
+            setIsMobileMenuOpen={setIsMobileMenuOpen}
+            tab={tab}
+            isAvatarUploading={isAvatarUploading}
+            showProfileCard={false}
+            showMenu
+          />
+
+          <div className="relative z-0 min-w-0 w-full">
+            <div
+              className="
+                min-h-fit
+                w-full
+                min-w-0
+                rounded-lg
+                border
+                border-gold
+                bg-[#F8F9FF]
+                p-3
+                shadow-sm
+                sm:p-6
+                lg:p-7
+              "
             >
-              <AccountTabContent
-                tab={tab}
-                user={user}
-                avatarFile={avatarFile}
-                avatarUrl={displayedAvatarUrl}
-              />
-            </ApiState>
+              <ApiState
+                loading={userState.loading && !user}
+                error={userState.error}
+                empty={false}
+              >
+                <AccountTabContent
+                  tab={tab}
+                  user={user}
+                  avatarFile={avatarFile}
+                  avatarUrl={displayedAvatarUrl}
+                />
+              </ApiState>
+            </div>
           </div>
         </div>
       </div>

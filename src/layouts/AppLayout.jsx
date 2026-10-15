@@ -56,7 +56,9 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   "/faq",
   "/become-a-seller",
   "/seller-policies",
-  "/about-us"
+  "/about-us",
+  "/privacy-policy",
+
 ];
 export default function AppLayout() {
   const dispatch = useDispatch();

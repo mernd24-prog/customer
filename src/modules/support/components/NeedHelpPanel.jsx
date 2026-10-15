@@ -27,7 +27,7 @@ export default function NeedHelpPanel({
       className={`
         h-fit w-full
         overflow-hidden
-        rounded-xl
+        rounded-lg
         border border-[#F0E6D2]
         bg-white
         ${sticky ? "lg:sticky lg:top-28" : ""}

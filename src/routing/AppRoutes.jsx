@@ -273,6 +273,21 @@ export default function AppRoutes() {
           />
 
           <Route
+            path="/privacy-policy"
+            element={<PolicyPage slugOverride="privacy-policy" />}
+          />
+
+          <Route
+            path="/cookie-policy"
+            element={<PolicyPage slugOverride="cookie-policy" />}
+          />
+
+          <Route
+            path="/cookies-policy"
+            element={<PolicyPage slugOverride="cookie-policy" />}
+          />
+
+          <Route
             path="/become-a-seller"
             element={<BecomeASeller />}
           />

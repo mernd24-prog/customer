@@ -16,6 +16,7 @@ import {
 
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
+import FallbackImage from "../../../components/ui/FallbackImage";
 import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_POLICY } from "../../../data/fallbackCmsData";
@@ -115,7 +116,7 @@ export default function SellerPolicy() {
     page?.image?.url ||
     page?.heroImage ||
     page?.coverImage ||
-    "";
+    FALLBACK_SELLER_POLICY.image.url;
 
   const primaryCtaLabel = page?.cta?.label || "Become a Seller";
 
@@ -155,10 +156,6 @@ export default function SellerPolicy() {
     2,
   );
 
-  /* =========================================================
-     SECTION 1
-  ========================================================= */
-
   const highlightBadge =
     section1?.cta?.label ||
     String(section1?.type || "")
@@ -170,10 +167,6 @@ export default function SellerPolicy() {
   const highlightDesc = section1?.description || "";
 
   const highlights = mapSectionPoints(section1, highlightIcons);
-
-  /* =========================================================
-     SECTION 2
-  ========================================================= */
 
   const respBadge =
     section2?.cta?.label ||
@@ -187,9 +180,6 @@ export default function SellerPolicy() {
 
   const responsibilities = mapSectionPoints(section2, responsibilityIcons);
 
-  /* =========================================================
-     SECTION 3
-  ========================================================= */
 
   const compBadge =
     section3?.cta?.label ||
@@ -223,17 +213,14 @@ export default function SellerPolicy() {
         loading={loading && !cmsPolicy && !cmsPolicies}
         skeletonLayout={SKELETON_PRESETS.POLICY_PAGE}
       >
-        {/* =====================================================
-            HERO
-        ===================================================== */}
-
         <section className="relative isolate overflow-hidden bg-[#FAF8F3]">
           {heroImg && (
-            <img
+            <FallbackImage
               loading="lazy"
               width="400"
               height="400"
               src={heroImg}
+              fallbackSrc={FALLBACK_SELLER_POLICY.image.url}
               alt={heroTitle || "Seller Policy"}
               className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
             />
@@ -297,10 +284,6 @@ export default function SellerPolicy() {
           </div>
         </section>
 
-        {/* =====================================================
-            POLICY HIGHLIGHTS
-        ===================================================== */}
-
         {section1 && (highlights.length > 0 || highlightTitle) && (
           <section className="bg-[#FAF8F3] py-12 sm:py-16 lg:py-24">
             <div className="customer-container">
@@ -360,9 +343,7 @@ export default function SellerPolicy() {
           </section>
         )}
 
-        {/* =====================================================
-            SELLER RESPONSIBILITIES
-        ===================================================== */}
+  
 
         {section2 && (responsibilities.length > 0 || respTitle) && (
           <section className="bg-white py-12 sm:py-16 lg:py-24">
@@ -423,9 +404,6 @@ export default function SellerPolicy() {
           </section>
         )}
 
-        {/* =====================================================
-            COMPLIANCE
-        ===================================================== */}
 
         {section3 && (compliance.length > 0 || compTitle) && (
           <section className="bg-[#F7F5EF] py-12 sm:py-16 lg:py-24">

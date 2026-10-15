@@ -311,7 +311,7 @@ export function mergeSocialLinks(fallbackLinks = [], cmsLinks = []) {
 export function mergeLinkGroups(fallbackGroups = [], cmsGroups = []) {
   if (!cmsGroups.length) return fallbackGroups;
 
-  return cmsGroups.map((cmsGroup, groupIndex) => {
+  const mergedGroups = cmsGroups.map((cmsGroup, groupIndex) => {
     const cmsTitle = normalizeText(cmsGroup?.title);
     const fallbackGroup =
       fallbackGroups.find(
@@ -323,24 +323,61 @@ export function mergeLinkGroups(fallbackGroups = [], cmsGroups = []) {
     const fallbackLinks = asArray(fallbackGroup?.links);
     const cmsLinks = asArray(cmsGroup?.links);
 
-    const mergedLinks = cmsLinks.map((cmsLink, linkIndex) => {
-      const fallbackLink = fallbackLinks[linkIndex] || {};
-      return {
-        ...fallbackLink,
-        ...cmsLink,
-        label: cmsLink?.label || fallbackLink?.label || "",
-        href: cmsLink?.href || fallbackLink?.href || "",
-        target: cmsLink?.target || fallbackLink?.target || "_self",
-      };
+    const mergedLinks = [...fallbackLinks];
+    const seenKeys = new Set(
+      fallbackLinks
+        .map((link) => {
+          const label = normalizeText(link?.label || "");
+          const href = normalizeText(link?.href || "");
+          return label || href || "";
+        })
+        .filter(Boolean),
+    );
+
+    cmsLinks.forEach((cmsLink) => {
+      const key = normalizeText(cmsLink?.label || cmsLink?.href || "");
+      const existingIndex = mergedLinks.findIndex((link) => {
+        const linkKey = normalizeText(link?.label || link?.href || "");
+        return linkKey && linkKey === key;
+      });
+
+      if (existingIndex >= 0) {
+        mergedLinks[existingIndex] = {
+          ...mergedLinks[existingIndex],
+          ...cmsLink,
+          label: cmsLink?.label || mergedLinks[existingIndex]?.label || "",
+          href: cmsLink?.href || mergedLinks[existingIndex]?.href || "",
+          target: cmsLink?.target || mergedLinks[existingIndex]?.target || "_self",
+        };
+        if (key) seenKeys.add(key);
+        return;
+      }
+
+      if (key && !seenKeys.has(key)) {
+        mergedLinks.push({
+          ...cmsLink,
+          label: cmsLink?.label || "",
+          href: cmsLink?.href || "",
+          target: cmsLink?.target || "_self",
+        });
+        seenKeys.add(key);
+      }
     });
 
     return {
       ...fallbackGroup,
       ...cmsGroup,
       title: cmsGroup?.title || fallbackGroup?.title || "",
-      links: mergedLinks.length > 0 ? mergedLinks : fallbackLinks,
+      links: mergedLinks.filter((link) => link?.label && link?.href),
     };
   });
+
+  const fallbackOnlyGroups = fallbackGroups.filter((fallbackGroup) => {
+    const title = normalizeText(fallbackGroup?.title || "");
+    return !cmsGroups.some((cmsGroup) => normalizeText(cmsGroup?.title || "") === title);
+  });
+
+  return [...mergedGroups, ...fallbackOnlyGroups];
 }
 
 export function mergeFooterData(fallback, cmsData) {
