@@ -38,6 +38,7 @@ const api = axios.create({
 let refreshPromise = null;
 const pendingCachedGetRequests = new Map();
 let serviceUnavailable = false;
+let availabilityCheckPromise = null;
         
 export const getServiceFailureKind = (error = {}) => {
   if (typeof navigator !== "undefined" && navigator.onLine === false) {
@@ -80,24 +81,29 @@ const publishServiceAvailability = (available, detail = {}) => {
   );
 };
 
-export const checkBackendAvailability = async () => {
-  if (typeof navigator !== "undefined" && navigator.onLine === false) {
-    publishServiceAvailability(false, { kind: "offline" });
-    return false;
-  }
-  try {
-    await axios.get(`${API_BASE_URL}/health`, {
-      timeout: Math.min(API_TIMEOUT_MS, 8000),
-      headers: { "Cache-Control": "no-store" },
-    });
-    publishServiceAvailability(true);
-    return true;
-  } catch (error) {
-    publishServiceAvailability(false, {
-      kind: getServiceFailureKind(error) || "unavailable",
-    });
-    return false;
-  }
+export const checkBackendAvailability = () => {
+  if (availabilityCheckPromise) return availabilityCheckPromise;
+  availabilityCheckPromise = (async () => {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      publishServiceAvailability(false, { kind: "offline" });
+      return false;
+    }
+    try {
+      // Readiness includes database connectivity; /health only checks the process.
+      await axios.get(`${API_BASE_URL}/ready`, {
+        timeout: Math.min(API_TIMEOUT_MS, 8000),
+        headers: { "Cache-Control": "no-store" },
+      });
+      publishServiceAvailability(true);
+      return true;
+    } catch (error) {
+      publishServiceAvailability(false, {
+        kind: getServiceFailureKind(error) || "unavailable",
+      });
+      return false;
+    }
+  })().finally(() => { availabilityCheckPromise = null; });
+  return availabilityCheckPromise;
 };
 
 const FORCE_LOGOUT_CODES = new Set([
@@ -221,16 +227,17 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
-    if (!response.config?._skipServiceAvailability) publishServiceAvailability(true);
+    if (serviceUnavailable && !response.config?._skipServiceAvailability) {
+      void checkBackendAvailability();
+    }
     return response;
   },
   async (error) => {
     const failureKind = getServiceFailureKind(error);
     if (failureKind && !error.config?._skipServiceAvailability) {
-      publishServiceAvailability(false, {
-        kind: failureKind,
-        retryAfter: Number(error?.response?.headers?.["retry-after"] || 0),
-      });
+      // A single slow endpoint is not proof of a site-wide outage.
+      // Keep the endpoint error, but confirm readiness before blocking the site.
+      void checkBackendAvailability();
     }
     const originalRequest = error.config;
     if (isPublicAuthEndpoint(originalRequest?.url)) {
