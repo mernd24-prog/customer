@@ -31,6 +31,16 @@ const POLICY_CONFIG = {
     cmsSlug: "terms-of-use",
     fallbackKey: "terms",
   },
+
+  "privacy-policy": {
+    cmsSlug: "privacy-policy",
+    fallbackKey: "privacy",
+  },
+
+  "cookie-policy": {
+    cmsSlug: "cookie-policy",
+    fallbackKey: "cookie",
+  },
 };
 
 function normalizeSections(sections = []) {

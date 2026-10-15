@@ -53,10 +53,12 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   "/shipping-policy",
   "/refund-policy",
   "/terms-of-use",
+  "/privacy-policy",
+  "/cookie-policy",
   "/faq",
   "/become-a-seller",
   "/seller-policies",
-  "/about-us"
+  "/about-us",
 ];
 export default function AppLayout() {
   const dispatch = useDispatch();
@@ -79,16 +81,16 @@ export default function AppLayout() {
   );
 
   const currentUser = useSelector((state) => state.auth.current);
-const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some((route) => {
-  if (route === "/categories") {
-    return location.pathname === route;
-  }
+  const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some((route) => {
+    if (route === "/categories") {
+      return location.pathname === route;
+    }
 
-  return (
-    location.pathname === route ||
-    (route !== "/" && location.pathname.startsWith(`${route}/`))
-  );
-});
+    return (
+      location.pathname === route ||
+      (route !== "/" && location.pathname.startsWith(`${route}/`))
+    );
+  });
   useEffect(() => {
     if (catalogCategories.length === 0) {
       dispatch(fetchCategories({ navigation: true })).catch(() => {});
@@ -159,7 +161,7 @@ const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some((route) => {
       </main>
 
       <Suspense fallback={<div className="h-[400px] w-full" />}>
-        <LazyFooter/>
+        <LazyFooter />
       </Suspense>
 
       <Suspense fallback={null}>

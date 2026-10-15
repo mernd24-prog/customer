@@ -1,3 +1,8 @@
+import {
+  CANONICAL_FAQ_DATA,
+  CANONICAL_POLICY_DATA,
+} from "./canonicalLegalContent";
+
 const image = (url, alt = "") => ({ url, alt });
 export const FALLBACK_CONTACT_PAGE = {
   title: "Contact us",
@@ -386,7 +391,7 @@ export const FALLBACK_SELLER_PAGE = {
       })),
     })),
   };
-/* -------------------------------------------------------------------------- */ /* About                                                                      */ /* -------------------------------------------------------------------------- */ 
+/* -------------------------------------------------------------------------- */ /* About                                                                      */ /* -------------------------------------------------------------------------- */
 export const FALLBACK_ABOUT = {
   banner: {
     image: "/image/png/fallback/become-a-seller/About-banner.png",
@@ -398,11 +403,7 @@ export const FALLBACK_ABOUT = {
       label: "Learn More",
       href: "#who-we-are",
     },
-    highlights: [
-      "Simple onboarding",
-      "Secure payouts",
-      "Dedicated support",
-    ],
+    highlights: ["Simple onboarding", "Secure payouts", "Dedicated support"],
   },
 
   story: {
@@ -935,6 +936,7 @@ export const FALLBACK_POLICY_DATA = {
     ],
   },
 };
+Object.assign(FALLBACK_POLICY_DATA, CANONICAL_POLICY_DATA);
 export const FALLBACK_CMS_DATA = {
   faq: {
     _id: "6aaa4fe3f5dedaa4a6a2a320",
@@ -1092,6 +1094,7 @@ export const FALLBACK_CMS_DATA = {
     },
   },
 };
+FALLBACK_CMS_DATA.faq = CANONICAL_FAQ_DATA;
 /* -------------------------------------------------------------------------- */
 /* Footer                                                                     */
 /* -------------------------------------------------------------------------- */
@@ -1104,15 +1107,13 @@ const footerImage = (url, alt = "") => ({
 export const FALLBACK_FOOTER = {
   slug: "footerdata",
   title: "footerData",
- logo: "/image/webp/logoWithName.webp", 
+  logo: "/image/webp/logoWithName.webp",
   benefits: [
     {
       title: "100% Secure Payments",
       description: "Multiple sale payment options",
-      icon: footerImage(
-        "/image/png/fallback/footer/payment.png",
-        "Payment",
-      ).url,
+      icon: footerImage("/image/png/fallback/footer/payment.png", "Payment")
+        .url,
       alt: "Payment",
     },
     {
@@ -1127,10 +1128,8 @@ export const FALLBACK_FOOTER = {
     {
       title: "24/7 Support",
       description: "We’re here to help you.",
-      icon: footerImage(
-        "/image/png/fallback/footer/support.png",
-        "Support",
-      ).url,
+      icon: footerImage("/image/png/fallback/footer/support.png", "Support")
+        .url,
       alt: "Support",
     },
   ],
@@ -1195,6 +1194,14 @@ export const FALLBACK_FOOTER = {
           href: "/terms-of-use",
         },
         {
+          label: "Privacy Policy",
+          href: "/privacy-policy",
+        },
+        {
+          label: "Cookie Policy",
+          href: "/cookie-policy",
+        },
+        {
           label: "FAQ",
           href: "/faq",
         },
@@ -1203,29 +1210,25 @@ export const FALLBACK_FOOTER = {
   ],
 
   appDownload: {
-    title:
-      "Download our app for a faster and smarter shopping experience.",
+    title: "Download our app for a faster and smarter shopping experience.",
 
     links: [
       {
         label: "Download on the App Store",
         href: "/mobile-app",
-        image:
-          "/image/png/fallback/footer/appStore.svg",
+        image: "/image/png/fallback/footer/appStore.svg",
         alt: "Download on the App Store",
       },
       {
         label: "Get it on Google Play",
         href: "/mobile-app",
-        image:
-          "/image/png/fallback/footer/playStore.svg",
+        image: "/image/png/fallback/footer/playStore.svg",
         alt: "Get it on Google Play",
       },
     ],
   },
 
-  copyright:
-    "© 2026 Samglobal Marketplace Pvt. Ltd. All Rights Reserved.",
+  copyright: "© 2026 Samglobal Marketplace Pvt. Ltd. All Rights Reserved.",
 
   socialLinks: [
     {
@@ -1247,4 +1250,4 @@ export const FALLBACK_FOOTER = {
       alt: "YouTube",
     },
   ],
-}; 
+};

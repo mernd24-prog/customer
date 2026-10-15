@@ -116,9 +116,7 @@ const RecentlyViewedPage = lazy(() =>
 
 const AboutPage = lazy(() => import("../pages/about/AboutPage"));
 
-const BrandPage = lazy(
-  () => import("../modules/catalog/pages/BrandPage"),
-);
+const BrandPage = lazy(() => import("../modules/catalog/pages/BrandPage"));
 
 const CategoryPage = lazy(
   () => import("../modules/catalog/pages/CategoryPage"),
@@ -126,13 +124,9 @@ const CategoryPage = lazy(
 
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 
-const AccountPage = lazy(
-  () => import("../modules/account/pages/AccountPage"),
-);
+const AccountPage = lazy(() => import("../modules/account/pages/AccountPage"));
 
-const CartPage = lazy(
-  () => import("../modules/cart/pages/CartPage"),
-);
+const CartPage = lazy(() => import("../modules/cart/pages/CartPage"));
 
 const CheckoutPage = lazy(
   () => import("../modules/checkout/pages/CheckoutPage"),
@@ -255,16 +249,12 @@ export default function AppRoutes() {
 
           <Route
             path="/shipping-policy"
-            element={
-              <PolicyPage slugOverride="shipping-delivery-policy" />
-            }
+            element={<PolicyPage slugOverride="shipping-delivery-policy" />}
           />
 
           <Route
             path="/refund-policy"
-            element={
-              <PolicyPage slugOverride="return-refund-policy" />
-            }
+            element={<PolicyPage slugOverride="return-refund-policy" />}
           />
 
           <Route
@@ -273,48 +263,34 @@ export default function AppRoutes() {
           />
 
           <Route
-            path="/become-a-seller"
-            element={<BecomeASeller />}
+            path="/privacy-policy"
+            element={<PolicyPage slugOverride="privacy-policy" />}
           />
 
           <Route
-            path="/seller-policies"
-            element={<SellerPolicy />}
+            path="/cookie-policy"
+            element={<PolicyPage slugOverride="cookie-policy" />}
           />
 
-          <Route
-            path="/seller-policy"
-            element={<SellerPolicy />}
-          />
+          <Route path="/become-a-seller" element={<BecomeASeller />} />
+
+          <Route path="/seller-policies" element={<SellerPolicy />} />
+
+          <Route path="/seller-policy" element={<SellerPolicy />} />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
             <Route index element={<HomePage />} />
 
-            <Route
-              path="/wishlist"
-              element={<WatchlistPage />}
-            />
+            <Route path="/wishlist" element={<WatchlistPage />} />
 
-            <Route
-              path="/search"
-              element={<SearchPage />}
-            />
+            <Route path="/search" element={<SearchPage />} />
 
-            <Route
-              path="/products"
-              element={<ProductsPage />}
-            />
+            <Route path="/products" element={<ProductsPage />} />
 
-            <Route
-              path="/products/pr"
-              element={<ProductsPage />}
-            />
+            <Route path="/products/pr" element={<ProductsPage />} />
 
-            <Route
-              path="/new-arrivals"
-              element={<NewArrivalsPage />}
-            />
+            <Route path="/new-arrivals" element={<NewArrivalsPage />} />
 
             <Route
               path={PRODUCT_ROUTES.recentlyUploaded}
@@ -366,25 +342,13 @@ export default function AppRoutes() {
               element={<ReviewDetailsPage />}
             />
 
-            <Route
-              path="/about-us"
-              element={<AboutPage />}
-            />
+            <Route path="/about-us" element={<AboutPage />} />
 
-            <Route
-              path="/categories/brand"
-              element={<BrandOutletPage />}
-            />
+            <Route path="/categories/brand" element={<BrandOutletPage />} />
 
-            <Route
-              path="/categories"
-              element={<CategoryListingPage />}
-            />
+            <Route path="/categories" element={<CategoryListingPage />} />
 
-            <Route
-              path="/category"
-              element={<CategoryListingPage />}
-            />
+            <Route path="/category" element={<CategoryListingPage />} />
 
             <Route
               path="/categories/brand/:brandSlug"
@@ -396,46 +360,24 @@ export default function AppRoutes() {
               element={<BrandPage />}
             />
 
-            <Route
-              path="/categories/:categoryKey"
-              element={<CategoryPage />}
-            />
+            <Route path="/categories/:categoryKey" element={<CategoryPage />} />
 
-            <Route
-              path="/brands/:brandSlug"
-              element={<BrandPage />}
-            />
+            <Route path="/brands/:brandSlug" element={<BrandPage />} />
 
             <Route
               path="/profile"
-              element={
-                <Navigate
-                  to="/account/profile"
-                  replace
-                />
-              }
+              element={<Navigate to="/account/profile" replace />}
             />
 
             <Route
               path="/settings"
-              element={
-                <Navigate
-                  to="/notification-preferences"
-                  replace
-                />
-              }
+              element={<Navigate to="/notification-preferences" replace />}
             />
 
             {/* Cart & Checkout */}
-            <Route
-              path={CART_ROUTES.cart}
-              element={<CartPage />}
-            />
+            <Route path={CART_ROUTES.cart} element={<CartPage />} />
 
-            <Route
-              path={CHECKOUT_ROUTES.checkout}
-              element={<CheckoutPage />}
-            />
+            <Route path={CHECKOUT_ROUTES.checkout} element={<CheckoutPage />} />
           </Route>
 
           {/* ── Protected buyer routes (must be logged in) ────────────── */}
@@ -444,12 +386,7 @@ export default function AppRoutes() {
               {/* Account */}
               <Route
                 path="/account"
-                element={
-                  <Navigate
-                    to="/account/profile"
-                    replace
-                  />
-                }
+                element={<Navigate to="/account/profile" replace />}
               />
 
               <Route
@@ -467,10 +404,7 @@ export default function AppRoutes() {
                 element={<AccountPage tab="security" />}
               />
 
-              <Route
-                path="/account/kyc"
-                element={<AccountPage tab="kyc" />}
-              />
+              <Route path="/account/kyc" element={<AccountPage tab="kyc" />} />
 
               {/* Payment results */}
               <Route
@@ -484,10 +418,7 @@ export default function AppRoutes() {
               />
 
               {/* Orders */}
-              <Route
-                path="/orders"
-                element={<OrdersPageLayout />}
-              />
+              <Route path="/orders" element={<OrdersPageLayout />} />
 
               <Route
                 path="/orders/i/:orderToken"
@@ -510,10 +441,7 @@ export default function AppRoutes() {
               />
 
               {/* Returns */}
-              <Route
-                path={RETURNS_ROUTES.returns}
-                element={<ReturnsPage />}
-              />
+              <Route path={RETURNS_ROUTES.returns} element={<ReturnsPage />} />
 
               <Route
                 path="/returns/request/i/:orderToken"
@@ -532,26 +460,14 @@ export default function AppRoutes() {
               />
 
               {/* Financial */}
-              <Route
-                path="/wallet"
-                element={<WalletPage />}
-              />
+              <Route path="/wallet" element={<WalletPage />} />
 
-              <Route
-                path="/payments"
-                element={<PaymentsPage />}
-              />
+              <Route path="/payments" element={<PaymentsPage />} />
 
-              <Route
-                path="/subscriptions"
-                element={<SubscriptionPage />}
-              />
+              <Route path="/subscriptions" element={<SubscriptionPage />} />
 
               {/* Warranty */}
-              <Route
-                path="/warranty"
-                element={<WarrantyPage />}
-              />
+              <Route path="/warranty" element={<WarrantyPage />} />
 
               <Route
                 path="/warranty/i/:warrantyToken"
@@ -564,10 +480,7 @@ export default function AppRoutes() {
               />
 
               {/* Notifications */}
-              <Route
-                path="/notifications"
-                element={<NotificationsPage />}
-              />
+              <Route path="/notifications" element={<NotificationsPage />} />
 
               <Route
                 path="/notification-preferences"
@@ -579,10 +492,7 @@ export default function AppRoutes() {
           </Route>
 
           {/* ── 404 catch-all ─────────────────────────────────────────── */}
-          <Route
-            path="*"
-            element={<NotFoundPage />}
-          />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </Suspense>
