@@ -11,8 +11,8 @@ export const ERROR_MESSAGES = Object.freeze({
   safeText: "Only letters, numbers, spaces, and basic punctuation are allowed",
   name: (field) =>
     `${field} can contain letters, spaces, apostrophes, dots, and hyphens only`,
-  firstName: "First Name should contain only letters",
-  lastName: "Last Name should contain only letters",
+  firstName: "First Name can contain letters, spaces, apostrophes, dots, and hyphens only",
+  lastName: "Last Name can contain letters, spaces, apostrophes, dots, and hyphens only",
   passwordMin: "Password must be at least 8 characters",
   passwordUppercase: "Password must contain at least one uppercase letter",
   passwordLowercase: "Password must contain at least one lowercase letter",

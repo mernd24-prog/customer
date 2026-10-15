@@ -58,23 +58,7 @@ export default function FAQPage() {
     faqCmsData?.excerpt ||
     FALLBACK_FAQ_DESCRIPTION;
 
-  const breadcrumbs = useMemo(
-    () => [
-      {
-        label: "Home",
-        href: "/",
-      },
-      {
-        label: faqTitle,
-      },
-    ],
-    [faqTitle],
-  );
 
-  /*
-   * Full-page loading state.
-   * Nothing from the FAQ page renders until CMS loading is complete.
-   */
   if (cmsLoading && !cmsPage) {
     return (
       <>
@@ -109,10 +93,7 @@ export default function FAQPage() {
       {/* Breadcrumb + FAQ content */}
       <section className="w-full pt-3 pb-10 md:pb-12">
         <PageContainer>
-          <Breadcrumbs
-            items={breadcrumbs}
-            className="mb-6 flex flex-wrap items-center gap-[10px] sm:mb-8 sm:gap-[12px] lg:gap-[15px]"
-          />
+
 
           {cmsError && !cmsPage && !faqCmsData ? (
             <div className="flex min-h-[35vh] items-center justify-center text-center">

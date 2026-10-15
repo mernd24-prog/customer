@@ -29,7 +29,7 @@ function getTextLines(value = "") {
     .replace(/<\/li>/gi, "\n")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/p>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
+    .replace(/<\/div>/gi, "\n")
     .split(/\n|•|&#8226;|&bull;/)
     .map((line) =>
       line
@@ -86,39 +86,43 @@ const PolicySection = ({
     : [];
 
   const visiblePoints =
-    cmsPoints.length > 0 ? cmsPoints : fallbackPoints;
+    typeof points === "undefined" || points === null
+      ? fallbackPoints
+      : cmsPoints;
 
   return (
     <section className="py-1 first:pt-0">
       {sectionTitle && (
-        <h2 className="mb-3 text-h3 font-bold text-ink">
+        <h2 className="mb-2 text-h3 font-bold text-ink">
           {sectionTitle}
         </h2>
       )}
 
       {sectionDescription && (
-        <p className="mb-8 text-[14px] leading-relaxed text-muted md:text-base">
-          {sectionDescription}
-        </p>
+        <p
+          className="mb-4 text-[14px] leading-relaxed text-muted md:text-base"
+          dangerouslySetInnerHTML={{ __html: sectionDescription }}
+        />
       )}
 
       {visiblePoints.length > 0 && (
-        <div className="space-y-8">
+        <div className="space-y-4">
           {visiblePoints.map((point, pIdx) => {
             const textLines = getTextLines(point.description);
+            const contentLines = textLines.length > 0 ? textLines : [point.description].filter(Boolean);
 
             return (
               <div key={`${point.title || "policy-point"}-${pIdx}`}>
                 {point.title && (
-                  <h3 className="mb-3 text-h5 font-bold text-ink">
+                  <h3 className="mb-2 text-h6 font-bold text-ink">
                     {point.title}
                   </h3>
                 )}
 
-                {textLines.length > 1 ? (
-                  <ul className="space-y-2">
-                    {textLines.map((line, lineIdx) => (
-                      <li
+                {contentLines.length > 0 && (
+                  <div className="space-y-2">
+                    {contentLines.map((line, lineIdx) => (
+                      <div
                         key={`${pIdx}-${lineIdx}`}
                         className="flex items-start gap-2 px-2"
                       >
@@ -128,20 +132,17 @@ const PolicySection = ({
                           height="400"
                           src="/image/png/arrow.svg"
                           alt=""
-                          className="my-auto h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
+                          className="mt-1 h-3 w-3 flex-shrink-0 self-start object-contain md:h-3.5 md:w-3.5"
                         />
 
-                        <span className="text-[14px] leading-relaxed text-muted md:text-base">
-                          {line}
-                        </span>
-                      </li>
+                        <span
+                          className="flex-1 text-[14px] leading-relaxed text-muted md:text-base"
+                          dangerouslySetInnerHTML={{ __html: line }}
+                        />
+                      </div>
                     ))}
-                  </ul>
-                ) : textLines.length === 1 ? (
-                  <p className="text-[14px] leading-relaxed text-muted md:text-base">
-                    {textLines[0]}
-                  </p>
-                ) : null}
+                  </div>
+                )}
               </div>
             );
           })}

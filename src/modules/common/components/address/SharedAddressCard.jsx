@@ -43,7 +43,7 @@ export default function SharedAddressCard({ addr, addrId, startEdit, handleDelet
           <button
             type="button"
             onClick={() => startEdit(addr)}
-            className="inline-flex  min-h-9 items-center justify-center gap-2 rounded-[6px] bg-[#D4A428] px-2 md:px-8 text-sm font-semibold text-white"
+            className="inline-flex  min-h-9 items-center justify-center gap-2 rounded-lg bg-[#D4A428] px-2 md:px-8 text-sm font-semibold text-white"
           >
             <Pencil className="size-4" />
             Edit Address

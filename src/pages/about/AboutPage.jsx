@@ -76,7 +76,7 @@ return (
      metaDescription="Learn more about Sam Global, our story, our values, and our mission."
    />
 
-```
+
   <AboutBanner
     image={
       bannerSection?.image?.url ||

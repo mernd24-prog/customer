@@ -1,4 +1,12 @@
-import { ChevronDown, ChevronUp, MapPin, Plus } from "lucide-react";
+
+import {
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Plus,
+  Info,
+} from "lucide-react";
+
 import Button from "../../../components/ui/buttons/Button";
 import AddressFormFields from "../../common/components/address/AddressFormFields";
 import AddressEditModal from "../../common/components/address/AddressEditModal";
@@ -51,42 +59,57 @@ export default function AddressTab({ user }) {
 
   if (loading && addresses.length === 0 && !showAddForm) {
     return (
-      <div className="flex flex-col gap-4 animate-pulse">
-        <div className="h-10 w-full sm:w-48 self-end rounded bg-cream" />
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <div className="h-48 w-full rounded-[12px] bg-cream" />
-          <div className="h-48 w-full rounded-[12px] bg-cream" />
-        </div>
+      <div className="animate-pulse space-y-4">
+        <div className="h-14 w-full rounded-lg bg-cream" />
+        <div className="h-48 w-full rounded-lg bg-cream" />
       </div>
     );
   }
 
   return (
     <>
-      <div className="grid gap-5  ">
-        <div className="flex  flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row  sm:justify-end">
+      <section className="min-w-0 space-y-5">
+        {/* Saved Addresses heading */}
+        <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
+              <MapPin size={21} />
+            </span>
+
+            <div className="min-w-0">
+              <h2 className="text-lg font-bold leading-6 text-[#1B1D60] sm:text-xl">
+                Saved Addresses
+              </h2>
+              <p className="mt-1 text-sm leading-5 text-[#64708A]">
+                Manage your delivery addresses for a faster checkout.
+              </p>
+            </div>
+          </div>
+
           <button
             type="button"
             onClick={handleToggleAddForm}
-            className="inline-flex min-h-10 items-center  justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
+            className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg border border-gold bg-gold px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 sm:w-auto"
           >
-            {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
+            {showAddForm ? <ChevronUp size={16} /> : <Plus size={17} />}
             {showAddForm ? "Close Form" : "Add New Address"}
           </button>
-        </div>
+        </header>
 
+        {/* Add Address Modal */}
         {showAddForm && (
           <BaseModal onClose={handleCloseAddForm} maxWidth="max-w-3xl">
             <form
-              className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6"
+              className="flex max-h-[85vh] flex-col rounded-xl bg-white p-4 sm:p-6"
               onSubmit={addForm.handleSubmit(handleAdd, handleInvalidAdd)}
               noValidate
             >
-              <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
-                <MapPin size={24} className="text-gold" />
+              <div className="mb-4 flex items-center gap-2 text-lg font-bold text-[#1B1D60]">
+                <MapPin size={22} className="text-gold" />
                 Add New Address
               </div>
-              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+
+              <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto pr-2">
                 <div className="grid gap-4 pb-2">
                   <AddressFormFields
                     form={addForm}
@@ -104,7 +127,8 @@ export default function AddressTab({ user }) {
                   />
                 </div>
               </div>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+
+              <div className="mt-5 flex flex-col-reverse gap-3 border-t border-[#E7D9B8] pt-4 sm:flex-row sm:justify-end">
                 <Button
                   type="button"
                   variant="secondary"
@@ -113,6 +137,7 @@ export default function AddressTab({ user }) {
                 >
                   Cancel
                 </Button>
+
                 <Button
                   type="submit"
                   loading={loading}
@@ -125,9 +150,10 @@ export default function AddressTab({ user }) {
           </BaseModal>
         )}
 
+        {/* Address Cards */}
         {addresses.length > 0 ? (
-          <div className="flex flex-col gap-6">
-            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <div className="space-y-5">
+            <div className="grid min-w-0 grid-cols-1 items-start gap-4 xl:grid-cols-2">
               {(showAllAddresses ? addresses : addresses.slice(0, 4)).map(
                 (addr) => {
                   const addrId = addr._id || addr.id;
@@ -136,7 +162,7 @@ export default function AddressTab({ user }) {
                   return (
                     <div
                       key={addrId}
-                      className="w-full overflow-hidden rounded-[12px] border border-gold bg-white"
+                      className="min-w-0 overflow-hidden rounded-lg  border border-[#E7D9B8] bg-white transition-colors hover:border-[#CE9F2D]"
                     >
                       <SharedAddressCard
                         addr={addr}
@@ -148,7 +174,10 @@ export default function AddressTab({ user }) {
                       <AddressEditModal
                         isOpen={isEditing}
                         onClose={cancelEdit}
-                        onSave={editForm.handleSubmit(handleUpdate, handleInvalidEdit)}
+                        onSave={editForm.handleSubmit(
+                          handleUpdate,
+                          handleInvalidEdit,
+                        )}
                         form={editForm}
                         idPrefix={`edit-${addrId}`}
                         loading={loading}
@@ -169,12 +198,13 @@ export default function AddressTab({ user }) {
               )}
             </div>
 
+            {/* Show More */}
             {addresses.length > 4 && (
-              <div className="flex justify-center w-full">
+              <div className="flex justify-center">
                 <button
                   type="button"
                   onClick={handleShowAllAddresses}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-gold px-6 py-2.5 text-sm font-semibold text-gold transition-colors hover:bg-gold-soft hover:text-gold-dark"
+                  className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-4 py-2 text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF8E8] sm:w-auto sm:min-w-52"
                 >
                   {showAllAddresses ? (
                     <>
@@ -182,32 +212,65 @@ export default function AddressTab({ user }) {
                     </>
                   ) : (
                     <>
-                      Show {addresses.length - 4} More Addresses{" "}
+                      Show {addresses.length - 4} More Addresses
                       <ChevronDown size={16} />
                     </>
                   )}
                 </button>
               </div>
             )}
+
+            {/* Bottom Note */}
+            <div className="flex items-start gap-3 rounded-lg border border-[#E7D9B8] bg-[#FFFCF5] px-4 py-3">
+              <Info
+                size={19}
+                className="mt-0.5 shrink-0 text-[#9A741D]"
+                aria-hidden="true"
+              />
+
+              <p className="text-sm leading-5 text-[#64708A]">
+                <span className="font-semibold text-[#1B1D60]">
+                  Need another delivery location?
+                </span>{" "}
+                Add another address to make your next checkout quicker and
+                easier.
+              </p>
+            </div>
           </div>
         ) : (
-          <div className="rounded-[10px] border border-dashed border-border-strong bg-cream p-8 text-center">
-            <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-gold">
-              <MapPin size={24} />
+          /* Empty State */
+          <div className="rounded-xl border border-dashed border-[#CE9F2D] bg-[#FFFCF5] px-5 py-10 text-center">
+            <span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60]">
+              <MapPin size={23} />
             </span>
-            <p className=" text-sm font-medium text-ink">
-              No Addresses Saved Yet.
+
+            <h3 className="text-base font-semibold text-[#1B1D60]">
+              No Saved Addresses Yet
+            </h3>
+
+            <p className="mx-auto mt-1 max-w-sm text-sm leading-5 text-[#64708A]">
+              Add your delivery address to make placing future orders easier.
             </p>
+
+            <button
+              type="button"
+              onClick={handleToggleAddForm}
+              className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark"
+            >
+              <Plus size={17} />
+              Add Your First Address
+            </button>
           </div>
         )}
-      </div>
+      </section>
 
+      {/* Delete Confirmation */}
       <ConfirmModal
         open={Boolean(deleteAddressId)}
         title="Delete This Address?"
         description="This saved address will be removed from your account. You can add it again later if needed."
-        confirmLabel={loading ? "Deleting..." : "Delete address"}
-        cancelLabel="Keep address"
+        confirmLabel={loading ? "Deleting..." : "Delete Address"}
+        cancelLabel="Keep Address"
         onCancel={() => setDeleteAddressId(null)}
         onConfirm={confirmDelete}
       />

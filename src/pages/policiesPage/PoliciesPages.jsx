@@ -39,7 +39,7 @@ const POLICY_CONFIG = {
 
   "cookie-policy": {
     cmsSlug: "cookie-policy",
-    fallbackKey: "cookie",
+    fallbackKey: "cookies",
   },
 };
 
@@ -127,19 +127,6 @@ export default function PoliciesPages({ slugOverride }) {
     policy?.description || fallbackPolicy?.description || "",
   );
 
-  const breadcrumbs = useMemo(
-    () => [
-      {
-        label: "Home",
-        href: "/",
-      },
-      {
-        label: title,
-      },
-    ],
-    [title],
-  );
-
   if (!config) {
     return (
       <>
@@ -168,9 +155,9 @@ export default function PoliciesPages({ slugOverride }) {
         metaDescription={description || `Read the ${title} of Sam Global.`}
       />
 
-      <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-10 md:py-12 lg:py-14">
+      <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
         <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-center text-2xl font-bold text-white md:text-3xl lg:text-[32px]">
+          <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
             {title}
           </h1>
         </div>
@@ -178,10 +165,7 @@ export default function PoliciesPages({ slugOverride }) {
 
       <section className="w-full pt-3 pb-10 md:pb-12">
         <PageContainer>
-          <Breadcrumbs
-            items={breadcrumbs}
-            className="mb-6 flex flex-wrap items-center gap-[10px] sm:mb-8 sm:gap-[12px] lg:gap-[15px]"
-          />
+          
 
           <ApiState
             loading={loading && !page && !fallbackPolicy}
@@ -194,9 +178,10 @@ export default function PoliciesPages({ slugOverride }) {
             {policy && (
               <div className="w-full">
                 {description && (
-                  <p className="mb-8 text-[14px] leading-relaxed text-muted md:text-base">
-                    {description}
-                  </p>
+                  <p
+                    className="mb-8 text-[14px] leading-relaxed text-muted md:text-base"
+                    dangerouslySetInnerHTML={{ __html: description }}
+                  />
                 )}
 
                 {sections.length > 0 ? (

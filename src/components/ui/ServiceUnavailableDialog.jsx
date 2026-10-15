@@ -87,20 +87,19 @@ export default function ServiceUnavailableDialog() {
         aria-modal="true"
         aria-labelledby="service-status-title"
         aria-describedby="service-status-message"
-        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-[var(--customer-gold)]/30 bg-[var(--customer-cream)] shadow-2xl"
+        className="relative w-full max-w-md overflow-hidden rounded-lg border border-[#15115d] bg-[var(--customer-cream)] shadow-2xl"
       >
-        <div className="h-1.5 bg-gradient-to-r from-[var(--customer-navy)] via-[var(--customer-gold)] to-[var(--customer-navy)]" />
         <button
           type="button"
           aria-label="Dismiss service status"
           onClick={() => setFailure(null)}
-          className="absolute right-4 top-5 rounded-full p-2 text-[var(--customer-muted)] transition hover:bg-white hover:text-[var(--customer-navy)]"
+          className="absolute right-4 top-5 rounded-lg p-2 text-[var(--customer-muted)] transition hover:bg-white hover:text-[var(--customer-navy)]"
         >
           <X size={19} />
         </button>
 
-        <div className="px-7 pb-7 pt-9 text-center sm:px-9">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--customer-gold-soft)] text-[var(--customer-gold-dark)] shadow-sm">
+        <div className="px-7 py-5 text-center sm:px-9">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-lg bg-[var(--customer-gold-soft)] text-[var(--customer-gold-dark)] shadow-sm">
             <Icon size={31} strokeWidth={1.8} />
           </div>
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--customer-gold-dark)]">
@@ -122,7 +121,7 @@ export default function ServiceUnavailableDialog() {
             type="button"
             onClick={retry}
             disabled={checking || failure.kind === "offline"}
-            className="mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--customer-navy)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--customer-navy-dark)] disabled:cursor-not-allowed disabled:opacity-55"
+            className="mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--customer-navy)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--customer-navy-dark)] disabled:cursor-not-allowed disabled:opacity-55"
           >
             <RefreshCw size={17} className={checking ? "animate-spin" : ""} />
             {checking ? "Checking connection…" : failure.kind === "offline" ? "Waiting for internet" : "Try again"}
