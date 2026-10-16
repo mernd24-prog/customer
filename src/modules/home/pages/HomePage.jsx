@@ -44,6 +44,7 @@ export function HomePage() {
   );
   const [homeProducts, setHomeProducts] = useState([]);
   const [homeLoading, setHomeLoading] = useState(true);
+  const [homeError, setHomeError] = useState(false);
   const hasFetchedRef = useRef(false);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const cmsList = useSelector((s) => s.cms.list);
@@ -81,7 +82,7 @@ export function HomePage() {
           const list = getProductListFromResponse(data);
           setHomeProducts(list);
         })
-        .catch(() => {})
+        .catch(() => setHomeError(true))
         .finally(() => setHomeLoading(false));
     } else {
       setHomeLoading(false);
@@ -119,13 +120,30 @@ export function HomePage() {
         <FeaturedCollectionsSection />
       </LazySection> */}
 
-      <LazySection minHeight="380px">
-        <PromoCampaignCarousel data={promoCampaignPage} />
-      </LazySection>
+      {!homeLoading && !products.length && !trendingProducts.length && (
+        <section className="mx-auto my-8 max-w-7xl rounded-2xl border border-[var(--customer-border)] bg-[var(--customer-cream)] px-6 py-12 text-center" role="status">
+          <h2 className="text-2xl font-semibold text-[var(--customer-navy)]">
+            {homeError ? "We couldn’t load products" : "Products coming soon"}
+          </h2>
+          <p className="mt-3 text-gray-600">
+            {homeError
+              ? "Please refresh the page to try again."
+              : "We’re preparing our collection. Please check back soon."}
+          </p>
+        </section>
+      )}
 
-      <LazySection minHeight="150px">
-        <ShoppingMadeEasyBanner data={shoppingBannerPage} />
-      </LazySection>
+      {promoCampaignPage && (
+        <LazySection minHeight="380px">
+          <PromoCampaignCarousel data={promoCampaignPage} />
+        </LazySection>
+      )}
+
+      {shoppingBannerPage && (
+        <LazySection minHeight="150px">
+          <ShoppingMadeEasyBanner data={shoppingBannerPage} />
+        </LazySection>
+      )}
 
       {featuredProducts.length > 0 && (
         <LazySection minHeight="450px">
