@@ -339,8 +339,8 @@ export default function useCheckout() {
   useEffect(() => {
     const rawValue = (watchedCouponCode || "").trim();
 
-    if (rawValue.length > 7) {
-      setValue("couponCode", rawValue.slice(0, 7), { shouldValidate: true });
+    if (rawValue.length > 30) {
+      setValue("couponCode", rawValue.slice(0, 30), { shouldValidate: true });
       return;
     }
 
@@ -355,13 +355,13 @@ export default function useCheckout() {
 
     const timer = setTimeout(() => {
       setIsCouponDebouncing(false);
-      if (rawValue.length > 0 && rawValue.length < 7) {
+      if (rawValue.length > 0 && rawValue.length < 3) {
         setError("couponCode", {
           type: "manual",
-          message: "Code must be exactly 7 digits",
+          message: "Code must be at least 3 characters",
         });
         setDebouncedCouponCode("");
-      } else if (rawValue.length === 7) {
+      } else if (rawValue.length <= 30) {
         clearErrors("couponCode");
         setDebouncedCouponCode(rawValue);
       }
@@ -892,13 +892,15 @@ export default function useCheckout() {
               : error?.message ||
                 error?.error?.message ||
                 "";
+          const isCodeError = Boolean(quotePayload?.couponCode);
           const isUnavailable =
-            !rawMsg ||
-            /not available/i.test(rawMsg) ||
-            /out of stock/i.test(rawMsg) ||
-            /unserviceable/i.test(rawMsg) ||
-            /disabled/i.test(rawMsg) ||
-            /inactive/i.test(rawMsg);
+            !isCodeError &&
+            (!rawMsg ||
+              (/not available/i.test(rawMsg) ||
+                /out of stock/i.test(rawMsg) ||
+                /unserviceable/i.test(rawMsg) ||
+                /disabled/i.test(rawMsg) ||
+                /inactive/i.test(rawMsg)));
 
           const errMsg = isUnavailable
             ? "This product is no longer available. Please remove it from your cart and try again later."
@@ -1345,6 +1347,17 @@ export default function useCheckout() {
           getOpaquePaymentResultPath("failed", activeOrderId, "pending_confirmation"),
           { replace: true },
         );
+      } else {
+        const message =
+          typeof error === "string"
+            ? error
+            : error?.message ||
+              error?.error?.message ||
+              "Unable to place the order";
+        if (values.couponCode) {
+          setError("couponCode", { type: "manual", message });
+        }
+        setError("root", { type: "manual", message });
       }
     } finally {
       if (shouldReleaseSubmitLock) {

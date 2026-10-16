@@ -36,7 +36,7 @@ export default function DiscountsSection({
             placeholder="Enter Coupon or Influencer Code"
             registration={register("couponCode")}
             error={errors.couponCode}
-            maxLength={7}
+            maxLength={30}
             loading={isCouponLoading}
           />
         </div>

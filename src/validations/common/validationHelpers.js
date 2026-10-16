@@ -202,10 +202,10 @@ export const locationField = (field, options = {}) =>
     ...options,
   });
 
-export const couponCodeField = optionalString(7)
+export const couponCodeField = optionalString(30)
   .transform((value) => value?.toUpperCase())
-  .refine((value) => !value || value.length === 7, {
-    message: "Code must be exactly 7 digits",
+  .refine((value) => !value || value.length >= 3, {
+    message: "Code must be at least 3 characters",
   })
   .refine((value) => !value || REGEX.couponCode.test(value), {
     message: "Enter a valid coupon or influencer code",
