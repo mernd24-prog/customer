@@ -68,7 +68,7 @@ export default function AddressTab({ user }) {
 
   return (
     <>
-      <section className="min-w-0 space-y-5">
+      <section className="mx-auto w-full min-w-0 space-y-5">
         {/* Saved Addresses heading */}
         <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
@@ -153,7 +153,7 @@ export default function AddressTab({ user }) {
         {/* Address Cards */}
         {addresses.length > 0 ? (
           <div className="space-y-5">
-            <div className="grid min-w-0 grid-cols-1 items-start gap-4 xl:grid-cols-2">
+            <div className="grid w-full min-w-0 grid-cols-1 items-stretch gap-4">
               {(showAllAddresses ? addresses : addresses.slice(0, 4)).map(
                 (addr) => {
                   const addrId = addr._id || addr.id;
@@ -162,7 +162,7 @@ export default function AddressTab({ user }) {
                   return (
                     <div
                       key={addrId}
-                      className="min-w-0 overflow-hidden rounded-lg  border border-[#E7D9B8] bg-white transition-colors hover:border-[#CE9F2D]"
+                      className="w-full min-w-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-colors hover:border-[#CE9F2D]"
                     >
                       <SharedAddressCard
                         addr={addr}
