@@ -225,13 +225,17 @@ function AccountSidebar({
 }
 
 function AccountTabContent({ tab, user }) {
+  const safeTab = ["profile", "addresses", "security"].includes(tab)
+    ? tab
+    : "profile";
+
   return (
-    <div className="mx-auto w-full  min-w-0">
-      {tab === "profile" && <ProfileTab user={user} />}
+    <div className="mx-auto w-full min-w-0">
+      {safeTab === "profile" && <ProfileTab user={user} />}
 
-      {tab === "addresses" && <AddressTab user={user} />}
+      {safeTab === "addresses" && <AddressTab user={user} />}
 
-      {tab === "security" && <SecurityTab />}
+      {safeTab === "security" && <SecurityTab />}
     </div>
   );
 }

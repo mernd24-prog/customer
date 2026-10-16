@@ -12,6 +12,7 @@ import { useToastThunk } from "../../../hooks/useToastThunk";
 import { changePassword, logout } from "../../../modules/auth/slices/authSlice";
 import { AUTH_ROUTES } from "../../../modules/auth/routes/apiRoutes";
 import { securitySchema } from "../../../validations/validationSchemas";
+import {UserRound } from "lucide-react";
 
 export default function SecurityTab() {
   const dispatch = useDispatch();
@@ -67,12 +68,22 @@ export default function SecurityTab() {
 
   return (
     <form className="security-password-form grid gap-4" onSubmit={handleSubmit((values) => submit(values))} noValidate>
-      <div className="rounded-[8px] border border-gold-soft bg-gold-soft px-4 py-3  text-sm text-gold-dark">
-        Choose a strong password with at least 8 characters, including numbers
-        and symbols.
-        {" "}OTP verification is required. OTP goes to your mobile first, then email if mobile delivery fails.
-      </div>
-
+      <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+             <div className="flex min-w-0 items-start gap-3">
+               <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
+                 <UserRound size={21} />
+               </span>
+               <div className="min-w-0">
+                 <h2 className="text-lg font-bold leading-6 text-[#1B1D60] sm:text-xl">
+                   Security
+                 </h2>
+                 <p className="mt-1 text-sm leading-5 text-[#64708A]">
+                   Manage your password and security settings.
+                 </p>
+               </div>
+             </div>
+           </header>
+        
       <FormField
         id="currentPassword"
         label="Current Password"

@@ -150,13 +150,10 @@ function OrderPaymentSummary({
 
   title = "Payment Summary",
 
-  // Controls
-  variant = "", // order | cart | checkout
+  variant = "", 
   buttonText,
   onCheckout,
   disabled = false,
-
-  // Checkout Props
   items = [],
   paymentMethods = [],
   selectedPaymentProvider,
@@ -179,8 +176,6 @@ function OrderPaymentSummary({
           <p className="mb-2  text-[18px] font-bold leading-[28px] text-ink">
             {String(items.length).padStart(2, "0")} Item(s)
           </p>
-
-          {/* <div className="grid divide-y divide-border "> */}
           {items.map((item) => (
             <div
               key={item._lineKey}
@@ -203,10 +198,8 @@ function OrderPaymentSummary({
               </span>
             </div>
           ))}
-          {/* </div> */}
         </>
       )}
-      {/* Cart MRP */}
 
       {variant === "cart" && asNumber?.(mrpSubtotal) > 0 && (
         <div>
@@ -219,14 +212,12 @@ function OrderPaymentSummary({
         </div>
       )}
 
-      {/* Cart Price */}
       {variant === "cart" && subtotal !== undefined && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow label="Price" value={formatMoney(subtotal, currency)} />
         </div>
       )}
 
-      {/* Order Subtotal */}
       {variant === "order" && subtotal !== undefined && (
         <div>
           <SummaryRow label="Price" value={formatMoney(subtotal, currency)} />
@@ -472,7 +463,7 @@ function OrderPaymentSummary({
           <button
             type="submit"
             disabled={loading || disabled}
-            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
           >
             {loading && (
               <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />

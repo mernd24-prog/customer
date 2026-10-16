@@ -1,7 +1,32 @@
+
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import CUSTOMER_ROUTES from "../../../constants/routes";
-import { getCategoryKey, getCategoryLabel } from "../../../utils/pages/categoryUtils";
+import {
+  getCategoryKey,
+  getCategoryLabel,
+} from "../../../utils/pages/categoryUtils";
+
+function CategoryCheckbox({ checked }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[3px] border transition-all duration-200 ${
+        checked
+          ? "border-[#3E4093] bg-[#3E4093]"
+          : "border-[#B8BBC5] bg-white"
+      }`}
+    >
+      {checked && (
+        <Check
+          size={11}
+          strokeWidth={3}
+          className="text-white"
+        />
+      )}
+    </span>
+  );
+}
 
 export function CategorySidebarNav({
   categoryTitle,
@@ -22,39 +47,36 @@ export function CategorySidebarNav({
       <h3 className="mb-4 text-xs font-bold uppercase tracking-wide text-[#111827]">
         Categories
       </h3>
+
       <div className="space-y-3">
         <p className="flex items-center gap-1.5 text-sm font-bold text-[#111827]">
-          <ChevronRight size={15} className="rotate-90 text-[#111827]" />
+          <ChevronRight
+            size={15}
+            className="rotate-90 text-[#111827]"
+          />
           <span className="line-clamp-2">{categoryTitle}</span>
         </p>
+
         <div className="space-y-3 pl-6">
           {visibleCategories.map((category) => {
             const isActive = category.key === activeKey;
+
             return (
               <Link
                 key={category.key}
                 to={CUSTOMER_ROUTES.category(category.key)}
+                aria-current={isActive ? "page" : undefined}
                 className={`flex items-start gap-2 text-sm font-medium leading-5 transition-colors hover:text-[var(--customer-gold)] ${
                   isActive
                     ? "font-bold text-[var(--customer-gold)]"
                     : "text-[#111827]"
                 }`}
               >
-                <span
-                  aria-hidden="true"
-                  className={`mt-0.5 inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[4px] border transition-colors ${
-                    isActive
-                      ? "border-[#3E4093] bg-[#3E4093]"
-                      : "border-[#3E4093] bg-transparent"
-                  }`}
-                >
-                  <span
-                    className={`h-2 w-2 rounded-[1px] bg-white transition-opacity ${
-                      isActive ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
+                <CategoryCheckbox checked={isActive} />
+
+                <span className="min-w-0">
+                  {category.name}
                 </span>
-                <span className="min-w-0">{category.name}</span>
               </Link>
             );
           })}
