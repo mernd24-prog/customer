@@ -66,18 +66,12 @@ export function getRootCategories(categories = []) {
 
   return Array.from(byKey.values()).filter((category) => {
     const count = category?.productCount ?? category?.count;
-    const hasExplicitZeroCount =
-      count !== undefined &&
-      count !== null &&
-      count !== "" &&
-      Number(count) < 1;
-
     return (
       (category.parentKey === null ||
         category.parentKey === undefined ||
         !byKey.has(category.parentKey) ||
         Number(category.level || 0) === 0) &&
-      !hasExplicitZeroCount
+      Number(count) > 0
     );
   });
 }

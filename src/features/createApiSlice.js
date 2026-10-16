@@ -110,27 +110,35 @@ export function createApiSlice({
   extraReducers,
   reducers = {},
   setCurrentFromList = true,
+  initialState = {},
+  thunkReducers = {},
 }) {
+  const resolvedInitialState = { ...defaultInitialState, ...initialState };
   const slice = createSlice({
     name,
-    initialState: defaultInitialState,
+    initialState: resolvedInitialState,
     reducers: {
-      resetState: () => defaultInitialState,
+      resetState: () => resolvedInitialState,
       clearError: (state) => {
         state.error = null;
       },
       ...reducers,
     },
     extraReducers: (builder) => {
-      Object.values(thunks).forEach((thunk) => {
+      Object.entries(thunks).forEach(([thunkName, thunk]) => {
         if (!thunk || !thunk.pending) return;
+        const dedicatedReducers = thunkReducers[thunkName];
 
         builder
-          .addCase(thunk.pending, (state) => {
+          .addCase(thunk.pending, (state, action) => {
+            dedicatedReducers?.pending?.(state, action);
+            if (dedicatedReducers?.skipDefault) return;
             state.loading = true;
             state.error = null;
           })
           .addCase(thunk.fulfilled, (state, action) => {
+            dedicatedReducers?.fulfilled?.(state, action);
+            if (dedicatedReducers?.skipDefault) return;
             state.loading = false;
             state.meta = action.payload?.meta || null;
             state.lastFetchedAt = Date.now();
@@ -196,6 +204,8 @@ export function createApiSlice({
             }
           })
           .addCase(thunk.rejected, (state, action) => {
+            dedicatedReducers?.rejected?.(state, action);
+            if (dedicatedReducers?.skipDefault) return;
             state.loading = false;
             state.error =
               action.payload || action.error?.message || "An error occurred";

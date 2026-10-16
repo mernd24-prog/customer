@@ -18,7 +18,11 @@ const DeliveryChecker = React.lazy(
 );
 import { closeAddedToCartModal } from "../modules/cart/slices/cartUiSlice";
 import { AUTH_ROUTES } from "../modules/auth/routes/apiRoutes";
-import { fetchCategories } from "../features/catalog/catalogSlice";
+import {
+  fetchCategories,
+  setGlobalCategories,
+} from "../features/catalog/catalogSlice";
+import { getCategoryListFromResponse } from "../utils/pages/categoryUtils";
 
 const LazyFooter = React.lazy(() =>
   import("./Footer").then((module) => ({ default: module.Footer })),
@@ -73,7 +77,7 @@ export default function AppLayout() {
 
   const addedProduct = useSelector((state) => state.cartUi.addedProduct);
   const catalogCategories = useSelector(
-    (state) => state.catalog?.globalCategories || state.catalog?.list || [],
+    (state) => state.catalog?.globalCategories || [],
   );
 
   const cart = useSelector((state) => state.cart.current || {});
@@ -95,7 +99,13 @@ export default function AppLayout() {
   });
   useEffect(() => {
     if (catalogCategories.length === 0) {
-      dispatch(fetchCategories({ navigation: true })).catch(() => {});
+      dispatch(fetchCategories({ navigation: true }))
+        .unwrap()
+        .then((result) => {
+          const list = getCategoryListFromResponse(result?.data || result);
+          if (list.length) dispatch(setGlobalCategories(list));
+        })
+        .catch(() => {});
     }
   }, [catalogCategories.length, dispatch]);
 

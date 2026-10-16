@@ -42,14 +42,7 @@ function getRootCategoriesForListing(list = []) {
       if (!category.routeKey || !category.displayName) return false;
 
       const explicitCount = category.productCount;
-      if (
-        explicitCount !== undefined &&
-        explicitCount !== null &&
-        explicitCount !== "" &&
-        Number(explicitCount) < 1
-      ) {
-        return false;
-      }
+      if (!Number.isFinite(explicitCount) || explicitCount < 1) return false;
 
       const isRoot =
         category.parentKey === null ||
@@ -231,20 +224,8 @@ export default function CategoryListingPage() {
 
         const payload = action?.payload;
 
-        /*
-         * IMPORTANT:
-         * Do NOT use getRootCategories() here.
-         *
-         * getRootCategories() intentionally filters:
-         *
-         *   productCount >= 1
-         *
-         * But the category API response does not provide
-         * productCount on the root categories.
-         *
-         * Therefore it would turn valid categories into
-         * an empty list.
-         */
+        // The public API includes aggregate productCount values and applies
+        // hasProducts=true, but keep the client-side check as a final guard.
         const rawList = getCategoryListFromResponse(payload);
 
         const roots = filterCategoryList(

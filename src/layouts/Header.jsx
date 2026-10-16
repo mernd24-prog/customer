@@ -544,7 +544,7 @@ export const CategoryBar = ({
 
   const catalogLoading = useSelector(
     (state) =>
-      state.catalog?.loading ||
+      state.catalog?.categoriesLoading ||
       state.catalog?.discoveryNavigationLoading,
   );
 

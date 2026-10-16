@@ -51,9 +51,7 @@ export function filterBrandList(brands = [], searchText = "") {
 
   return normalizedList.filter((brand) => {
     const productCount = getBrandProductCount(brand);
-    if (productCount !== undefined && productCount !== null && Number(productCount) < 1) {
-      return false;
-    }
+    if (!Number.isFinite(productCount) || productCount < 1) return false;
 
     return matchesBrandSearch(brand, query);
   });

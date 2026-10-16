@@ -8,7 +8,11 @@ import {
   clearSuggestions,
   searchAutocomplete,
 } from "../../features/search/searchSlice";
-import { fetchCategories } from "../../features/catalog/catalogSlice";
+import {
+  fetchCategories,
+  setGlobalCategories,
+} from "../../features/catalog/catalogSlice";
+import { getCategoryListFromResponse } from "../../utils/pages/categoryUtils";
 import useDebouncedValue from "../../hooks/useDebouncedValue";
 
 // function getCategoryListFromResponse(data) {
@@ -243,10 +247,10 @@ const SearchBar = ({
   const [searchParams] = useSearchParams();
   const location = useLocation();
 
+  // Category navigation has a dedicated store field and is never sourced
+  // from other catalog resources such as brands or families.
   const categoriesRaw =
-    useSelector(
-      (state) => state.catalog.globalCategories || state.catalog.list,
-    ) || [];
+    useSelector((state) => state.catalog.globalCategories) || [];
   const suggestionsRaw = useSelector((state) => state.search.suggestions) || [];
   const autocompleteLoading = useSelector(
     (state) => state.search.autocompleteLoading,
@@ -269,7 +273,13 @@ const SearchBar = ({
   useEffect(() => {
     if (!enableCategoryDropdown) return;
     if (categoriesRaw.length === 0) {
-      dispatch(fetchCategories({ navigation: true })).catch(() => {});
+      dispatch(fetchCategories({ navigation: true }))
+        .unwrap()
+        .then((result) => {
+          const list = getCategoryListFromResponse(result?.data || result);
+          if (list.length) dispatch(setGlobalCategories(list));
+        })
+        .catch(() => {});
     }
   }, [dispatch, enableCategoryDropdown, categoriesRaw.length]);
 

@@ -36,12 +36,11 @@ export const CategoryBar = ({
   const location = useLocation();
   const catalogLoading = useSelector(
     (state) =>
-      state.catalog?.loading || state.catalog?.discoveryNavigationLoading,
+      state.catalog?.categoriesLoading ||
+      state.catalog?.discoveryNavigationLoading,
   );
   const catalogCategoryList =
-    useSelector(
-      (state) => state.catalog.globalCategories || state.catalog.list,
-    ) || [];
+    useSelector((state) => state.catalog.globalCategories) || [];
   const [categoriesList, setCategoriesList] = useState([]);
 
   // Sync with Redux list when it contains actual category items

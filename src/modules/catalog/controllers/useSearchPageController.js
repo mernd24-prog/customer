@@ -25,13 +25,9 @@ export default function useSearchPageController() {
 
   const searchState = useSelector((s) => s.search);
   const globalCategories = useSelector((state) => state.catalog?.globalCategories);
-  const catalogList = useSelector((state) => state.catalog?.list);
   const categoriesRaw = useMemo(
-    () => [
-      ...(Array.isArray(globalCategories) ? globalCategories : []),
-      ...(Array.isArray(catalogList) ? catalogList : []),
-    ],
-    [catalogList, globalCategories],
+    () => (Array.isArray(globalCategories) ? globalCategories : []),
+    [globalCategories],
   );
   useEffect(() => {
     if (!categoriesRaw.length) dispatch(fetchCategories());

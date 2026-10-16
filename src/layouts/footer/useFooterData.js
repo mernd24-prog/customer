@@ -12,6 +12,7 @@ import { useCmsRecord } from "../../hooks/useCmsRecord";
 import {
   fetchCategories,
   fetchBrands,
+  setGlobalCategories,
   setGlobalBrands,
 } from "../../features/catalog/catalogSlice";
 import { CUSTOMER_ROUTES } from "../../constants/routes";
@@ -48,8 +49,7 @@ const uniqueLinks = (links = []) => {
 export function useFooterData(fallbackData) {
   const dispatch = useDispatch();
   const catalogCategoryList = useSelector(
-    (state) =>
-      state.catalog?.globalCategories || state.catalog?.list || emptyArray,
+    (state) => state.catalog?.globalCategories || emptyArray,
   );
   const globalBrands = useSelector(
     (state) => state.catalog?.globalBrands || emptyArray,
@@ -57,7 +57,13 @@ export function useFooterData(fallbackData) {
   useEffect(() => {
     const categoryList = getCategoryListFromResponse(catalogCategoryList);
     if (!categoryList.length) {
-      dispatch(fetchCategories({ tree: false, limit: 500 }));
+      dispatch(fetchCategories({ tree: false, limit: 500 }))
+        .unwrap()
+        .then((result) => {
+          const categories = getCategoryListFromResponse(result?.data || result);
+          if (categories.length) dispatch(setGlobalCategories(categories));
+        })
+        .catch(() => {});
     }
   }, [dispatch, catalogCategoryList]);
   useEffect(() => {
@@ -68,10 +74,7 @@ export function useFooterData(fallbackData) {
       .then((result) => {
         const brands = getBrandListFromResponse(result);
         const brandsWithProducts = brands
-          .filter((brand) => {
-            const count = getBrandProductCount(brand);
-            return count === undefined || Number(count) >= 1;
-          })
+          .filter((brand) => Number(getBrandProductCount(brand)) > 0)
           .slice(0, 5);
         dispatch(setGlobalBrands(brandsWithProducts));
       })
@@ -101,12 +104,7 @@ export function useFooterData(fallbackData) {
     const links = catalogCategories
       .filter((category) => {
         const count = category?.productCount ?? category?.count;
-        return (
-          count === undefined ||
-          count === null ||
-          count === "" ||
-          Number(count) > 0
-        );
+        return Number(count) > 0;
       })
       .map((cat) => {
         const categoryKey = getCategoryKey(cat);

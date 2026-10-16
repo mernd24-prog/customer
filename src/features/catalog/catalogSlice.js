@@ -1,6 +1,14 @@
 import { createApiSlice } from "../createApiSlice";
 import { catalogThunks, productThunks } from "../domainThunks";
-import { isReferenceId } from "../../utils/pages/brandUtils";
+import {
+  getBrandProductCount,
+  isReferenceId,
+  listFromPayload,
+} from "../../utils/pages/brandUtils";
+import {
+  filterCategoryTreeWithProducts,
+  getCategoryListFromResponse,
+} from "../../utils/pages/categoryUtils";
 
 const productFacetCategories = (action = {}) => {
   const facets =
@@ -82,7 +90,12 @@ const syncDiscoveryCategories = (state, action) => {
     }
   }
 
-  state.globalBrands = brands;
+  // A product response does not always include every facet. Keep the last
+  // known navigation brands when the facet is omitted instead of briefly
+  // clearing the footer while changing routes.
+  if (brands.length) {
+    state.globalBrands = brands;
+  }
   state.discoveryNavigationLoading = false;
   state.discoveryNavigationLoaded = true;
 };
@@ -102,12 +115,62 @@ export const {
 const catalogSlice = createApiSlice({
   name: "catalog",
   thunks: catalogThunks,
+  initialState: {
+    globalCategories: [],
+    globalBrands: [],
+    categoryList: [],
+    brandList: [],
+    categoriesLoading: false,
+    categoriesError: null,
+    brandsLoading: false,
+    brandsError: null,
+  },
+  thunkReducers: {
+    fetchCategories: {
+      skipDefault: true,
+      pending: (state) => {
+        state.categoriesLoading = true;
+        state.categoriesError = null;
+      },
+      fulfilled: (state, action) => {
+        state.categoriesLoading = false;
+        state.categoryList = filterCategoryTreeWithProducts(
+          getCategoryListFromResponse(action.payload?.data),
+        );
+      },
+      rejected: (state, action) => {
+        state.categoriesLoading = false;
+        state.categoriesError =
+          action.payload || action.error?.message || "Failed to load categories";
+      },
+    },
+    fetchBrands: {
+      skipDefault: true,
+      pending: (state) => {
+        state.brandsLoading = true;
+        state.brandsError = null;
+      },
+      fulfilled: (state, action) => {
+        state.brandsLoading = false;
+        state.brandList = listFromPayload(action.payload?.data).filter(
+          (brand) => Number(getBrandProductCount(brand)) > 0,
+        );
+      },
+      rejected: (state, action) => {
+        state.brandsLoading = false;
+        state.brandsError =
+          action.payload || action.error?.message || "Failed to load brands";
+      },
+    },
+  },
   reducers: {
     setGlobalCategories: (state, action) => {
-      state.globalCategories = action.payload;
+      state.globalCategories = filterCategoryTreeWithProducts(action.payload);
     },
     setGlobalBrands: (state, action) => {
-      state.globalBrands = action.payload;
+      state.globalBrands = (Array.isArray(action.payload) ? action.payload : []).filter(
+        (brand) => Number(getBrandProductCount(brand)) > 0,
+      );
     },
   },
   extraReducers: (builder) => {

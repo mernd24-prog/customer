@@ -118,6 +118,45 @@ export function getCategoryCount(category = {}) {
   return undefined;
 }
 
+export function categoryHasProducts(category = {}) {
+  const count = getCategoryCount(category);
+  if (Number.isFinite(count)) return count > 0;
+
+  const children = [
+    ...(Array.isArray(category.children) ? category.children : []),
+    ...(Array.isArray(category.subCategories) ? category.subCategories : []),
+  ];
+  return children.some(categoryHasProducts);
+}
+
+export function filterCategoryTreeWithProducts(categories = []) {
+  return (Array.isArray(categories) ? categories : []).reduce(
+    (result, category) => {
+      if (!category || typeof category !== "object") return result;
+
+      const children = filterCategoryTreeWithProducts([
+        ...(Array.isArray(category.children) ? category.children : []),
+        ...(Array.isArray(category.subCategories)
+          ? category.subCategories
+          : []),
+      ]);
+      if (!categoryHasProducts(category) && children.length === 0) return result;
+
+      result.push({
+        ...category,
+        ...(Array.isArray(category.children) || children.length
+          ? { children }
+          : {}),
+        ...(Array.isArray(category.subCategories)
+          ? { subCategories: children }
+          : {}),
+      });
+      return result;
+    },
+    [],
+  );
+}
+
 export function getMatchingCategoryKeys(targetCats, categoryTree) {
   const keys = new Set();
 
@@ -213,14 +252,7 @@ export function filterCategoryList(categories = [], searchText = "") {
     const normalizedCategory = normalizeCategory(category);
     const explicitCount = getCategoryCount(normalizedCategory);
 
-    if (
-      explicitCount !== undefined &&
-      explicitCount !== null &&
-      explicitCount !== "" &&
-      Number(explicitCount) < 1
-    ) {
-      return false;
-    }
+    if (!Number.isFinite(explicitCount) || explicitCount < 1) return false;
 
     return matchesCategorySearch(normalizedCategory, query);
   });
@@ -240,18 +272,12 @@ export function getRootCategories(list = []) {
 
   return Array.from(byKey.values())
     .filter((category) => {
-      const hasExplicitZeroCount =
-        category.productCount !== undefined &&
-        category.productCount !== null &&
-        category.productCount !== "" &&
-        Number(category.productCount) < 1;
-
       return (
         (category.parentKey === null ||
           category.parentKey === undefined ||
           !byKey.has(category.parentKey) ||
           Number(category.level || 0) === 0) &&
-        !hasExplicitZeroCount
+        Number(category.productCount) > 0
       );
     })
     .sort(sortByOrder);

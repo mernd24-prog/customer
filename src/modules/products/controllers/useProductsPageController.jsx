@@ -53,13 +53,9 @@ export function useProductsPageController() {
   const globalCategories = useSelector(
     (state) => state.catalog?.globalCategories,
   );
-  const catalogList = useSelector((state) => state.catalog?.list);
   const catalogCategoryList = useMemo(
-    () => [
-      ...(Array.isArray(globalCategories) ? globalCategories : []),
-      ...(Array.isArray(catalogList) ? catalogList : []),
-    ],
-    [catalogList, globalCategories],
+    () => (Array.isArray(globalCategories) ? globalCategories : []),
+    [globalCategories],
   );
 
   useEffect(() => {

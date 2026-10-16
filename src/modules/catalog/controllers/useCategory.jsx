@@ -39,6 +39,25 @@ import { getClearFiltersAction } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import { getFilterSections } from "../../../modules/products/controllers/getFilterSections";
 
+const findCategoryInTree = (categories = [], targetKey = "") => {
+  const normalizedTarget = String(targetKey).trim().toLowerCase();
+  if (!normalizedTarget) return null;
+
+  for (const category of Array.isArray(categories) ? categories : []) {
+    if (
+      String(getCategoryKey(category)).trim().toLowerCase() === normalizedTarget
+    ) {
+      return category;
+    }
+    const nested = findCategoryInTree(
+      category?.children || category?.subCategories || [],
+      targetKey,
+    );
+    if (nested) return nested;
+  }
+  return null;
+};
+
 export default function useCategory() {
   const { categoryKey } = useParams();
   const navigate = useNavigate();
@@ -67,6 +86,11 @@ export default function useCategory() {
   const productLoadTimerRef = useRef(null);
   const inFlightProductLoadKeyRef = useRef("");
   const productState = useSelector((s) => s.product);
+  const globalCategories = useSelector(
+    (state) => state.catalog?.globalCategories || [],
+  );
+  const globalCategoriesRef = useRef(globalCategories);
+  globalCategoriesRef.current = globalCategories;
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
   const brandContextKey = useMemo(() => {
@@ -336,10 +360,14 @@ export default function useCategory() {
   }, [categoryData, supportedAttributeKeys, searchParams, setSearchParams]);
 
   useEffect(() => {
+    const cachedCategory = findCategoryInTree(
+      globalCategoriesRef.current,
+      categoryKey,
+    );
     setItems([]);
     setFirstLoadDone(false);
-    setCategoryData(null);
-    setSidebarCategory(null);
+    setCategoryData(cachedCategory);
+    setSidebarCategory(cachedCategory);
     setSubCategories([]);
     setCategoryError(null);
     didInitialProductsLoadRef.current = false;
@@ -392,6 +420,16 @@ export default function useCategory() {
           .catch(() => {});
       })
       .catch((error) => {
+        const fallbackCategory = findCategoryInTree(
+          globalCategoriesRef.current,
+          categoryKey,
+        );
+        if (fallbackCategory) {
+          setCategoryData(fallbackCategory);
+          setSidebarCategory(fallbackCategory);
+          setCategoryError(null);
+          return;
+        }
         setCategoryError(error);
       });
   }, [dispatch, categoryKey]);
