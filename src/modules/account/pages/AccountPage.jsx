@@ -1,24 +1,32 @@
-import useProfileImage from "../../../hooks/useProfileImage";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDown, Pencil, Heart } from "lucide-react";
-import { CgMail } from "react-icons/cg";
-import { MdOutlineLocalPhone } from "react-icons/md";
+import { ChevronDown, Heart, UserRound } from "lucide-react";
 
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
-import { fetchMe, updateMe } from "../../../features/user/userSlice";
-import { apiRequest } from "../../../api/client";
-import { endpoints, FILE_UPLOAD_MODULES } from "../../../api/endpoints";
+import { PageContainer } from "../../../components/ui/layout";
+import { fetchMe } from "../../../features/user/userSlice";
 
 import ProfileTab from "./ProfileTab";
 import AddressTab from "./AddressTab";
 import SecurityTab from "./SecurityTab";
 
-const fallbackAvatar = "/image/png/person.png";
-
 const MENU_ITEMS = [
+  {
+    id: "profile",
+    label: "My Profile",
+    description: "View and edit your personal details.",
+    icon: UserRound,
+    path: "/account/profile",
+  },
+  {
+    id: "addresses",
+    label: "Saved Addresses",
+    description: "Manage your delivery addresses.",
+    icon: "/image/png/location.png",
+    path: "/account/addresses",
+  },
   {
     id: "orders",
     label: "My Orders",
@@ -35,13 +43,6 @@ const MENU_ITEMS = [
     path: "/wishlist",
   },
   {
-    id: "addresses",
-    label: "Saved Addresses",
-    description: "Manage your delivery addresses.",
-    icon: "/image/png/location.png",
-    path: "/account/addresses",
-  },
-  {
     id: "security",
     label: "Security",
     description: "Manage your password and account security.",
@@ -50,317 +51,43 @@ const MENU_ITEMS = [
   },
 ];
 
-const normalizeAvatarPreview = (avatarUrl) =>
-  typeof avatarUrl === "string" &&
-  avatarUrl &&
-  !avatarUrl.startsWith("data:image/")
-    ? avatarUrl
-    : fallbackAvatar;
-
-const getUploadedFileUrl = (uploadResult) => {
-  const data = uploadResult?.data || uploadResult || {};
-
-  const file =
-    data?.file ||
-    data?.uploadedFile ||
-    data?.attachment ||
-    data?.files?.[0] ||
-    data?.items?.[0] ||
-    data?.[0];
-
-  return (
-    data?.url ||
-    data?.imageURL ||
-    data?.fileUrl ||
-    data?.fileURL ||
-    data?.path ||
-    data?.location ||
-    data?.secureUrl ||
-    file?.url ||
-    file?.imageURL ||
-    file?.fileUrl ||
-    file?.fileURL ||
-    file?.path ||
-    file?.location ||
-    file?.secureUrl ||
-    ""
-  );
-};
-
-function AccountProfileCard({
-  user,
-  name,
-  avatar,
-  avatarError,
-  fileInputRef,
-  onAvatarChange,
-  showEditButton = true,
-  isAvatarUploading = false,
+function AccountMenuItem({
+  item,
+  variant = "desktop",
+  onClick,
+  active = false,
 }) {
-  return (
-    <div
-      className="
-        min-w-0
-        w-full
-        rounded-lg
-        border
-        border-gold
-        bg-[#FFFDF8]
-        p-4
-        sm:p-6
-        2xl:p-6
-        mt-2
-      "
-    >
-      <div
-        className="
-          grid
-          min-w-0
-          w-full
-          grid-cols-[48px_minmax(0,1fr)]
-          items-start
-          gap-3
-          sm:flex
-          sm:items-center
-          sm:gap-4
-        "
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={onAvatarChange}
-          className="hidden"
-          disabled={isAvatarUploading}
-        />
-
-        <button
-          type="button"
-          onClick={(event) => {
-            event.preventDefault();
-
-            if (!isAvatarUploading) {
-              fileInputRef.current?.click();
-            }
-          }}
-          className="
-            group
-            relative
-            shrink-0
-            rounded-full
-            focus-visible:outline-none
-            focus-visible:ring-2
-            focus-visible:ring-[#1B1D60]/40
-          "
-          aria-label="Change Profile Image"
-          disabled={isAvatarUploading}
-        >
-          <img
-            loading="lazy"
-            width="400"
-            height="400"
-            src={avatar}
-            alt="Profile Avatar"
-            className="
-              size-12
-              rounded-full
-              border-2
-              border-[#1B1D60]
-              object-cover
-              md:size-[60px]
-              lg:size-[80px]
-            "
-            onError={(event) => {
-              event.currentTarget.src = fallbackAvatar;
-            }}
-          />
-
-          <span
-            className="
-              absolute
-              inset-0
-              flex
-              items-center
-              justify-center
-              rounded-full
-              bg-black/40
-              opacity-0
-              transition-opacity
-              group-hover:opacity-100
-            "
-          >
-            {isAvatarUploading ? (
-              <span className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            ) : (
-              <Pencil className="size-5 text-white" />
-            )}
-          </span>
-        </button>
-
-        <div className="min-w-0 flex-1">
-          <div className="min-w-0 truncate text-lg font-bold text-[#3E4093] sm:text-xl lg:text-2xl 2xl:text-h3">
-            {name}
-          </div>
-
-          <div className="mt-2 grid min-w-0 gap-1.5">
-            <div
-              className="
-                flex
-                min-w-0
-                max-w-full
-                items-start
-                gap-1.5
-                text-xs
-                font-medium
-                text-[#2E2E2E]
-                sm:gap-2
-                sm:text-sm
-                lg:text-[18px]
-                2xl:text-[20px]
-              "
-            >
-              <CgMail
-                className="
-                  mt-0.5
-                  h-4
-                  w-4
-                  shrink-0
-                  text-[#2E2E2E]
-                  sm:h-[18px]
-                  sm:w-[18px]
-                "
-                aria-hidden="true"
-              />
-
-              <span className="min-w-0 flex-1 break-all text-xs leading-5 sm:text-sm lg:text-[18px] 2xl:text-[20px]">
-                {user?.email || "—"}
-              </span>
-            </div>
-
-            <div
-              className="
-                flex
-                min-w-0
-                max-w-full
-                items-start
-                gap-1.5
-                py-1
-                text-xs
-                font-medium
-                text-[#2E2E2E]
-                sm:gap-2
-                sm:text-sm
-                lg:text-[18px]
-              "
-            >
-              <MdOutlineLocalPhone
-                className="
-                  mt-0.5
-                  h-4
-                  w-4
-                  shrink-0
-                  text-[#2E2E2E]
-                  sm:h-[18px]
-                  sm:w-[18px]
-                "
-                aria-hidden="true"
-              />
-
-              <span className="min-w-0 flex-1 break-words text-xs leading-5 sm:text-sm lg:text-[18px] 2xl:text-[20px]">
-                {user?.phone || "—"}
-              </span>
-            </div>
-
-            <div className="mt-2 grid min-w-0 grid-cols-1 gap-2 text-xs text-[#4E4E4E] sm:grid-cols-2 sm:text-sm xl:grid-cols-3">
-              {(user?.profile?.businessWebsite || user?.businessWebsite) && (
-                <div className="min-w-0">
-                  <span className="font-semibold text-[#1B1D60]">Website: </span>
-                  <span className="break-all">
-                    {user?.profile?.businessWebsite || user?.businessWebsite}
-                  </span>
-                </div>
-              )}
-             
-            </div>
-          </div>
-        </div>
-
-        {showEditButton && (
-          <Link
-            to="/account/profile"
-            className="
-              col-span-2
-              inline-flex
-              min-w-0
-              shrink-0
-              items-center
-              justify-center
-              gap-2
-              rounded-lg
-              border
-              border-[#343B91]
-              bg-[#F3F1F0]
-              px-3
-              py-2
-              text-sm
-              font-semibold
-              text-[#1B1D60]
-              hover:!bg-[#F3F1F0]
-              hover:!text-[#1B1D60]
-              sm:col-auto
-              sm:mb-auto
-              sm:ml-auto
-              sm:px-4
-            "
-          >
-            <Pencil className="my-auto size-3 shrink-0" />
-            <span className="whitespace-nowrap">Edit Profile</span>
-          </Link>
-        )}
-      </div>
-
-      {isAvatarUploading && (
-        <p className="mt-2 text-xs font-medium text-[#3E4093]">
-          Uploading profile image...
-        </p>
-      )}
-
-      {avatarError && (
-        <p className="mt-2 text-xs font-medium text-red-500">
-          {avatarError}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function AccountMenuItem({ item, variant = "desktop", onClick }) {
   const isMobile = variant === "mobile";
 
   return (
     <Link
       to={item.path}
       onClick={onClick}
+      aria-current={active ? "page" : undefined}
       className={
         isMobile
-          ? "flex w-full min-w-0 items-start gap-3 border-b border-[#04258626] p-2 text-[#2E2E2E] hover:!bg-transparent hover:!text-[#2E2E2E] last:border-b-0 lg:p-4"
-          : "flex w-full min-w-0 items-center gap-3 border-b border-[#04258626] px-3 py-3 text-[#2E2E2E] hover:!bg-transparent hover:!text-[#2E2E2E] last:border-b-0 sm:gap-4 sm:px-4 sm:py-4"
+          ? `flex w-full min-w-0 items-start gap-3 border-b border-[#04258626] p-3 text-[#2E2E2E] last:border-b-0 ${
+              active ? "bg-[#FFF9E9]" : "bg-white"
+            }`
+          : `flex w-full min-w-0 items-center gap-3 border-b border-[#04258626] p-6 px-6 text-[#2E2E2E] last:border-b-0 sm:gap-4 sm:px-4 ${
+              active ? "bg-[#FFF9E9]" : "bg-white"
+            }`
       }
     >
       <span
         className={
           isMobile
-            ? "flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] lg:size-12"
-            : "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60] xl:size-[50px] lg:size-12"
+            ? "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60]"
+            : "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60] xl:size-11"
         }
       >
         {typeof item.icon === "string" ? (
           <img
             loading="lazy"
-            width="400"
-            height="400"
+            width="20"
+            height="20"
             src={item.icon}
-            alt={isMobile ? "" : item.label}
+            alt=""
             className={
               isMobile
                 ? "size-4 object-contain"
@@ -373,9 +100,9 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
 
             return (
               <Icon
-                className={`${
-                  isMobile ? "size-4" : "size-4 sm:size-5"
-                } ${item.iconColor || "text-[#1B1D60] fill-current"}`}
+                className={`${isMobile ? "size-4" : "size-4 sm:size-5"} ${
+                  item.iconColor || "text-[#1B1D60]"
+                }`}
               />
             );
           })()
@@ -387,7 +114,7 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
           className={
             isMobile
               ? "block text-sm font-semibold"
-              : "block text-sm font-semibold text-[#2E2E2E] sm:text-base lg:text-xl"
+              : "block text-sm font-semibold text-[#2E2E2E] sm:text-base"
           }
         >
           {item.label}
@@ -396,8 +123,8 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
         <span
           className={
             isMobile
-              ? "mt-0.5 block text-[11px] text-[#4E4E4E]"
-              : "mt-0.5 block text-xs text-[#4E4E4E] sm:text-sm lg:text-base"
+              ? "mt-0.5 block text-[11px] leading-4 text-[#4E4E4E]"
+              : "mt-0.5 block text-xs leading-5 text-[#4E4E4E] sm:text-sm"
           }
         >
           {item.description}
@@ -420,22 +147,8 @@ function AccountMobileMenu({
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="
-          flex
-          w-full
-          min-w-0
-          items-center
-          justify-between
-          rounded-lg
-          border
-          border-gold
-          bg-white
-          px-4
-          py-3
-          text-left
-          font-semibold
-          text-[#2E2E2E]
-        "
+        aria-label="Toggle account navigation"
+        className="flex w-full min-w-0 items-center justify-between rounded-lg border border-gold bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
       >
         <span className="min-w-0 truncate">
           {activeMenuItem?.label || "Account Menu"}
@@ -449,13 +162,17 @@ function AccountMobileMenu({
       </button>
 
       {isOpen && (
-        <nav className="absolute left-0 top-[calc(100%+6px)] z-50 flex w-full min-w-0 flex-col items-start overflow-hidden rounded-lg border border-gold bg-white shadow-lg">
+        <nav
+          aria-label="Mobile account navigation"
+          className="absolute left-0 top-[calc(100%+6px)] z-50 flex w-full min-w-0 flex-col items-start overflow-hidden rounded-lg border border-gold bg-white shadow-lg"
+        >
           {items.map((item) => (
             <AccountMenuItem
               key={item.id}
               item={item}
               variant="mobile"
               onClick={onClose}
+              active={item.id === activeMenuItem?.id}
             />
           ))}
         </nav>
@@ -464,77 +181,53 @@ function AccountMobileMenu({
   );
 }
 
-function AccountDesktopMenu({ items }) {
+function AccountDesktopMenu({ items, activeMenuItem }) {
   return (
-    <nav className="hidden w-full min-w-0 flex-col items-start rounded-lg  border border-gold py-4 xl:flex">
+    <nav
+      aria-label="Account navigation"
+      className="hidden w-full min-w-0 flex-col items-start gap-0 space-y-0 overflow-hidden rounded-lg border border-gold bg-white xl:flex"
+    >
       {items.map((item) => (
-        <AccountMenuItem key={item.id} item={item} variant="desktop" />
+        <AccountMenuItem
+          key={item.id}
+          item={item}
+          variant="desktop"
+          active={item.id === activeMenuItem?.id}
+        />
       ))}
     </nav>
   );
 }
 
 function AccountSidebar({
-  user,
-  name,
-  avatar,
-  avatarError,
-  fileInputRef,
-  onAvatarChange,
   activeMenuItem,
   isMobileMenuOpen,
   setIsMobileMenuOpen,
-  tab,
-  isAvatarUploading,
-  showProfileCard = true,
-  showMenu = true,
 }) {
   return (
-    <aside className={`relative z-30 w-full min-w-0 ${showMenu ? "space-y-5" : ""}`}>
-      {showProfileCard && (
-        <AccountProfileCard
-          user={user}
-          name={name}
-          avatar={avatar}
-          avatarError={avatarError}
-          fileInputRef={fileInputRef}
-          onAvatarChange={onAvatarChange}
-          showEditButton={tab !== "profile"}
-          isAvatarUploading={isAvatarUploading}
+    <aside className="relative z-30 w-full min-w-0 xl:max-w-[330px]">
+      <div className="min-w-0">
+        <AccountMobileMenu
+          items={MENU_ITEMS}
+          activeMenuItem={activeMenuItem}
+          isOpen={isMobileMenuOpen}
+          onToggle={() => setIsMobileMenuOpen((open) => !open)}
+          onClose={() => setIsMobileMenuOpen(false)}
         />
-      )}
 
-      {showMenu && (
-        <div className="min-w-0">
-          <AccountMobileMenu
-            items={MENU_ITEMS}
-            activeMenuItem={activeMenuItem}
-            isOpen={isMobileMenuOpen}
-            onToggle={() => setIsMobileMenuOpen((open) => !open)}
-            onClose={() => setIsMobileMenuOpen(false)}
-          />
-          <AccountDesktopMenu items={MENU_ITEMS} />
-        </div>
-      )}
+        <AccountDesktopMenu
+          items={MENU_ITEMS}
+          activeMenuItem={activeMenuItem}
+        />
+      </div>
     </aside>
   );
 }
 
-function AccountTabContent({
-  tab,
-  user,
-  avatarFile,
-  avatarUrl,
-}) {
+function AccountTabContent({ tab, user }) {
   return (
-    <div className="min-w-0 animate-[fadeIn_180ms_ease-out]">
-      {tab === "profile" && (
-        <ProfileTab
-          user={user}
-          avatarFile={avatarFile}
-          avatarUrl={avatarUrl}
-        />
-      )}
+    <div className="mx-auto w-full  min-w-0">
+      {tab === "profile" && <ProfileTab user={user} />}
 
       {tab === "addresses" && <AddressTab user={user} />}
 
@@ -545,20 +238,11 @@ function AccountTabContent({
 
 export default function AccountPage({ tab = "profile" }) {
   const dispatch = useDispatch();
-  const userState = useSelector((s) => s.user);
+
+  const userState = useSelector((state) => state.user);
   const user = userState.current;
 
-  const fileInputRef = useRef(null);
-
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [avatarPreview, setAvatarPreview] = useState(fallbackAvatar);
-  const [avatarError, setAvatarError] = useState("");
-  const [isAvatarUploading, setIsAvatarUploading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const displayedAvatar = useProfileImage(avatarPreview, user?.updatedAt);
-  const displayedAvatarUrl = useProfileImage(avatarUrl, user?.updatedAt);
-
 
   useEffect(() => {
     if (!user) {
@@ -567,190 +251,37 @@ export default function AccountPage({ tab = "profile" }) {
   }, [dispatch, user]);
 
   useEffect(() => {
-    const existingAvatar =
-      user?.profile?.avatarUrl || user?.profile?.avatar || "";
-
-    setAvatarPreview(normalizeAvatarPreview(existingAvatar));
-    setAvatarUrl(existingAvatar || "");
-    setAvatarFile(null);
-    setAvatarError("");
-  }, [user]);
-
-  useEffect(
-    () => () => {
-      if (avatarPreview.startsWith("blob:")) {
-        globalThis.URL.revokeObjectURL(avatarPreview);
-      }
-    },
-    [avatarPreview],
-  );
-
-  const handleAvatarChange = async (event) => {
-    const file = event.target.files?.[0];
-
-    event.target.value = "";
-
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setAvatarError("Please select a valid image file.");
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      setAvatarError("Profile image must be 2 MB or smaller.");
-      return;
-    }
-
-    setAvatarError("");
-    setAvatarFile(file);
-
-    // Show local preview immediately.
-    const previewUrl = globalThis.URL.createObjectURL(file);
-    setAvatarPreview(previewUrl);
-
-    try {
-      setIsAvatarUploading(true);
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("module", FILE_UPLOAD_MODULES.profiles);
-
-      const result = await apiRequest({
-        method: "post",
-        url: endpoints.fileUploader.upload,
-        data: formData,
-      });
-
-      const uploadedUrl = getUploadedFileUrl(result);
-
-      if (!uploadedUrl) {
-        throw new Error(
-          "Image uploaded, but the server did not return the uploaded image URL.",
-        );
-      }
-
-      // Save updated avatarUrl directly to the DB via updateMe API
-      await dispatch(
-        updateMe({
-          profile: {
-            ...(user?.profile || {}),
-            avatarUrl: uploadedUrl,
-          },
-        }),
-      ).unwrap();
-
-      await dispatch(fetchMe()).unwrap();
-
-      setAvatarUrl(uploadedUrl);
-      setAvatarFile(null);
-      setAvatarPreview(normalizeAvatarPreview(uploadedUrl));
-    } catch (error) {
-      console.error("Profile image upload failed:", error);
-
-      setAvatarError(
-        error?.message || "Failed to upload profile image.",
-      );
-
-      setAvatarFile(null);
-      setAvatarUrl("");
-
-      // Restore previous profile image if upload fails.
-      setAvatarPreview(
-        normalizeAvatarPreview(
-          user?.profile?.avatarUrl || user?.profile?.avatar,
-        ),
-      );
-    } finally {
-      setIsAvatarUploading(false);
-    }
-  };
-
-  const profile = user?.profile || {};
-
-  const name =
-    [profile.firstName, profile.lastName].filter(Boolean).join(" ") ||
-    user?.name ||
-    "Your account";
+    setIsMobileMenuOpen(false);
+  }, [tab]);
 
   const activeMenuItem = MENU_ITEMS.find((item) => item.id === tab);
 
+  const pageTitle = activeMenuItem?.label || "My Account";
+
   return (
     <>
-      <Seo
-        title={`Account — ${
-          tab.charAt(0).toUpperCase() + tab.slice(1)
-        } | Sam Global`}
-      />
+      <Seo title={`Account — ${pageTitle} | Sam Global`} />
 
-      <div className="min-w-0 space-y-5 py-4 sm:space-y-6 sm:py-8 lg:py-10">
-        {/* Full-width profile summary */}
+      <PageContainer
+        className="mt-0 mb-0 bg-white"
+        contentClassName="mx-auto grid w-full min-w-0 grid-cols-1 items-start gap-3 px-3 sm:gap-4 sm:px-5 lg:px-8 xl:grid-cols-[330px_minmax(0,1fr)] xl:gap-5"
+      >
         <AccountSidebar
-          user={user}
-          name={name}
-          avatar={displayedAvatar}
-          avatarError={avatarError}
-          fileInputRef={fileInputRef}
-          onAvatarChange={handleAvatarChange}
           activeMenuItem={activeMenuItem}
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
-          tab={tab}
-          isAvatarUploading={isAvatarUploading}
-          showProfileCard
-          showMenu={false}
         />
 
-        {/* Account pages start below the profile card */}
-        <div className="grid min-w-0 grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(260px,0.34fr)_minmax(0,1fr)] xl:gap-6">
-          <AccountSidebar
-            user={user}
-            name={name}
-            avatar={displayedAvatar}
-            avatarError={avatarError}
-            fileInputRef={fileInputRef}
-            onAvatarChange={handleAvatarChange}
-            activeMenuItem={activeMenuItem}
-            isMobileMenuOpen={isMobileMenuOpen}
-            setIsMobileMenuOpen={setIsMobileMenuOpen}
-            tab={tab}
-            isAvatarUploading={isAvatarUploading}
-            showProfileCard={false}
-            showMenu
-          />
-
-          <div className="relative z-0 min-w-0 w-full">
-            <div
-              className="
-                min-h-fit
-                w-full
-                min-w-0
-                rounded-lg
-                border
-                border-gold
-                bg-[#F8F9FF]
-                p-3
-                shadow-sm
-                sm:p-6
-                lg:p-7
-              "
-            >
-              <ApiState
-                loading={userState.loading && !user}
-                error={userState.error}
-                empty={false}
-              >
-                <AccountTabContent
-                  tab={tab}
-                  user={user}
-                  avatarFile={avatarFile}
-                  avatarUrl={displayedAvatarUrl}
-                />
-              </ApiState>
-            </div>
-          </div>
-        </div>
-      </div>
+        <main className="relative z-0 w-full min-w-0 rounded-lg border border-gold bg-white p-3 sm:p-4 lg:p-5">
+          <ApiState
+            loading={userState.loading && !user}
+            error={userState.error}
+            empty={false}
+          >
+            <AccountTabContent tab={tab} user={user} />
+          </ApiState>
+        </main>
+      </PageContainer>
     </>
   );
 }

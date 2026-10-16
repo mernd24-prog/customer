@@ -1,5 +1,7 @@
 import { SkeletonLoader } from "../../../components/ui/skeleton";
 import { useDelayedLoading } from "../../../hooks/useDelayedLoading";
+import FallbackImage from "../../../components/ui/FallbackImage";
+import { FALLBACK_ABOUT } from "../../../data/fallbackCmsData";
 
 function PrimaryCta({ children }) {
   return (
@@ -11,6 +13,7 @@ function PrimaryCta({ children }) {
 
 export default function OurStory({ data }) {
   const loading = useDelayedLoading();
+  const fallbackImage = FALLBACK_ABOUT.story.image?.url || FALLBACK_ABOUT.story.image;
 
   return (
     <>
@@ -21,10 +24,14 @@ export default function OurStory({ data }) {
       ) : (
         <section className="flex  flex-col lg:flex-row  lg:gap-12 gap-2 py-8 lg:py-20">
           <div className=" w-full xl:w-[45%]  flex justify-center">
-            <img loading="lazy" width="400" height="400"
-              src={data?.image?.url}
-              alt={data?.image?.alt}
-              className="w-full h-full object-cover rounded-lg max-w-[750px]  "
+            <FallbackImage
+              src={data?.image?.url || data?.image}
+              fallbackSrc={fallbackImage}
+              alt={data?.image?.alt || "Sam Global story"}
+              loading="lazy"
+              width="400"
+              height="400"
+              className="w-full h-full object-cover rounded-lg max-w-[750px]"
             />
           </div>
           <div className="w-full xl:w-[45%]  flex flex-col lg:mt-8 justify-between">

@@ -146,7 +146,6 @@ export default function AddressFormFields({
             },
           })}
           error={errors.city}
-          disabled={!selectedState}
           autoComplete="address-level2"
         />
         <FormField
@@ -171,7 +170,6 @@ export default function AddressFormFields({
             },
           })}
           error={errors.postalCode}
-          disabled={!selectedCity}
           autoComplete="postal-code"
         />
       </div>

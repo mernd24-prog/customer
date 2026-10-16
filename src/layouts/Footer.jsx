@@ -7,9 +7,6 @@ import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
 import { FALLBACK_FOOTER } from "../data/fallbackCmsData";
 import { useFooterData } from "./footer/useFooterData";
 import { capitalizeFirst } from "../utils/stringUtils";
-/* -------------------------------------------------------------------------- */
-/* FooterLinkGroups — renders one column per group + social icons            */
-/* -------------------------------------------------------------------------- */
 
 function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = false }) {
   const location = useLocation();

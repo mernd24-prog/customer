@@ -1,8 +1,12 @@
+import FallbackImage from "../../../components/ui/FallbackImage";
+import { FALLBACK_ABOUT } from "../../../data/fallbackCmsData";
+
 const InfoSection = ({ data }) => {
   const finalData = data || {};
   const { title, description, image } = finalData;
   const imageUrl = typeof image === "string" ? image : image?.url;
   const imageAlt = typeof image === "object" ? image?.alt : title;
+  const fallbackImage = FALLBACK_ABOUT.mission.image?.url || FALLBACK_ABOUT.mission.image;
 
   return (
     <section className="relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] my-8 lg:my-16 overflow-hidden bg-gradient-to-r from-navy to-navy-dark">
@@ -23,11 +27,12 @@ const InfoSection = ({ data }) => {
           </div>
         </div>
 
-        {imageUrl && (
+        {imageUrl || fallbackImage ? (
           <div className="flex w-full items-end justify-center lg:w-[45%] lg:justify-end">
             <div className="relative w-full max-w-[340px] overflow-hidden rounded-t-[1.8rem] sm:max-w-[450px] lg:max-w-[550px]">
-              <img
+              <FallbackImage
                 src={imageUrl}
+                fallbackSrc={fallbackImage}
                 alt={imageAlt || title || ""}
                 loading="lazy"
                 width="800"
@@ -36,7 +41,7 @@ const InfoSection = ({ data }) => {
               />
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </section>
   );
