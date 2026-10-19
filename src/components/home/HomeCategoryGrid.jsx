@@ -114,8 +114,10 @@ export default function HomeCategoryGrid({
       actionHref={actionHref}
       actionStyle="icon"
       disablePadding={true}
+      className="mt-5"
+    
     >
-      <div className="relative group/carousel rounded-3xl my-2 sm:my-4">
+      <div className="relative group/carousel rounded-3xl my-2 sm:my-4 ">
         {/* Previous Button */}
         <button
           ref={prevRef}
