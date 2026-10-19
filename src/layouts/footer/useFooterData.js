@@ -5,26 +5,19 @@
  * Returns a single `footer` object plus `hasDynamicGroups`.
  */
 
-import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
 
 import { useCmsRecord } from "../../hooks/useCmsRecord";
-import {
-  fetchCategories,
-  fetchBrands,
-  setGlobalBrands,
-} from "../../features/catalog/catalogSlice";
 import { CUSTOMER_ROUTES } from "../../constants/routes";
 import {
   getBrandName,
-  getBrandProductCount,
   getBrandRouteKey,
 } from "../../utils/pages/brandUtils";
 import { brandToSlug } from "../../utils/ecommerce/brand";
 import { asArray } from "../../utils/content";
 import {
   getCategoryListFromResponse,
-  getBrandListFromResponse,
   getRootCategories,
   getCategoryKey,
   normalizeText,
@@ -46,7 +39,6 @@ const uniqueLinks = (links = []) => {
 };
 
 export function useFooterData(fallbackData) {
-  const dispatch = useDispatch();
   const catalogCategoryList = useSelector(
     (state) =>
       state.catalog?.globalCategories || state.catalog?.list || emptyArray,
@@ -54,29 +46,6 @@ export function useFooterData(fallbackData) {
   const globalBrands = useSelector(
     (state) => state.catalog?.globalBrands || emptyArray,
   );
-  useEffect(() => {
-    const categoryList = getCategoryListFromResponse(catalogCategoryList);
-    if (!categoryList.length) {
-      dispatch(fetchCategories({ tree: false, limit: 500 }));
-    }
-  }, [dispatch, catalogCategoryList]);
-  useEffect(() => {
-    if (asArray(globalBrands).length) return;
-
-    dispatch(fetchBrands({ limit: 100, active: true, hasProducts: true }))
-      .unwrap()
-      .then((result) => {
-        const brands = getBrandListFromResponse(result);
-        const brandsWithProducts = brands
-          .filter((brand) => {
-            const count = getBrandProductCount(brand);
-            return count === undefined || Number(count) >= 1;
-          })
-          .slice(0, 5);
-        dispatch(setGlobalBrands(brandsWithProducts));
-      })
-      .catch(() => {});
-  }, [dispatch, globalBrands]);
 
   /* ---- CMS footer ---- */
   const { page: cmsFooterPage } = useCmsRecord("footerdata");

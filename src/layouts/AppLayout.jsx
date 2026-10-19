@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,7 +18,6 @@ const DeliveryChecker = React.lazy(
 );
 import { closeAddedToCartModal } from "../modules/cart/slices/cartUiSlice";
 import { AUTH_ROUTES } from "../modules/auth/routes/apiRoutes";
-import { fetchCategories } from "../features/catalog/catalogSlice";
 
 const LazyFooter = React.lazy(() =>
   import("./Footer").then((module) => ({ default: module.Footer })),
@@ -42,6 +41,7 @@ import {
 } from "../constants";
 
 const EMPTY_ITEMS = [];
+const EMPTY_CART = {};
 
 const HIDE_CATEGORY_BAR_ROUTES = [
   ...Object.values(AUTH_ROUTES),
@@ -72,11 +72,7 @@ export default function AppLayout() {
   const addedModalOpen = useSelector((state) => state.cartUi.addedModalOpen);
 
   const addedProduct = useSelector((state) => state.cartUi.addedProduct);
-  const catalogCategories = useSelector(
-    (state) => state.catalog?.globalCategories || state.catalog?.list || [],
-  );
-
-  const cart = useSelector((state) => state.cart.current || {});
+  const cart = useSelector((state) => state.cart.current || EMPTY_CART);
 
   const cartItems = useSelector(
     (state) => state.cart.current?.items ?? EMPTY_ITEMS,
@@ -93,11 +89,6 @@ export default function AppLayout() {
       (route !== "/" && location.pathname.startsWith(`${route}/`))
     );
   });
-  useEffect(() => {
-    if (catalogCategories.length === 0) {
-      dispatch(fetchCategories({ navigation: true })).catch(() => {});
-    }
-  }, [catalogCategories.length, dispatch]);
 
   const handleCloseAddedToCartModal = () => {
     dispatch(closeAddedToCartModal());

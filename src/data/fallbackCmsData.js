@@ -109,6 +109,21 @@ export const FALLBACK_SHOPPING_BANNER = {
   description: "50-80",
   cta: { url: "/deals" },
 };
+export const FALLBACK_HOME_CATEGORIES = [
+  ["fashion", "Fashion"],
+  ["electronics", "Electronics"],
+  ["home-living", "Home & Living"],
+  ["beauty", "Beauty"],
+  ["accessories", "Accessories"],
+].map(([categoryKey, title]) => ({
+  categoryKey,
+  slug: categoryKey,
+  title,
+  name: title,
+  productCount: 1,
+  active: true,
+  isDashboardVisible: true,
+}));
 export const FALLBACK_SUPPORT = {
   topicImages: {
     order: "/image/png/fallback/Help&Support/Track-order.png",
