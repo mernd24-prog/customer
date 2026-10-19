@@ -81,13 +81,13 @@ export default function ServiceUnavailableDialog() {
   const { Icon } = content;
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#15115d]/45 px-4 py-8 backdrop-blur-sm">
+    <div className="pointer-events-none fixed bottom-4 left-0 right-0 z-[10000] flex justify-center px-4">
       <section
-        role="alertdialog"
-        aria-modal="true"
+        role="status"
+        aria-live="polite"
         aria-labelledby="service-status-title"
         aria-describedby="service-status-message"
-        className="relative w-full max-w-md overflow-hidden rounded-lg border border-[#15115d] bg-[var(--customer-cream)] shadow-2xl"
+        className="pointer-events-auto relative w-full max-w-md overflow-hidden rounded-lg border border-[#15115d] bg-[var(--customer-cream)] shadow-2xl"
       >
         <button
           type="button"

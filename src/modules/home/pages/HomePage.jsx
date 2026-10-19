@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef, Suspense } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../../components/ui/Seo";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
@@ -7,38 +7,29 @@ import {
   fetchRecommendations,
 } from "../../../features/recommendation/recommendationSlice";
 import { fetchProducts } from "../../../modules/products/slices/productSlice";
-import { fetchCmsPages } from "../../../features/cms/cmsSlice";
-import {
-  fetchCategories,
-  setGlobalCategories,
-} from "../../../features/catalog/catalogSlice";
 import { tokenStorage } from "../../../api/tokenStorage";
 import HomeCategoryGrid from "../../../components/home/HomeCategoryGrid";
 import Banner from "../../../layouts/HeroBanner";
 import { CategoryBar } from "../../../layouts/Header";
 import LazySection from "../../../components/ui/LazySection";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
-
-const ShoppingMadeEasyBanner = React.lazy(
-  () => import("../../../components/home/ShoppingBanner"),
-);
-const FeaturedProductsSection = React.lazy(
-  () => import("../../../components/home/FeaturedProductsSection"),
-);
-const PromoCampaignCarousel = React.lazy(
-  () => import("../../../components/home/PromoCampaignCarousel"),
-);
-const HomeProductsForYouSection = React.lazy(
-  () => import("../../../components/home/HomeProductsForYouSection"),
-);
+import ShoppingMadeEasyBanner from "../../../components/home/ShoppingBanner";
+import FeaturedProductsSection from "../../../components/home/FeaturedProductsSection";
+import PromoCampaignCarousel from "../../../components/home/PromoCampaignCarousel";
+import HomeProductsForYouSection from "../../../components/home/HomeProductsForYouSection";
+import { FALLBACK_HOME_CATEGORIES } from "../../../data/fallbackCmsData";
 
 import { getProductListFromResponse } from "../../../utils/ecommerce";
-import { getCategoryListFromResponse } from "../../../utils/pages/categoryUtils";
 
 export function HomePage() {
   const dispatch = useDispatch();
-  const categoryList = useSelector((s) => s.catalog.globalCategories);
-  const categories = Array.isArray(categoryList) ? categoryList : [];
+  const categoryList = useSelector(
+    (s) => s.catalog.globalCategories || s.catalog.list,
+  );
+  const apiCategories = Array.isArray(categoryList) ? categoryList : [];
+  const categories = apiCategories.length
+    ? apiCategories
+    : FALLBACK_HOME_CATEGORIES;
   const [categoryRequestComplete, setCategoryRequestComplete] = useState(
     categories.length > 0,
   );
@@ -47,8 +38,6 @@ export function HomePage() {
   const [homeError, setHomeError] = useState(false);
   const hasFetchedRef = useRef(false);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
-  const cmsList = useSelector((s) => s.cms.list);
-
   const { page: promoCampaignPage } = useCmsRecord("promo-campaign-carousel");
   const { page: shoppingBannerPage } = useCmsRecord("shopping-banner");
   const products = homeProducts;
@@ -60,14 +49,7 @@ export function HomePage() {
     hasFetchedRef.current = true;
 
     setHomeLoading(true);
-    dispatch(fetchCategories({ navigation: true }))
-      .unwrap()
-      .then((result) => {
-        const list = getCategoryListFromResponse(result?.data || result);
-        dispatch(setGlobalCategories(list));
-      })
-      .catch(() => {})
-      .finally(() => setCategoryRequestComplete(true));
+    setCategoryRequestComplete(true);
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 10 })).catch(() => {});
@@ -87,7 +69,6 @@ export function HomePage() {
     } else {
       setHomeLoading(false);
     }
-    dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
   }, [dispatch]);
 
   // Featured: top-rated from newest products; fall back to trending
@@ -119,7 +100,7 @@ export function HomePage() {
       <LazySection minHeight="280px">
         <FeaturedCollectionsSection />
       </LazySection> */}
-
+{/* 
       {!homeLoading && !products.length && !trendingProducts.length && (
         <section className="mx-auto my-8 max-w-7xl rounded-2xl border border-[var(--customer-border)] bg-[var(--customer-cream)] px-6 py-12 text-center" role="status">
           <h2 className="text-2xl font-semibold text-[var(--customer-navy)]">
@@ -131,9 +112,9 @@ export function HomePage() {
               : "We’re preparing our collection. Please check back soon."}
           </p>
         </section>
-      )}
+      )} */}
 
-      {promoCampaignPage && (
+      {/* {promoCampaignPage && (
         <LazySection minHeight="380px">
           <PromoCampaignCarousel data={promoCampaignPage} />
         </LazySection>
@@ -143,7 +124,7 @@ export function HomePage() {
         <LazySection minHeight="150px">
           <ShoppingMadeEasyBanner data={shoppingBannerPage} />
         </LazySection>
-      )}
+      )} */}
 
       {featuredProducts.length > 0 && (
         <LazySection minHeight="450px">

@@ -18,9 +18,9 @@ const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL || getDefaultApiBaseUrl()
 ).replace(/\/+$/, "");
 
-const API_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || 30000);
-const API_RETRY_DELAY_MS = Number(
-  import.meta.env.VITE_API_RETRY_DELAY_MS || 500,
+const API_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || 15000);
+const API_READ_TIMEOUT_MS = Number(
+  import.meta.env.VITE_API_READ_TIMEOUT_MS || 7000,
 );
 const buildApiUrl = (path = "") =>
   `${API_BASE_URL}/${String(path).replace(/^\/+/, "")}`;
@@ -177,32 +177,10 @@ const isPublicAuthEndpoint = (url = "") =>
     endpoints.auth.resetPassword,
   ].some((endpoint) => String(url || "").includes(endpoint));
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const isRetriableReadError = (error) =>
-  error?.code === "ECONNABORTED" ||
-  error?.code === "ERR_NETWORK" ||
-  (error?.response?.status === 503 &&
-    ["DATABASE_UNAVAILABLE", "DATABASE_TIMEOUT"].includes(getAuthCode(error))) ||
-  (!error?.response && Boolean(error?.request));
-
 const requestWithReadRetry = async (config) => {
-  try {
-    return await api.request(config);
-  } catch (error) {
-    const method = String(config?.method || "get").toLowerCase();
-    if (
-      method !== "get" ||
-      config?._retryRead ||
-      !isRetriableReadError(error)
-    ) {
-      throw error;
-    }
-
-    const retryAfterSeconds = Number(error?.response?.headers?.["retry-after"] || 0);
-    await wait(Math.max(API_RETRY_DELAY_MS, retryAfterSeconds * 1000));
-    return api.request({ ...config, _retryRead: true });
-  }
+  // Retrying a failed public read doubles the time a skeleton remains on
+  // screen. Let callers render cached/static content and retry explicitly.
+  return api.request(config);
 };
 
 api.interceptors.request.use((config) => {
@@ -304,7 +282,12 @@ export async function apiRequest({
   const resolvedCacheKey =
     cacheKey || createCacheKey("api", [normalizedMethod, url, params]);
 
+  let staleCachedResult;
   if (shouldCache) {
+    staleCachedResult = getCache(resolvedCacheKey, {
+      allowExpired: true,
+      fallback: undefined,
+    });
     const cached = getCache(resolvedCacheKey);
     if (cached) return cached;
 
@@ -313,7 +296,14 @@ export async function apiRequest({
   }
 
   const requestPromise = (async () => {
-    const response = await requestWithReadRetry({ method, url, data, params });
+    const response = await requestWithReadRetry({
+      method,
+      url,
+      data,
+      params,
+      timeout:
+        normalizedMethod === "get" ? API_READ_TIMEOUT_MS : API_TIMEOUT_MS,
+    });
     const result = normalizeApiResponse(response);
 
     if (shouldCache) {
@@ -332,6 +322,9 @@ export async function apiRequest({
   try {
     return await requestPromise;
   } catch (error) {
+    if (shouldCache && staleCachedResult !== undefined) {
+      return staleCachedResult;
+    }
     throw new Error(normalizeApiError(error));
   } finally {
     if (shouldCache && pendingCachedGetRequests.get(resolvedCacheKey) === requestPromise) {

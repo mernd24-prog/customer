@@ -9,6 +9,7 @@ import { CHECKOUT_ROUTES } from "../modules/checkout/routes/apiRoutes";
 import { CART_ROUTES } from "../modules/cart/routes/apiRoutes";
 import { RETURNS_ROUTES } from "../modules/returns/routes/apiRoutes";
 import Loader from "../components/ui/Loader";
+import { HomePage } from "../modules/home/pages/HomePage";
 
 const CategoryListingPage = lazy(
   () => import("../modules/catalog/pages/CategoryListingPage"),
@@ -58,12 +59,6 @@ const SupportTicketDetailsPage = lazy(
 const CmsPage = lazy(() => import("../pages/cms/CmsPage"));
 const BrandOutletPage = lazy(
   () => import("../modules/catalog/pages/BrandOutletPage"),
-);
-
-const HomePage = lazy(() =>
-  import("../modules/home/pages/HomePage").then((m) => ({
-    default: m.HomePage,
-  })),
 );
 
 const WatchlistPage = lazy(

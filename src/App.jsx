@@ -2,18 +2,24 @@ import AppRoutes from "./routing/AppRoutes";
 import {
   BrowserRouter,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthModalProvider } from "./modules/auth/context/AuthModalContext";
 import { checkAuthStatus, logout } from "./modules/auth/slices/authSlice";
 import { fetchCart, setGuestCart } from "./modules/cart/slices/cartSlice";
 import { readGuestCart } from "./utils/ecommerce/cart";
 import { fetchCmsPages } from "./features/cms/cmsSlice";
+import {
+  fetchBrands,
+  fetchCategories,
+  setGlobalBrands,
+  setGlobalCategories,
+} from "./features/catalog/catalogSlice";
+import { getCategoryListFromResponse } from "./utils/pages/categoryUtils";
 import { tokenStorage } from "./api/tokenStorage";
 import { disconnectRealtime, reconnectRealtime } from "./api/realtime";
 
 import ScrollToTop from "./components/ui/ScrollToTop";
-import Loader from "./components/ui/Loader";
 import AiSupportChatWidget from "./modules/support/components/AiSupportChatWidget";
 import { RaiseTicketModal } from "./modules/support/components/RaiseTicketModal";
 import { TicketSuccessModal } from "./modules/support/components/TicketSuccessModal";
@@ -29,6 +35,12 @@ const CART_SESSION_KEYS = [
   "sam_global_buy_now_items", // sessionStorage
 ];
 
+const getBrandList = (result) => {
+  const data = result?.data || result;
+  if (Array.isArray(data)) return data;
+  return data?.items || data?.brands || data?.list || [];
+};
+
 function clearCartStorage() {
   CART_STORAGE_KEYS.forEach((key) => window.localStorage.removeItem(key));
   CART_SESSION_KEYS.forEach((key) => window.sessionStorage.removeItem(key));
@@ -37,7 +49,6 @@ function clearCartStorage() {
 export default function  App() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.current);
-  const [sessionReady, setSessionReady] = useState(false);
 
   useEffect(() => {
     const handler = () => {
@@ -51,17 +62,7 @@ export default function  App() {
   useEffect(() => {
     const hasStoredSession =
       tokenStorage.getAccessToken() || tokenStorage.getRefreshToken();
-    if (!hasStoredSession || currentUser) {
-      setSessionReady(true);
-      return;
-    }
-
-    let isDone = false;
-    const timeoutId = window.setTimeout(() => {
-      if (isDone) return;
-      isDone = true;
-      setSessionReady(true);
-    }, 8000);
+    if (!hasStoredSession || currentUser) return;
 
     dispatch(checkAuthStatus())
       .unwrap()
@@ -70,21 +71,23 @@ export default function  App() {
         clearCartStorage();
         dispatch(logout());
       })
-      .finally(() => {
-        if (isDone) return;
-        isDone = true;
-        window.clearTimeout(timeoutId);
-        setSessionReady(true);
-      });
-
-    return () => {
-      isDone = true;
-      window.clearTimeout(timeoutId);
-    };
+      .catch(() => {});
   }, [currentUser, dispatch]);
 
   useEffect(() => {
     dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
+    dispatch(fetchCategories({ navigation: true }))
+      .unwrap()
+      .then((result) => {
+        dispatch(setGlobalCategories(getCategoryListFromResponse(result?.data || result)));
+      })
+      .catch(() => {});
+    dispatch(fetchBrands({ limit: 100, active: true, hasProducts: true }))
+      .unwrap()
+      .then((result) => {
+        dispatch(setGlobalBrands(getBrandList(result)));
+      })
+      .catch(() => {});
   }, [dispatch]);
 
   useEffect(() => {
@@ -97,16 +100,6 @@ export default function  App() {
       dispatch(setGuestCart(guestCart));
     }
   }, [currentUser, dispatch]);
-
-  if (!sessionReady) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[var(--customer-cream)]">
-        <div className="flex items-center justify-center">
-          <Loader size="lg" />
-        </div>
-      </main>
-    );
-  }
 
   return (
     <BrowserRouter>
