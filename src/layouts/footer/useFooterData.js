@@ -6,6 +6,7 @@
  */
 
 import { useMemo } from "react";
+import { SELLER_LOGIN_URL } from "../../config/seller";
 import { useSelector } from "react-redux";
 
 import { useCmsRecord } from "../../hooks/useCmsRecord";
@@ -159,7 +160,11 @@ export function useFooterData(fallbackData) {
       }
       if (removeBrandGroup && normalizedTitle === "brands") return;
 
-      const links = asArray(group?.links).filter(
+      const links = asArray(group?.links).map((link) =>
+        normalizeText(link?.label) === "seller dashboard"
+          ? { ...link, href: SELLER_LOGIN_URL }
+          : link,
+      ).filter(
         (link) => link?.label && link?.href,
       );
       if (!links.length) return;

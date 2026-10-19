@@ -24,7 +24,7 @@ import FallbackImage from "../../../components/ui/FallbackImage";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
-const SELLER_LOGIN_URL = "http://45.195.90.183:3000/login";
+import { SELLER_LOGIN_URL } from "../../../config/seller";
 
 const STORY_SWIPER_BREAKPOINTS = {
   640: {

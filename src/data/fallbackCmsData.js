@@ -1,3 +1,4 @@
+import { SELLER_LOGIN_URL } from "../config/seller";
 import {
   CANONICAL_FAQ_DATA,
   CANONICAL_POLICY_DATA,
@@ -6,20 +7,20 @@ import {
 const image = (url, alt = "") => ({ url, alt });
 export const FALLBACK_CONTACT_PAGE = {
   title: "Contact us",
-  excerpt: "Get in touch with Sam Global for support, inquiries, or feedback.",
+  excerpt: "Get in touch with The Bear House for support, inquiries, or feedback.",
   sections: [
     {
       type: "content",
       title: "contact-info",
       description: "",
       points: [
-        { title: "Email", description: "info@samglobal1.com" },
-        { title: "Phone", description: "+91 99154 29897" },
-        { title: "Working Hours", description: "Mon - Sat\n9 AM - 7 PM" },
+        { title: "Email", description: "maintenancestesting@gmail.com" },
+        { title: "Phone", description: "+91 7879057767" },
+        { title: "Working Hours", description: "Mon - Sat\n 09:00 AM - 07:00 PM" },
         {
           title: "Office",
           description:
-            "202, KINGSTON1 OMAXE ROYAL RESIDENCY, PAKHOWAL ROAD, Lalton Kalan, Ludhiana, Ludhiana Punjab 142022",
+            "Plot No. 24, 2nd Floor, Orion Business Park, Indore, Madhya Pradesh, 452010, India",
         },
       ],
     },
@@ -39,7 +40,7 @@ export const FALLBACK_CONTACT_PAGE = {
 };
 export const FALLBACK_HERO_SLIDES = [
   [
-    "HeroImg1.webp",
+    "HeroImg1.jpg",
     "END OF SEASON SALE | UP TO 50% OFF",
     "Shop Smarter Across",
     "Every Category",
@@ -312,47 +313,47 @@ export const FALLBACK_FAQ_PAGE = {
 /* -------------------------------------------------------------------------- */ /* Become A Seller                                                            */ /* -------------------------------------------------------------------------- */ const sellerStories =
   [
     [
-      "Aarav Mehta",
-      "Sam Global gave our handcrafted home collection the reach it deserved.",
-      "SellerStory.avif",
-      "Founder, House of Aara",
-      "3.2x growth in 8 months",
+      "Sam Bhatia",
+      "The Bear House is a contemporary menswear brand offering premium shirts, T-shirts, trousers, and stylish everyday clothing. With a focus on modern designs, quality fabrics, and versatile fashion, the brand brings together comfort, sophistication, and effortless style for today's men.",
+      "SellerStory5.jpg",
+      "The Bear House",
+      "Recently achieved 3.2x growth",
     ],
-    [
-      "Nisha Kapoor",
-      "The seller tools help us make better decisions every week.",
-      "SellerStory1.webp",
-      "Owner, Nivara Studio",
-      "18,000+ orders delivered",
-    ],
-    [
-      "Kabir Shah",
-      "Reliable payouts gave us the confidence to scale.",
-      "SellerStory2.webp",
-      "Director, K&S Essentials",
-      "200+ products listed",
-    ],
-    [
-      "Riya Malhotra",
-      "The marketplace helped our family-run brand find customers beyond our city.",
-      "SellerStory3.webp",
-      "Co-founder, Terra Crafts",
-      "42 cities reached",
-    ],
-    [
-      "Dev Arora",
-      "Sam Global made online selling feel approachable from day one.",
-      "SellerStory4.webp",
-      "Owner, Volt Avenue",
-      "4.8 average rating",
-    ],
-    [
-      "Meera Iyer",
-      "Simple tools and dependable support let us focus on our customers.",
-      "SellerStory5.webp",
-      "Founder, Studio Meera",
-      "2.5x monthly growth",
-    ],
+    // [
+    //   "Nisha Kapoor",
+    //   "The seller tools help us make better decisions every week.",
+    //   "SellerStory1.webp",
+    //   "Owner, Nivara Studio",
+    //   "18,000+ orders delivered",
+    // ],
+    // [
+    //   "Kabir Shah",
+    //   "Reliable payouts gave us the confidence to scale.",
+    //   "SellerStory2.webp",
+    //   "Director, K&S Essentials",
+    //   "200+ products listed",
+    // ],
+    // [
+    //   "Riya Malhotra",
+    //   "The marketplace helped our family-run brand find customers beyond our city.",
+    //   "SellerStory3.webp",
+    //   "Co-founder, Terra Crafts",
+    //   "42 cities reached",
+    // ],
+    // [
+    //   "Dev Arora",
+    //   "Sam Global made online selling feel approachable from day one.",
+    //   "SellerStory4.webp",
+    //   "Owner, Volt Avenue",
+    //   "4.8 average rating",
+    // ],
+    // [
+    //   "Meera Iyer",
+    //   "Simple tools and dependable support let us focus on our customers.",
+    //   "SellerStory5.webp",
+    //   "Founder, Studio Meera",
+    //   "2.5x monthly growth",
+    // ],
   ].map(([title, description, file, role, result]) => ({
     title,
     description,
@@ -1537,7 +1538,7 @@ export const FALLBACK_FOOTER = {
         },
         {
           label: "Seller Dashboard",
-          href: "http://45.195.90.183:3000/login",
+          href: SELLER_LOGIN_URL,
           target: "_blank",
         },
         {
