@@ -96,25 +96,10 @@ export function HomePage() {
           subtitle=""
         />
       )}
-      {/* 
-      <LazySection minHeight="280px">
-        <FeaturedCollectionsSection />
-      </LazySection> */}
-{/* 
-      {!homeLoading && !products.length && !trendingProducts.length && (
-        <section className="mx-auto my-8 max-w-7xl rounded-2xl border border-[var(--customer-border)] bg-[var(--customer-cream)] px-6 py-12 text-center" role="status">
-          <h2 className="text-2xl font-semibold text-[var(--customer-navy)]">
-            {homeError ? "We couldn’t load products" : "Products coming soon"}
-          </h2>
-          <p className="mt-3 text-gray-600">
-            {homeError
-              ? "Please refresh the page to try again."
-              : "We’re preparing our collection. Please check back soon."}
-          </p>
-        </section>
-      )} */}
-
-      {/* {promoCampaignPage && (
+     
+  
+    
+      {promoCampaignPage && (
         <LazySection minHeight="380px">
           <PromoCampaignCarousel data={promoCampaignPage} />
         </LazySection>
@@ -124,7 +109,7 @@ export function HomePage() {
         <LazySection minHeight="150px">
           <ShoppingMadeEasyBanner data={shoppingBannerPage} />
         </LazySection>
-      )} */}
+      )}
 
       {featuredProducts.length > 0 && (
         <LazySection minHeight="450px">
@@ -138,25 +123,7 @@ export function HomePage() {
         </LazySection>
       )}
 
-      {/* <LazySection minHeight="500px">
-        <section className="">
-          <ShowcaseSection
-            title="New Arrivals"
-            subtitle="Newly added products with trend-driven rankings"
-            headerbgColor="bg-white"
-            bodybgColor="bg-white"
-            gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
-            items={newArrivalItems.length ? newArrivalItems : undefined}
-            CardComponent={NewArrivalCard}
-            skeletonVariant="new-arrivals"
-            skeletonCount={3}
-            className="mt-8"
-            actionLabel="View Shop"
-            actionHref="/products"
-            loading={loading}
-          />
-        </section>
-      </LazySection> */}
+      
 
       {(products.length > 0 || trendingProducts.length > 0) && (
         <LazySection minHeight="400px">
