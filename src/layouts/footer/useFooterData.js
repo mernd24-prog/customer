@@ -137,12 +137,30 @@ export function useFooterData(fallbackData) {
 
   const resolvedLinkGroups = useMemo(() => {
     const groups = [];
+    const seenLinks = new Set();
+
+    const dedupeAcrossGroups = (links = []) =>
+      links.filter((link) => {
+        const href = normalizeText(link?.href);
+        const label = normalizeText(link?.label);
+        const key = href || label;
+
+        if (!key || seenLinks.has(key)) return false;
+        seenLinks.add(key);
+        return true;
+      });
 
     if (apiCategoryLinks.length > 0) {
-      groups.push({ title: "Categories", links: apiCategoryLinks });
+      groups.push({
+        title: "Categories",
+        links: dedupeAcrossGroups(apiCategoryLinks),
+      });
     }
     if (apiBrandLinks.length > 0) {
-      groups.push({ title: "Brands", links: apiBrandLinks });
+      groups.push({
+        title: "Brands",
+        links: dedupeAcrossGroups(apiBrandLinks),
+      });
     }
 
     const removeCategoryGroup = apiCategoryLinks.length > 0;
@@ -159,8 +177,8 @@ export function useFooterData(fallbackData) {
       }
       if (removeBrandGroup && normalizedTitle === "brands") return;
 
-      const links = asArray(group?.links).filter(
-        (link) => link?.label && link?.href,
+      const links = dedupeAcrossGroups(
+        asArray(group?.links).filter((link) => link?.label && link?.href),
       );
       if (!links.length) return;
 

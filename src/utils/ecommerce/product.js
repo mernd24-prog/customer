@@ -506,9 +506,14 @@ export function getProductBrandName(product) {
   const value =
     product?.brandName ||
     product?.brandRef?.name ||
+    product?.brandRef?.title ||
+    product?.brandRef?.label ||
     product?.brand?.name ||
     product?.brand?.title ||
     product?.brand?.label ||
+    product?.brand?.brandName ||
+    product?.metadata?.brandName ||
+    product?.attributes?.brand ||
     product?.manufacturer ||
     product?.vendor ||
     product?.brand ||
