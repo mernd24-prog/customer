@@ -857,7 +857,7 @@ export default function ProductCard({
                 h-10
                 gap-2
                 px-4
-                text-[14px]
+                text-[16px]
                 leading-none
                 font-semibold
                 whitespace-nowrap
