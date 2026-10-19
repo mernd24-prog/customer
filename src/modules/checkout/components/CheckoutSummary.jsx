@@ -62,6 +62,7 @@ export default function CheckoutSummary({
   selectedPaymentProvider,
   onPaymentProviderChange,
   getPaymentProviderLabel,
+  disabled = false,
 }) {
   const selectedOption = paymentOptions.find(
     (option) => option.provider === selectedPaymentProvider,
@@ -163,7 +164,7 @@ export default function CheckoutSummary({
         onPaymentProviderChange={onPaymentProviderChange}
         buttonText={buttonLabel}
         loading={loading || quoteLoading}
-        disabled={Boolean(quoteError)}
+        disabled={Boolean(quoteError) || disabled}
         selectedLabel={selectedLabel}
         onCheckout={() => {}}
       />

@@ -498,7 +498,8 @@ export default function useCheckout() {
       setValue("useNewAddress", false);
     }
     if (addresses.length === 0) {
-      setValue("useNewAddress", true);
+      setValue("selectedAddressId", "");
+      setValue("useNewAddress", false);
     }
   }, [addresses, selectedAddressId, setValue]);
 
@@ -1112,7 +1113,14 @@ export default function useCheckout() {
 
     try {
       let shippingAddress;
-      if (!values.useNewAddress && values.selectedAddressId) {
+      if (!values.useNewAddress) {
+        if (!values.selectedAddressId) {
+          setError("selectedAddressId", {
+            type: "manual",
+            message: "Select a delivery address",
+          });
+          return;
+        }
         const saved = addresses.find(
           (a) => getAddressId(a) === String(values.selectedAddressId),
         );

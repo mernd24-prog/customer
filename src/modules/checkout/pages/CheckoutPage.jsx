@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { MapPin, Plus } from "lucide-react";
 import useCheckout from "../controllers/useCheckout";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { getPaymentProviderLabel } from "../utils/checkoutUtils";
@@ -68,6 +69,7 @@ export default function CheckoutPage() {
     isCouponDebouncing,
     watchedWalletAmount,
     watchedCouponCode,
+    quoteShippingAddress,
   } = useCheckout();
 
   const handleCloseGuestOtp = useCallback(() => {
@@ -90,6 +92,13 @@ export default function CheckoutPage() {
       excludeBlockedItem(blocker);
     },
     [excludeBlockedItem],
+  );
+
+  const isAddressAvailable = Boolean(
+    !useNewAddress &&
+      addresses.length > 0 &&
+      selectedAddressId &&
+      quoteShippingAddress,
   );
 
   return (
@@ -202,34 +211,37 @@ export default function CheckoutPage() {
                   />
                 )}
 
+                {addresses.length === 0 && !useNewAddress && (
+                  <div className="rounded-[20px] border-[1.5px] border-dashed border-[#D9B86D] bg-[#FFFDF8] px-5 py-8 text-center shadow-[0_0_0_1px_rgba(201,163,88,0.12)] sm:px-6">
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60] shadow-inner shadow-[#E2CF9E]">
+                      <MapPin size={24} />
+                    </div>
+
+                    <h3 className="text-[1.05rem] font-bold leading-6 text-[#1B1D60]">
+                      No addresses saved yet
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-5 text-[#64708A]">
+                      Please add address to continue.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setValue("useNewAddress", true, { shouldValidate: true })
+                      }
+                      className="mt-5 inline-flex min-h-11 w-full max-w-[190px] items-center justify-center gap-2 rounded-lg border border-[#C69D2A] bg-[#C69D2A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#b98a1f]"
+                    >
+                      <Plus size={17} />
+                      Add Address
+                    </button>
+                  </div>
+                )}
+
                 {/* New address form */}
-                {(useNewAddress || addresses.length === 0) &&
-                  (addresses.length > 0 ? (
-                    <BaseModal onClose={handleCloseNewAddress}>
-                      <div className="w-full bg-surface p-4 sm:p-5 rounded-[10px] max-h-[75vh] overflow-y-auto [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
-                        <ShippingAddressForm
-                          register={register}
-                          errors={errors}
-                          checkoutDialCodes={checkoutDialCodes}
-                          countries={countries}
-                          selectedCountry={selectedCountry}
-                          states={states}
-                          selectedState={selectedState}
-                          cities={cities}
-                          selectedCity={selectedCity}
-                          watchedPostalCode={watchedPostalCode}
-                          setValue={setValue}
-                          postalCodes={postalCodes}
-                          showSavedAddressFields={true}
-                          addressLabels={addressLabels}
-                          loading={checkoutActionLoading}
-                          onCancel={handleCloseNewAddress}
-                          onSave={handleSaveShippingAddressOnly}
-                        />
-                      </div>
-                    </BaseModal>
-                  ) : (
-                    <div ref={newAddressFormRef} className="scroll-mt-24">
+                {useNewAddress && (
+                  <BaseModal onClose={handleCloseNewAddress}>
+                    <div className="w-full bg-surface p-4 sm:p-5 rounded-[10px] max-h-[75vh] overflow-y-auto [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
                       <ShippingAddressForm
                         register={register}
                         errors={errors}
@@ -250,7 +262,8 @@ export default function CheckoutPage() {
                         onSave={handleSaveShippingAddressOnly}
                       />
                     </div>
-                  ))}
+                  </BaseModal>
+                )}
 
                 {/* Coupons & wallet */}
                 <DiscountsSection
@@ -280,6 +293,11 @@ export default function CheckoutPage() {
                   selectedPaymentProvider={paymentProvider}
                   onPaymentProviderChange={setPaymentProvider}
                   getPaymentProviderLabel={getPaymentProviderLabel}
+                  disabled={
+                    Boolean(quoteError) ||
+                    deliverabilityBlockers.length > 0 ||
+                    !isAddressAvailable
+                  }
                 />
               </OrderDetailAside>
             </OrderDetailLayout>

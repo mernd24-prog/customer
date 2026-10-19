@@ -57,20 +57,10 @@ export default function AddressTab({ user }) {
     handleShowAllAddresses,
   } = useAddressBook(user);
 
-  if (loading && addresses.length === 0 && !showAddForm) {
+  if ((loading || !user) && !showAddForm) {
     return (
-      <div className="animate-pulse space-y-4">
-        <div className="h-14 w-full rounded-lg bg-cream" />
-        <div className="h-48 w-full rounded-lg bg-cream" />
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <section className="mx-auto w-full min-w-0 space-y-5">
-        {/* Saved Addresses heading */}
-        <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+      <section className="mx-auto w-full min-w-0 space-y-4">
+        <header className="flex flex-col gap-3 border-b border-[#E7D9B8] pb-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
               <MapPin size={21} />
@@ -85,13 +75,48 @@ export default function AddressTab({ user }) {
               </p>
             </div>
           </div>
+        </header>
+
+        <div className="animate-pulse space-y-3 rounded-xl border border-[#E7D9B8] bg-[#FFFCF5] p-5">
+          <div className="h-5 w-40 rounded bg-[#F5E9C9]" />
+          <div className="h-4 w-3/4 rounded bg-[#F5E9C9]" />
+          <div className="h-10 w-full rounded-lg bg-[#F5E9C9]" />
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <>
+      <section className="mx-auto w-full min-w-0 space-y-4">
+        {/* Saved Addresses heading */}
+        <header className="flex flex-col gap-3 border-b border-[#E7D9B8] pb-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
+              <MapPin size={21} />
+            </span>
+
+            <div className="min-w-0">
+              <h2 className="text-lg font-bold leading-6 text-[#1B1D60] sm:text-xl">
+                Saved Addresses
+              </h2>
+
+              <p className="mt-1 text-sm leading-5 text-[#64708A]">
+                Manage your delivery addresses for a faster checkout.
+              </p>
+            </div>
+          </div>
 
           <button
             type="button"
             onClick={handleToggleAddForm}
             className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg border border-gold bg-gold px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 sm:w-auto"
           >
-            {showAddForm ? <ChevronUp size={16} /> : <Plus size={17} />}
+            {showAddForm ? (
+              <ChevronUp size={16} />
+            ) : (
+              <Plus size={17} />
+            )}
             {showAddForm ? "Close Form" : "Add New Address"}
           </button>
         </header>
@@ -150,52 +175,53 @@ export default function AddressTab({ user }) {
           </BaseModal>
         )}
 
-        {/* Address Cards */}
+        {/* Address Cards: two per row on medium and larger screens */}
         {addresses.length > 0 ? (
-          <div className="space-y-5">
-            <div className="grid w-full min-w-0 grid-cols-1 items-stretch gap-4">
-              {(showAllAddresses ? addresses : addresses.slice(0, 4)).map(
-                (addr) => {
-                  const addrId = addr._id || addr.id;
-                  const isEditing = editingId === addrId;
+          <div className="space-y-4">
+            <div className="grid w-full min-w-0 grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:gap-4">
+              {(showAllAddresses
+                ? addresses
+                : addresses.slice(0, 4)
+              ).map((addr) => {
+                const addrId = addr._id || addr.id;
+                const isEditing = editingId === addrId;
 
-                  return (
-                    <div
-                      key={addrId}
-                      className="w-full min-w-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-colors hover:border-[#CE9F2D]"
-                    >
-                      <SharedAddressCard
-                        addr={addr}
-                        addrId={addrId}
-                        startEdit={startEdit}
-                        handleDelete={handleDelete}
-                      />
+                return (
+                  <div
+                    key={addrId}
+                    className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-colors hover:border-[#CE9F2D]"
+                  >
+                    <SharedAddressCard
+                      addr={addr}
+                      addrId={addrId}
+                      startEdit={startEdit}
+                      handleDelete={handleDelete}
+                    />
 
-                      <AddressEditModal
-                        isOpen={isEditing}
-                        onClose={cancelEdit}
-                        onSave={editForm.handleSubmit(
-                          handleUpdate,
-                          handleInvalidEdit,
-                        )}
-                        form={editForm}
-                        idPrefix={`edit-${addrId}`}
-                        loading={loading}
-                        countries={countries}
-                        states={editStates}
-                        cities={editCities}
-                        postalCodes={editPostalCodes}
-                        dialCodes={editDialCodes}
-                        selectedCountry={editCountry}
-                        selectedState={editState}
-                        selectedCity={editCity}
-                        selectedPostalCode={editPostalCode}
-                        addressLabels={addressLabels}
-                      />
-                    </div>
-                  );
-                },
-              )}
+                    <AddressEditModal
+                      isOpen={isEditing}
+                      onClose={cancelEdit}
+                      onSave={editForm.handleSubmit(
+                        handleUpdate,
+                        handleInvalidEdit
+                      )}
+                      form={editForm}
+                      idPrefix={`edit-${addrId}`}
+                      loading={loading}
+                      countries={countries}
+                      states={editStates}
+                      cities={editCities}
+                      postalCodes={editPostalCodes}
+                      dialCodes={editDialCodes}
+                      selectedCountry={editCountry}
+                      selectedState={editState}
+                      selectedCity={editCity}
+                      selectedPostalCode={editPostalCode}
+                      addressLabels={addressLabels}
+                    />
+                  </div>
+                );
+              })}
             </div>
 
             {/* Show More */}
@@ -239,17 +265,17 @@ export default function AddressTab({ user }) {
           </div>
         ) : (
           /* Empty State */
-          <div className="rounded-xl border border-dashed border-[#CE9F2D] bg-[#FFFCF5] px-5 py-10 text-center">
+          <div className="rounded-xl border border-dashed border-[#CE9F2D] bg-[#FFFCF5] px-5 py-8 text-center">
             <span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60]">
               <MapPin size={23} />
             </span>
 
             <h3 className="text-base font-semibold text-[#1B1D60]">
-              No Saved Addresses Yet
+              No addresses saved yet
             </h3>
 
             <p className="mx-auto mt-1 max-w-sm text-sm leading-5 text-[#64708A]">
-              Add your delivery address to make placing future orders easier.
+              Please add address to continue.
             </p>
 
             <button
@@ -258,7 +284,7 @@ export default function AddressTab({ user }) {
               className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark"
             >
               <Plus size={17} />
-              Add Your First Address
+              Add Address
             </button>
           </div>
         )}

@@ -3,22 +3,18 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Mail, Phone, UserRound } from "lucide-react";
-
 import {
-  ChevronDown,
-  ChevronUp,
-  MapPin,
-  Plus,
-  Info,
+  Camera,
+  Mail,
+  Phone,
+  UserRound,
+  Pencil,
 } from "lucide-react";
+
 import FormField from "../../../components/ui/FormField";
 import Button from "../../../components/ui/buttons/Button";
 import { useToastThunk } from "../../../hooks/useToastThunk";
-import {
-  fetchMe,
-  updateMe,
-} from "../../../features/user/userSlice";
+import { fetchMe, updateMe } from "../../../features/user/userSlice";
 import { apiRequest } from "../../../api/client";
 import { endpoints, FILE_UPLOAD_MODULES } from "../../../api/endpoints";
 import { profileSchema } from "../../../validations/validationSchemas";
@@ -68,6 +64,7 @@ export default function ProfileTab({ user }) {
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef("");
 
+  const [isEditing, setIsEditing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(() =>
     getAvatar(user),
   );
@@ -95,7 +92,6 @@ export default function ProfileTab({ user }) {
       lastName: user?.profile?.lastName || "",
     });
 
-    // Refresh the preview when the saved user changes.
     setAvatarPreview(getAvatar(user));
     setAvatarError("");
   }, [user, reset]);
@@ -107,6 +103,26 @@ export default function ProfileTab({ user }) {
       }
     };
   }, []);
+
+  const handleEdit = () => {
+    reset({
+      firstName: user?.profile?.firstName || "",
+      lastName: user?.profile?.lastName || "",
+    });
+
+    setAvatarError("");
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    reset({
+      firstName: user?.profile?.firstName || "",
+      lastName: user?.profile?.lastName || "",
+    });
+
+    setAvatarError("");
+    setIsEditing(false);
+  };
 
   const handleAvatarChange = async (event) => {
     const file = event.target.files?.[0];
@@ -179,7 +195,6 @@ export default function ProfileTab({ user }) {
         error?.message || "Failed to upload profile image.",
       );
 
-      // Restore the last saved image.
       if (previewUrlRef.current) {
         URL.revokeObjectURL(previewUrlRef.current);
         previewUrlRef.current = "";
@@ -192,19 +207,27 @@ export default function ProfileTab({ user }) {
   };
 
   const submit = async (values) => {
+    if (!isEditing) return;
+
     const profile = {
       ...(user?.profile || {}),
       firstName: values.firstName.trim(),
       lastName: values.lastName.trim(),
     };
 
-    await run(
-      dispatch,
-      updateMe({ profile }),
-      "Profile updated",
-    );
+    try {
+      await run(
+        dispatch,
+        updateMe({ profile }),
+        "Profile updated",
+      );
 
-    await dispatch(fetchMe()).unwrap();
+      await dispatch(fetchMe()).unwrap();
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Profile update failed:", error);
+    }
   };
 
   const fullName =
@@ -229,32 +252,40 @@ export default function ProfileTab({ user }) {
     <form
       onSubmit={handleSubmit(submit)}
       noValidate
-      className="grid w-full min-w-0 gap-5"
+      className="grid w-full min-w-0 gap-3"
     >
-     
+      {/* Profile heading and edit action */}
+      <header className="flex flex-col gap-3 border-b border-[#E7D9B8] pb-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
+            <UserRound size={21} />
+          </span>
 
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold leading-6 text-[#1B1D60] sm:text-xl">
+              My Profile
+            </h2>
 
-
-<header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-w-0 items-start gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
-              <MapPin size={21} />
-            </span>
-
-            <div className="min-w-0">
-              <h2 className="text-lg font-bold leading-6 text-[#1B1D60] sm:text-xl">
-                 My Profile
-              </h2>
-              <p className="mt-1 text-sm leading-5 text-[#64708A]">
-                Manage your personal details and profile photo.
-              </p>
-            </div>
+            <p className="mt-1 text-sm leading-5 text-[#64708A]">
+              Manage your personal details and profile photo.
+            </p>
           </div>
+        </div>
 
-         
-        </header>
+        {!isEditing && (
+          <button
+            type="button"
+            onClick={handleEdit}
+            className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg border border-gold bg-gold px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 sm:w-auto"
+          >
+            <Pencil size={15} />
+            Edit Profile
+          </button>
+        )}
+      </header>
+
       {/* Profile photo and account identity */}
-      <section className="flex min-w-0 items-center gap-4 rounded-xl bg-[#FAFAFC] ">
+      <section className="flex min-w-0 items-center gap-4 rounded-xl bg-[#FAFAFC]">
         <div className="relative shrink-0">
           <img
             src={avatarPreview}
@@ -268,37 +299,43 @@ export default function ProfileTab({ user }) {
             className="size-[68px] rounded-full border border-[#E6E8F0] bg-white object-cover sm:size-20"
           />
 
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isAvatarUploading}
-            aria-label="Change profile photo"
-            className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border-2 border-white bg-[#1B1D60] text-white transition hover:bg-[#343B91] disabled:opacity-60"
-          >
-            {isAvatarUploading ? (
-              <span className="size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            ) : (
-              <Camera size={14} />
-            )}
-          </button>
+          {isEditing && (
+            <>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isAvatarUploading || loading}
+                aria-label="Change profile photo"
+                className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border-2 border-white bg-[#1B1D60] text-white transition hover:bg-[#343B91] disabled:opacity-60"
+              >
+                {isAvatarUploading ? (
+                  <span className="size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : (
+                  <Camera size={14} />
+                )}
+              </button>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            disabled={isAvatarUploading}
-            className="hidden"
-          />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                disabled={isAvatarUploading || loading}
+                className="hidden"
+              />
+            </>
+          )}
         </div>
 
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-base font-bold text-[#171A3A] sm:text-lg">
             {fullName}
           </h2>
+
           <p className="mt-1 text-xs text-[#697084] sm:text-sm">
             {user?.email || "No email available"}
           </p>
+
           {avatarError && (
             <p role="alert" className="mt-1 text-xs text-red-600">
               {avatarError}
@@ -307,17 +344,17 @@ export default function ProfileTab({ user }) {
         </div>
       </section>
 
-      {/* Editable name fields */}
-      <section className="grid min-w-0 gap-3 sm:grid-cols-2 sm:gap-4">
+      {/* Name fields: read-only until Edit Profile is clicked */}
+      <section className="grid min-w-0 gap-2 sm:grid-cols-2 sm:gap-3">
         <div className="min-w-0">
           <FormField
             id="firstName"
             label="First Name"
             registration={register("firstName")}
-            error={errors.firstName}
+            error={isEditing ? errors.firstName : undefined}
             autoComplete="given-name"
             placeholder="Enter first name"
-            disabled={loading}
+            disabled={loading || !isEditing}
           />
         </div>
 
@@ -326,10 +363,10 @@ export default function ProfileTab({ user }) {
             id="lastName"
             label="Last Name"
             registration={register("lastName")}
-            error={errors.lastName}
+            error={isEditing ? errors.lastName : undefined}
             autoComplete="family-name"
             placeholder="Enter last name"
-            disabled={loading}
+            disabled={loading || !isEditing}
           />
         </div>
       </section>
@@ -338,11 +375,13 @@ export default function ProfileTab({ user }) {
       <section className="grid min-w-0 gap-3 sm:grid-cols-2 sm:gap-4">
         <div className={readonlyFieldClass}>
           <label className={readonlyLabelClass}>Email</label>
+
           <div className={readonlyValueClass}>
             <Mail
               size={17}
               className="shrink-0 text-[#697084]"
             />
+
             <span className="min-w-0 break-all">
               {user?.email || "—"}
             </span>
@@ -351,11 +390,13 @@ export default function ProfileTab({ user }) {
 
         <div className={readonlyFieldClass}>
           <label className={readonlyLabelClass}>Phone</label>
+
           <div className={readonlyValueClass}>
             <Phone
               size={17}
               className="shrink-0 text-[#697084]"
             />
+
             <span className="min-w-0 break-words">
               {user?.phone || "—"}
             </span>
@@ -363,18 +404,33 @@ export default function ProfileTab({ user }) {
         </div>
       </section>
 
-      {/* Save action */}
-      <div className="flex justify-start border-t border-[#E8EAF1] pt-4">
-        <Button
-          type="submit"
-          loading={loading}
-          disabled={!isValid || loading || isAvatarUploading}
-          className="w-full px-6 text-sm font-semibold text-white sm:w-auto sm:min-w-[150px]"
-          size="lg"
-        >
-          Save Profile
-        </Button>
-      </div>
+      {/* Save and Cancel actions appear only in edit mode */}
+      {isEditing && (
+        <div className="flex flex-col-reverse justify-start gap-3 border-t border-[#E8EAF1] pt-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={loading || isAvatarUploading}
+            className="min-h-10 w-full rounded-lg border border-[#D9DCE5] px-6 text-sm font-semibold text-[#1B1D60] transition hover:bg-[#F7F7F9] disabled:opacity-60 sm:w-auto"
+          >
+            Cancel
+          </button>
+
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={
+              !isValid ||
+              loading ||
+              isAvatarUploading
+            }
+            className="w-full px-6 text-sm font-semibold text-white sm:w-auto sm:min-w-[150px]"
+            size="lg"
+          >
+            Save Profile
+          </Button>
+        </div>
+      )}
     </form>
   );
 }
