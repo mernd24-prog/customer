@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ShoppingBag } from "lucide-react";
 
 import moreImage from "/image/png/MoreImage.png";
@@ -8,7 +8,6 @@ import ImageSkeleton from "../../components/ui/Image";
 import { CategoryMoreButton } from "../../components/ui/button/static";
 import CategoryMegaMenu from "../../modules/catalog/components/CategoryMegaMenu";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
-import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { asArray, keyOr, textOr } from "../../utils/content";
 
 import {
@@ -32,7 +31,6 @@ export const CategoryBar = ({
   compact = false,
   loading = false,
 }) => {
-  const dispatch = useDispatch();
   const location = useLocation();
   const catalogLoading = useSelector(
     (state) =>
@@ -53,43 +51,6 @@ export const CategoryBar = ({
       setCategoriesList(actualCategories);
     }
   }, [catalogCategoryList]);
-
-  // Fetch if we don't have categories yet
-  useEffect(() => {
-    if (categoriesList.length === 0) {
-      dispatch(fetchCategories({ navigation: true }))
-        .unwrap()
-        .then((result) => {
-          const data = result?.data || result;
-          const list = getCategoryListFromResponse(data);
-          const actualCategories = list.filter(
-            (item) => item && (item.categoryKey || item.parentKey),
-          );
-          if (actualCategories.length > 0) {
-            setCategoriesList(actualCategories);
-          }
-
-          const hydrateTree = () => {
-            dispatch(fetchCategories({ navigation: false, maxDepth: 3 }))
-              .unwrap()
-              .then((treeResult) => {
-                const treeData = treeResult?.data || treeResult;
-                const tree = getCategoryListFromResponse(treeData).filter(
-                  (item) => item && (item.categoryKey || item.parentKey),
-                );
-                if (tree.length) setCategoriesList(tree);
-              })
-              .catch(() => {});
-          };
-          if (typeof window.requestIdleCallback === "function") {
-            window.requestIdleCallback(hydrateTree, { timeout: 1500 });
-          } else {
-            window.setTimeout(hydrateTree, 250);
-          }
-        })
-        .catch(() => {});
-    }
-  }, [dispatch, categoriesList.length]);
 
   const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
 

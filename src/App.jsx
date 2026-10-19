@@ -76,7 +76,7 @@ export default function  App() {
 
   useEffect(() => {
     dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
-    dispatch(fetchCategories({ navigation: true }))
+    dispatch(fetchCategories({ navigation: false, maxDepth: 3 }))
       .unwrap()
       .then((result) => {
         dispatch(setGlobalCategories(getCategoryListFromResponse(result?.data || result)));

@@ -85,7 +85,7 @@ export function HomePage() {
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
       <Banner />
-      {/* <CategoryBar loading={!categoryRequestComplete && !categories.length} />
+      {/* <CategoryBar loading={!categoryRequestComplete && !categories.length} /> */}
 
       {categories.length > 0 && (
         <HomeCategoryGrid
@@ -94,15 +94,15 @@ export function HomePage() {
           title="Time for a Spring Refresh"
           subtitle=""
         />
-      )} */}
+      )}
       {/* 
       <LazySection minHeight="280px">
         <FeaturedCollectionsSection />
       </LazySection> */}
-
+{/* 
       <LazySection minHeight="380px">
         <PromoCampaignCarousel data={promoCampaignPage} />
-      </LazySection>
+      </LazySection> */}
 
       <LazySection minHeight="150px">
         <ShoppingMadeEasyBanner data={shoppingBannerPage} />

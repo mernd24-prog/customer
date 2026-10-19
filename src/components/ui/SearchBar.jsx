@@ -8,11 +8,6 @@ import {
   clearSuggestions,
   searchAutocomplete,
 } from "../../features/search/searchSlice";
-import {
-  fetchCategories,
-  setGlobalCategories,
-} from "../../features/catalog/catalogSlice";
-import { getCategoryListFromResponse } from "../../utils/pages/categoryUtils";
 import useDebouncedValue from "../../hooks/useDebouncedValue";
 
 // function getCategoryListFromResponse(data) {
@@ -267,21 +262,6 @@ const SearchBar = ({
         ),
     [categoriesRaw],
   );
-
-  // Fetch categories if not yet loaded (e.g. on product detail page where
-  // no fetchProducts call populates globalCategories via syncDiscoveryCategories)
-  useEffect(() => {
-    if (!enableCategoryDropdown) return;
-    if (categoriesRaw.length === 0) {
-      dispatch(fetchCategories({ navigation: true }))
-        .unwrap()
-        .then((result) => {
-          const list = getCategoryListFromResponse(result?.data || result);
-          if (list.length) dispatch(setGlobalCategories(list));
-        })
-        .catch(() => {});
-    }
-  }, [dispatch, enableCategoryDropdown, categoriesRaw.length]);
 
   const [internalQuery, setInternalQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

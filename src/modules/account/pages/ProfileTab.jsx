@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -14,7 +13,6 @@ import {
 import FormField from "../../../components/ui/FormField";
 import Button from "../../../components/ui/buttons/Button";
 import { useToastThunk } from "../../../hooks/useToastThunk";
-import useProfileImage from "../../../hooks/useProfileImage";
 import { fetchMe, updateMe } from "../../../features/user/userSlice";
 import { apiRequest } from "../../../api/client";
 import { endpoints, FILE_UPLOAD_MODULES } from "../../../api/endpoints";
@@ -83,7 +81,6 @@ export default function ProfileTab({ user }) {
   const [localPreview, setLocalPreview] = useState("");
   const [avatarError, setAvatarError] = useState("");
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
-  const resolvedAvatar = useProfileImage(avatarPreview, user?.updatedAt);
 
   const displayAvatar = localPreview || profileAvatar;
   const isAvatarLoading = isAvatarFetching || isAvatarUploading;
