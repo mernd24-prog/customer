@@ -44,6 +44,7 @@ export default function useBrandPageController() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
+  const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
 
   const selectedRatings = useMemo(
@@ -166,6 +167,10 @@ export default function useBrandPageController() {
         brand: brandName,
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
+        rating: searchParams.get("rating") || undefined,
+        featured: searchParams.get("featured") || undefined,
+        bestSeller: searchParams.get("bestSeller") || undefined,
+        newArrival: searchParams.get("newArrival") || undefined,
         sort: searchParams.get("sort") || undefined,
         inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
         outOfStock:
@@ -185,45 +190,56 @@ export default function useBrandPageController() {
   const loadProducts = useCallback(
     async ({ page = 1, append = false } = {}) => {
       const params = { ...getParams(page), view: "cards" };
+      const requestSequence = append
+        ? requestSequenceRef.current
+        : ++requestSequenceRef.current;
       if (append) setIsLoadingMore(true);
-      const result = await dispatch(fetchProducts(params)).unwrap();
-      const data = result?.data || {};
-      let list =
-        data.hits ||
-        data.products ||
-        data.results ||
-        data.items ||
-        data.list ||
-        (Array.isArray(data) ? data : []);
+      try {
+        const result = await dispatch(fetchProducts(params)).unwrap();
+        if (requestSequence !== requestSequenceRef.current) return [];
+        const data = result?.data || {};
+        const list =
+          data.hits ||
+          data.products ||
+          data.results ||
+          data.items ||
+          data.list ||
+          (Array.isArray(data) ? data : []);
 
-      const p = new URLSearchParams(searchParams);
-      p.delete("minPrice");
-      p.delete("maxPrice");
-      p.delete("page");
-      const ctxKey = p.toString();
+        const p = new URLSearchParams(searchParams);
+        p.delete("minPrice");
+        p.delete("maxPrice");
+        p.delete("page");
+        const ctxKey = p.toString();
 
-      const meta = getPagination(result, {
-        page: params.page || 1,
-        totalPages: 1,
-        total: list.length || 0,
-      });
-      setPageInfo({
-        page: Number(meta.page || meta.currentPage || 1),
-        totalPages: Number(meta.totalPages || meta.pages || 1),
-        total: Number(meta.total || meta.count || 0),
-      });
-      setFacetsContextKey(ctxKey);
-      if (!append) {
-        dispatch(fetchProducts({ ...getParams(1), page: 1, limit: 1, view: "facets" }))
-          .unwrap()
-          .then((facetResult) => {
-            setProductFacets(facetResult?.meta?.facets || facetResult?.meta?.filters || {});
-          })
-          .catch(() => {});
+        const meta = getPagination(result, {
+          page: params.page || 1,
+          totalPages: 1,
+          total: list.length || 0,
+        });
+        setPageInfo({
+          page: Number(meta.page || meta.currentPage || 1),
+          totalPages: Number(meta.totalPages || meta.pages || 1),
+          total: Number(meta.total || meta.count || 0),
+        });
+        setFacetsContextKey(ctxKey);
+        if (!append) {
+          dispatch(fetchProducts({ ...getParams(1), page: 1, limit: 1, view: "facets" }))
+            .unwrap()
+            .then((facetResult) => {
+              if (requestSequence !== requestSequenceRef.current) return;
+              setProductFacets(facetResult?.meta?.facets || facetResult?.meta?.filters || {});
+            })
+            .catch(() => {});
+        }
+        setItems((prev) => (append ? [...prev, ...list] : list));
+        setFirstLoadDone(true);
+        return list;
+      } finally {
+        if (requestSequence === requestSequenceRef.current) {
+          setIsLoadingMore(false);
+        }
       }
-      setItems((prev) => (append ? [...prev, ...list] : list));
-      setFirstLoadDone(true);
-      setIsLoadingMore(false);
     },
     [dispatch, getParams, searchParams],
   );
