@@ -20,6 +20,7 @@ import {
   formatSupportDate,
   normalizeSupportQueries,
 } from "../utils/supportUtils";
+import useProfileImage from "../../../hooks/useProfileImage";
 
 const SUPPORT_BREADCRUMBS = [
   { label: "Home", href: "/" },
@@ -120,7 +121,7 @@ export default function SupportTicketDetailsPage() {
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
 
-  const userAvatar =
+  const rawUserAvatar =
     profileUser?.profile?.avatarUrl ||
     profileUser?.profile?.avatar ||
     currentUser?.profile?.avatarUrl ||
@@ -128,6 +129,11 @@ export default function SupportTicketDetailsPage() {
     currentUser?.avatar ||
     currentUser?.profileImage ||
     "/image/png/person.png";
+
+  const userAvatar = useProfileImage(
+    rawUserAvatar,
+    currentUser?.updatedAt || profileUser?.updatedAt,
+  );
 
   const chatContainerRef = useRef(null);
 

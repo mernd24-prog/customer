@@ -18,6 +18,7 @@ import { fetchMe, updateMe } from "../../../features/user/userSlice";
 import { apiRequest } from "../../../api/client";
 import { endpoints, FILE_UPLOAD_MODULES } from "../../../api/endpoints";
 import { profileSchema } from "../../../validations/validationSchemas";
+import { useProfileImageState, invalidateProfileImageCache } from "../../../hooks/useProfileImage";
 
 const FALLBACK_AVATAR = "/image/png/person.png";
 
@@ -51,6 +52,15 @@ const getUploadedFileUrl = (result) => {
   );
 };
 
+const ensureAbsoluteUrl = (url) => {
+  if (!url || typeof url !== "string") return "";
+  if (/^https?:\/\//i.test(url)) return url;
+  const apiBase =
+    import.meta.env.VITE_API_BASE_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "");
+  return `${apiBase.replace(/\/+$/, "")}/${url.replace(/^\/+/, "")}`;
+};
+
 const getAvatar = (user) =>
   user?.profile?.avatarUrl ||
   user?.profile?.avatar ||
@@ -65,11 +75,16 @@ export default function ProfileTab({ user }) {
   const previewUrlRef = useRef("");
 
   const [isEditing, setIsEditing] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState(() =>
+  const { src: profileAvatar, isLoading: isAvatarFetching } = useProfileImageState(
     getAvatar(user),
+    user?.updatedAt
   );
+  const [localPreview, setLocalPreview] = useState("");
   const [avatarError, setAvatarError] = useState("");
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
+
+  const displayAvatar = localPreview || profileAvatar;
+  const isAvatarLoading = isAvatarFetching || isAvatarUploading;
 
   const {
     register,
@@ -92,7 +107,6 @@ export default function ProfileTab({ user }) {
       lastName: user?.profile?.lastName || "",
     });
 
-    setAvatarPreview(getAvatar(user));
     setAvatarError("");
   }, [user, reset]);
 
@@ -120,6 +134,11 @@ export default function ProfileTab({ user }) {
       lastName: user?.profile?.lastName || "",
     });
 
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = "";
+    }
+    setLocalPreview("");
     setAvatarError("");
     setIsEditing(false);
   };
@@ -146,9 +165,9 @@ export default function ProfileTab({ user }) {
       URL.revokeObjectURL(previewUrlRef.current);
     }
 
-    const localPreview = URL.createObjectURL(file);
-    previewUrlRef.current = localPreview;
-    setAvatarPreview(localPreview);
+    const localUrl = URL.createObjectURL(file);
+    previewUrlRef.current = localUrl;
+    setLocalPreview(localUrl);
 
     try {
       setIsAvatarUploading(true);
@@ -171,23 +190,33 @@ export default function ProfileTab({ user }) {
         );
       }
 
+      const absoluteUploadedUrl = ensureAbsoluteUrl(uploadedUrl);
+
+      const { avatarUrl: _oldAvatar, ...restProfileOnUpload } = user?.profile || {};
+      const profilePayload = {
+        ...restProfileOnUpload,
+        firstName: (user?.profile?.firstName || "").trim(),
+        lastName: (user?.profile?.lastName || "").trim(),
+      };
+
+      if (absoluteUploadedUrl && /^https?:\/\//i.test(absoluteUploadedUrl)) {
+        profilePayload.avatarUrl = absoluteUploadedUrl;
+      }
+
       await dispatch(
         updateMe({
-          profile: {
-            ...(user?.profile || {}),
-            avatarUrl: uploadedUrl,
-          },
+          profile: profilePayload,
         }),
       ).unwrap();
 
+      invalidateProfileImageCache();
       await dispatch(fetchMe()).unwrap();
 
       if (previewUrlRef.current) {
         URL.revokeObjectURL(previewUrlRef.current);
         previewUrlRef.current = "";
       }
-
-      setAvatarPreview(uploadedUrl);
+      setLocalPreview("");
     } catch (error) {
       console.error("Profile image upload failed:", error);
 
@@ -199,8 +228,7 @@ export default function ProfileTab({ user }) {
         URL.revokeObjectURL(previewUrlRef.current);
         previewUrlRef.current = "";
       }
-
-      setAvatarPreview(getAvatar(user));
+      setLocalPreview("");
     } finally {
       setIsAvatarUploading(false);
     }
@@ -209,11 +237,15 @@ export default function ProfileTab({ user }) {
   const submit = async (values) => {
     if (!isEditing) return;
 
+    const { avatarUrl, ...restProfile } = user?.profile || {};
     const profile = {
-      ...(user?.profile || {}),
+      ...restProfile,
       firstName: values.firstName.trim(),
       lastName: values.lastName.trim(),
     };
+    if (avatarUrl && /^https?:\/\//i.test(avatarUrl)) {
+      profile.avatarUrl = avatarUrl;
+    }
 
     try {
       await run(
@@ -254,7 +286,7 @@ export default function ProfileTab({ user }) {
       noValidate
       className="grid w-full min-w-0 gap-3"
     >
-      {/* Profile heading and edit action */}
+
       <header className="flex flex-col gap-3 border-b border-[#E7D9B8] pb-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
@@ -284,35 +316,40 @@ export default function ProfileTab({ user }) {
         )}
       </header>
 
-      {/* Profile photo and account identity */}
       <section className="flex min-w-0 items-center gap-4 rounded-xl bg-[#FAFAFC]">
         <div className="relative shrink-0">
-          <img
-            src={avatarPreview}
-            alt="Profile"
-            width="80"
-            height="80"
-            onError={(event) => {
-              event.currentTarget.onerror = null;
-              event.currentTarget.src = FALLBACK_AVATAR;
-            }}
-            className="size-[68px] rounded-full border border-[#E6E8F0] bg-white object-cover sm:size-20"
-          />
+          {isAvatarLoading ? (
+            <div
+              role="status"
+              aria-label="Loading profile photo"
+              className="flex size-[68px] items-center justify-center rounded-full border border-[#E6E8F0] bg-[#F2F4F8] sm:size-20"
+            >
+              <span className="size-5 animate-spin rounded-full border-2 border-gold border-t-transparent sm:size-6" />
+            </div>
+          ) : (
+            <img
+              src={displayAvatar}
+              alt="Profile"
+              width="80"
+              height="80"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = FALLBACK_AVATAR;
+              }}
+              className="size-[68px] rounded-full border border-[#E6E8F0] bg-white object-cover sm:size-20"
+            />
+          )}
 
           {isEditing && (
             <>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={isAvatarUploading || loading}
+                disabled={isAvatarUploading || isAvatarFetching || loading}
                 aria-label="Change profile photo"
                 className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border-2 border-white bg-[#1B1D60] text-white transition hover:bg-[#343B91] disabled:opacity-60"
               >
-                {isAvatarUploading ? (
-                  <span className="size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                ) : (
-                  <Camera size={14} />
-                )}
+                <Camera size={14} />
               </button>
 
               <input
@@ -344,7 +381,6 @@ export default function ProfileTab({ user }) {
         </div>
       </section>
 
-      {/* Name fields: read-only until Edit Profile is clicked */}
       <section className="grid min-w-0 gap-2 sm:grid-cols-2 sm:gap-3">
         <div className="min-w-0">
           <FormField
@@ -370,8 +406,6 @@ export default function ProfileTab({ user }) {
           />
         </div>
       </section>
-
-      {/* Read-only contact information */}
       <section className="grid min-w-0 gap-3 sm:grid-cols-2 sm:gap-4">
         <div className={readonlyFieldClass}>
           <label className={readonlyLabelClass}>Email</label>
@@ -403,8 +437,6 @@ export default function ProfileTab({ user }) {
           </div>
         </div>
       </section>
-
-      {/* Save and Cancel actions appear only in edit mode */}
       {isEditing && (
         <div className="flex flex-col-reverse justify-start gap-3 border-t border-[#E8EAF1] pt-3 sm:flex-row">
           <button
