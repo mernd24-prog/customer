@@ -100,7 +100,7 @@ export function HomePage() {
       <LazySection minHeight="280px">
         <FeaturedCollectionsSection />
       </LazySection> */}
-
+{/* 
       {!homeLoading && !products.length && !trendingProducts.length && (
         <section className="mx-auto my-8 max-w-7xl rounded-2xl border border-[var(--customer-border)] bg-[var(--customer-cream)] px-6 py-12 text-center" role="status">
           <h2 className="text-2xl font-semibold text-[var(--customer-navy)]">
@@ -112,9 +112,9 @@ export function HomePage() {
               : "We’re preparing our collection. Please check back soon."}
           </p>
         </section>
-      )}
+      )} */}
 
-      {promoCampaignPage && (
+      {/* {promoCampaignPage && (
         <LazySection minHeight="380px">
           <PromoCampaignCarousel data={promoCampaignPage} />
         </LazySection>
@@ -124,7 +124,7 @@ export function HomePage() {
         <LazySection minHeight="150px">
           <ShoppingMadeEasyBanner data={shoppingBannerPage} />
         </LazySection>
-      )}
+      )} */}
 
       {featuredProducts.length > 0 && (
         <LazySection minHeight="450px">
