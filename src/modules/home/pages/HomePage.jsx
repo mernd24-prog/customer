@@ -87,14 +87,14 @@ export function HomePage() {
       <Banner />
       {/* <CategoryBar loading={!categoryRequestComplete && !categories.length} /> */}
 
-      {categories.length > 0 && (
+      {/* {categories.length > 0 && (
         <HomeCategoryGrid
           categories={categories}
           loading={!categoryRequestComplete && !categories.length}
           title="Time for a Spring Refresh"
           subtitle=""
         />
-      )}
+      )} */}
       {/* 
       <LazySection minHeight="280px">
         <FeaturedCollectionsSection />
