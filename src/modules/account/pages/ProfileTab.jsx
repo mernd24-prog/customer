@@ -14,6 +14,7 @@ import {
 import FormField from "../../../components/ui/FormField";
 import Button from "../../../components/ui/buttons/Button";
 import { useToastThunk } from "../../../hooks/useToastThunk";
+import useProfileImage from "../../../hooks/useProfileImage";
 import { fetchMe, updateMe } from "../../../features/user/userSlice";
 import { apiRequest } from "../../../api/client";
 import { endpoints, FILE_UPLOAD_MODULES } from "../../../api/endpoints";
@@ -70,6 +71,7 @@ export default function ProfileTab({ user }) {
   );
   const [avatarError, setAvatarError] = useState("");
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
+  const resolvedAvatar = useProfileImage(avatarPreview, user?.updatedAt);
 
   const {
     register,
@@ -288,7 +290,7 @@ export default function ProfileTab({ user }) {
       <section className="flex min-w-0 items-center gap-4 rounded-xl bg-[#FAFAFC]">
         <div className="relative shrink-0">
           <img
-            src={avatarPreview}
+            src={resolvedAvatar || FALLBACK_AVATAR}
             alt="Profile"
             width="80"
             height="80"

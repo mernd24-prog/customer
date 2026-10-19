@@ -35,7 +35,6 @@ export function HomePage() {
   );
   const [homeProducts, setHomeProducts] = useState([]);
   const [homeLoading, setHomeLoading] = useState(true);
-  const [homeError, setHomeError] = useState(false);
   const hasFetchedRef = useRef(false);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const { page: promoCampaignPage } = useCmsRecord("promo-campaign-carousel");
@@ -64,7 +63,7 @@ export function HomePage() {
           const list = getProductListFromResponse(data);
           setHomeProducts(list);
         })
-        .catch(() => setHomeError(true))
+        .catch(() => {})
         .finally(() => setHomeLoading(false));
     } else {
       setHomeLoading(false);
@@ -86,7 +85,7 @@ export function HomePage() {
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
       <Banner />
-      <CategoryBar loading={!categoryRequestComplete && !categories.length} />
+      {/* <CategoryBar loading={!categoryRequestComplete && !categories.length} />
 
       {categories.length > 0 && (
         <HomeCategoryGrid
@@ -95,21 +94,19 @@ export function HomePage() {
           title="Time for a Spring Refresh"
           subtitle=""
         />
-      )}
-     
-  
-    
-      {promoCampaignPage && (
-        <LazySection minHeight="380px">
-          <PromoCampaignCarousel data={promoCampaignPage} />
-        </LazySection>
-      )}
+      )} */}
+      {/* 
+      <LazySection minHeight="280px">
+        <FeaturedCollectionsSection />
+      </LazySection> */}
 
-      {shoppingBannerPage && (
-        <LazySection minHeight="150px">
-          <ShoppingMadeEasyBanner data={shoppingBannerPage} />
-        </LazySection>
-      )}
+      <LazySection minHeight="380px">
+        <PromoCampaignCarousel data={promoCampaignPage} />
+      </LazySection>
+
+      <LazySection minHeight="150px">
+        <ShoppingMadeEasyBanner data={shoppingBannerPage} />
+      </LazySection>
 
       {featuredProducts.length > 0 && (
         <LazySection minHeight="450px">
@@ -123,7 +120,25 @@ export function HomePage() {
         </LazySection>
       )}
 
-      
+      {/* <LazySection minHeight="500px">
+        <section className="">
+          <ShowcaseSection
+            title="New Arrivals"
+            subtitle="Newly added products with trend-driven rankings"
+            headerbgColor="bg-white"
+            bodybgColor="bg-white"
+            gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
+            items={newArrivalItems.length ? newArrivalItems : undefined}
+            CardComponent={NewArrivalCard}
+            skeletonVariant="new-arrivals"
+            skeletonCount={3}
+            className="mt-8"
+            actionLabel="View Shop"
+            actionHref="/products"
+            loading={loading}
+          />
+        </section>
+      </LazySection> */}
 
       {(products.length > 0 || trendingProducts.length > 0) && (
         <LazySection minHeight="400px">
