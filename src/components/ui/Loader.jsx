@@ -1,11 +1,5 @@
 // components/ui/Loader.jsx
 
-const loaderImage = (
-  <div className="flex flex-col items-center gap-4">
-    <img loading="lazy" width="400" height="400" src="/image/svg/loader.svg" alt="Loading" className="h-full w-full" />
-  </div>
-);
-
 export default function Loader({ size = "md" }) {
   const sizes = {
     sm: "h-5 w-5",
@@ -16,9 +10,9 @@ export default function Loader({ size = "md" }) {
 
   return (
     <div
-      className={`${sizes[size]} flex rounded-full bg-white border border-black/15 shadow-[0_2px_4px_rgba(0,0,0,0.15)] items-center justify-center`}
-    >
-      {loaderImage}
-    </div>
+      role="status"
+      aria-label="Loading"
+      className={`${sizes[size]} animate-spin rounded-full border-4 border-[#CE9F2D]/25 border-t-[#1B1D60]`}
+    />
   );
 }

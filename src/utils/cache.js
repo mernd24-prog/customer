@@ -116,7 +116,7 @@ export function getCache(key, options = {}) {
       return options.fallback;
     }
 
-    if (payload.expiresAt && payload.expiresAt < now()) {
+    if (payload.expiresAt && payload.expiresAt < now() && !options.allowExpired) {
       storage.removeItem(key);
       return options.fallback;
     }
