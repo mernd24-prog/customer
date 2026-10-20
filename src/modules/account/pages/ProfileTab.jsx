@@ -286,98 +286,83 @@ export default function ProfileTab({ user }) {
       className="grid w-full min-w-0 gap-3"
     >
 
-      <header className="flex flex-col gap-3 border-b border-[#E7D9B8] pb-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
-            <UserRound size={21} />
-          </span>
+      <section className="flex min-w-0 items-center justify-between gap-4 rounded-xl bg-[#FAFAFC]">
+        {/* Avatar + Name */}
+        <div className="flex min-w-0 items-center gap-4">
+          <div className="relative shrink-0">
+            {isAvatarLoading ? (
+              <div
+                role="status"
+                aria-label="Loading profile photo"
+                className="flex size-[68px] items-center justify-center rounded-full border border-[#E6E8F0] bg-[#F2F4F8] sm:size-20"
+              >
+                <span className="size-5 animate-spin rounded-full border-2 border-gold border-t-transparent sm:size-6" />
+              </div>
+            ) : (
+              <img
+                src={displayAvatar}
+                alt="Profile"
+                width="80"
+                height="80"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = FALLBACK_AVATAR;
+                }}
+                className="size-[68px] rounded-full border border-[#E6E8F0] bg-white object-cover sm:size-20"
+              />
+            )}
+            {isEditing && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isAvatarUploading || isAvatarFetching || loading}
+                  aria-label="Change profile photo"
+                  className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border-2 border-white bg-[#1B1D60] text-white transition hover:bg-[#343B91] disabled:opacity-60"
+                >
+                  <Camera size={14} />
+                </button>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  disabled={isAvatarUploading || loading}
+                  className="hidden"
+                />
+              </>
+            )}
+          </div>
 
           <div className="min-w-0">
-            <h2 className="text-lg font-bold leading-6 text-[#1B1D60] sm:text-xl">
-              My Profile
+            <h2 className="truncate text-base font-bold text-[#171A3A] sm:text-lg">
+              {fullName}
             </h2>
 
-            <p className="mt-1 text-sm leading-5 text-[#64708A]">
-              Manage your personal details and profile photo.
+            <p className="mt-1 text-xs text-[#697084] sm:text-sm">
+              {user?.email || "No email available"}
             </p>
+
+            {avatarError && (
+              <p role="alert" className="mt-1 text-xs text-red-600">
+                {avatarError}
+              </p>
+            )}
           </div>
         </div>
 
+        {/* Edit Profile button — right side */}
         {!isEditing && (
           <button
             type="button"
             onClick={handleEdit}
-            className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg border border-gold bg-gold px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 sm:w-auto"
+            className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-lg border border-gold bg-gold px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
           >
             <Pencil size={15} />
             Edit Profile
           </button>
         )}
-      </header>
-
-      <section className="flex min-w-0 items-center gap-4 rounded-xl bg-[#FAFAFC]">
-        <div className="relative shrink-0">
-          {isAvatarLoading ? (
-            <div
-              role="status"
-              aria-label="Loading profile photo"
-              className="flex size-[68px] items-center justify-center rounded-full border border-[#E6E8F0] bg-[#F2F4F8] sm:size-20"
-            >
-              <span className="size-5 animate-spin rounded-full border-2 border-gold border-t-transparent sm:size-6" />
-            </div>
-          ) : (
-            <img
-              src={displayAvatar}
-              alt="Profile"
-              width="80"
-              height="80"
-              onError={(event) => {
-                event.currentTarget.onerror = null;
-                event.currentTarget.src = FALLBACK_AVATAR;
-              }}
-              className="size-[68px] rounded-full border border-[#E6E8F0] bg-white object-cover sm:size-20"
-            />
-          )}
-
-          {isEditing && (
-            <>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isAvatarUploading || isAvatarFetching || loading}
-                aria-label="Change profile photo"
-                className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border-2 border-white bg-[#1B1D60] text-white transition hover:bg-[#343B91] disabled:opacity-60"
-              >
-                <Camera size={14} />
-              </button>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                disabled={isAvatarUploading || loading}
-                className="hidden"
-              />
-            </>
-          )}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <h2 className="truncate text-base font-bold text-[#171A3A] sm:text-lg">
-            {fullName}
-          </h2>
-
-          <p className="mt-1 text-xs text-[#697084] sm:text-sm">
-            {user?.email || "No email available"}
-          </p>
-
-          {avatarError && (
-            <p role="alert" className="mt-1 text-xs text-red-600">
-              {avatarError}
-            </p>
-          )}
-        </div>
       </section>
 
       <section className="grid min-w-0 gap-2 sm:grid-cols-2 sm:gap-3">

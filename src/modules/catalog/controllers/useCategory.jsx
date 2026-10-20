@@ -106,6 +106,14 @@ export default function useCategory() {
     brandContextKey,
   );
 
+  const brandOptions = useMemo(() => {
+    return (allBrands || []).map((brand) => ({
+      value: String(brand.value ?? brand.id ?? brand._id ?? ""),
+      label: String(brand.label || brand.name || brand.title || brand.value || ""),
+      count: Number(brand.count || 0),
+    }));
+  }, [allBrands]);
+
   const products = useMemo(() => {
     const sortKey = searchParams.get("sort") || "";
     // listProducts already expands the selected category to every descendant.
@@ -471,6 +479,7 @@ export default function useCategory() {
   } = useCatalogFilters({
     attributeFacets: filterableAttributes,
     absolutePriceLimits: priceLimits,
+    brandOptions,
     clearExceptions: [],
   });
 
@@ -522,16 +531,10 @@ export default function useCategory() {
   ]);
 
   const filterSections = useMemo(() => {
-    const brandOptions = allBrands
-      .map((brand) => ({
-        value: String(brand.value),
-        label: String(brand.label || brand.name || brand.value),
-        count: Number(brand.count || 0),
-      }))
-      .filter(
-        (brand) =>
-          brand.count > 0 && !/^[a-f\d]{24}$/i.test(brand.label.trim()),
-      );
+    const visibleBrandOptions = brandOptions.filter(
+      (brand) =>
+        brand.count > 0 && !/^[a-f\d]{24}$/i.test(brand.label.trim()),
+    );
 
     const attributeFacets = filterableAttributes
       .map((attribute) => ({
@@ -553,7 +556,7 @@ export default function useCategory() {
 
     return getFilterSections({
       categoryOptions: [],
-      brandOptions,
+      brandOptions: visibleBrandOptions,
       collectionOptions: [],
       productFacets: {},
       attributeFacets,
@@ -570,7 +573,7 @@ export default function useCategory() {
     });
   }, [
     productFacets,
-    allBrands,
+    brandOptions,
     filterableAttributes,
     attributeCountMaps,
     availabilityCounts,

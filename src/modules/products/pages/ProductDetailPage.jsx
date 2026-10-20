@@ -262,9 +262,9 @@ export default function ProductDetailPage() {
                     >
                       <ShowMoreText
                         text={productTitle}
-                        mode="lines"
-                        limit={2}
-                        buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#CE9F2D] hover:underline"
+                        mode="words"
+                        limit={10}
+                        buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#CE9F2D] hover:underline bg-transparent border-0 p-0 outline-none shadow-none"
                       />
                     </h1>
                     {Number(product.rating || 0) > 0 && (

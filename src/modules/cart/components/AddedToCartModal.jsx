@@ -191,7 +191,7 @@ export default function AddedToCartModal({
             <Link
               to="/cart"
               onClick={onClose}
-              className="button border border-gold w-full py-2 rounded-lg text-center shadow-sm transition-transform hover:-translate-y-0.5"
+              className="button border border-gold w-full py-2 rounded-lg text-center shadow-sm "
             >
               View Cart
             </Link>
@@ -201,7 +201,7 @@ export default function AddedToCartModal({
                 onClose?.();
                 onCheckout?.(cartItems);
               }}
-              className="button secondary border py-2 rounded-lg border-gold w-full text-center transition-transform hover:-translate-y-0.5"
+              className="button secondary border py-2 rounded-lg border-gold w-full text-center "
             >
               Checkout
             </button>

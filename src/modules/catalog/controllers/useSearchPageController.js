@@ -312,6 +312,46 @@ export default function useSearchPageController() {
     brandContextKey
   );
 
+  const {
+    updateParam,
+    updateParams,
+    handlePriceChange,
+    removeFilter: defaultRemoveFilter,
+    handleClearFilters,
+    activeFilters: defaultActiveFilters,
+    clearFiltersAction,
+  } = useCatalogFilters({
+    attributeFacets,
+    brandOptions,
+    categoryOptions,
+    absolutePriceLimits: {
+      min: facets.priceStats?.min ?? facets.price?.min ?? 0,
+      max: facets.priceStats?.max ?? facets.price?.max ?? 150000,
+    },
+    clearExceptions: ["q", "categoryId", "categorySlug", "categoryName"],
+  });
+
+  const setPage = (p) => updateParam("page", p);
+
+  const removeFilter = (key, filter) => {
+    if (key === "categoryId" || key === "q") {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (key === "q") next.delete("q");
+        if (key === "categoryId") {
+          next.delete("categoryId");
+          next.delete("categorySlug");
+          next.delete("categoryName");
+        }
+        next.delete("page");
+        return next;
+      });
+      scrollToTop();
+      return;
+    }
+    defaultRemoveFilter(key, filter);
+  };
+
 
   const collectionOptions = useMemo(
     () =>

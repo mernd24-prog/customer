@@ -46,8 +46,6 @@ export default function ShoppingMadeEasyBanner({
   const hasLink = rawCtaUrl.length > 0;
   const isExternal = hasLink && /^https?:\/\//i.test(rawCtaUrl);
   const ctaTarget = section?.cta?.target || data?.cta?.target || "_self";
-
-  // Helper: render text with newlines / <br> as actual line breaks
   const renderTitle = (text) => {
     if (!text) return null;
     const lines = String(text).split(/\\n|\n|<br\s*\/?>/i);

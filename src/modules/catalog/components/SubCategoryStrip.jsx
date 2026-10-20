@@ -66,13 +66,13 @@ export function SubCategoryStrip({ categories = [], loading }) {
                   <p className="mt-2 line-clamp-2 min-h-[32px] text-xs font-semibold leading-4 text-[var(--customer-ink)]">
                     {category.name}
                   </p>
-                  {category.count !== undefined &&
+                  {/* {category.count !== undefined &&
                   category.count !== null &&
                   category.count !== "" ? (
                     <span className="mt-1 inline-flex rounded bg-cyan-100 px-1.5 py-0.5 text-[10px] font-bold text-cyan-700">
                       {Number(category.count).toLocaleString()}
                     </span>
-                  ) : null}
+                  ) : null} */}
                 </Link>
               ))}
         </div>
