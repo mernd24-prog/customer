@@ -7,7 +7,6 @@ import {
   getImageUrlFromValue,
 } from "../../../utils/ecommerce";
 import { ProductGallery } from "../components/ImageGallery";
-import ShowMoreText from "../../../utils/showMore";
 
 const decodeHtml = (html) => {
   if (!html || typeof html !== "string") return html || "";
@@ -21,6 +20,42 @@ const decodeHtml = (html) => {
   }
   return html;
 };
+
+function ProductDescription({ content }) {
+  const [expanded, setExpanded] = useState(false);
+  const [canExpand, setCanExpand] = useState(false);
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (el) {
+      setCanExpand(el.scrollHeight > 220);
+    }
+  }, [content]);
+
+  if (!content) return null;
+
+  return (
+    <div className="px-4 py-4 text-[#4E4E4E]">
+      <div
+        ref={contentRef}
+        className={`rich-text-content transition-all duration-300 ${
+          !expanded && canExpand ? "max-h-[200px] overflow-hidden" : ""
+        }`}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+      {canExpand && (
+        <button
+          type="button"
+          onClick={() => setExpanded((prev) => !prev)}
+          className="inline-block mt-3 text-sm font-bold text-[#CE9F2D] hover:underline cursor-pointer bg-transparent border-0 p-0 outline-none shadow-none focus:outline-none"
+        >
+          {expanded ? "Read Less" : "Read More"}
+        </button>
+      )}
+    </div>
+  );
+}
 import { capitalizeFirst } from "../../../utils/stringUtils";
 function InfoTabs({ tabs, activeTab, onChange }) {
   const containerRef = useRef(null);
@@ -173,12 +208,19 @@ export default function ProductInfoSection({
 
   const effectiveWarranty =
     warranty?.warrantyDetails || warranty || product?.warranty || {};
-  const warrantyPeriod = [
-    effectiveWarranty.period,
-    effectiveWarranty.periodUnit,
-  ]
-    .filter((value) => value !== null && value !== undefined && value !== "")
-    .join(" ");
+  const rawPeriodCount = Number(effectiveWarranty.period);
+  const hasValidPeriod =
+    effectiveWarranty.period !== null &&
+    effectiveWarranty.period !== undefined &&
+    effectiveWarranty.period !== "" &&
+    !isNaN(rawPeriodCount) &&
+    rawPeriodCount >= 1;
+
+  const warrantyPeriod = hasValidPeriod
+    ? [effectiveWarranty.period, effectiveWarranty.periodUnit]
+        .filter((value) => value !== null && value !== undefined && value !== "")
+        .join(" ")
+    : "";
   const returnPolicy = effectiveWarranty.returnPolicy || {};
 
   return (
@@ -214,22 +256,13 @@ export default function ProductInfoSection({
           {effectiveDescription ||
           selectedVariant?.description ||
           product?.description ? (
-            <div className="px-4 py-4 text-[#4E4E4E]">
-              <ShowMoreText
-                text={decodeHtml(
-                  effectiveDescription ||
-                    selectedVariant?.description ||
-                    product.description,
-                )}
-                isHtml={true}
-                mode="characters"
-                limit={800}
-                moreLabel="Read More"
-                lessLabel="Read Less"
-                buttonClassName="inline-block mt-2 text-sm font-bold text-[#CE9F2D] hover:underline cursor-pointer"
-                textClassName="rich-text-content"
-              />
-            </div>
+            <ProductDescription
+              content={decodeHtml(
+                effectiveDescription ||
+                  selectedVariant?.description ||
+                  product.description,
+              )}
+            />
           ) : (
             <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
               No Description Available.
@@ -238,121 +271,121 @@ export default function ProductInfoSection({
         </InfoCard>
       )}
 
-      {activeInfoTab === "warranty" && (
-        <InfoCard title="Warranty Information" roundedClass="rounded-xl">
-          <div className="space-y-6 px-4 py-5 text-sm lg:text-base text-[#4E4E4E] leading-relaxed">
-            {(effectiveWarranty.summary ||
-              effectiveWarranty.warrantySummary ||
-              warrantyPeriod ||
-              effectiveWarranty.type ||
-              effectiveWarranty.provider) && (
-              <div>
-                <h3 className="text-base font-bold text-ink">
-                  Warranty Summary
-                </h3>
+        {activeInfoTab === "warranty" && (
+          <InfoCard title="Warranty Information" roundedClass="rounded-xl">
+            <div className="space-y-6 px-4 py-5 text-sm lg:text-base text-[#4E4E4E] leading-relaxed">
+              {(effectiveWarranty.summary ||
+                effectiveWarranty.warrantySummary ||
+                warrantyPeriod ||
+                effectiveWarranty.type ||
+                effectiveWarranty.provider) && (
+                <div>
+                  <h3 className="text-base font-bold text-ink">
+                    Warranty Summary
+                  </h3>
 
-                <div className="mt-2 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed">
-                  {effectiveWarranty.summary ||
-                  effectiveWarranty.warrantySummary ? (
-                    capitalizeFirst(
-                      (
-                        effectiveWarranty.summary ||
-                        effectiveWarranty.warrantySummary
-                      ).replace(/_/g, " "),
-                    )
-                  ) : (
-                    <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
-                      {warrantyPeriod && (
-                        <div>
-                          <span className="font-medium text-ink">Period:</span>{" "}
-                          {capitalizeFirst(warrantyPeriod)}
-                        </div>
-                      )}
+                  <div className="mt-2 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed">
+                    {effectiveWarranty.summary ||
+                    effectiveWarranty.warrantySummary ? (
+                      capitalizeFirst(
+                        (
+                          effectiveWarranty.summary ||
+                          effectiveWarranty.warrantySummary
+                        ).replace(/_/g, " "),
+                      )
+                    ) : (
+                      <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
+                        {warrantyPeriod && (
+                          <div>
+                            <span className="font-medium text-ink">Period:</span>{" "}
+                            {capitalizeFirst(warrantyPeriod)}
+                          </div>
+                        )}
 
-                      {effectiveWarranty.type && (
-                        <div>
-                          <span className="font-medium text-ink">Type:</span>{" "}
-                          {capitalizeFirst(
-                            effectiveWarranty.type.replace(/_/g, " "),
-                          )}
-                        </div>
-                      )}
+                        {effectiveWarranty.type && (
+                          <div>
+                            <span className="font-medium text-ink">Type:</span>{" "}
+                            {capitalizeFirst(
+                              effectiveWarranty.type.replace(/_/g, " "),
+                            )}
+                          </div>
+                        )}
 
-                      {effectiveWarranty.provider && (
-                        <div>
-                          <span className="font-medium text-ink">
-                            Provider:
-                          </span>{" "}
-                          {capitalizeFirst(
-                            effectiveWarranty.provider.replace(/_/g, " "),
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                        {effectiveWarranty.provider && (
+                          <div>
+                            <span className="font-medium text-ink">
+                              Provider:
+                            </span>{" "}
+                            {capitalizeFirst(
+                              effectiveWarranty.provider.replace(/_/g, " "),
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {(effectiveWarranty.coveredInWarranty ||
-              effectiveWarranty.terms) && (
-              <div>
-                <h3 className="text-base font-bold text-ink">
-                  Covered in Warranty
-                </h3>
-                <div
-                  className="mt-2 rich-text-content text-[#4E4E4E]"
-                  dangerouslySetInnerHTML={{
-                    __html: decodeHtml(
-                      effectiveWarranty.coveredInWarranty ||
-                        effectiveWarranty.terms,
-                    ),
-                  }}
-                />
-              </div>
-            )}
-
-            {effectiveWarranty.notCoveredInWarranty && (
-              <div>
-                <h3 className="text-base font-bold text-ink">
-                  Not Covered in Warranty
-                </h3>
-                <div
-                  className="mt-2 rich-text-content text-[#4E4E4E]"
-                  dangerouslySetInnerHTML={{
-                    __html: decodeHtml(effectiveWarranty.notCoveredInWarranty),
-                  }}
-                />
-              </div>
-            )}
-
-            {Object.keys(returnPolicy).length > 0 && (
-              <div className="border-t border-border pt-4">
-                <h3 className="mb-3 text-base font-bold text-ink">
-                  Return Terms
-                </h3>
-                <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
-                  <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
-                    {returnPolicy.returnable === false
-                      ? "Non-Returnable"
-                      : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 0}-day return window`}
-                  </span>
-                  {returnPolicy.resolution && (
-                    <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
-                      {formatPageTitle(returnPolicy.resolution)}
-                    </span>
-                  )}
-                  {returnPolicy.inspectionRequired !== false && (
-                    <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
-                      Inspection Required
-                    </span>
-                  )}
+              {(effectiveWarranty.coveredInWarranty ||
+                effectiveWarranty.terms) && (
+                <div>
+                  <h3 className="text-base font-bold text-ink">
+                    Covered in Warranty
+                  </h3>
+                  <div
+                    className="mt-2 rich-text-content text-[#4E4E4E]"
+                    dangerouslySetInnerHTML={{
+                      __html: decodeHtml(
+                        effectiveWarranty.coveredInWarranty ||
+                          effectiveWarranty.terms,
+                      ),
+                    }}
+                  />
                 </div>
-              </div>
-            )}
-          </div>
-        </InfoCard>
-      )}
+              )}
+
+              {effectiveWarranty.notCoveredInWarranty && (
+                <div>
+                  <h3 className="text-base font-bold text-ink">
+                    Not Covered in Warranty
+                  </h3>
+                  <div
+                    className="mt-2 rich-text-content text-[#4E4E4E]"
+                    dangerouslySetInnerHTML={{
+                      __html: decodeHtml(effectiveWarranty.notCoveredInWarranty),
+                    }}
+                  />
+                </div>
+              )}
+
+              {Object.keys(returnPolicy).length > 0 && (
+                <div className="border-t border-border pt-4">
+                  <h3 className="mb-3 text-base font-bold text-ink">
+                    Return Terms
+                  </h3>
+                  <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
+                    <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
+                      {returnPolicy.returnable === false
+                        ? "Non-Returnable"
+                        : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 0}-day return window`}
+                    </span>
+                    {returnPolicy.resolution && (
+                      <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
+                        {formatPageTitle(returnPolicy.resolution)}
+                      </span>
+                    )}
+                    {returnPolicy.inspectionRequired !== false && (
+                      <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
+                        Inspection Required
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </InfoCard>
+        )}
 
       {activeInfoTab === "common-images" &&
         product.commonImages?.length > 0 && (
@@ -429,28 +462,46 @@ export default function ProductInfoSection({
                     Seller Rating
                   </span>
 
-                  <div className="flex items-center gap-2">
-                    <div className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-2.5 py-1 text-white">
-                      <Star size={12} className="fill-white text-white" />
-
-                      <span className="text-xs font-bold leading-none">
-                        {Number(
-                          product.seller?.rating ??
-                            product.seller?.averageRating ??
-                            product.sellerRating ??
-                            0,
-                        ).toFixed(1)}
-                      </span>
-                    </div>
-
-                    <span className="text-xs text-muted">
-                      {product.seller?.reviewCount ??
+                  {(() => {
+                    const rawRating = Number(
+                      product.seller?.rating ??
+                        product.seller?.averageRating ??
+                        product.sellerRating ??
+                        0,
+                    );
+                    const rawCount = Number(
+                      product.seller?.reviewCount ??
                         product.seller?.reviewsCount ??
                         product.seller?.ratingsCount ??
-                        0}{" "}
-                      Ratings
-                    </span>
-                  </div>
+                        0,
+                    );
+                    const hasRating =
+                      !isNaN(rawRating) && rawRating > 0 && !isNaN(rawCount) && rawCount > 0;
+
+                    if (!hasRating) {
+                      return (
+                        <p className="text-sm font-semibold text-ink">
+                          No Rating
+                        </p>
+                      );
+                    }
+
+                    return (
+                      <div className="flex items-center gap-2">
+                        <div className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-2.5 py-1 text-white">
+                          <Star size={12} className="fill-white text-white" />
+
+                          <span className="text-xs font-bold leading-none">
+                            {rawRating.toFixed(1)}
+                          </span>
+                        </div>
+
+                        <span className="text-xs text-muted">
+                          {rawCount} {rawCount === 1 ? "Rating" : "Ratings"}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Joined Date */}

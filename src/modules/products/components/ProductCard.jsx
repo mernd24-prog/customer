@@ -614,7 +614,7 @@ export default function ProductCard({
             variant="featured"
             className="
               flex items-center justify-center
-              rounded-lg
+              rounded-xl
               bg-[#1F2430]
               bg-[linear-gradient(#CE9F2D,#CE9F2D)]
               px-2 py-0.5
@@ -625,32 +625,6 @@ export default function ProductCard({
             "
           >
             Featured
-          </Label>
-        )}
-
-        {discountLabel && (
-          <Label
-            variant="success"
-            className="
-              flex h-[20px] min-w-[54px]
-              items-center justify-center
-              rounded-[50px]
-              bg-blue
-              px-[8px] py-[3px]
-              font-dmSans
-              text-[10px]
-              font-semibold
-              leading-none
-              tracking-[0%]
-              text-white
-              sm:h-[28px]
-              sm:min-w-[84px]
-              sm:px-[15px]
-              sm:py-[5px]
-              sm:text-[14px]
-            "
-          >
-            {discountLabel}
           </Label>
         )}
 
@@ -695,7 +669,7 @@ export default function ProductCard({
         className="flex min-w-0 flex-1 flex-col"
       >
         {/* IMAGE */}
-        <div className="relative flex h-[160px] w-full items-center justify-center overflow-hidden rounded-t-[14px] transition-all duration-300 ease-in-out group-hover:scale-[1.01] xs:h-[190px] sm:h-[230px] sm:rounded-t-[20px] md:h-[260px]">
+        <div className="relative flex h-[160px] w-full items-center justify-center overflow-hidden rounded-t-[14px] xs:h-[190px] sm:h-[230px] sm:rounded-t-[20px] md:h-[260px]">
           {activeImage ? (
             <>
               <img
@@ -711,7 +685,7 @@ export default function ProductCard({
                 alt=""
                 width="400"
                 height="400"
-                className="h-full w-full object-contain p-2 transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
+                className="h-full w-full object-contain object-center p-2 transition-transform duration-300 ease-in-out group-hover:scale-[1.02]"
                 loading="lazy"
                 decoding="async"
                 onError={handleImageError}
@@ -755,69 +729,73 @@ export default function ProductCard({
               />
             </div>
           )}
+{/* DEAL END DATE */}
+{isDealProduct && dealEndDate && (
+  <div className="absolute inset-x-0 bottom-0 z-20 flex h-[19px] items-center justify-between gap-1 bg-[#FFFDF8]/95 px-1.5 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] sm:h-[29px] sm:px-3">
+    <div className="flex shrink-0 items-center gap-1 text-[9px] font-semibold text-[#1B1D60] sm:gap-1.5 sm:text-[13px]">
+      <span className="relative flex h-1.5 w-1.5 shrink-0 sm:h-2 sm:w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 sm:h-2 sm:w-2" />
+      </span>
+      <span>Ends</span>
+    </div>
 
-          {/* DEAL END DATE */}
-          {isDealProduct && dealEndDate && (
-            <div className="absolute inset-x-0 bottom-0 z-20 flex h-[26px] items-center justify-between border-t border-[#EEDFB9]/80 bg-[#FFFDF8]/95 px-2.5 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] backdrop-blur-md sm:h-[29px] sm:px-3">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1B1D60] sm:text-[13px]">
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                </span>
-
-                <span>Ends</span>
-              </div>
-
-              <span className="flex truncate items-center gap-1 text-xs font-bold text-[#1B1D60] sm:text-[13px]">
-                <Clock3
-                  size={13}
-                  className="shrink-0 text-[#1B1D60]"
-                />
-                {dealEndDate}
-              </span>
-            </div>
-          )}
+    <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[9px] font-bold text-[#1B1D60] sm:gap-1 sm:text-[13px]">
+      <Clock3
+        size={11}
+        className="shrink-0 sm:h-[13px] sm:w-[13px]"
+      />
+      <span className="truncate">{dealEndDate}</span>
+    </span>
+  </div>
+)}
         </div>
 
-        {/* PRODUCT INFO */}
-        <div className="flex min-w-0 flex-col px-2.5 pb-1 pt-2 sm:px-4 sm:pb-2 sm:pt-3">
-          <StarRating
-            rating={rating}
-            count={ratingCount}
-          />
+       {/* PRODUCT INFO */}
+<div className="flex min-w-0 flex-col px-2.5 sm:px-4 sm:pb-2 ">
+  <StarRating rating={rating} count={ratingCount} />
 
-          {brand && (
-            <div
-              className="mt-1.5 truncate text-xs font-bold tracking-tight text-[#2E2E2E] sm:mt-2 sm:text-base"
-              title={brand}
-            >
-             {capitalizeFirst(brand)}
-            </div>
-          )}
+  {brand && (
+    <div
+      className="mt-1.5 truncate text-xs font-bold tracking-tight text-[#2E2E2E] sm:mt-2 sm:text-base"
+      title={brand}
+    >
+      {capitalizeFirst(brand)}
+    </div>
+  )}
 
-          <h3
-            className={cn(
-              "w-full line-clamp-1",
-              brand
-                ? "mb-1.5 mt-0.5 text-xs font-normal text-black sm:mb-2.5 sm:mt-1 sm:text-[16px]"
-                : "my-1 text-xs font-semibold text-[#2E2E2E] sm:my-[10px] sm:text-sm",
-            )}
-            title={title}
-          >
-            {title}
-          </h3>
+  <h3
+    className={cn(
+      "w-full line-clamp-1",
+      brand
+        ? "mb-1.5 mt-0.5 text-xs font-normal text-black sm:mb-2.5 sm:mt-1 sm:text-[16px]"
+        : "my-1 text-xs font-semibold text-[#2E2E2E] sm:my-[10px] sm:text-sm",
+    )}
+    title={title}
+  >
+    {title}
+  </h3>
+{/* FLIPKART-STYLE PRICE AND DISCOUNT */}
+<div className="my-0.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 sm:my-1 sm:gap-x-2.5 sm:gap-y-1">
+  <Price
+    price={price}
+    oldPrice={oldPrice}
+    currency={currency || cardProduct?.currency}
+    className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 sm:gap-x-2"
+    priceClassName="text-sm font-bold text-[#212121] sm:text-lg md:text-xl"
+    oldPriceClassName="text-[11px] font-normal text-[#878787] line-through sm:text-base md:text-lg"
+  />
 
-          <Price
-            price={price}
-            oldPrice={oldPrice}
-            currency={
-              currency || cardProduct?.currency
-            }
-            className="my-0.5 flex flex-wrap items-baseline gap-1 sm:my-1 sm:gap-2.5"
-            priceClassName="text-sm sm:text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
-            oldPriceClassName="text-xs sm:text-base font-semibold text-[#737373] line-through md:text-lg 2xl:text-[20px]"
-          />
-        </div>
+  {discountLabel && (
+    <span className="whitespace-nowrap text-[10px] font-semibold text-[#388E3C] sm:text-sm md:text-base">
+      {computedDiscountPercent}% off
+    </span>
+  )}
+</div>
+</div>
+
+     
+
       </Link>
 
       {/* 

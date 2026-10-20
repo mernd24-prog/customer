@@ -8,6 +8,7 @@ import {
 } from "react";
 import { ChevronDown, Search, Star, X } from "lucide-react";
 import { Check } from "lucide-react";
+import { capitalizeFirst } from "../../../utils/stringUtils";
 
 function FilterTick({ checked }) {
   return (
@@ -522,7 +523,7 @@ function FilterOptionGroup({ group, selectedSet, onChange, isMultiSelect, select
                   className="sr-only"
                 />
                 <FilterTick checked={checked} />
-                <span className="min-w-0 flex-1 truncate overflow-hidden text-[14px] font-medium text-[#434343]">{label}</span>
+                <span className="min-w-0 flex-1 truncate overflow-hidden text-[14px] font-medium text-[#434343]">{capitalizeFirst(label)}</span>
                 {count != null && (
                   <span className="shrink-0 text-[12px] text-[#888] whitespace-nowrap">({count})</span>
                 )}
@@ -681,7 +682,7 @@ export function OptionFilter({
               <FilterTick checked={checked} className="" />
 
               <span className="min-w-0 flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
-                {label}
+                {capitalizeFirst(label)}
               </span>
 
               {count != null && (
@@ -762,7 +763,7 @@ export function CheckboxListFilter({
             <FilterTick checked={checked} />
 
             <span className="min-w-0  flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
-              {label}
+             {capitalizeFirst(label)}
             </span>
 
             {count != null && (

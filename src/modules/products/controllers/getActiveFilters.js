@@ -1,11 +1,41 @@
 import { parseMultiValue } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 
+const isObjectId = (str) => /^[a-f\d]{24}$/i.test(String(str || "").trim());
+
+const getOptionLabel = (option) => {
+  const candidates = [
+    option?.label,
+    option?.name,
+    option?.title,
+    option?.brandName,
+    option?.categoryName,
+  ];
+  const validCandidate = candidates.find((c) => c && !isObjectId(c));
+  if (validCandidate) return String(validCandidate);
+  const anyCandidate = candidates.find((c) => c);
+  return anyCandidate ? String(anyCandidate) : "";
+};
+
 const displayValue = (value, options = []) => {
-  const match = (options || []).find(
-    (option) => String(option?.value ?? option?.id ?? option?._id ?? "") === String(value),
-  );
-  return String(match?.label || match?.name || match?.title || value);
+  const strVal = String(value ?? "");
+  const match = (options || []).find((option) => {
+    const candidates = [
+      option?.value,
+      option?.id,
+      option?._id,
+      option?.slug,
+      option?.key,
+      option?.brandId,
+      option?.categoryId,
+    ];
+    return candidates.some((c) => c !== undefined && c !== null && String(c) === strVal);
+  });
+  if (match) {
+    const label = getOptionLabel(match);
+    if (label && !isObjectId(label)) return label;
+  }
+  return strVal;
 };
 
 export function getActiveFilters(
