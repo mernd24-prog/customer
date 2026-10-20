@@ -29,8 +29,6 @@ export default function DealsPage() {
   // CMS data
   const {
     page: cmsPage,
-    loading: cmsLoading,
-    error: cmsError,
   } = useCmsRecord("deal-products");
 
   const {
@@ -72,7 +70,6 @@ export default function DealsPage() {
     cmsPage?.excerpt ||
     FALLBACK_DEAL_DESCRIPTION;
 
-  const pageError = error || cmsError;
 
   return (
     <ProductListingLayout
@@ -117,11 +114,10 @@ export default function DealsPage() {
       onRemoveFilter={removeFilter}
       onClearFilters={clearFiltersAction}
       loading={
-        cmsLoading ||
         (loading && !products.length) ||
         (!firstLoadDone && !products.length)
       }
-      error={null}
+      error={error}
       empty={!products.length && !loading && firstLoadDone}
       emptyTitle="No active deals found"
       emptyText="Please check back later for new deal products."

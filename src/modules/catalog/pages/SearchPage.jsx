@@ -37,6 +37,7 @@ export default function SearchPage() {
     filterSections,
     onLoadMore,
     loadingMore,
+    sentinelRef,
   } = useSearchPageController();
 
   const topContent = (
@@ -93,6 +94,7 @@ export default function SearchPage() {
       currentPage={currentPage}
       totalPages={totalPages}
       loadingMore={loadingMore}
+      sentinelRef={sentinelRef}
       onLoadMore={onLoadMore}
     >
       {!(q || categoryValue) ? (

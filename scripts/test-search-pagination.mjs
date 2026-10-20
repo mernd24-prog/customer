@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { readSearchPage, appendSearchProducts } from '../src/modules/catalog/controllers/searchPagination.js';
+const first = readSearchPage({ data: [{ id: 'a' }, { id: 'b' }], meta: { total: 5 } }, { page: 1, limit: 2 });
+assert.equal(first.meta.totalPages, 3, 'use request page size');
+const next = readSearchPage({ data: [{ id: 'b' }, { id: 'c' }, { id: 'c' }], meta: { total: 5 } }, { page: 2, limit: 2 });
+const combined = appendSearchProducts(first.items, next.items);
+assert.deepEqual(combined.map(item => item.id), ['a', 'b', 'c']);
+assert.equal(next.meta.page, 2);
+assert.deepEqual(first.items.map(item => item.id), ['a', 'b']);
+assert.equal(appendSearchProducts(combined, [{ id: 'c' }]).length, combined.length);
+const last = readSearchPage({ data: { hits: [{ _id: 'e' }], total: 5 } }, { page: 3, limit: 2 });
+assert.equal(last.meta.page, last.meta.totalPages);
+assert.equal(appendSearchProducts(combined, []).length, combined.length);
+console.log('PASS: request page sizing, append, deduplication and last-page detection.');

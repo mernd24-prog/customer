@@ -107,7 +107,7 @@ export const FALLBACK_PROMO_CARDS = [
 export const FALLBACK_SHOPPING_BANNER = {
   image: "/image/png/fallback/bannerDeals.png",
   title: "Irresistible Brands,\nBest Prices",
-  description: "50-80",
+  description: "20-30",
   cta: { url: "/deals" },
 };
 export const FALLBACK_HOME_CATEGORIES = [

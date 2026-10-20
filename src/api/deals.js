@@ -24,6 +24,8 @@ export const getPublicDeals = async (params = {}) => {
   return response.data;
 };
 
+const pendingDealProductRequests = new Map();
+
 export const getPublicDealProducts = async (params = {}) => {
   const normalizedParams = {
     page: params.page || 1,
@@ -73,11 +75,18 @@ export const getPublicDealProducts = async (params = {}) => {
     normalizedParams.free_delivery = params.freeDelivery;
   }
 
-  const response = await api.get(endpoints.deals.publicProducts, {
-    params: normalizedParams,
+  Object.entries(params).forEach(([key, value]) => {
+    if (key.startsWith("attr_") || key.startsWith("attribute.")) normalizedParams[key] = value;
   });
-
-  return response.data;
+  const key = JSON.stringify(normalizedParams);
+  if (pendingDealProductRequests.has(key)) return pendingDealProductRequests.get(key);
+  const request = api.get(endpoints.deals.publicProducts, { params: normalizedParams })
+    .then(response => response.data)
+    .finally(() => {
+      if (pendingDealProductRequests.get(key) === request) pendingDealProductRequests.delete(key);
+    });
+  pendingDealProductRequests.set(key, request);
+  return request;
 };
 
 /**

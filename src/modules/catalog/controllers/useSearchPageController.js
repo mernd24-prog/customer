@@ -1,3 +1,4 @@
+import { readSearchPage, appendSearchProducts } from "./searchPagination";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +25,14 @@ export default function useSearchPageController() {
   const navigate = useNavigate();
 
   const searchState = useSelector((s) => s.search);
+  const [loadedProducts, setLoadedProducts] = useState([]);
+  const [pageMeta, setPageMeta] = useState(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [exhausted, setExhausted] = useState(false);
+  const requestRef = useRef(null);
+  const generationRef = useRef(0);
+  const autoPausedRef = useRef(false);
+  const sentinelRef = useRef(null);
   const globalCategories = useSelector((state) => state.catalog?.globalCategories);
   const categoriesRaw = useMemo(
     () => (Array.isArray(globalCategories) ? globalCategories : []),
@@ -36,9 +45,8 @@ export default function useSearchPageController() {
   const sort = searchParams.get("sort") || "";
 
   const hits = useMemo(() => {
-    const rawHits = Array.isArray(searchState.hits) ? searchState.hits : [];
-    return sortProducts(rawHits, sort);
-  }, [searchState.hits, sort]);
+    return sortProducts(loadedProducts, sort);
+  }, [loadedProducts, sort]);
 
   const availabilityCounts = useMemo(
     () => getAvailabilityCounts(hits, facets),
@@ -88,9 +96,10 @@ export default function useSearchPageController() {
     [categoriesRaw]
   );
 
-  const meta = searchState.meta || {};
+  const meta = pageMeta || {};
   const totalPages = meta.totalPages || meta.pages || 1;
-  const currentPage = Number(searchParams.get("page") || 1);
+  const initialPage = Math.max(1, Number(searchParams.get("page") || 1));
+  const currentPage = pageMeta?.page || initialPage;
   const q = sanitizeSearchQuery(searchParams.get("q") || "");
   const minPrice = searchParams.get("minPrice") || "";
   const maxPrice = searchParams.get("maxPrice") || "";
@@ -148,7 +157,7 @@ export default function useSearchPageController() {
       inStock: inStock ? "true" : undefined,
       outOfStock: outOfStock ? "true" : undefined,
       sort: sort || undefined,
-      page: currentPage,
+      page: initialPage,
       limit,
     };
     searchParams.forEach((value, key) => {
@@ -157,7 +166,7 @@ export default function useSearchPageController() {
     return next;
   }, [
     categoryValue,
-    currentPage,
+    initialPage,
     inStock,
     limit,
     maxPrice,
@@ -179,12 +188,28 @@ export default function useSearchPageController() {
       return;
     }
 
-    dispatch(
-      searchCatalog({
-        params,
-        cacheKey: `search-list-${JSON.stringify(params)}`,
-      })
-    ).catch(() => { });
+    const generation = ++generationRef.current;
+    setLoadedProducts([]);
+    setPageMeta(null);
+    setExhausted(false);
+    setIsLoadingMore(false);
+    autoPausedRef.current = false;
+    const request = dispatch(searchCatalog({ params, cacheKey: `search-list-${JSON.stringify(params)}` }));
+    requestRef.current = request;
+    request.unwrap().then(payload => {
+      if (generationRef.current !== generation) return;
+      const result = readSearchPage(payload, params);
+      setLoadedProducts(result.items);
+      setPageMeta(result.meta);
+      setExhausted(!result.items.length || result.meta.page >= result.meta.totalPages);
+    }).catch(() => {}).finally(() => {
+      if (requestRef.current === request) requestRef.current = null;
+    });
+    return () => {
+      generationRef.current++;
+      requestRef.current?.abort?.();
+      requestRef.current = null;
+    };
   }, [dispatch, hasLegacyCategoryParams, params, searchKey]);
 
   useEffect(() => {
@@ -238,7 +263,7 @@ export default function useSearchPageController() {
     clearExceptions: ["q", "categoryId", "categorySlug", "categoryName"],
   });
 
-  const setPage = (p) => updateParam("page", p);
+  const setPage = (page) => setSearchParams(prev => { const next = new URLSearchParams(prev); next.set("page", String(page)); return next; });
 
   const removeFilter = (key, filter) => {
     if (key === "categoryId" || key === "q") {
@@ -349,7 +374,7 @@ export default function useSearchPageController() {
 
   const filterSections = useMemo(() => {
     return getFilterSections({
-      categoryOptions: [],
+      categoryOptions,
       brandOptions,
       collectionOptions,
       tagOptions,
@@ -381,41 +406,39 @@ export default function useSearchPageController() {
     handlePriceChange,
   ]);
 
-  const [accumulatedHits, setAccumulatedHits] = useState([]);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const loadMore = useCallback((automatic = false) => {
+    if (requestRef.current || searchState.loading || !pageMeta || exhausted || currentPage >= totalPages) return;
+    if (automatic && autoPausedRef.current) return;
+    autoPausedRef.current = false;
+    const generation = generationRef.current;
+    const nextParams = { ...params, page: currentPage + 1 };
+    setIsLoadingMore(true);
+    const request = dispatch(searchCatalog({ params: nextParams, cacheKey: `search-list-${JSON.stringify(nextParams)}` }));
+    requestRef.current = request;
+    request.unwrap().then(payload => {
+      if (generationRef.current !== generation) return;
+      const result = readSearchPage(payload, nextParams);
+      const merged = appendSearchProducts(loadedProducts, result.items);
+      setLoadedProducts(merged);
+      setPageMeta(result.meta);
+      setExhausted(merged.length === loadedProducts.length || !result.items.length || result.meta.page >= result.meta.totalPages);
+    }).catch(() => {
+      if (generationRef.current === generation) autoPausedRef.current = true;
+    }).finally(() => {
+      if (requestRef.current === request) requestRef.current = null;
+      if (generationRef.current === generation) setIsLoadingMore(false);
+    });
+  }, [searchState.loading, pageMeta, exhausted, currentPage, totalPages, params, dispatch, loadedProducts]);
 
   useEffect(() => {
-    if (currentPage === 1) {
-      setAccumulatedHits(hits);
-    }
-  }, [hits, currentPage]);
-
-  const loadMore = useCallback(() => {
-    if (searchState.loading || isLoadingMore || currentPage >= totalPages) return;
-    const nextPage = currentPage + 1;
-    setIsLoadingMore(true);
-    const nextParams = { ...params, page: nextPage };
-    dispatch(
-      searchCatalog({
-        params: nextParams,
-        cacheKey: `search-list-${JSON.stringify(nextParams)}`,
-      })
-    )
-      .unwrap()
-      .then((res) => {
-        const data = res?.data || {};
-        const newHits = data.hits || data.products || data.results || (Array.isArray(data) ? data : []);
-        setAccumulatedHits((prev) => {
-          const currentList = prev.length ? prev : hits;
-          const seen = new Set(currentList.map((p) => p._id || p.id || p.slug));
-          const unique = newHits.filter((p) => !seen.has(p._id || p.id || p.slug));
-          return [...currentList, ...unique];
-        });
-        updateParam("page", nextPage);
-      })
-      .catch(() => {})
-      .finally(() => setIsLoadingMore(false));
-  }, [searchState.loading, isLoadingMore, currentPage, totalPages, params, dispatch, updateParam, hits]);
+    const node = sentinelRef.current;
+    if (!node || !pageMeta || exhausted || isLoadingMore || searchState.loading || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) loadMore(true);
+    }, { rootMargin: "400px 0px" });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [loadMore, pageMeta, exhausted, isLoadingMore, searchState.loading]);
 
   return {
     q,
@@ -424,9 +447,9 @@ export default function useSearchPageController() {
     meta,
     limit,
     sort,
-    hits: accumulatedHits.length ? accumulatedHits : hits,
+    hits,
     currentPage,
-    totalPages,
+    totalPages: exhausted ? currentPage : totalPages,
     searchState,
     sidebarOpen,
     setSidebarOpen,
@@ -438,7 +461,8 @@ export default function useSearchPageController() {
     clearFiltersAction,
     activeFilters,
     filterSections,
-    onLoadMore: loadMore,
+    onLoadMore: () => loadMore(false),
+    sentinelRef,
     loadingMore: isLoadingMore,
   };
 }

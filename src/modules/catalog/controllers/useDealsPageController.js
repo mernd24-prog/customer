@@ -38,6 +38,8 @@ export default function useDealsPageController() {
   const [dealFacets, setDealFacets] = useState({});
 
   const sentinelRef = useRef(null);
+  const requestSequenceRef = useRef(0);
+  const activeAppendRef = useRef(false);
 
   const selectedBrands = useMemo(
     () => parseMultiValue(searchParams.get("brand")),
@@ -110,12 +112,18 @@ export default function useDealsPageController() {
     ? dealRatingCounts
     : ratingCounts;
 
+  const attributeFacets = useMemo(() => (dealFacets.attributes || [])
+    .filter(attribute => attribute.variant === true)
+    .map(attribute => ({ ...attribute, values: (attribute.values || []).filter(option => option.value && option.count > 0) }))
+    .filter(attribute => attribute.values.length), [dealFacets.attributes]);
+
   const pageSize = Number(searchParams.get("limit") || 10);
   const currentPage = Number(pageInfo.page || 1);
   const totalPages = Number(pageInfo.totalPages || 1);
 
   const getParams = useCallback(
     (pageOverride) => ({
+      ...Object.fromEntries([...searchParams.entries()].filter(([key]) => key.startsWith("attr_") || key.startsWith("attribute."))),
       page: pageOverride || 1,
       limit: pageSize,
       category: searchParams.get("category") || undefined,
@@ -133,13 +141,16 @@ export default function useDealsPageController() {
 
   const loadDeals = useCallback(
     async ({ page = 1, append = false } = {}) => {
-      if (append) setLoadingMore(true);
-      else setLoading(true);
+      if (append && activeAppendRef.current) return;
+      const sequence = append ? requestSequenceRef.current : ++requestSequenceRef.current;
+      if (append) { activeAppendRef.current = true; setLoadingMore(true); }
+      else { activeAppendRef.current = false; setLoadingMore(false); setLoading(true); }
       setError("");
 
       try {
         const params = getParams(page);
         const response = await getPublicDealProducts(params);
+        if (sequence !== requestSequenceRef.current) return;
         const rawList = unwrapProducts(response);
         const sortKey = params.sort || searchParams.get("sort") || "";
         const list = sortProducts(rawList, sortKey);
@@ -160,15 +171,19 @@ export default function useDealsPageController() {
           total: Number(pagination.total || list.length || 0),
         });
       } catch (err) {
+        if (sequence !== requestSequenceRef.current) return;
         setError(
           err?.response?.data?.message ||
           err?.message ||
           "Failed to load deal products",
         );
       } finally {
-        setLoading(false);
-        setLoadingMore(false);
-        setFirstLoadDone(true);
+        if (sequence === requestSequenceRef.current) {
+          activeAppendRef.current = false;
+          setLoading(false);
+          setLoadingMore(false);
+          setFirstLoadDone(true);
+        }
       }
     },
     [getParams, pageSize, searchParams],
@@ -182,6 +197,7 @@ export default function useDealsPageController() {
     if (
       !sentinelRef.current ||
       !firstLoadDone ||
+      error ||
       loading ||
       loadingMore ||
       currentPage >= totalPages
@@ -199,7 +215,7 @@ export default function useDealsPageController() {
     );
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [currentPage, firstLoadDone, loadDeals, loading, loadingMore, totalPages]);
+  }, [currentPage, firstLoadDone, error, loadDeals, loading, loadingMore, totalPages]);
 
   const {
     updateParam,
@@ -209,7 +225,7 @@ export default function useDealsPageController() {
     clearFiltersAction,
     activeFilters,
   } = useCatalogFilters({
-    attributeFacets: [],
+    attributeFacets,
     brandOptions,
     categoryOptions,
     absolutePriceLimits: {
@@ -225,7 +241,7 @@ export default function useDealsPageController() {
       brandOptions,
       collectionOptions: [],
       productFacets: dealFacets,
-      attributeFacets: [],
+      attributeFacets,
       availabilityCounts,
       absolutePriceLimits: {
         min: dealFacets.priceStats?.min ?? dealFacets.price?.min,
@@ -241,6 +257,7 @@ export default function useDealsPageController() {
     categoryOptions,
     brandOptions,
     dealFacets,
+    attributeFacets,
     availabilityCounts,
     effectiveRatingCounts,
     searchParams,

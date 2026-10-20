@@ -247,7 +247,7 @@ export function formatCategoryOptionsForTree(options = [], catalogCategoryList =
     result.push({
       isGroup: true,
       value: `__group_${rootKey}`,
-      label: labelOf(nodeMap.get(rootKey), rootOption?.label || rootKey),
+      label: labelOf(nodeMap.get(rootKey), rootOption?.label || rootKey.replace(/[-_]+/g, " ").replace(/\b\w/g, letter => letter.toUpperCase())),
       options: children.sort((left, right) => left.label.localeCompare(right.label)),
     });
   });
