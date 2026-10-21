@@ -375,7 +375,7 @@ export default function SupportTicketDetailsPage() {
           >
             {ticket && (
               <div className="mt-4 sm:mt-6 grid gap-4 sm:gap-5 lg:h-[calc(100vh-210px)] lg:min-h-[520px] lg:grid-cols-[minmax(0,1fr)_360px]">
-                <section className="flex h-[calc(100vh-220px)] min-h-[450px] flex-col overflow-hidden rounded-[14px] border border-[#E3DCCE] bg-white shadow-sm lg:h-auto lg:min-h-0">
+                <section className="flex h-[calc(100vh-220px)] min-h-[450px] flex-col overflow-hidden rounded-lg border border-[#E3DCCE] bg-white shadow-sm lg:h-auto lg:min-h-0">
                   <div className="flex items-center gap-2.5 border-b border-white/10 bg-gradient-to-r from-[#111538] via-[#1B1D60] to-[#252875] px-3.5 py-3.5 text-white sm:gap-3 sm:px-5 sm:py-4">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 backdrop-blur-xs text-[#F5C451] shadow-2xs sm:h-11 sm:w-11">
                       <Headphones size={20} className="sm:hidden" />
@@ -456,7 +456,7 @@ export default function SupportTicketDetailsPage() {
                   </form>
                 </section>
 
-                <aside className="hidden min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#E3DCCE] bg-white shadow-sm lg:flex">
+                <aside className="hidden min-h-0 flex-col overflow-hidden rounded-lg border border-[#E3DCCE] bg-white shadow-sm lg:flex">
                   <div className="border-b border-[#E3DCCE] bg-gradient-to-r from-[#FAF6ED] to-[#F3EAD7] px-4 py-4">
                     <div className="flex items-center justify-between gap-3">
                       <div>
@@ -495,9 +495,9 @@ export default function SupportTicketDetailsPage() {
                           <Link
                             key={item.id}
                             to={`/support/tickets/${encodeURIComponent(item.id)}`}
-                            className={`block rounded-[12px] border px-3.5 py-3 transition-all ${
+                            className={`block rounded-lg border px-3.5 py-3 transition-all ${
                               active
-                                ? "border-l-4 border-l-[#CE9F2D] border-y-[#E3DCCE] border-r-[#E3DCCE] bg-[#FFFBF3] shadow-xs"
+                                ? "border-[#E3DCCE] bg-[#FFFBF3] shadow-xs"
                                 : "border-transparent bg-transparent hover:bg-[#F9F7F1]"
                             }`}
                           >

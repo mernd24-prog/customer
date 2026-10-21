@@ -246,7 +246,7 @@ export const Navbar = ({ icons: propIcons }) => {
     }),
   ]);
 
-  const cartItemCount = cartItems.length;
+  const cartItemCount = Array.isArray(cartItems) ? cartItems.length : 0;
 
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};

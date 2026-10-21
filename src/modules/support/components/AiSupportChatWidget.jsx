@@ -320,7 +320,7 @@ export default function AiSupportChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-3 sm:right-6 z-50 flex h-[570px] max-h-[84vh] w-[calc(100vw-1.5rem)] sm:w-[400px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.14)]">
+        <div className="fixed bottom-24 right-3 sm:right-6 z-50 flex h-[570px] max-h-[84vh] w-[calc(100vw-1.5rem)] sm:w-[400px] flex-col overflow-hidden rounded-lg  border border-slate-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.14)]">
           {/* Header */}
           <div
             className="flex items-center justify-between px-4 py-3 text-white"

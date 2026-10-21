@@ -44,7 +44,7 @@ export default function BrandCard({
         className
       )}
     >
-      <div className="relative flex h-24 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4 w-full">
+      <div className="relative flex h-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-cream p-4 w-full">
         <img
           src={getOptimizedCloudinaryUrl(displayImage || "/image/webp/favicon.webp", 200)}
           alt=""
@@ -62,7 +62,7 @@ export default function BrandCard({
 
         <span
           aria-hidden="true"
-          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
+          className=" absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
         >
           <ArrowUpRight size={14} strokeWidth={1.8} />
         </span>

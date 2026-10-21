@@ -256,7 +256,7 @@ export default function BrandOutletPage() {
                         getBrandRouteKey(brand)
                       )}
                       className="
-                        min-h-0 items-center rounded-[12px]
+                        min-h-0 items-center rounded-lg
                         border border-[#EEE8DA] bg-[#FAF8F3] p-1.5 text-center
                         shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300 ease-out
                         hover:-translate-y-0.5 hover:border-[#E5D6B5]

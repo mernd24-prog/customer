@@ -13,10 +13,7 @@ export default function ActiveFilterChips({
   useLayoutEffect(() => {
     const checkOverflow = () => {
       if (contentRef.current) {
-        // Chip min-height is 40px. If it wraps with an 8px gap, scrollHeight will be >= 88px.
-        // So 50px is a safe threshold for > 1 line.
-        const overflowing = contentRef.current.scrollHeight > 50;
-        setIsOverflowing(overflowing);
+        setIsOverflowing(contentRef.current.scrollHeight > 50);
       }
     };
 
@@ -26,6 +23,7 @@ export default function ActiveFilterChips({
     if (contentRef.current) {
       resizeObserver.observe(contentRef.current);
     }
+
     return () => resizeObserver.disconnect();
   }, [filters]);
 
@@ -34,17 +32,37 @@ export default function ActiveFilterChips({
   return (
     <div className={`${className} flex flex-col gap-2`}>
       <div
-        className={`w-full overflow-hidden transition-all mt-6 duration-300 ${expanded ? "max-h-[1000px]" : "max-h-[42px]"}`}
+        className={`mt-3 w-full overflow-hidden transition-all duration-300 ${
+          expanded ? "max-h-[1000px]" : "max-h-[50px]"
+        }`}
       >
-        <div ref={contentRef} className="flex flex-wrap gap-2">
+        <div ref={contentRef} className="flex flex-wrap items-center gap-2">
           {filters.map((filter) => (
             <button
               key={filter.key}
               type="button"
               onClick={() => onRemove?.(filter.key, filter)}
-              className="chip inline-flex items-center gap-1.5 text-xs font-medium"
+              aria-label={`Remove ${filter.label} filter`}
+              className="
+              group inline-flex shrink-0 items-center gap-1.5
+              rounded-[5px] border border-[#e3d6b6]
+              bg-white px-2 py-1.5
+              text-[10px] font-medium leading-[14px]
+              text-[#172033]
+              transition-colors duration-200
+              hover:border-[#D1A128]
+              hover:bg-[#FFFBF0]
+              focus-visible:outline-none
+              focus-visible:ring-1 focus-visible:ring-[#D1A128]
+            "
             >
-              {filter.label} <X size={12} />
+              <span>{filter.label}</span>
+
+              <X
+                size={11}
+                strokeWidth={1.6}
+                className="shrink-0 text-[#6B7280] transition-colors group-hover:text-[#172033]"
+              />
             </button>
           ))}
         </div>
@@ -53,10 +71,10 @@ export default function ActiveFilterChips({
       {isOverflowing && (
         <button
           type="button"
-          onClick={() => setExpanded(!expanded)}
-          className="text-xs font-bold text-[#2874f0] hover:underline w-fit uppercase"
+          onClick={() => setExpanded((prev) => !prev)}
+          className="w-fit text-[11px] font-semibold uppercase tracking-wide text-[#2874F0] hover:underline"
         >
-          {expanded ? "SHOW LESS" : "SHOW MORE"}
+          {expanded ? "Show less" : "Show more"}
         </button>
       )}
     </div>

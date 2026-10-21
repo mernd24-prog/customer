@@ -84,12 +84,16 @@ export function adaptItemForCard(item, fullProduct = null) {
   const size = item.size || item.selectedSize || attributes.size;
   const stock = getCartItemStock(item, product);
   const outOfStock = stock !== null && stock <= 0;
-  const stockLimitReached = stock !== null && stock > 0 && quantity >= stock;
+  const effectiveMaxStock = stock !== null ? Math.min(stock, 10) : 10;
+  const stockLimitReached = stock !== null && stock < 10 && quantity >= stock;
+  const maxOrderLimitReached = quantity >= 10;
   const stockMessage = outOfStock
     ? "Out of stock"
     : stockLimitReached
       ? `Only ${stock} in stock`
-      : "";
+      : maxOrderLimitReached
+        ? "We're sorry! Only 10 unit(s) allowed in each order"
+        : "";
   const rating =
     item.rating ??
     item.averageRating ??
@@ -125,9 +129,10 @@ export function adaptItemForCard(item, fullProduct = null) {
     rating,
     reviewCount,
     stock,
+    maxQuantity: effectiveMaxStock,
     attributes,
     stockMessage,
-    increaseDisabled: outOfStock || stockLimitReached,
+    increaseDisabled: outOfStock || stockLimitReached || maxOrderLimitReached,
     _raw: item,
   };
 }

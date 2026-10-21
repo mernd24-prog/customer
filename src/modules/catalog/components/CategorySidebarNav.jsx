@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Check, ChevronRight } from "lucide-react";
 import CUSTOMER_ROUTES from "../../../constants/routes";
@@ -12,18 +11,10 @@ function CategoryCheckbox({ checked }) {
     <span
       aria-hidden="true"
       className={`inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[3px] border transition-all duration-200 ${
-        checked
-          ? "border-[#3E4093] bg-[#3E4093]"
-          : "border-[#B8BBC5] bg-white"
+        checked ? "border-[#3E4093] bg-[#3E4093]" : "border-[#B8BBC5] bg-white"
       }`}
     >
-      {checked && (
-        <Check
-          size={11}
-          strokeWidth={3}
-          className="text-white"
-        />
-      )}
+      {checked && <Check size={11} strokeWidth={3} className="text-white" />}
     </span>
   );
 }
@@ -50,10 +41,7 @@ export function CategorySidebarNav({
 
       <div className="space-y-3">
         <p className="flex items-center gap-1.5 text-sm font-bold text-[#111827]">
-          <ChevronRight
-            size={15}
-            className="rotate-90 text-[#111827]"
-          />
+          <ChevronRight size={15} className="rotate-90 text-[#111827]" />
           <span className="line-clamp-2">{categoryTitle}</span>
         </p>
 
@@ -74,9 +62,7 @@ export function CategorySidebarNav({
               >
                 <CategoryCheckbox checked={isActive} />
 
-                <span className="min-w-0">
-                  {category.name}
-                </span>
+                <span className="min-w-0">{category.name}</span>
               </Link>
             );
           })}

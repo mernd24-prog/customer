@@ -83,7 +83,7 @@ export function NotificationCard({ notif, onClick }) {
 
             <div className="flex items-center gap-2 shrink-0">
               {count ? (
-                <span className="text-[11px] font-semibold text-[#3E4093] bg-[#F3F4F9] border border-[#EAEFF5] px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-semibold text-[#3E4093] bg-[#F3F4F9] border border-[#EAEFF5] px-2 py-0.5 rounded-lg">
                   {count} {count === 1 ? "Product" : "Products"}
                 </span>
               ) : null}

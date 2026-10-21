@@ -195,7 +195,7 @@ export default function CartPage() {
                     )}
 
                     {hasCartItems && (
-                      <div className="rounded-[16px] border border-[#F0E6D2] bg-[#FFFDF8]  sm:rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                      <div className="rounded-lg border border-[#F0E6D2] bg-[#FFFDF8]  sm:rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
                         {items.map((item, index) => (
                           <div key={item.id}>
                             <CartItemCard

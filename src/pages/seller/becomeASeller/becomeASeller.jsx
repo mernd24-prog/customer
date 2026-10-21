@@ -82,7 +82,7 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
       <span
-        className={`inline-flex rounded-full px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] sm:px-4 sm:py-2 ${
+        className={`inline-flex rounded-lg px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] sm:px-4 sm:py-2 ${
           light ? "bg-white/10 text-[#f1c65f]" : "bg-[#f5eddb] text-[#9c6a0a]"
         }`}
       >
@@ -333,9 +333,9 @@ export default function BecomeASeller() {
                         key={story.name || index}
                         className="!h-auto pb-2"
                       >
-                        <article className="group h-full rounded-[22px] bg-white p-3 pb-5 sm:p-4 sm:pb-7">
+                        <article className="group h-full rounded-lg bg-white p-3 pb-5 sm:p-4 sm:pb-7">
                           <div className="relative">
-                            <div className="overflow-hidden rounded-xl bg-[#e8e5df]">
+                            <div className="overflow-hidden rounded-lg bg-[#e8e5df]">
                               {story.photo ? (
                                 <img
                                   width="400"
@@ -395,7 +395,7 @@ export default function BecomeASeller() {
             <section className="bg-[#FAF8F3] py-12 sm:py-16 lg:py-24">
               <div className="mx-auto max-w-7xl px-4 sm:px-6">
                 <div className="mx-auto max-w-3xl text-center">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
+                  <span className="inline-flex items-center gap-2 rounded-lg bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
                     <ShieldCheck size={14} />
                     Made for sellers
                   </span>
@@ -415,9 +415,9 @@ export default function BecomeASeller() {
                     ({ icon: Icon, title, text }, index) => (
                       <div
                         key={title || index}
-                        className="rounded-2xl border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                        className="rounded-lg border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
                       >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#18156D]/10 text-[#18156D]">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D]">
                           <Icon size={24} strokeWidth={2} />
                         </div>
 
@@ -465,10 +465,10 @@ export default function BecomeASeller() {
                       ({ icon: Icon, number, title, text }) => (
                         <article
                           key={number}
-                          className="relative flex min-h-[190px] flex-col rounded-[20px] border border-white/10 bg-white/[0.075] p-4 text-white backdrop-blur-sm sm:min-h-[214px] sm:p-6"
+                          className="relative flex min-h-[190px] flex-col rounded-lg border border-white/10 bg-white/[0.075] p-4 text-white backdrop-blur-sm sm:min-h-[214px] sm:p-6"
                         >
                           <div className="relative z-10 flex items-center justify-between">
-                            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[15px] bg-[#d6a323] text-[#17145f] shadow-[0_8px_20px_rgba(0,0,0,0.12)] sm:h-14 sm:w-14">
+                            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-[#d6a323] text-[#17145f] shadow-[0_8px_20px_rgba(0,0,0,0.12)] sm:h-14 sm:w-14">
                               <Icon size={24} strokeWidth={1.9} />
                             </span>
 

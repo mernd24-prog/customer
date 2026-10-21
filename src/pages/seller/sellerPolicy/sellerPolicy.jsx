@@ -289,7 +289,7 @@ export default function SellerPolicy() {
             <div className="customer-container">
               <div className="mx-auto max-w-3xl text-center">
                 {highlightBadge && (
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
+                  <span className="inline-flex items-center gap-2 rounded-lg bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
                     <ShieldCheck size={14} />
 
                     {highlightBadge}
@@ -317,9 +317,9 @@ export default function SellerPolicy() {
                     return (
                       <div
                         key={item.title || index}
-                        className="rounded-2xl border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                        className="rounded-lg border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
                       >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#18156D]/10 text-[#18156D]">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D]">
                           {Icon && <Icon size={24} strokeWidth={2} />}
                         </div>
 
@@ -350,7 +350,7 @@ export default function SellerPolicy() {
             <div className="customer-container">
               <div className="mx-auto max-w-3xl text-center">
                 {respBadge && (
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#18156D]/5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#18156D] sm:px-4 sm:py-2">
+                  <span className="inline-flex items-center gap-2 rounded-lg bg-[#18156D]/5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#18156D] sm:px-4 sm:py-2">
                     <ClipboardList size={14} />
 
                     {respBadge}
@@ -380,7 +380,7 @@ export default function SellerPolicy() {
                         key={item.title || index}
                         className="rounded-2xl border border-[#ECE7DD] bg-[#FCFBF8] p-5 transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
                       >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#18156D] text-white">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#18156D] text-white">
                           {Icon && <Icon size={23} strokeWidth={2} />}
                         </div>
 
@@ -410,7 +410,7 @@ export default function SellerPolicy() {
             <div className="customer-container">
               <div className="mx-auto max-w-3xl text-center">
                 {compBadge && (
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
+                  <span className="inline-flex items-center gap-2 rounded-lg bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
                     <BadgeCheck size={14} />
 
                     {compBadge}
@@ -438,9 +438,9 @@ export default function SellerPolicy() {
                     return (
                       <div
                         key={item.title || index}
-                        className="rounded-2xl border border-[#18156D]/10 bg-[#18156D] p-5 transition-colors duration-200 hover:bg-[#211d78] sm:p-6 lg:p-8"
+                        className="rounded-lg border border-[#18156D]/10 bg-[#18156D] p-5 transition-colors duration-200 hover:bg-[#211d78] sm:p-6 lg:p-8"
                       >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-[#F2D37A]">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/10 text-[#F2D37A]">
                           {Icon && <Icon size={24} strokeWidth={2} />}
                         </div>
 

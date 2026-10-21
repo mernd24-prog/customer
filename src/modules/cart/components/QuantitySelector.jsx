@@ -2,13 +2,14 @@ export default function QuantitySelector({
   quantity,
   onIncrease,
   onDecrease,
-  max,
+  max = 10,
   disabled,
   increaseDisabled,
-  increaseDisabledLabel
+  increaseDisabledLabel,
 }) {
   const atMax = max != null && quantity >= max;
-  const disableIncrease = disabled || increaseDisabled || atMax;
+  const disableIncrease =
+    disabled || increaseDisabled || atMax || quantity >= 10;
 
   return (
     <div className="flex w-full flex-col gap-1.5 w-[140px] sm:w-[150px]">
@@ -35,8 +36,8 @@ export default function QuantitySelector({
           }}
           disabled={disableIncrease}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1B1D60] text-lg font-normal leading-none text-white disabled:cursor-not-allowed disabled:opacity-40 transition hover:bg-[#25287d]"
-          aria-label={increaseDisabledLabel || "Increase Quantity"}
-          title={increaseDisabledLabel || undefined}
+          aria-label={increaseDisabledLabel || (disableIncrease ? "Maximum quantity reached" : "Increase Quantity")}
+          title={increaseDisabledLabel || (disableIncrease ? "Max 10 items per order" : undefined)}
         >
           +
         </button>

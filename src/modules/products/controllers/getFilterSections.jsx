@@ -1,12 +1,14 @@
-
-import React from 'react';
+import React from "react";
 import {
   CheckboxListFilter,
   OptionFilter,
   PriceRangeFilter,
   RatingFilter,
 } from "../components/ProductFilterSidebar";
-import { parseMultiValue, serializeMultiValue } from "../../../utils/filterUtils";
+import {
+  parseMultiValue,
+  serializeMultiValue,
+} from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export function getFilterSections({
@@ -219,7 +221,4 @@ export function getFilterSections({
         }
       : false,
   ].filter(Boolean);
-
-
-
 }

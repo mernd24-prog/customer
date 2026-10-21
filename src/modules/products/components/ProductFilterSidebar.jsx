@@ -15,18 +15,10 @@ function FilterTick({ checked }) {
     <span
       aria-hidden="true"
       className={`inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[3px] border transition-all duration-200 ${
-        checked
-          ? "border-[#3E4093] bg-[#3E4093]"
-          : "border-[#B8BBC5] bg-white"
+        checked ? "border-[#3E4093] bg-[#3E4093]" : "border-[#B8BBC5] bg-white"
       }`}
     >
-      {checked && (
-        <Check
-          size={11}
-          strokeWidth={3}
-          className="text-white"
-        />
-      )}
+      {checked && <Check size={11} strokeWidth={3} className="text-white" />}
     </span>
   );
 }
@@ -89,7 +81,10 @@ export function FilterSection({
             onKeyDown={(event) => {
               if (event.key === "Escape") closeSearch();
             }}
-            placeholder={`Search ${title.toLowerCase()}`}
+            placeholder={(() => {
+              const p = `Search ${title.toLowerCase()}`;
+              return p.length > 13 ? p.slice(0, 12) + "…" : p;
+            })()}
             className="min-w-0 flex-1 bg-transparent border-none border focus:outline-none text-sm font-semibold text-[#2E2E2E] outline-none placeholder:text-[#8D8F98]"
           />
           <button
@@ -415,11 +410,13 @@ export function PriceRangeFilter({
 // Recursively count all selected leaf values inside a group tree
 function countGroupSelections(options, selectedSet) {
   let count = 0;
-  options.forEach(opt => {
+  options.forEach((opt) => {
     if (opt.isGroup) {
       count += countGroupSelections(opt.options || [], selectedSet);
     } else {
-      const val = String(opt.value ?? opt.id ?? opt._id ?? opt.categoryKey ?? "");
+      const val = String(
+        opt.value ?? opt.id ?? opt._id ?? opt.categoryKey ?? "",
+      );
       if (selectedSet.has(val)) count++;
     }
   });
@@ -428,14 +425,22 @@ function countGroupSelections(options, selectedSet) {
 
 // Check if any leaf inside the group is selected (for auto-expand)
 function groupHasActiveChild(options, selectedSet) {
-  return options.some(opt => {
+  return options.some((opt) => {
     if (opt.isGroup) return groupHasActiveChild(opt.options || [], selectedSet);
     const val = String(opt.value ?? opt.id ?? opt._id ?? opt.categoryKey ?? "");
     return selectedSet.has(val);
   });
 }
 
-function FilterOptionGroup({ group, selectedSet, onChange, isMultiSelect, selectedValues, name, depth = 0 }) {
+function FilterOptionGroup({
+  group,
+  selectedSet,
+  onChange,
+  isMultiSelect,
+  selectedValues,
+  name,
+  depth = 0,
+}) {
   const isActive = groupHasActiveChild(group.options || [], selectedSet);
   const [expanded, setExpanded] = useState(false);
 
@@ -457,7 +462,7 @@ function FilterOptionGroup({ group, selectedSet, onChange, isMultiSelect, select
     <div className={`max-w-full overflow-hidden ${isRoot ? "mb-1" : "mb-0.5"}`}>
       <button
         type="button"
-        onClick={() => setExpanded(prev => !prev)}
+        onClick={() => setExpanded((prev) => !prev)}
         className={headerClass}
       >
         {/* min-w-0 allows truncate to work inside flex */}
@@ -476,8 +481,10 @@ function FilterOptionGroup({ group, selectedSet, onChange, isMultiSelect, select
       </button>
 
       {expanded && (
-        <div className={`flex flex-col ${isRoot ? "mt-0.5 ml-1 pl-2 gap-0" : "ml-2 pl-1 gap-0"}`}>
-          {(group.options || []).map(option => {
+        <div
+          className={`flex flex-col ${isRoot ? "mt-0.5 ml-1 pl-2 gap-0" : "ml-2 pl-1 gap-0"}`}
+        >
+          {(group.options || []).map((option) => {
             // Nested group → recurse
             if (option.isGroup) {
               return (
@@ -495,14 +502,20 @@ function FilterOptionGroup({ group, selectedSet, onChange, isMultiSelect, select
             }
 
             // Leaf checkbox
-            const value = String(option.value ?? option.id ?? option._id ?? option.categoryKey ?? "");
+            const value = String(
+              option.value ??
+                option.id ??
+                option._id ??
+                option.categoryKey ??
+                "",
+            );
             const label = option.label ?? option.title ?? option.name ?? value;
             const count = option.count ?? option.doc_count;
             const checked = selectedSet.has(value);
             return (
               <label
                 key={value}
-                className="flex min-w-0 cursor-pointer items-center gap-2 py-1 pr-1 leading-none text-[#434343] transition-colors duration-200 "
+                className=" flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[15px]"
               >
                 <input
                   type="checkbox"
@@ -516,16 +529,28 @@ function FilterOptionGroup({ group, selectedSet, onChange, isMultiSelect, select
                       return;
                     }
                     const nextValues = checked
-                      ? selectedValues.filter(item => String(item).trim() !== v)
-                      : [...selectedValues.filter(item => String(item).trim() !== v), v];
+                      ? selectedValues.filter(
+                          (item) => String(item).trim() !== v,
+                        )
+                      : [
+                          ...selectedValues.filter(
+                            (item) => String(item).trim() !== v,
+                          ),
+                          v,
+                        ];
                     onChange?.(nextValues);
                   }}
                   className="sr-only"
                 />
                 <FilterTick checked={checked} />
-                <span className="min-w-0 flex-1 truncate overflow-hidden text-[14px] font-medium text-[#434343]">{capitalizeFirst(label)}</span>
+                <span className=" min-w-0 flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
+                  {capitalizeFirst(label)}
+                </span>
+
                 {count != null && (
-                  <span className="shrink-0 text-[12px] text-[#888] whitespace-nowrap">({count})</span>
+                  <span className="shrink-0 text-[12px] text-[#888] whitespace-nowrap">
+                    ({count})
+                  </span>
                 )}
               </label>
             );
@@ -607,24 +632,33 @@ export function OptionFilter({
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
   const filteredOptions = normalizedSearchQuery
-    ? options.map(opt => {
-        if (opt.isGroup) {
-           const matchGroup = String(opt.label).toLowerCase().includes(normalizedSearchQuery);
-           const matchedChildren = opt.options.filter(child => {
-             const val = child.value ?? child.id ?? child._id ?? child.categoryKey;
-             const lbl = child.label ?? child.title ?? child.name ?? val;
-             return String(lbl).toLowerCase().includes(normalizedSearchQuery);
-           });
-           if (matchGroup || matchedChildren.length > 0) {
-             return { ...opt, options: matchedChildren.length ? matchedChildren : opt.options };
-           }
-           return null;
-        }
-        const value = opt.value ?? opt.id ?? opt._id ?? opt.categoryKey;
-        const label = opt.label ?? opt.title ?? opt.name ?? value;
-        if (String(label).toLowerCase().includes(normalizedSearchQuery)) return opt;
-        return null;
-      }).filter(Boolean)
+    ? options
+        .map((opt) => {
+          if (opt.isGroup) {
+            const matchGroup = String(opt.label)
+              .toLowerCase()
+              .includes(normalizedSearchQuery);
+            const matchedChildren = opt.options.filter((child) => {
+              const val =
+                child.value ?? child.id ?? child._id ?? child.categoryKey;
+              const lbl = child.label ?? child.title ?? child.name ?? val;
+              return String(lbl).toLowerCase().includes(normalizedSearchQuery);
+            });
+            if (matchGroup || matchedChildren.length > 0) {
+              return {
+                ...opt,
+                options: matchedChildren.length ? matchedChildren : opt.options,
+              };
+            }
+            return null;
+          }
+          const value = opt.value ?? opt.id ?? opt._id ?? opt.categoryKey;
+          const label = opt.label ?? opt.title ?? opt.name ?? value;
+          if (String(label).toLowerCase().includes(normalizedSearchQuery))
+            return opt;
+          return null;
+        })
+        .filter(Boolean)
     : options;
   const allowViewMoreForFiltered = (filteredOptions?.length || 0) > 5;
   const visibleOptions =
@@ -639,7 +673,7 @@ export function OptionFilter({
         {visibleOptions.map((option) => {
           if (option.isGroup) {
             return (
-              <FilterOptionGroup 
+              <FilterOptionGroup
                 key={option.label}
                 group={option}
                 selectedSet={selectedSet}
@@ -651,7 +685,9 @@ export function OptionFilter({
             );
           }
 
-          const value = String(option.value ?? option.id ?? option._id ?? option.categoryKey);
+          const value = String(
+            option.value ?? option.id ?? option._id ?? option.categoryKey,
+          );
           const label = option.label ?? option.title ?? option.name ?? value;
           const count = option.count ?? option.doc_count;
           const checked = selectedSet.has(String(value));
@@ -659,7 +695,7 @@ export function OptionFilter({
           return (
             <label
               key={value}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[16px]"
+              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[15px]"
             >
               <input
                 type="checkbox"
@@ -744,7 +780,7 @@ export function CheckboxListFilter({
         return (
           <label
             key={value}
-            className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[16px]"
+            className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[15px]"
           >
             <input
               type="checkbox"
@@ -763,7 +799,7 @@ export function CheckboxListFilter({
             <FilterTick checked={checked} />
 
             <span className="min-w-0  flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
-             {capitalizeFirst(label)}
+              {capitalizeFirst(label)}
             </span>
 
             {count != null && (
@@ -795,7 +831,7 @@ export function RatingFilter({
   return (
     <div
       className={`grid gap-0.5 ${
-        multiple ? "filter-scrollbar overflow-y-auto pr-2" : ""
+        multiple ? "sidebar-scrollbar overflow-y-auto pr-2" : ""
       }`}
     >
       {[5, 4, 3, 2, 1]
@@ -807,7 +843,7 @@ export function RatingFilter({
           return (
             <label
               key={stars}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[16px]"
+              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[15px]"
             >
               <input
                 type="checkbox"
@@ -882,11 +918,12 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full rounded-[20px] border border-[#EEDFB9]
-        bg-[#FFFDF8] lg:sticky
-        lg:top-[calc(var(--customer-header-height,95px)+62px)]
-        lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px]
-        ${className}`}
+      className={`w-full rounded-lg border 
+        border-[#EEDFB9]
+         bg-[#FFFDF8] lg:sticky
+          lg:top-[calc(var(--customer-header-height,95px)+62px)]
+           lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] 
+           max-h-[calc(100vh-var(--customer-header-height,95px)-78px)] overflow-y-auto sidebar-scrollbar ${className}`}
     >
       <div className="pt-6 pb-4">
         <div

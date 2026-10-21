@@ -177,6 +177,7 @@ export default function CustomDropdown({
         disabled={disabled}
         onClick={() => setIsOpen((previousState) => !previousState)}
         className={cn( 
+          
           "custom-dropdown-trigger",
           "customer-dropdown-button",
           "flex h-11 w-full items-center justify-between",

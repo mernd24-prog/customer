@@ -129,10 +129,7 @@ export default function ProductCard({
 
   const brand =
     typeof rawBrand === "object"
-      ? rawBrand?.name ||
-        rawBrand?.title ||
-        rawBrand?.label ||
-        ""
+      ? rawBrand?.name || rawBrand?.title || rawBrand?.label || ""
       : rawBrand || "";
 
   const variantImage = getProductImage(displayProduct);
@@ -153,10 +150,7 @@ export default function ProductCard({
   const oldPrice = oldPriceProp ?? getProductMrp(displayProduct) ?? 0;
 
   const rating =
-    ratingProp ??
-    cardProduct?.rating ??
-    cardProduct?.averageRating ??
-    0;
+    ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
 
   const ratingCount =
     ratingCountProp ??
@@ -176,8 +170,7 @@ export default function ProductCard({
       variant: displayVariant,
     });
 
-  const isListVariant =
-    variant === "list" || variant === "compact";
+  const isListVariant = variant === "list" || variant === "compact";
 
   const isFeatured =
     cardProduct?.metadata?.featured === true ||
@@ -190,31 +183,22 @@ export default function ProductCard({
     badge ||
     null;
 
-  const dealEndDate = formatDealEndDate(
-    getDealEndDateValue(cardProduct),
-  );
+  const dealEndDate = formatDealEndDate(getDealEndDateValue(cardProduct));
 
   const isDealProduct =
     Boolean(cardProduct?.deal?.dealId) ||
     cardProduct?.metadata?.isDealProduct === true ||
     Boolean(dealEndDate);
 
-  const currentPriceNumber = Number(
-    String(price || 0).replace(/[^\d.-]/g, ""),
-  );
+  const currentPriceNumber = Number(String(price || 0).replace(/[^\d.-]/g, ""));
 
-  const oldPriceNumber = Number(
-    String(oldPrice || 0).replace(/[^\d.-]/g, ""),
-  );
+  const oldPriceNumber = Number(String(oldPrice || 0).replace(/[^\d.-]/g, ""));
 
   const computedDiscountPercent =
     discountPercent ||
-    (oldPriceNumber > currentPriceNumber &&
-    currentPriceNumber > 0
+    (oldPriceNumber > currentPriceNumber && currentPriceNumber > 0
       ? Math.round(
-          ((oldPriceNumber - currentPriceNumber) /
-            oldPriceNumber) *
-            100,
+          ((oldPriceNumber - currentPriceNumber) / oldPriceNumber) * 100,
         )
       : 0);
 
@@ -222,11 +206,9 @@ export default function ProductCard({
     ? `${computedDiscountPercent}% Off`
     : "";
 
-  const availableStock =
-    getProductAvailableStock(displayProduct);
+  const availableStock = getProductAvailableStock(displayProduct);
 
-  const codAvailable =
-    isProductCodAvailable(cardProduct);
+  const codAvailable = isProductCodAvailable(cardProduct);
 
   const isInStock =
     inStock !== undefined
@@ -239,8 +221,7 @@ export default function ProductCard({
             ? availableStock > 0
             : true;
 
-  const [activeImageIndex, setActiveImageIndex] =
-    useState(0);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -253,35 +234,22 @@ export default function ProductCard({
       const url =
         typeof img === "string"
           ? img
-          : img?.url ||
-            img?.src ||
-            img?.image ||
-            img?.link ||
-            "";
+          : img?.url || img?.src || img?.image || img?.link || "";
 
-      if (
-        url &&
-        typeof url === "string" &&
-        !list.includes(url)
-      ) {
+      if (url && typeof url === "string" && !list.includes(url)) {
         list.push(url);
       }
     };
 
     addImg(variantImage || imageProp);
 
-    const displayVariantImages = Array.isArray(
-      displayVariant?.images,
-    )
+    const displayVariantImages = Array.isArray(displayVariant?.images)
       ? displayVariant.images
       : [];
 
     displayVariantImages.forEach(addImg);
 
-    if (
-      !displayVariantImages.length &&
-      Array.isArray(cardProduct?.images)
-    ) {
+    if (!displayVariantImages.length && Array.isArray(cardProduct?.images)) {
       cardProduct.images.forEach(addImg);
     }
 
@@ -309,11 +277,7 @@ export default function ProductCard({
       });
     }
 
-    return list.length > 0
-      ? list
-      : image
-        ? [image]
-        : [];
+    return list.length > 0 ? list : image ? [image] : [];
   }, [
     cardProduct,
     displayProduct,
@@ -332,24 +296,18 @@ export default function ProductCard({
     allImages.forEach((imgUrl) => {
       if (imgUrl) {
         const img = new Image();
-        img.src = getOptimizedCloudinaryUrl(
-          imgUrl,
-          400,
-        );
+        img.src = getOptimizedCloudinaryUrl(imgUrl, 400);
       }
     });
 
     const interval = setInterval(() => {
-      setActiveImageIndex(
-        (prev) => (prev + 1) % allImages.length,
-      );
+      setActiveImageIndex((prev) => (prev + 1) % allImages.length);
     }, 1200);
 
     return () => clearInterval(interval);
   }, [isHovered, allImages]);
 
-  const activeImage =
-    allImages[activeImageIndex] || image;
+  const activeImage = allImages[activeImageIndex] || image;
 
   const handleWishlist = (event) => {
     event.preventDefault();
@@ -371,17 +329,11 @@ export default function ProductCard({
     event.preventDefault();
     event.stopPropagation();
 
-    navigate(
-      `/brands/${encodeURIComponent(brand)}`,
-    );
+    navigate(`/brands/${encodeURIComponent(brand)}`);
   };
 
   const handleImageError = (event) => {
-    applyImageFallback(
-      event,
-      title,
-      cardProduct?.category || brand,
-    );
+    applyImageFallback(event, title, cardProduct?.category || brand);
   };
 
   /*
@@ -400,25 +352,16 @@ export default function ProductCard({
         <div className="grid gap-4 sm:grid-cols-[180px_1fr_auto] sm:items-center">
           <Link
             to={to}
-            target={
-              resolvedTarget === "_self"
-                ? undefined
-                : resolvedTarget
-            }
+            target={resolvedTarget === "_self" ? undefined : resolvedTarget}
             rel={
-              resolvedTarget === "_blank"
-                ? "noopener noreferrer"
-                : undefined
+              resolvedTarget === "_blank" ? "noopener noreferrer" : undefined
             }
             className="relative block overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
           >
             {activeImage ? (
               <div className="group flex aspect-square w-full items-center justify-center overflow-hidden p-4">
                 <img
-                  src={getOptimizedCloudinaryUrl(
-                    activeImage,
-                    300,
-                  )}
+                  src={getOptimizedCloudinaryUrl(activeImage, 300)}
                   srcSet={generateCloudinarySrcSet(
                     activeImage,
                     [200, 300, 400],
@@ -433,50 +376,35 @@ export default function ProductCard({
                   onError={handleImageError}
                 />
 
-                {isHovered &&
-                  allImages.length > 1 && (
-                    <div className="pointer-events-none absolute inset-x-0 bottom-2 z-20 flex items-center justify-center gap-1 px-2">
-                      {allImages
-                        .slice(0, 5)
-                        .map((_, idx) => (
-                          <div
-                            key={idx}
-                            className={cn(
-                              "h-1 rounded-full shadow-sm transition-all duration-300",
-                              activeImageIndex %
-                                Math.min(
-                                  allImages.length,
-                                  5,
-                                ) === idx
-                                ? "w-4 bg-[#1B1D60]"
-                                : "w-1.5 bg-black/30",
-                            )}
-                          />
-                        ))}
-                    </div>
-                  )}
+                {isHovered && allImages.length > 1 && (
+                  <div className="pointer-events-none absolute inset-x-0 bottom-2 z-20 flex items-center justify-center gap-1 px-2">
+                    {allImages.slice(0, 5).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={cn(
+                          "h-1 rounded-full shadow-sm transition-all duration-300",
+                          activeImageIndex % Math.min(allImages.length, 5) ===
+                            idx
+                            ? "w-4 bg-[#1B1D60]"
+                            : "w-1.5 bg-black/30",
+                        )}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex aspect-square items-center justify-center text-[var(--customer-border-strong)]">
-                <ShoppingCart
-                  size={42}
-                  strokeWidth={1.4}
-                />
+                <ShoppingCart size={42} strokeWidth={1.4} />
               </div>
             )}
           </Link>
 
           <Link
             to={to}
-            target={
-              resolvedTarget === "_self"
-                ? undefined
-                : resolvedTarget
-            }
+            target={resolvedTarget === "_self" ? undefined : resolvedTarget}
             rel={
-              resolvedTarget === "_blank"
-                ? "noopener noreferrer"
-                : undefined
+              resolvedTarget === "_blank" ? "noopener noreferrer" : undefined
             }
             className="min-w-0"
           >
@@ -486,7 +414,7 @@ export default function ProductCard({
                 onClick={handleBrandClick}
                 className="text-left text-[11px] font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
-                  {capitalizeFirst(brand)}
+                {capitalizeFirst(brand)}
               </button>
             )}
 
@@ -529,9 +457,7 @@ export default function ProductCard({
             <Price
               price={price}
               oldPrice={oldPrice}
-              currency={
-                currency || cardProduct?.currency
-              }
+              currency={currency || cardProduct?.currency}
               layout="stacked"
             />
 
@@ -565,7 +491,7 @@ export default function ProductCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        "group relative flex min-w-0 flex-col overflow-hidden rounded-[14px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out sm:rounded-[20px]",
+        "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out sm:rounded-lg",
         className,
       )}
     >
@@ -576,11 +502,7 @@ export default function ProductCard({
       */}
       {showActions && (
         <IconCircleButton
-          title={
-            isWishlisted
-              ? "Remove from wishlist"
-              : "Add to wishlist"
-          }
+          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           aria-label={
             isWishlisted
               ? `Remove ${title} from wishlist`
@@ -590,18 +512,13 @@ export default function ProductCard({
           className={cn(
             "absolute right-2 top-2 z-30 flex h-8 w-8 min-w-8 items-center justify-center rounded-full border border-[#1B1D60] bg-white p-0 text-[#1B1D60] shadow-none",
             "min-[1000px]:hidden",
-            isWishlisted &&
-              "border-[#1B1D60]",
+            isWishlisted && "border-[#1B1D60]",
           )}
         >
           <Heart
             size={16}
             strokeWidth={1.8}
-            fill={
-              isWishlisted
-                ? "#1B1D60"
-                : "none"
-            }
+            fill={isWishlisted ? "#1B1D60" : "none"}
             stroke="#1B1D60"
           />
         </IconCircleButton>
@@ -656,16 +573,8 @@ export default function ProductCard({
       {/* PRODUCT CONTENT */}
       <Link
         to={to}
-        target={
-          resolvedTarget === "_self"
-            ? undefined
-            : resolvedTarget
-        }
-        rel={
-          resolvedTarget === "_blank"
-            ? "noopener noreferrer"
-            : undefined
-        }
+        target={resolvedTarget === "_self" ? undefined : resolvedTarget}
+        rel={resolvedTarget === "_blank" ? "noopener noreferrer" : undefined}
         className="flex min-w-0 flex-1 flex-col"
       >
         {/* IMAGE */}
@@ -673,129 +582,108 @@ export default function ProductCard({
           {activeImage ? (
             <>
               <img
-                src={getOptimizedCloudinaryUrl(
-                  activeImage,
-                  400,
-                )}
-                srcSet={generateCloudinarySrcSet(
-                  activeImage,
-                  [300, 400, 800],
-                )}
+                src={getOptimizedCloudinaryUrl(activeImage, 400)}
+                srcSet={generateCloudinarySrcSet(activeImage, [300, 400, 800])}
                 sizes="(max-width: 640px) 250px, (max-width: 1024px) 400px, 800px"
                 alt=""
                 width="400"
                 height="400"
-                className="h-full w-full object-contain object-center p-2 transition-transform duration-300 ease-in-out group-hover:scale-[1.02]"
+                className="h-full w-full object-contain object-center p-2 "
                 loading="lazy"
                 decoding="async"
                 onError={handleImageError}
               />
 
-              {isHovered &&
-                allImages.length > 1 && (
-                  <div
-                    className={cn(
-                      "pointer-events-none absolute inset-x-0 z-20 flex items-center justify-center gap-1.5 px-2",
-                      isDealProduct && dealEndDate
-                        ? "bottom-8"
-                        : "bottom-3",
-                    )}
-                  >
-                    {allImages
-                      .slice(0, 6)
-                      .map((_, idx) => (
-                        <div
-                          key={idx}
-                          className={cn(
-                            "h-1 rounded-full shadow-sm transition-all duration-300",
-                            activeImageIndex %
-                              Math.min(
-                                allImages.length,
-                                6,
-                              ) === idx
-                              ? "w-4 bg-[#1B1D60]"
-                              : "w-1.5 bg-black/30",
-                          )}
-                        />
-                      ))}
-                  </div>
-                )}
+              {isHovered && allImages.length > 1 && (
+                <div
+                  className={cn(
+                    "pointer-events-none absolute inset-x-0 z-20 flex items-center justify-center gap-1.5 px-2",
+                    isDealProduct && dealEndDate ? "bottom-8" : "bottom-3",
+                  )}
+                >
+                  {allImages.slice(0, 6).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={cn(
+                        "h-1 rounded-full shadow-sm transition-all duration-300",
+                        activeImageIndex % Math.min(allImages.length, 6) === idx
+                          ? "w-4 bg-[#1B1D60]"
+                          : "w-1.5 bg-black/30",
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
             </>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[var(--customer-border-strong)]">
-              <ShoppingCart
-                size={48}
-                strokeWidth={1.4}
-              />
+              <ShoppingCart size={48} strokeWidth={1.4} />
             </div>
           )}
-{/* DEAL END DATE */}
-{isDealProduct && dealEndDate && (
-  <div className="absolute inset-x-0 bottom-0 z-20 flex h-[19px] items-center justify-between gap-1 bg-[#FFFDF8]/95 px-1.5 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] sm:h-[29px] sm:px-3">
-    <div className="flex shrink-0 items-center gap-1 text-[9px] font-semibold text-[#1B1D60] sm:gap-1.5 sm:text-[13px]">
-      <span className="relative flex h-1.5 w-1.5 shrink-0 sm:h-2 sm:w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 sm:h-2 sm:w-2" />
-      </span>
-      <span>Ends</span>
-    </div>
+          {/* DEAL END DATE */}
+          {isDealProduct && dealEndDate && (
+            <div className="absolute inset-x-0 bottom-0 z-20 flex h-[19px] items-center justify-between gap-1 bg-[#FFFDF8]/95 px-1.5 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] sm:h-[29px] sm:px-3">
+              <div className="flex shrink-0 items-center gap-1 text-[9px] font-semibold text-[#1B1D60] sm:gap-1.5 sm:text-[13px]">
+                <span className="relative flex h-1.5 w-1.5 shrink-0 sm:h-2 sm:w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 sm:h-2 sm:w-2" />
+                </span>
+                <span>Ends</span>
+              </div>
 
-    <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[9px] font-bold text-[#1B1D60] sm:gap-1 sm:text-[13px]">
-      <Clock3
-        size={11}
-        className="shrink-0 sm:h-[13px] sm:w-[13px]"
-      />
-      <span className="truncate">{dealEndDate}</span>
-    </span>
-  </div>
-)}
+              <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[9px] font-bold text-[#1B1D60] sm:gap-1 sm:text-[13px]">
+                <Clock3
+                  size={11}
+                  className="shrink-0 sm:h-[13px] sm:w-[13px]"
+                />
+                <span className="truncate">{dealEndDate}</span>
+              </span>
+            </div>
+          )}
         </div>
 
-       {/* PRODUCT INFO */}
-<div className="flex min-w-0 flex-col px-2.5 sm:px-4 sm:pb-2 ">
-  <StarRating rating={rating} count={ratingCount} />
+        {/* PRODUCT INFO */}
+        <div className="flex min-w-0 flex-col px-2.5 sm:px-4 sm:pb-2 ">
+          <StarRating rating={rating} count={ratingCount} />
 
-  {brand && (
-    <div
-      className="mt-1.5 truncate text-xs font-bold tracking-tight text-[#2E2E2E] sm:mt-2 sm:text-base"
-      title={brand}
-    >
-      {capitalizeFirst(brand)}
-    </div>
-  )}
+          {brand && (
+            <div
+              className="mt-1.5 truncate text-xs font-bold tracking-tight text-[#2E2E2E] sm:mt-2 sm:text-base"
+              title={brand}
+            >
+              {capitalizeFirst(brand)}
+            </div>
+          )}
 
-  <h3
-    className={cn(
-      "w-full line-clamp-1",
-      brand
-        ? "mb-1.5 mt-0.5 text-xs font-normal text-black sm:mb-2.5 sm:mt-1 sm:text-[16px]"
-        : "my-1 text-xs font-semibold text-[#2E2E2E] sm:my-[10px] sm:text-sm",
-    )}
-    title={title}
-  >
-    {title}
-  </h3>
-{/* FLIPKART-STYLE PRICE AND DISCOUNT */}
-<div className="my-0.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 sm:my-1 sm:gap-x-2.5 sm:gap-y-1">
-  <Price
-    price={price}
-    oldPrice={oldPrice}
-    currency={currency || cardProduct?.currency}
-    className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 sm:gap-x-2"
-    priceClassName="text-sm font-bold text-[#212121] sm:text-lg md:text-xl"
-    oldPriceClassName="text-[11px] font-normal text-[#878787] line-through sm:text-base md:text-lg"
-  />
+          <h3
+            className={cn(
+              "w-full line-clamp-1",
+              brand
+                ? "mb-1.5 mt-0.5 text-xs font-normal text-black sm:mb-2.5 sm:mt-1 sm:text-[16px]"
+                : "my-1 text-xs font-semibold text-[#2E2E2E] sm:my-[10px] sm:text-sm",
+            )}
+            title={title}
+          >
+            {title}
+          </h3>
+          {/* FLIPKART-STYLE PRICE AND DISCOUNT */}
+          <div className="my-0.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 sm:my-1 sm:gap-x-2.5 sm:gap-y-1">
+            <Price
+              price={price}
+              oldPrice={oldPrice}
+              currency={currency || cardProduct?.currency}
+              className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 sm:gap-x-2"
+              priceClassName="text-sm font-bold text-[#212121] sm:text-lg md:text-xl"
+              oldPriceClassName="text-[11px] font-normal text-[#7A7A7A] line-through sm:text-base md:text-lg"
+            />
 
-  {discountLabel && (
-    <span className="whitespace-nowrap text-[10px] font-semibold text-[#388E3C] sm:text-sm md:text-base">
-      {computedDiscountPercent}% off
-    </span>
-  )}
-</div>
-</div>
-
-     
-
+            {discountLabel && (
+              <span className="whitespace-nowrap text-[10px] font-bold text-[#388E3C] sm:text-sm md:text-base">
+                {computedDiscountPercent}% off
+              </span>
+            )}
+          </div>
+        </div>
       </Link>
 
       {/* 
@@ -822,11 +710,7 @@ export default function ProductCard({
             disabled={!isInStock}
             onClick={handleAddToCart}
             rightIcon={
-              <ShoppingCart
-                size={15}
-                strokeWidth={2.4}
-                className="shrink-0"
-              />
+              <ShoppingCart size={15} strokeWidth={2.4} className="shrink-0" />
             }
             className={cn(
               `
@@ -839,23 +723,17 @@ export default function ProductCard({
                 leading-none
                 font-semibold
                 whitespace-nowrap
+                rounded-lg
               `,
-              !isInStock &&
-                "cursor-not-allowed opacity-60",
+              !isInStock && "cursor-not-allowed opacity-60",
             )}
           >
-            <span className="truncate">
-              Add to Cart
-            </span>
+            <span className="truncate">Add to Cart</span>
           </PillButton>
 
           {/* DESKTOP BOTTOM WISHLIST */}
           <IconCircleButton
-            title={
-              isWishlisted
-                ? "Remove from wishlist"
-                : "Add to wishlist"
-            }
+            title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
             aria-label={
               isWishlisted
                 ? `Remove ${title} from wishlist`
@@ -878,17 +756,12 @@ export default function ProductCard({
                 p-0
                 text-[#1B1D60]
               `,
-              isWishlisted &&
-                "border-[#1B1D60]",
+              isWishlisted && "border-[#1B1D60]",
             )}
           >
             <Heart
               size={19}
-              fill={
-                isWishlisted
-                  ? "#1B1D60"
-                  : "none"
-              }
+              fill={isWishlisted ? "#1B1D60" : "none"}
               stroke="#1B1D60"
               strokeWidth={1.8}
             />

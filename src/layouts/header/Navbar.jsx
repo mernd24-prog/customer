@@ -86,7 +86,7 @@ export const Navbar = ({ icons: propIcons }) => {
     }),
   ]);
 
-  const cartItemCount = cartItems.length;
+  const cartItemCount = Array.isArray(cartItems) ? cartItems.length : 0;
 
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
@@ -164,7 +164,6 @@ export const Navbar = ({ icons: propIcons }) => {
     <>
       <header className="customer-container w-full">
         <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
-          {/* Logo */}
           <div className="group relative order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
             <Link to="/" aria-label="Sam Global Home">
               <picture>
@@ -192,8 +191,6 @@ export const Navbar = ({ icons: propIcons }) => {
               Menu
             </span>
           </div>
-
-          {/* Search */}
           <SearchBar
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
