@@ -34,8 +34,7 @@ export default function Breadcrumbs({
     linkClassName.includes("text-[11px]") ||
     linkClassName.includes("text-[12px]");
 
-  const resolvedHomeSize =
-    homeIconSize || (isCompact ? 11 : 12);
+  const resolvedHomeSize = homeIconSize || (isCompact ? 13 : 16);
 
   const isDarkBg =
     Boolean(isDark || dark) ||
@@ -80,7 +79,7 @@ export default function Breadcrumbs({
   return (
     <nav
       className={cn(
-        "mb-2 flex flex-wrap items-center gap-x-0.5 gap-y-1 pl-0 pr-2 py-1 sm:pr-3 sm:py-1.5",
+        "mb-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 pl-0 pr-2 py-1 sm:pr-3 sm:py-1.5",
         className,
       )}
       aria-label="Breadcrumb"
@@ -135,14 +134,14 @@ export default function Breadcrumbs({
         return (
           <span
             key={`${item.label}-${index}`}
-            className="inline-flex min-w-0 items-center gap-0.5"
+            className="inline-flex min-w-0 items-center gap-1.5"
           >
             {item.href && !isLast ? (
               <Link
                 to={item.href}
                 title={item.label}
                 className={cn(
-                  "group inline-flex items-center gap-1 font-medium text-[10px] leading-tight text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D] sm:text-[11px] lg:text-[12px]",
+                  "group inline-flex items-center gap-1.5 font-medium text-xs leading-tight text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D] sm:text-sm lg:text-base",
                   linkClassName,
                 )}
               >
@@ -163,7 +162,7 @@ export default function Breadcrumbs({
               <span
                 title={item.label}
                 className={cn(
-                  "inline-flex min-w-0 items-center gap-1 font-medium text-[10px] leading-tight text-[#8A6500] sm:text-[11px] lg:text-[12px]",
+                  "inline-flex min-w-0 items-center gap-1.5 font-medium text-xs leading-tight text-[#8A6500] sm:text-sm lg:text-base",
                   currentClassName,
                 )}
               >
@@ -191,7 +190,7 @@ export default function Breadcrumbs({
             {!isLast && (
               <IoIosArrowForward
                 className={cn(
-                  "h-2.5 w-2.5 shrink-0",
+                  "h-3.5 w-3.5 shrink-0",
                   isDarkBg
                     ? "text-white/70"
                     : "text-[#2E2E2E]",

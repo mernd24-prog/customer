@@ -86,7 +86,6 @@ export default function DealsPage() {
                     linkClassName="!text-white"
                     currentClassName="!text-[#CE9F2D]"
                     separatorClassName="!text-white"
-                    className="mb-5"
                   />
 
                   <h1 className="text-h1 font-bold leading-tight text-white capitalize">

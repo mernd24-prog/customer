@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import CustomSwiper, {
   SwiperSlide,
 } from "../../../components/swiper/CustomSwiper";
@@ -37,6 +38,27 @@ const STORY_SWIPER_BREAKPOINTS = {
     slidesPerView: 4,
   },
 };
+
+function useStorySlidesPerView() {
+  const getSlidesPerView = () => {
+    if (typeof window === "undefined") return 1;
+    const width = window.innerWidth;
+    if (width >= 1100) return 4;
+    if (width >= 900) return 3;
+    if (width >= 640) return 2;
+    return 1;
+  };
+
+  const [slidesPerView, setSlidesPerView] = useState(getSlidesPerView);
+
+  useEffect(() => {
+    const updateSlidesPerView = () => setSlidesPerView(getSlidesPerView());
+    window.addEventListener("resize", updateSlidesPerView);
+    return () => window.removeEventListener("resize", updateSlidesPerView);
+  }, []);
+
+  return slidesPerView;
+}
 
 const benefitIcons = [
   CircleDollarSign,
@@ -89,6 +111,7 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
 }
 
 export default function BecomeASeller() {
+  const storySlidesPerView = useStorySlidesPerView();
   const { page: cmsPage, loading, error } =
     useCmsRecord("become-a-seller");
 
@@ -300,6 +323,7 @@ export default function BecomeASeller() {
                   <CustomSwiper
                     prevEl=".seller-story-prev"
                     nextEl=".seller-story-next"
+                    showPagination={mappedExperiences.length > storySlidesPerView}
                     spaceBetween={16}
                     slidesPerView={1}
                     breakpoints={STORY_SWIPER_BREAKPOINTS}
