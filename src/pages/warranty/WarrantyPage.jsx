@@ -38,6 +38,8 @@ export function WarrantyPage({ detail = false }) {
 
   const warranty = state.current;
   const warranties = Array.isArray(state.list) ? state.list : [];
+  const warrantyDetails = warranty?.warrantyDetails || warranty || {};
+  const warrantyReference = warranty?.warrantyId || warranty?._id || resolvedWarrantyId;
 
   return (
     <>
@@ -96,27 +98,29 @@ export function WarrantyPage({ detail = false }) {
                     </div>
                     <div>
                       <p className=" text-sm font-semibold text-ink">
-                        {warranty.type || "Product Warranty"}
+                        {warrantyDetails.type
+                          ? warrantyDetails.type.replace(/_/g, " ")
+                          : "Product Warranty"}
                       </p>
                       <p className=" text-xs text-gray">
-                        Id: {warranty.id || warrantyId}
+                        Id: {warrantyReference}
                       </p>
                     </div>
                   </div>
                   <div className="grid gap-2 text-sm">
-                    {warranty.period && (
+                    {warrantyDetails.period && (
                       <div className="flex gap-2">
                         <span className="text-muted">Period:</span>
                         <span className="font-medium text-ink">
-                          {warranty.period}
+                          {`${warrantyDetails.period} ${warrantyDetails.periodUnit || ""}`.trim()}
                         </span>
                       </div>
                     )}
-                    {warranty.expiresAt && (
+                    {(warranty.endDate || warranty.expiresAt) && (
                       <div className="flex gap-2">
                         <span className="text-muted">Expires:</span>
                         <span className="font-medium text-ink">
-                          {new Date(warranty.expiresAt).toLocaleDateString(
+                          {new Date(warranty.endDate || warranty.expiresAt).toLocaleDateString(
                             "en-IN",
                           )}
                         </span>
@@ -134,7 +138,7 @@ export function WarrantyPage({ detail = false }) {
                           run(
                             dispatch,
                             claimWarranty({
-                              warrantyId,
+                              warrantyId: warrantyReference,
                               reason: "Issue reported",
                               description: "Customer warranty claim",
                             }),
@@ -146,21 +150,30 @@ export function WarrantyPage({ detail = false }) {
                   )}
                 </div>
               )}
-              {warranties.map((w, i) => (
+              {warranties.map((w, i) => {
+                const details = w.warrantyDetails || w;
+                const reference = w.warrantyId || w._id || w.id;
+                return (
                 <div
-                  key={w.id || i}
+                  key={reference || i}
                   className="flex items-center justify-between border-t border-border px-5 py-4 first:border-t-0"
                 >
                   <div className="flex items-center gap-3">
                     <ShieldCheck size={16} className="text-gold" />
                     <div>
                       <p className=" text-sm font-medium text-ink">
-                        {w.type || "Warranty"}
+                        {details.type
+                          ? details.type.replace(/_/g, " ")
+                          : "Warranty"}
                       </p>
-                      <p className=" text-xs text-gray">{w.period}</p>
+                      <p className=" text-xs text-gray">
+                        {details.period
+                          ? `${details.period} ${details.periodUnit || ""}`.trim()
+                          : "Coverage details unavailable"}
+                      </p>
                     </div>
                   </div>
-                  <Link to={getOpaqueWarrantyPath(w.id)}>
+                  <Link to={getOpaqueWarrantyPath(reference)}>
                     <BrandButton
                       variant="secondary"
                       rounded
@@ -170,7 +183,8 @@ export function WarrantyPage({ detail = false }) {
                     />
                   </Link>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
 

@@ -215,6 +215,11 @@ export default function ProductInfoSection({
     effectiveWarranty.period !== "" &&
     !isNaN(rawPeriodCount) &&
     rawPeriodCount >= 1;
+  const hasWarranty =
+    effectiveWarranty.enabled !== false &&
+    hasValidPeriod &&
+    [effectiveWarranty.periodUnit, effectiveWarranty.type, effectiveWarranty.provider]
+      .every((value) => Boolean(String(value || "").trim()));
 
   const warrantyPeriod = hasValidPeriod
     ? [effectiveWarranty.period, effectiveWarranty.periodUnit]
@@ -272,9 +277,15 @@ export default function ProductInfoSection({
       )}
 
         {activeInfoTab === "warranty" && (
-          <InfoCard title="Warranty Information" roundedClass="rounded-xl">
+          <InfoCard title="Warranty & Return Information" roundedClass="rounded-xl">
             <div className="space-y-6 px-4 py-5 text-sm lg:text-base text-[#4E4E4E] leading-relaxed">
-              {(effectiveWarranty.summary ||
+              {!hasWarranty && (
+                <div>
+                  <h3 className="text-base font-bold text-ink">Warranty</h3>
+                  <p className="mt-2">No warranty is offered for this product.</p>
+                </div>
+              )}
+              {hasWarranty && (effectiveWarranty.summary ||
                 effectiveWarranty.warrantySummary ||
                 warrantyPeriod ||
                 effectiveWarranty.type ||
@@ -327,7 +338,7 @@ export default function ProductInfoSection({
                 </div>
               )}
 
-              {(effectiveWarranty.coveredInWarranty ||
+              {hasWarranty && (effectiveWarranty.coveredInWarranty ||
                 effectiveWarranty.terms) && (
                 <div>
                   <h3 className="text-base font-bold text-ink">
@@ -345,7 +356,7 @@ export default function ProductInfoSection({
                 </div>
               )}
 
-              {effectiveWarranty.notCoveredInWarranty && (
+              {hasWarranty && effectiveWarranty.notCoveredInWarranty && (
                 <div>
                   <h3 className="text-base font-bold text-ink">
                     Not Covered in Warranty

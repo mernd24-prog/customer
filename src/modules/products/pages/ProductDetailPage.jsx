@@ -146,7 +146,7 @@ export default function ProductDetailPage() {
       : []),
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
-    { key: "warranty", label: "Warranty" },
+    { key: "warranty", label: "Warranty & Returns" },
     { key: "seller", label: "Seller Information" },
   ];
 
