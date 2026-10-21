@@ -99,7 +99,7 @@ export default function CartItemCard({
 
           <div className="flex flex-col items-center gap-3 flex-1 min-w-0">
             {item?.image && (
-              <div className="relative flex aspect-square w-full max-w-full sm:max-w-[165px] h-auto max-h-[260px] sm:max-h-[190px] items-center justify-center overflow-hidden rounded-[10px] border border-[#F0E6D2] bg-white">
+              <div className="relative flex aspect-square w-full max-w-full sm:max-w-[165px] h-auto max-h-[260px] sm:max-h-[190px] items-center justify-center overflow-hidden rounded-lg border border-[#F0E6D2] bg-white">
                 {productPath ? (
                   <Link
                     to={productPath}

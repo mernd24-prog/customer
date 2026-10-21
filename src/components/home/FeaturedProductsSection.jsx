@@ -33,7 +33,7 @@ export default function FeaturedProductsSection({
     md:py-0
 
     lg:my-10
-    lg:rounded-3xl
+    lg:rounded-lg
     lg:px-5
     lg:py-4
 

@@ -67,7 +67,7 @@ export default function SectionContainer({
               actionStyle === "icon" && actionHref ? (
                 <Link
                   to={actionHref}
-                  className="self-start sm:self-center hidden sm:flex w-[52px] h-8 sm:h-9 rounded-[100px] bg-[#3E4093] text-white items-center justify-center hover:bg-[#2A2B66] transition-colors outline-none focus:outline-none"
+                  className="self-start sm:self-center hidden sm:flex w-[52px] h-8 sm:h-7 rounded-lg bg-[#3E4093] text-white items-center justify-center hover:bg-[#2A2B66] transition-colors outline-none focus:outline-none"
                   aria-label={`Go to ${title}`}
                 >
                   <ArrowRight className="w-5 h-5" strokeWidth={2} />

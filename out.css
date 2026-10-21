@@ -3604,7 +3604,7 @@ h1,
 }
 
 .rounded-\[12px\] {
-  border-radius: 12px;
+  border-radius: 8px;
 }
 
 .rounded-\[14px\] {
@@ -8300,26 +8300,15 @@ select:not([multiple]):disabled {
   background: var(--customer-gold);
 }
 
-.filter-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #ce9f2d transparent;
+.sidebar-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.filter-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.filter-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.filter-scrollbar::-webkit-scrollbar-thumb {
-  background: #ce9f2d;
-  border-radius: 999px;
-}
-
-.filter-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #b8871f;
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 .price-range-input {

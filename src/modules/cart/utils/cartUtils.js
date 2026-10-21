@@ -109,13 +109,16 @@ export function adaptItemForCard(item, fullProduct = null) {
   const stock =
     rawStock != null && !isNaN(Number(rawStock)) ? Number(rawStock) : null;
   const outOfStock = stock !== null && stock <= 0;
-  const effectiveMaxStock = stock !== null ? stock : 999;
-  const stockLimitReached = stock !== null && quantity >= effectiveMaxStock;
+  const effectiveMaxStock = stock !== null ? Math.min(stock, 10) : 10;
+  const stockLimitReached = stock !== null && stock < 10 && quantity >= stock;
+  const maxOrderLimitReached = quantity >= 10;
   const stockMessage = outOfStock
     ? "Out of stock"
     : stockLimitReached
       ? `Only ${stock} in stock`
-      : "";
+      : maxOrderLimitReached
+        ? "Max 10 items per order"
+        : "";
   const rating =
     item.rating ??
     item.averageRating ??
@@ -154,7 +157,7 @@ export function adaptItemForCard(item, fullProduct = null) {
     maxQuantity: effectiveMaxStock,
     attributes,
     stockMessage,
-    increaseDisabled: outOfStock || stockLimitReached,
+    increaseDisabled: outOfStock || stockLimitReached || maxOrderLimitReached,
     _raw: item,
   };
 }

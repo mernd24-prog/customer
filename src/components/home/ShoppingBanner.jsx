@@ -126,7 +126,7 @@ export default function ShoppingMadeEasyBanner({
       </div>
     </div>
   );
-const containerClasses = `group my-8 md:my-12 flex w-full aspect-[2.5/1] items-center overflow-hidden rounded-[6px] sm:rounded-lg md:rounded-xl block ${
+const containerClasses = `group my-8 md:my-12 flex w-full aspect-[2.5/1] items-center overflow-hidden rounded-lg sm:rounded-lg md:rounded-lg block ${
   hasLink ? "cursor-pointer" : "cursor-default"
 } ${className}`;
 

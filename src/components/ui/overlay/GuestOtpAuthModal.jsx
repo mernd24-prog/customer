@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { cn } from "../../../utils/common";
@@ -9,6 +9,7 @@ import AuthCard from "../../ui/AuthCard";
 import OtpInput from "../../ui/OtpInput";
 import Button from "../buttons/Button";
 import { otpAuth } from "../../../modules/auth/slices/authSlice";
+import { AUTH_ROUTES } from "../../../modules/auth/routes/apiRoutes";
 import { fetchCart, updateCart } from "../../../modules/cart/slices/cartSlice";
 import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
@@ -332,6 +333,17 @@ export default function GuestOtpAuthModal({
                 >
                   {isSubmitting ? "Please wait..." : "Continue"}
                 </Button>
+
+                <p className="text-center text-[0.8rem] text-muted">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    to={AUTH_ROUTES.register}
+                    onClick={() => onClose?.()}
+                    className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
+                  >
+                    Create Account
+                  </Link>
+                </p>
               </form>
             ) : (
               <form onSubmit={handleVerifyOtp} className="space-y-4" noValidate>

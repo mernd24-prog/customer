@@ -246,11 +246,7 @@ export const Navbar = ({ icons: propIcons }) => {
     }),
   ]);
 
-  const cartItemCount = cartItems.reduce(
-    (total, item) =>
-      total + Math.max(1, Number(item?.quantity) || 1),
-    0,
-  );
+  const cartItemCount = Array.isArray(cartItems) ? cartItems.length : 0;
 
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};

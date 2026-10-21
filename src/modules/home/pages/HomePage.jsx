@@ -96,13 +96,13 @@ export function HomePage() {
         />
       )} */}
       {/* 
-      <LazySection minHeight="280px">
-        <FeaturedCollectionsSection />
-      </LazySection> */}
-{/* 
+      // <LazySection minHeight="280px">
+      //   <FeaturedCollectionsSection />
+      // </LazySection> */}
+
       <LazySection minHeight="380px">
         <PromoCampaignCarousel data={promoCampaignPage} />
-      </LazySection> */}
+      </LazySection>
 
       <LazySection minHeight="150px">
         <ShoppingMadeEasyBanner data={shoppingBannerPage} />

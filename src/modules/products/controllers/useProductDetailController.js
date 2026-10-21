@@ -323,7 +323,7 @@ export function useProductDetailController(
     rawAvailableStock != null && !isNaN(Number(rawAvailableStock))
       ? Number(rawAvailableStock)
       : null;
-  const effectiveMaxStock = availableStock != null ? availableStock : 999;
+  const effectiveMaxStock = availableStock != null ? Math.min(availableStock, 10) : 10;
 
   useEffect(() => {
     setQuantity((currentQuantity) => {
@@ -411,9 +411,11 @@ export function useProductDetailController(
     availableStock != null ? quantity >= effectiveMaxStock : false;
   const quantityStockMessage = !inStock
     ? "Out Of Stock"
-    : quantityAtStockLimit
-      ? `Only ${availableStock} in stock`
-      : "";
+    : quantity >= 10
+      ? "Max 10 items per order"
+      : quantityAtStockLimit
+        ? `Only ${Math.min(availableStock ?? 0, 10)} in stock`
+        : "";
 
   const brand = getProductBrandName(product);
   const categoryLabel = getProductCategoryName(product);

@@ -123,18 +123,18 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
             >
               <IoChevronForward className="text-lg sm:text-xl text-[#333]" />
             </button>
-          )}
+          )} 
           <div
             ref={scrollRef}
             className="flex items-center gap-3 sm:gap-4 lg:gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth py-1 w-full"
           >
             {cards.map((card, index) => {
-                            const rawLink = (card.link || "").trim();
+              const rawLink = (card.link || "").trim();
               const hasLink = rawLink.length > 0;
               const isExternal = hasLink && /^https?:\/\//i.test(rawLink);
 
               const cardClasses =
-                "relative overflow-hidden rounded-xl sm:rounded-2xl group shadow-md sm:shadow-xl h-[240px] min-[375px]:h-[270px] min-[425px]:h-[310px] sm:h-[360px] md:h-[380px] lg:h-[420px] xl:h-[450px] w-[72vw] min-[375px]:w-[68vw] min-[425px]:w-[260px] sm:w-[280px] md:w-[300px] lg:w-[calc(25%-15px)] shrink-0 snap-start block";
+                "relative overflow-hidden rounded-lg sm:rounded-lg group shadow-md sm:shadow-xl h-[240px] min-[375px]:h-[270px] min-[425px]:h-[310px] sm:h-[360px] md:h-[380px] lg:h-[420px] xl:h-[450px] w-[72vw] min-[375px]:w-[68vw] min-[425px]:w-[260px] sm:w-[280px] md:w-[300px] lg:w-[calc(25%-15px)] shrink-0 snap-start block";
 
               const CardContent = (
                 <>
@@ -153,7 +153,7 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                     className="absolute inset-0 pointer-events-none"
                     style={{
                       background:
-                        "linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 28%, transparent 52%)",
+                        "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.1) 60%, transparent 75%)",
                     }}
                   />
                   <div className="absolute bottom-0 left-0 right-0 p-2.5 sm:p-4 lg:p-5 flex flex-col justify-end text-white z-10">
@@ -164,12 +164,12 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                     )}
 
                     {card.description && (
-                      <p className=" text-[18px] sm:text-xs text-gray-200 line-clamp-1 mb-1 drop-shadow">
+                      <p className=" text-[12px] sm:text-[15px]  line-clamp-1 mb-1 drop-shadow">
                         {card.description}
                       </p>
                     )}
                     {card.ctaLabel && (
-                      <span className="mt-1 sm:mt-2 inline-flex items-center gap-1 sm:gap-1.5 h-[28px] sm:h-[32px] md:h-[36px] w-fit rounded-full bg-[#CE9F2D] px-2.5 sm:px-4 text-[11px] sm:text-xs md:text-sm font-bold leading-none text-white shadow-md transition-colors duration-300 group-hover:bg-[#B88B22] group-hover:shadow-lg">
+                      <span className="mt-1 sm:mt-2 inline-flex items-center gap-1 sm:gap-1.5 h-[28px] sm:h-[32px] md:h-[36px] w-fit rounded-lg bg-[#CE9F2D] px-2.5 sm:px-4 text-[11px] sm:text-xs md:text-sm font-bold leading-none text-white shadow-md transition-colors duration-300 group-hover:bg-[#B88B22] group-hover:shadow-lg">
                         {card.ctaLabel}
                         <IoChevronForward className="text-[10px] sm:text-xs shrink-0" />
                       </span>

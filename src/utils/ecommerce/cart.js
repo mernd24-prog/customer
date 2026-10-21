@@ -220,7 +220,7 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
           ? { ...item, quantity: Math.min(item.quantity + quantity, 10) }
           : item,
       )
-    : [nextItem, ...existing]; // Add new item at the top
+    : [nextItem, ...existing];
 
   return normalizeCartPayloadForWrite({
     wishlist: cart?.wishlist || [],

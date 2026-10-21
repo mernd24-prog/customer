@@ -153,11 +153,7 @@ export default function useCart() {
   const selectedItems = items.filter((item) =>
     normalizedSelectedItemIds.includes(normalizeCartItemId(item)),
   );
-  const selectedItemCount = selectedItems.reduce(
-    (total, item) =>
-      total + Math.max(1, Number(item?.quantity || item?.qty || 1)),
-    0,
-  );
+  const selectedItemCount = selectedItems.length;
 
   const mrpSubtotal = calcMRPSubtotal(selectedItems);
   const sellingSubtotal = calcSellingSubtotal(selectedItems);
