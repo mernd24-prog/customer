@@ -149,12 +149,7 @@ export default function CartPage() {
 
     <PageContainer>
           <Breadcrumbs
-            items={breadcrumbItems}
-            className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-            linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
-            currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
-            separatorClassName="text-[#2E2E2E]"
-          />
+            items={breadcrumbItems} />
 
           <ApiState
             loading={cartState.loading && !cart.items}

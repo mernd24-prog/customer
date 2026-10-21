@@ -511,8 +511,7 @@ function ReturnsRefundsPage() {
 
       <PageContainer>
         <Breadcrumbs
-          items={breadcrumbItems}
-          className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+          items={breadcrumbItems}   
           heading="My Order"
         />
         <ApiState

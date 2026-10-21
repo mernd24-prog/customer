@@ -194,7 +194,6 @@ export function PaymentResultPage() {
     <PageContainer>
       <Breadcrumbs
         items={breadcrumbItems}
-        className="mb-6 flex flex-wrap items-center gap-[10px] sm:mb-8 sm:gap-[12px] lg:gap-[15px]"
       />
 
       <div className="mx-auto flex w-full justify-center">

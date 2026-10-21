@@ -71,12 +71,13 @@ export function HomePage() {
   }, [dispatch]);
 
   // Featured: top-rated from newest products; fall back to trending
-  const featuredProducts = useMemo(() => {
-    const pool = products.length ? products : trendingProducts;
-    return [...pool]
-      .sort((a, b) => Number(b?.rating || 0) - Number(a?.rating || 0))
-      .slice(0, 5);
-  }, [products, trendingProducts]);
+ const featuredProducts = useMemo(() => {
+  const pool = products.length ? products : trendingProducts;
+
+  return pool
+    .filter((product) => product?.metadata?.featured === true)
+    .slice(0, 5);
+}, [products, trendingProducts]);
 
   return (
     <AppErrorBoundary>

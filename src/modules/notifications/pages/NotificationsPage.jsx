@@ -42,7 +42,6 @@ export function NotificationsPage() {
       <PageContainer>
         <Breadcrumbs
           items={BREADCRUMB_ITEMS}
-          className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
           heading={null}
         />
 

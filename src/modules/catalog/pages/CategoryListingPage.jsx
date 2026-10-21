@@ -387,7 +387,6 @@ export default function CategoryListingPage() {
       <PageContainer>
         <Breadcrumbs
           items={breadcrumbItems}
-          className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
           heading={null}
         />
 
