@@ -146,7 +146,7 @@ export default function VariantSelector({
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
                     }
-                    className={`relative h-[80px] w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
+                    className={`relative h-[80px] w-[80px] overflow-hidden rounded-lg border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
                       isSelected
                         ? "border border-gold shadow-sm"
                         : "border border-gold/20 hover:border-gold/50"

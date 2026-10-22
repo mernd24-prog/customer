@@ -83,7 +83,7 @@ function CartLine({ item, onClose }) {
     <Link
       to={getProductPublicPath(product || item)}
       onClick={onClose}
-      className="group flex items-center gap-3 rounded-xl border border-[var(--customer-border)] bg-white p-2.5 transition-all duration-300 "
+      className="group flex items-center gap-3 rounded-lg  border border-[var(--customer-border)] bg-white p-2.5 transition-all duration-300 "
       aria-label={`View ${title}`}
     >
       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[var(--customer-cream)] ring-1 ring-black/5">
@@ -101,6 +101,7 @@ function CartLine({ item, onClose }) {
         <p className="line-clamp-1 text-sm font-semibold text-[var(--customer-ink)]">
           {title}
         </p>
+
         <p className="mt-1  text-xs text-[var(--customer-muted)]">
           Qty {quantity} • {formatMoney(unitPrice, product?.currency || "INR")}
         </p>
@@ -162,10 +163,10 @@ export default function AddedToCartModal({
           <Link
             to={addedProductPath}
             onClick={onClose}
-            className="group relative mt-5 flex items-center gap-4 rounded-2xl border border-white bg-white/80 p-3 shadow-sm backdrop-blur transition-all duration-300  sm:p-4"
+            className="group relative mt-5 flex items-center gap-4 rounded-lg border border-white bg-white/80 p-3 shadow-sm backdrop-blur transition-all duration-300  sm:p-4"
             aria-label={`View ${addedTitle}`}
           >
-            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--customer-cream)] ring-1  ring-black/5 sm:h-24 sm:w-24">
+            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-[var(--customer-cream)] ring-1  ring-black/5 sm:h-24 sm:w-24">
               <img
                 loading="lazy"
                 width="400"
@@ -180,7 +181,7 @@ export default function AddedToCartModal({
               <p className="line-clamp-2  text-sm font-bold leading-5 text-[var(--customer-ink)] sm:text-base">
                 {addedTitle}
               </p>
-              <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[var(--customer-cream)] px-2.5 py-1 text-xs font-medium text-[var(--customer-muted)]">
+              <p className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-[var(--customer-cream)] px-2.5 py-1 text-xs font-medium text-[var(--customer-muted)]">
                 <ShoppingBag size={13} aria-hidden="true" />
                 Cart Now Has {cartItems.length}{" "}
                 {cartItems.length === 1 ? "item" : "items"}
@@ -209,7 +210,7 @@ export default function AddedToCartModal({
         </div>
 
         <div className="flex flex-col bg-[#fcfcfb] p-4 sm:p-5 md:max-h-[80vh]">
-          <div className="mb-4 flex min-h-9 items-center justify-between gap-3 md:pr-14">
+          <div className="mb-4 flex min-h-9 items-center justify-between gap-3 md:pr-14 ">
             <div>
               <h3 className="mt-0.5 text-base font-bold text-[var(--customer-ink)]">
                 Cart Items
@@ -219,7 +220,7 @@ export default function AddedToCartModal({
               {formatMoney(subtotal, "INR")}
             </span>
           </div>
-          <div className="space-y-2.5 max-h-[20rem] overflow-y-auto pr-1 hide-scrollbar">
+          <div className="space-y-2.5 max-h-[20rem] overflow-y-auto pr-1 hide-scrollbar ">
             {cartItems.map((item, index) => (
               <CartLine
                 key={`${getProductId(item?.productId || item?.product || item)}-${index}`}

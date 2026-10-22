@@ -80,7 +80,7 @@ function CategoryTile({ category }) {
     >
       <div
         className="
-          mt-2 overflow-hidden rounded-[12px]
+          mt-2 overflow-hidden rounded-lg
           border border-[#EEE8DA]
           bg-[#FAF8F3]
           p-1.5
@@ -95,7 +95,7 @@ function CategoryTile({ category }) {
           className="
             flex h-[140px] w-full
             items-center justify-center
-            overflow-hidden rounded-[9px]
+            overflow-hidden rounded-lg
             bg-white
             p-3
             transition-all duration-300

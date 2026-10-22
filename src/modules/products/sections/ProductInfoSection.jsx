@@ -237,7 +237,7 @@ export default function ProductInfoSection({
       />
 
       {activeInfoTab === "details" && (
-        <InfoCard title="Product Details" roundedClass="rounded-xl">
+        <InfoCard title="Product Details" roundedClass="rounded-lg">
           {detailRows.length > 0 || warranty ? (
             <DetailRows
               rows={detailRows.map(([key, value]) => [
@@ -257,7 +257,7 @@ export default function ProductInfoSection({
       )}
 
       {activeInfoTab === "description" && (
-        <InfoCard title="Description">
+        <InfoCard title="Description" roundedClass="rounded-lg">
           {effectiveDescription ||
           selectedVariant?.description ||
           product?.description ? (
@@ -277,7 +277,7 @@ export default function ProductInfoSection({
       )}
 
         {activeInfoTab === "warranty" && (
-          <InfoCard title="Warranty & Return Information" roundedClass="rounded-xl">
+          <InfoCard title="Warranty & Return Information" roundedClass="rounded-lg">
             <div className="space-y-6 px-4 py-5 text-sm lg:text-base text-[#4E4E4E] leading-relaxed">
               {!hasWarranty && (
                 <div>
@@ -400,7 +400,7 @@ export default function ProductInfoSection({
 
       {activeInfoTab === "common-images" &&
         product.commonImages?.length > 0 && (
-          <InfoCard title="Catalogue Images" roundedClass="rounded-xl">
+          <InfoCard title="Catalogue Images" roundedClass="rounded-lg">
             <div
               ref={catalogueContainerRef}
               className="flex flex-wrap gap-3 sm:gap-4 p-4"
@@ -448,7 +448,7 @@ export default function ProductInfoSection({
         )}
 
       {activeInfoTab === "seller" && (
-        <InfoCard title="Seller Information">
+        <InfoCard title="Seller Information"roundedClass="rounded-lg">
           {product.seller || product.sellerName ? (
             <div className="overflow-hidden">
               {/* Seller Details */}

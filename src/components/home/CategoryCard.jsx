@@ -18,7 +18,7 @@ export default function CategoryCard({
   const cardContent = (
     <article
       className={cn(
-        "group relative flex flex-col h-full min-h-[300px] sm:min-h-[360px] w-full overflow-hidden rounded-2xl select-none transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-black/10",
+        "group relative flex flex-col h-full min-h-[300px] sm:min-h-[360px] w-full overflow-hidden rounded-lg select-none transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-black/10",
         active && "ring-2 ring-indigo-500 ring-offset-2",
         className,
       )}

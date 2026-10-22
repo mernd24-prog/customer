@@ -44,25 +44,9 @@ export default function OrderActions({
   const buttonClass =
     "flex h-[52px] w-full min-w-0 cursor-pointer items-center justify-center gap-2 bg-transparent px-3 py-2 text-sm font-semibold text-[#1B1D60] transition-colors duration-200 hover:bg-[#F5F0E7] disabled:cursor-not-allowed disabled:opacity-60";
 
-  const chatButtonClass =
-    "flex h-[52px] w-full min-w-0 cursor-pointer items-center justify-center gap-2 bg-transparent px-3 py-2 text-sm font-semibold text-[#1B1D60] transition-colors duration-200 hover:bg-[#F5F0E7]";
-
-  const ticketButtonClass =
-    "flex h-[52px] w-full min-w-0 cursor-pointer items-center justify-center gap-2 bg-transparent px-3 py-2 text-sm font-semibold text-[#1B1D60] transition-colors duration-200 hover:bg-[#F5F0E7]";
-
   const iconClass = "h-4 w-4 shrink-0 text-[#1B1D60]";
-  const chatIconClass = "h-4 w-4 shrink-0 text-[#1B1D60]";
-  const ticketIconClass = "h-4 w-4 shrink-0 text-[#1B1D60]";
-
   const dividerClass = "h-4 w-px shrink-0 bg-[#D8C9A1]";
-  const chatDividerClass = "h-4 w-px shrink-0 bg-[#D8C9A1]";
-  const ticketDividerClass = "h-4 w-px shrink-0 bg-[#D8C9A1]";
-
   const textClass =
-    "min-w-0 whitespace-normal break-words text-center text-sm font-semibold leading-5 text-[#1B1D60]";
-  const chatTextClass =
-    "min-w-0 whitespace-normal break-words text-center text-sm font-semibold leading-5 text-[#1B1D60]";
-  const ticketTextClass =
     "min-w-0 whitespace-normal break-words text-center text-sm font-semibold leading-5 text-[#1B1D60]";
 
   const actionItems = [];
@@ -122,7 +106,7 @@ export default function OrderActions({
                 )}`
               : `/returns/request/${orderId}`
           }
-          className={`${buttonClass} block`}
+          className={buttonClass}
         >
           <RotateCcw className={iconClass} />
           <span className={dividerClass} />
@@ -132,9 +116,17 @@ export default function OrderActions({
     );
   }
 
+  // Make a single available action span the full action container.
+  const actionGridClass =
+    actionItems.length === 1
+      ? "grid-cols-1"
+      : actionItems.length === 2
+        ? "grid-cols-1 md:grid-cols-2"
+        : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3";
+
   const actionButtons = (
     <div className="grid w-full min-w-0 overflow-hidden rounded-lg border border-[#D8C9A1] bg-[#F6F0E5]">
-      <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+      <div className={`grid w-full min-w-0 ${actionGridClass}`}>
         {actionItems}
       </div>
     </div>
@@ -156,11 +148,11 @@ export default function OrderActions({
       onClick={() => {
         window.dispatchEvent(new CustomEvent("open-ai-chat"));
       }}
-      className={chatButtonClass}
+      className={buttonClass}
     >
-      <MessageSquare className={chatIconClass} />
-      <span className={chatDividerClass} />
-      <span className={chatTextClass}>Chat with us</span>
+      <MessageSquare className={iconClass} />
+      <span className={dividerClass} />
+      <span className={textClass}>Chat with us</span>
     </button>
   );
 
@@ -168,17 +160,17 @@ export default function OrderActions({
     <button
       type="button"
       onClick={handleTicketClick}
-      className={ticketButtonClass}
+      className={buttonClass}
     >
-      <Ticket className={ticketIconClass} />
-      <span className={ticketDividerClass} />
-      <span className={ticketTextClass}>Raise Ticket</span>
+      <Ticket className={iconClass} />
+      <span className={dividerClass} />
+      <span className={textClass}>Raise Ticket</span>
     </button>
   );
 
   const supportActions = (
     <div className="grid w-full min-w-0 overflow-hidden rounded-lg border border-[#D8C9A1] bg-[#F6F0E5] md:grid-cols-2">
-      <div className="min-w-0 border-b border-[#D8C9A1] md:border-b-0 md:border-r md:last:border-r-0">
+      <div className="min-w-0 border-b border-[#D8C9A1] md:border-b-0 md:border-r">
         {ticketButton}
       </div>
       <div className="min-w-0">{chatButton}</div>
