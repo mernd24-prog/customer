@@ -1,10 +1,19 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { tokenStorage } from "../api/tokenStorage";
 
 export function ProtectedRoute() {
   const user = useSelector((state) => state.auth.current);
   const location = useLocation();
-  return user ? <Outlet /> : <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  const hasStoredSession = Boolean(
+    tokenStorage.getAccessToken() || tokenStorage.getRefreshToken(),
+  );
+
+  return user || hasStoredSession ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/login" replace state={{ from: location.pathname }} />
+  );
 }
 
 export function GuestRoute() {
