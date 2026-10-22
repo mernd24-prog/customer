@@ -178,7 +178,7 @@ function ProductGallery({
                       }
                       mainSwiper?.slideTo(targetIndex);
                     }}
-                    className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-[15px] border transition-colors duration-200 xl:w-[92px] ${
+                    className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-lg border transition-colors duration-200 xl:w-[92px] ${
                       isModal ? "xl:h-[80px]" : "xl:h-[calc((100%_-_64px)/5)]"
                     } ${
                       isActive
@@ -237,7 +237,7 @@ function ProductGallery({
         )}
 
         <div
-          className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
+          className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-lg  bg-transparent xl:order-2 ${
             isModal
               ? "h-full w-full"
               : "h-[324px] md:h-[440px] xl:h-full w-full"

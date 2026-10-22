@@ -46,7 +46,7 @@ export default function EmptyState({
         <div className="mt-6 w-full max-w-xs sm:w-auto">
           <ContinueShoppingButton
             onClick={resolvedAction}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto "
           >
             {resolvedActionLabel}
           </ContinueShoppingButton>
