@@ -47,6 +47,8 @@ export const endpoints = {
     forgotPassword: `${API_PREFIX}/auth/forgot-password`,
     resetPassword: `${API_PREFIX}/auth/reset-password`,
     changePassword: `${API_PREFIX}/auth/change-password`,
+    sendProfileEmailOtp: `${API_PREFIX}/auth/profile-email/send-otp`,
+    verifyProfileEmailOtp: `${API_PREFIX}/auth/profile-email/verify-otp`,
     status: `${API_PREFIX}/auth/customer/status`,
   },
   users: {

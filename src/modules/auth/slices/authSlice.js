@@ -91,6 +91,8 @@ export const {
   forgotPassword,
   resetPassword,
   changePassword,
+  sendProfileEmailOtp,
+  verifyProfileEmailOtp,
   checkAuthStatus
 } = authThunks;
 

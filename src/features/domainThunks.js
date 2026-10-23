@@ -87,6 +87,16 @@ export const authThunks = {
     url: endpoints.auth.changePassword,
     data: body,
   }),
+  sendProfileEmailOtp: makeAuthThunk("auth/sendProfileEmailOtp", {
+    method: "post",
+    url: endpoints.auth.sendProfileEmailOtp,
+    data: body,
+  }),
+  verifyProfileEmailOtp: makeAuthThunk("auth/verifyProfileEmailOtp", {
+    method: "post",
+    url: endpoints.auth.verifyProfileEmailOtp,
+    data: body,
+  }),
   checkAuthStatus: makeAuthThunk("auth/checkAuthStatus", {
     url: endpoints.auth.status,
   }),

@@ -12,11 +12,14 @@ import {
 
 import FormField from "../../../components/ui/FormField";
 import Button from "../../../components/ui/buttons/Button";
+import OtpInput from "../../../components/ui/OtpInput";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { fetchMe, updateMe } from "../../../features/user/userSlice";
 import { apiRequest } from "../../../api/client";
 import { endpoints, FILE_UPLOAD_MODULES } from "../../../api/endpoints";
 import { profileSchema } from "../../../validations/validationSchemas";
+import { sendProfileEmailOtp, verifyProfileEmailOtp } from "../../auth/slices/authSlice";
+import { notify } from "../../../utils/notify";
 import { useProfileImageState, invalidateProfileImageCache } from "../../../hooks/useProfileImage";
 
 const FALLBACK_AVATAR = "/image/png/person.png";
@@ -81,6 +84,11 @@ export default function ProfileTab({ user }) {
   const [localPreview, setLocalPreview] = useState("");
   const [avatarError, setAvatarError] = useState("");
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
+  const [email, setEmail] = useState(user?.email || "");
+  const [emailOtp, setEmailOtp] = useState("");
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [emailBusy, setEmailBusy] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   const displayAvatar = localPreview || profileAvatar;
   const isAvatarLoading = isAvatarFetching || isAvatarUploading;
@@ -89,6 +97,7 @@ export default function ProfileTab({ user }) {
     register,
     handleSubmit,
     reset,
+    trigger,
     formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(profileSchema),
@@ -107,7 +116,82 @@ export default function ProfileTab({ user }) {
     });
 
     setAvatarError("");
+    setEmail(user?.email || "");
+    setEmailOtp("");
+    setEmailOtpSent(false);
+    setEmailError("");
   }, [user, reset]);
+
+  const getRequestError = (error, fallback) => {
+    const rawMessage =
+      (typeof error === "string" ? error : "") ||
+      error?.response?.data?.message ||
+      error?.response?.data?.error?.message ||
+      error?.data?.message ||
+      error?.data?.error?.message ||
+      error?.error?.message ||
+      error?.message ||
+      fallback;
+    const message = String(rawMessage || fallback);
+
+    if (/already (in use|exists)/i.test(message)) {
+      return "This email belongs to another account. Please use a different email address.";
+    }
+    if (/verified email.*cannot be changed|cannot change.*verified email/i.test(message)) {
+      return "Your email is already verified and cannot be changed.";
+    }
+    if (/invalid or expired otp|otp is invalid or has expired/i.test(message)) {
+      return "This OTP is incorrect or has expired. Request a new email OTP and try again.";
+    }
+    if (/too many|daily.*limit|rate limit/i.test(message)) {
+      return "Too many OTP requests or attempts. Please wait before trying again.";
+    }
+    if (/disabled|not configured/i.test(message)) {
+      return "Email OTP delivery is currently unavailable. Please try again later or contact support.";
+    }
+
+    return message;
+  };
+
+  const handleSendEmailOtp = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      setEmailError("Enter a valid email address.");
+      return;
+    }
+    setEmailBusy(true);
+    setEmailError("");
+    try {
+      await dispatch(sendProfileEmailOtp({ email: normalizedEmail })).unwrap();
+      setEmail(normalizedEmail);
+      setEmailOtp("");
+      setEmailOtpSent(true);
+      notify.success(`A 6-digit OTP was sent to email ${normalizedEmail}.`);
+    } catch (error) {
+      setEmailError(getRequestError(error, "Unable to send email OTP."));
+    } finally {
+      setEmailBusy(false);
+    }
+  };
+
+  const handleVerifyEmailOtp = async () => {
+    if (!/^\d{6}$/.test(emailOtp)) {
+      setEmailError("Enter the complete 6-digit OTP sent to your email.");
+      return;
+    }
+    setEmailBusy(true);
+    setEmailError("");
+    try {
+      await dispatch(verifyProfileEmailOtp({ email, otp: emailOtp })).unwrap();
+      await dispatch(fetchMe()).unwrap();
+      setEmailOtpSent(false);
+      notify.success("Email verified. It is now secured and cannot be edited.");
+    } catch (error) {
+      setEmailError(getRequestError(error, "The email OTP is invalid or expired."));
+    } finally {
+      setEmailBusy(false);
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -125,6 +209,13 @@ export default function ProfileTab({ user }) {
 
     setAvatarError("");
     setIsEditing(true);
+
+    // Phone-only accounts intentionally start without names. Surface those
+    // required-field errors as soon as profile editing begins instead of
+    // leaving a disabled Save button with no explanation.
+    window.setTimeout(() => {
+      void trigger(["firstName", "lastName"]);
+    }, 0);
   };
 
   const handleCancel = () => {
@@ -392,18 +483,54 @@ export default function ProfileTab({ user }) {
       </section>
       <section className="grid min-w-0 gap-3 sm:grid-cols-2 sm:gap-4">
         <div className={readonlyFieldClass}>
-          <label className={readonlyLabelClass}>Email</label>
+          <label htmlFor="profile-email" className={readonlyLabelClass}>
+            Email {user?.emailVerified && <span className="text-xs text-green-700">(Verified)</span>}
+          </label>
 
-          <div className={readonlyValueClass}>
-            <Mail
-              size={17}
-              className="shrink-0 text-[#697084]"
-            />
-
-            <span className="min-w-0 break-all">
-              {user?.email || "—"}
-            </span>
-          </div>
+          {user?.emailVerified ? (
+            <div className={readonlyValueClass}>
+              <Mail size={17} className="shrink-0 text-[#697084]" />
+              <span className="min-w-0 break-all">{user.email}</span>
+            </div>
+          ) : (
+            <div className="grid gap-2">
+              <div className="flex gap-2">
+                <div className="relative min-w-0 flex-1">
+                  <Mail size={17} className="absolute left-3 top-3 text-[#697084]" />
+                  <input
+                    id="profile-email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                      setEmailOtpSent(false);
+                      setEmailOtp("");
+                      setEmailError("");
+                    }}
+                    disabled={!isEditing || emailBusy}
+                    placeholder="Add your email address"
+                    className="min-h-11 w-full rounded-lg border border-[#D9DCE5] bg-white py-2 pl-10 pr-3 text-sm disabled:bg-[#F7F7F9]"
+                  />
+                </div>
+                {isEditing && (
+                  <button type="button" onClick={handleSendEmailOtp} disabled={emailBusy || !email.trim()} className="rounded-lg bg-[#1B1D60] px-3 text-xs font-semibold text-white disabled:opacity-50">
+                    {emailOtpSent ? "Resend OTP" : "Verify email"}
+                  </button>
+                )}
+              </div>
+              {emailOtpSent && (
+                <div className="grid gap-2 rounded-lg border border-gold/30 bg-gold/5 p-3">
+                  <p className="text-xs text-[#4B5265]">Enter the OTP sent to email <strong>{email}</strong>.</p>
+                  <OtpInput value={emailOtp} length={6} onChange={(value) => setEmailOtp(String(value || "").replace(/\D/g, "").slice(0, 6))} error="" />
+                  <button type="button" onClick={handleVerifyEmailOtp} disabled={emailBusy || emailOtp.length !== 6} className="min-h-10 rounded-lg bg-gold px-4 text-sm font-semibold text-white disabled:opacity-50">
+                    {emailBusy ? "Verifying..." : "Verify email OTP"}
+                  </button>
+                </div>
+              )}
+              {!user?.email && !isEditing && <p className="text-xs text-amber-700">Add and verify an email by selecting Edit Profile.</p>}
+              {emailError && <p role="alert" className="text-xs font-semibold text-red-600">{emailError}</p>}
+            </div>
+          )}
         </div>
 
         <div className={readonlyFieldClass}>

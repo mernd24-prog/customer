@@ -58,6 +58,9 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
 
   return (
     <form className="grid gap-3" onSubmit={handleSubmit(submit)}>
+      <div className="rounded-lg border border-gold/25 bg-gold/5 px-3 py-2 text-xs text-[#4B5265]">
+        Complete all details below. We will send the registration OTP to the delivery destination shown on the next screen.
+      </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField
           id="firstName"
@@ -142,7 +145,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         size="lg"
         type="submit"
       >
-        <UserPlus size={18} /> Send OTP
+        <UserPlus size={18} /> Create Account & Send OTP
       </Button>
 
       <p className="text-center  text-[0.8rem] text-muted">

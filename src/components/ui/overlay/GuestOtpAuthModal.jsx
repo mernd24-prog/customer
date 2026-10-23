@@ -152,14 +152,19 @@ export default function GuestOtpAuthModal({
     setLoading(true);
 
     try {
-      await dispatch(
+      const result = await dispatch(
         otpAuth({
           mobile: cleanedMobile,
           otp: cleanedOtp,
         }),
       ).unwrap();
 
-      notify.success("Authenticated successfully!");
+      const authAction = (result?.data || result)?.otpAuth?.action;
+      notify.success(
+        authAction === "register"
+          ? "Account created and phone number verified. Add your name and email in My Account."
+          : "Phone number verified. Welcome back!",
+      );
 
       await syncGuestCartWithServer(dispatch, {
         fetchCartAction: fetchCart,
@@ -204,12 +209,12 @@ export default function GuestOtpAuthModal({
 
   const isSubmitting = loading || authLoading;
 
-  const cardTitle = step === 1 ? "Login with Phone" : "Verify OTP";
+  const cardTitle = step === 1 ? "Login or Create Account" : "Verify Mobile OTP";
 
   const cardSubtitle =
     step === 1
-      ? "Enter your mobile number to continue shopping with Sam Global."
-      : `Enter the 6-digit verification code sent to +91 ${mobile}`;
+      ? "Enter your mobile number. We will log you in if an account exists, or create a new account after verification."
+      : `Enter the 6-digit OTP sent by SMS to mobile +91 ${mobile}`;
 
   return createPortal(
     <div
@@ -272,7 +277,7 @@ export default function GuestOtpAuthModal({
                     htmlFor="guest-mobile"
                     className="mb-2 block text-sm font-medium text-[#2E2E2E]"
                   >
-                    Mobile Number
+                    Mobile Number (login or registration)
                     <span className="text-red-500">*</span>
                   </label>
 
@@ -331,17 +336,17 @@ export default function GuestOtpAuthModal({
                   disabled={isSubmitting || mobile.length < 10}
                   className="h-11 text-sm font-semibold uppercase"
                 >
-                  {isSubmitting ? "Please wait..." : "Continue"}
+                  {isSubmitting ? "Sending mobile OTP..." : "Send Mobile OTP"}
                 </Button>
 
                 <p className="text-center text-[0.8rem] text-muted">
-                  Don&apos;t have an account?{" "}
+                  New numbers create a phone-verified account automatically. Prefer email and password?{" "}
                   <Link
                     to={AUTH_ROUTES.register}
                     onClick={() => onClose?.()}
                     className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
                   >
-                    Create Account
+                    Complete registration form
                   </Link>
                 </p>
               </form>
@@ -350,7 +355,7 @@ export default function GuestOtpAuthModal({
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <label className="text-sm font-medium text-[#2E2E2E]">
-                      Enter OTP
+                      Mobile OTP
                     </label>
 
                     <button
@@ -406,7 +411,7 @@ export default function GuestOtpAuthModal({
                   disabled={isSubmitting || otp.length !== 6}
                   className="h-11 text-sm font-semibold uppercase"
                 >
-                  {isSubmitting ? "Verifying..." : "Continue"}
+                  {isSubmitting ? "Verifying mobile OTP..." : "Verify & Continue"}
                 </Button>
               </form>
             )}

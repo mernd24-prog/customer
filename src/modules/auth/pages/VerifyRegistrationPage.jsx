@@ -30,7 +30,7 @@ export default function VerifyRegistrationPage() {
       <AuthCard
         eyebrow="Almost there"
         title="Verify Your Account"
-        subtitle="Enter the 6-digit OTP to create your account."
+        subtitle="Enter the 6-digit registration OTP. The exact delivery destination is shown below."
         icon="/image/png/person.png"
         image="/image/png/authImage.png"
         maxWidth="max-w-[65rem]"
@@ -51,7 +51,7 @@ export default function VerifyRegistrationPage() {
             placeholder="you@example.com"
           />}
 
-          <label className=" text-sm font-semibold text-ink">Otp Code</label>
+          <label className="text-sm font-semibold text-ink">6-digit registration OTP</label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}

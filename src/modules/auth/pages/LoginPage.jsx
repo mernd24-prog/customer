@@ -97,7 +97,7 @@ export default function LoginPage() {
             className="h-11 w-full rounded-[8px] border border-gold bg-white text-[13px] font-semibold tracking-[0.5px] text-gold shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:bg-gold/5 hover:text-gold-dark hover:shadow-md active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Smartphone size={18} />
-            Continue with Mobile OTP
+            Login or Register with Mobile OTP
           </Button>
 
           <Button
