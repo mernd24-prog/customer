@@ -24,22 +24,46 @@ const FALLBACK_POLICY_SECTION = {
 };
 
 function getTextLines(value = "") {
-  return String(value || "")
+  const cleaned = String(value || "")
     .replace(/<li[^>]*>/gi, "\n")
     .replace(/<\/li>/gi, "\n")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/p>/gi, "\n")
     .replace(/<\/div>/gi, "\n")
-    .split(/\n|•|&#8226;|&bull;/)
+    .replace(/\s*•\s*/g, "\n")
+    .replace(/&#8226;/gi, "\n")
+    .replace(/&bull;/gi, "\n");
+
+  const fromLines = cleaned
+    .split(/\n/)
     .map((line) =>
       line
         .replace(/&nbsp;/g, " ")
         .replace(/&amp;/g, "&")
         .replace(/&lt;/g, "<")
         .replace(/&gt;/g, ">")
+        .replace(/\s+/g, " ")
         .trim(),
     )
     .filter(Boolean);
+
+  if (fromLines.length > 1) {
+    return fromLines;
+  }
+
+  const text = (fromLines[0] || cleaned).trim();
+  if (!text) return [];
+
+  const bySentence = text
+    .split(/(?<=[.!?])\s+(?=[A-Z])/)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  if (bySentence.length > 1) {
+    return bySentence;
+  }
+
+  return [text];
 }
 
 function normalizePoint(point) {
@@ -47,7 +71,9 @@ function normalizePoint(point) {
     return null;
   }
 
-  const title = String(point.title || "").trim();
+  const title = String(point.title || "")
+    .trim()
+    .replace(/^\s*\d+[\.)]\s*/, "");
   const description = String(point.description || "").trim();
 
   if (!title && !description) {
@@ -93,56 +119,53 @@ const PolicySection = ({
   return (
     <section className="py-1 first:pt-0">
       {sectionTitle && (
-        <h2 className="mb-2 text-h3 font-bold text-ink">
+        <h2 className="mb-3 text-[30px] font-bold leading-tight tracking-[-0.02em] text-ink md:text-[34px]">
           {sectionTitle}
         </h2>
       )}
 
       {sectionDescription && (
         <p
-          className="mb-4 text-[14px] leading-relaxed text-muted md:text-base"
+          className="mb-6 text-[15px] leading-relaxed text-muted md:text-[17px]"
           dangerouslySetInnerHTML={{ __html: sectionDescription }}
         />
       )}
 
       {visiblePoints.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-2.5">
           {visiblePoints.map((point, pIdx) => {
             const textLines = getTextLines(point.description);
             const contentLines = textLines.length > 0 ? textLines : [point.description].filter(Boolean);
 
             return (
-              <div key={`${point.title || "policy-point"}-${pIdx}`}>
-                {point.title && (
-                  <h3 className="mb-2 text-h6 font-bold text-ink">
-                    {point.title}
-                  </h3>
-                )}
+              <div
+                key={`${point.title || "policy-point"}-${pIdx}`}
+                className="flex items-start gap-3 py-1"
+              >
+                <img
+                  loading="lazy"
+                  width="400"
+                  height="400"
+                  src="/image/png/arrow.svg"
+                  alt=""
+                  className="mt-1.5 h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
+                />
 
-                {contentLines.length > 0 && (
-                  <div className="space-y-2">
-                    {contentLines.map((line, lineIdx) => (
-                      <div
-                        key={`${pIdx}-${lineIdx}`}
-                        className="flex items-start gap-2 px-2"
-                      >
-                        <img
-                          loading="lazy"
-                          width="400"
-                          height="400"
-                          src="/image/png/arrow.svg"
-                          alt=""
-                          className="mt-1 h-3 w-3 flex-shrink-0 self-start object-contain md:h-3.5 md:w-3.5"
-                        />
+                <div className="flex-1 text-[15px] leading-relaxed text-muted md:text-[17px]">
+                  {point.title && (
+                    <span className="font-bold text-ink">
+                      {point.title}
+                      {contentLines.length > 0 && ": "}
+                    </span>
+                  )}
 
-                        <span
-                          className="flex-1 text-[14px] leading-relaxed text-muted md:text-base"
-                          dangerouslySetInnerHTML={{ __html: line }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                  {contentLines.map((line, lineIdx) => (
+                    <span
+                      key={`${pIdx}-${lineIdx}`}
+                      dangerouslySetInnerHTML={{ __html: line }}
+                    />
+                  ))}
+                </div>
               </div>
             );
           })}

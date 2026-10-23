@@ -843,7 +843,7 @@ export function RatingFilter({
           return (
             <label
               key={stars}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[15px]"
+              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 sm:text-[15px]"
             >
               <input
                 type="checkbox"
@@ -867,12 +867,14 @@ export function RatingFilter({
               <FilterTick checked={isSelected} />
 
               <span className="flex min-w-0 flex-1 items-center gap-1.5 leading-normal">
-                <Star size={16} className="fill-[#D4A025] text-[#D4A025]" />
-                <span>{stars === 5 ? "(5)" : `(${stars} & Above)`}</span>
+                <Star size={16} className="shrink-0 fill-[#D4A025] text-[#D4A025]" />
+                <span className="truncate">
+                  {stars === 5 ? "(5)" : `(${stars} & Above)`}
+                </span>
               </span>
 
               {counts[String(stars)] != null && (
-                <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
+                <span className="shrink-0 whitespace-nowrap text-[14px] font-medium leading-none text-[#373737]">
                   ( {counts[String(stars)]} )
                 </span>
               )}
@@ -923,12 +925,12 @@ export default function ProductFilterSidebar({
          bg-[#FFFDF8] lg:sticky
           lg:top-[calc(var(--customer-header-height,95px)+62px)]
            lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] 
-           max-h-[calc(100vh-var(--customer-header-height,95px)-78px)] overflow-y-auto sidebar-scrollbar ${className}`}
+           max-h-[calc(100vh-var(--customer-header-height,95px)-78px)] overflow-y-auto sidebar-scrollbar filter-scrollbar ${className}`}
     >
       <div className="pt-6 pb-4">
         <div
           className="max-h-[calc(100vh-var(--customer-header-height,95px)-120px)]
-            overflow-y-auto filter-scrollbar"
+            overflow-y-auto sidebar-scrollbar filter-scrollbar"
         >
           <div className="w-full shadow-none">
             <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">

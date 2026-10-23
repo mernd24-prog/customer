@@ -282,7 +282,7 @@ export default function BecomeASeller() {
               <div className="customer-container relative">
                 <div className="flex flex-col items-center justify-between gap-5 md:flex-row md:items-end md:gap-7">
                   <div className="max-w-2xl text-center md:text-left">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-[#f1e5c9] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#8d5d08] sm:px-4 sm:py-2">
+                    <span className="inline-flex items-center gap-2 rounded-lg bg-[#f1e5c9] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#8d5d08] sm:px-4 sm:py-2">
                       <Sparkles size={14} />
                       Real Seller Stories
                     </span>

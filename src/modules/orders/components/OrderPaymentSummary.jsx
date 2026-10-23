@@ -450,7 +450,7 @@ function OrderPaymentSummary({
           type="button"
           onClick={onCheckout}
           disabled={disabled || loading}
-          className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
+          className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-lg bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
         >
           {loading && (
             <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />

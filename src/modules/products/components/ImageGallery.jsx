@@ -139,10 +139,10 @@ function ProductGallery({
         } ${mediaItems.length > 1 ? "gap-6 xl:flex-row" : ""}`}
       >
         {mediaItems.length > 1 && (
-          <div className="order-2 h-[84px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
+          <div className="order-2 h-[82px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
             <div
               className={`flex h-full w-full gap-3 overflow-x-auto overflow-y-hidden hide-scrollbar no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden xl:flex-col xl:overflow-x-hidden xl:overflow-y-auto ${
-                isModal ? "xl:gap-5" : "xl:gap-4"
+                isModal ? "xl:gap-5 xl:pb-2" : "xl:gap-4 xl:pb-2"
               }`}
             >
               {thumbnailItems.map((item, i) => {
@@ -179,7 +179,7 @@ function ProductGallery({
                       mainSwiper?.slideTo(targetIndex);
                     }}
                     className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-lg border transition-colors duration-200 xl:w-[92px] ${
-                      isModal ? "xl:h-[80px]" : "xl:h-[calc((100%_-_64px)/5)]"
+                      isModal ? "xl:h-[80px]" : "xl:h-[calc((100%_-_80px)/5)]"
                     } ${
                       isActive
                         ? "border-gold shadow-sm bg-white"
@@ -237,11 +237,12 @@ function ProductGallery({
         )}
 
         <div
-          className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-lg  bg-transparent xl:order-2 ${
+          className={`group relative order-1 box-border min-w-0 w-full overflow-hidden rounded-lg border-2 border-[#CE9F2D] bg-transparent transition-colors duration-200 hover:border-[#B88716] xl:order-2 ${
             isModal
-              ? "h-full w-full"
-              : "h-[324px] md:h-[440px] xl:h-full w-full"
+              ? "h-full"
+              : "h-[324px] md:h-[440px] xl:h-full"
           }`}
+          style={{ isolation: "isolate" }}
         >
           <Swiper
             onSwiper={setMainSwiper}
@@ -294,7 +295,7 @@ function ProductGallery({
                   </button>
                 ) : (
                   <div
-                    className={`relative   h-full w-full overflow-hidden bg-transparent ${
+                    className={`relative h-full w-full overflow-hidden bg-transparent ${
                       isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
                     }`}
                     onMouseMove={handleMouseMove}
@@ -314,7 +315,7 @@ function ProductGallery({
                           ? isModal
                             ? "scale-[2.0]"
                             : "scale-[2.4]"
-                          : "scale-95"
+                          : "scale-100"
                       }`}
                       style={{
                         transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -457,4 +458,3 @@ export default function ImageGallery({
 }
 
 export { ProductGallery };
-

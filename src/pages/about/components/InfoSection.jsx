@@ -2,46 +2,45 @@ import FallbackImage from "../../../components/ui/FallbackImage";
 import { FALLBACK_ABOUT } from "../../../data/fallbackCmsData";
 
 const InfoSection = ({ data }) => {
-  const finalData = data || {};
-  const { title, description, image } = finalData;
+  const finalData = data || FALLBACK_ABOUT.mission;
+  const title = finalData.title || FALLBACK_ABOUT.mission.title;
+  const description = finalData.description || FALLBACK_ABOUT.mission.description;
+  const image = finalData.image || FALLBACK_ABOUT.mission.image;
   const imageUrl = typeof image === "string" ? image : image?.url;
   const imageAlt = typeof image === "object" ? image?.alt : title;
   const fallbackImage = FALLBACK_ABOUT.mission.image?.url || FALLBACK_ABOUT.mission.image;
 
   return (
-    <section className="relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] my-8 lg:my-16 overflow-hidden bg-gradient-to-r from-navy to-navy-dark">
-      <div className="customer-container flex flex-col items-center gap-6 lg:flex-row lg:items-stretch">
-        {/* Left Content */}
-        <div className="flex w-full flex-col justify-center text-left lg:w-[55%] py-8 lg:py-12">
-          <div className="flex w-full flex-col gap-6">
-            <h2 className="text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+    <section className="relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] overflow-hidden bg-gradient-to-r from-navy to-navy-dark py-8 ">
+      <div className="customer-container">
+        <div className="grid items-center gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12">
+          <div className="flex flex-col justify-center py-2 sm:py-3 lg:py-4">
+            <h2 className="text-white text-xl md:text-2xl lg:text-3xl xl:text-4xl font-extrabold">
               {title}
             </h2>
 
-            <div className="flex flex-col gap-5">
-              <p
-                className="text-base font-light leading-8 text-white/90 sm:text-lg"
-                dangerouslySetInnerHTML={{ __html: description }}
-              />
-            </div>
+            <div
+              className="mt-6 max-w-[640px] text-base leading-7 text-white/90 sm:text-lg lg:text-[1.02rem] [&_ul]:mt-4 [&_ul]:space-y-3 [&_li]:flex [&_li]:items-start [&_li]:gap-3 [&_li]:leading-7 [&_li]:before:mt-2 [&_li]:before:inline-block [&_li]:before:h-2 [&_li]:before:w-2 [&_li]:before:rounded-full [&_li]:before:bg-[#d9b15a] [&_li]:before:content-['']"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
           </div>
-        </div>
 
-        {imageUrl || fallbackImage ? (
-          <div className="flex w-full items-end justify-center lg:w-[45%] lg:justify-end">
-            <div className="relative w-full max-w-[340px] overflow-hidden rounded-t-[1.8rem] sm:max-w-[450px] lg:max-w-[550px]">
-              <FallbackImage
-                src={imageUrl}
-                fallbackSrc={fallbackImage}
-                alt={imageAlt || title || ""}
-                loading="lazy"
-                width="800"
-                height="600"
-                className="block h-auto w-full object-cover"
-              />
+          {imageUrl || fallbackImage ? (
+            <div className="flex items-center justify-center">
+              <div className="relative w-full overflow-hidden rounded-[24px] shadow-[0_18px_40px_rgba(0,0,0,0.18)] ring-1 ring-white/10">
+                <FallbackImage
+                  src={imageUrl}
+                  fallbackSrc={fallbackImage}
+                  alt={imageAlt || title || ""}
+                  loading="lazy"
+                  width="800"
+                  height="600"
+                  className="block h-[300px] w-full object-cover sm:h-[330px] lg:h-[390px]"
+                />
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </div>
     </section>
   );

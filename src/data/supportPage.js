@@ -1,15 +1,16 @@
 import { Phone, Mail, Ticket } from "lucide-react";
+import { FALLBACK_COMPANY_CONTACT } from "./fallbackCmsData";
 
 export const SUPPORT_CONTACT_ITEMS = [
   {
     icon: Phone,
-    title: "+91 99154 29897",
+    title: FALLBACK_COMPANY_CONTACT.phone,
     description: "Call Us",
     path: "/contact-us",
   },
   {
     icon: Mail,
-    title: "info@samglobal1.com",
+    title: FALLBACK_COMPANY_CONTACT.email,
     description: "Email Support",
     path: "/contact-us",
   },

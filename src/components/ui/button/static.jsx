@@ -32,7 +32,7 @@ const buttonStyles = {
   categoryMore:
     "group flex h-auto min-h-0 min-w-[80px] flex-col items-center rounded-md bg-transparent px-0 py-0 text-inherit shadow-none outline-none transition-all duration-300 ease-in-out hover:bg-transparent focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2 sm:min-w-[100px] lg:min-w-[140px]",
   continueShopping:
-    "mx-auto mt-6 flex items-center justify-center h-[42px] w-full max-w-[210px] rounded-full bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] px-5 text-[13px] font-bold text-[#1B1D60] shadow-sm transition-all duration-300 hover:from-[#3E4093] hover:to-[#1B1D60] hover:text-white hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]",
+  "mx-auto mt-6 flex h-[42px] w-full max-w-[210px] items-center justify-center rounded-full bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-5 text-[13px] font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]",
 };
 
 export const PrimaryGradientButton = ({ children, ...props }) => (
@@ -210,6 +210,23 @@ export const ContinueShoppingButton = ({
   <DynamicButton
     variant="unstyled"
     className={cn(buttonStyles.continueShopping, className)}
+    {...props}
+  >
+    {children}
+  </DynamicButton>
+);
+
+export const BannerActionButton = ({
+  children = "Explore Our Platform",
+  className = "",
+  ...props
+}) => (
+  <DynamicButton
+    variant="unstyled"
+    className={cn(
+      "mt-6 inline-flex items-center justify-center rounded-full border border-white/70 bg-transparent px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#d9b15a] hover:text-white hover:border-[#d9b15a]",
+      className,
+    )}
     {...props}
   >
     {children}

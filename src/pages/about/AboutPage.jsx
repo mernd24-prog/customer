@@ -8,7 +8,6 @@ import AboutBanner from "./components/AboutBanner";
 import InfoSection from "./components/InfoSection";
 import OurStory from "./components/OurStory";
 import ValuesSection from "./components/ValuesSection";
-import BrandCarousel from "./components/BrandSection";
 import WhyChooseSection from "./components/WhyChooseSection";
 
 import { FALLBACK_ABOUT } from "../../data/fallbackCmsData";
@@ -19,7 +18,6 @@ const location = useLocation();
 const { page: bannerPage } = useCmsRecord("about-banner");
 const { page: storyPage } = useCmsRecord("about-sam-global");
 const { page: valuesPage } = useCmsRecord("our-values");
-const { page: brandsPage } = useCmsRecord("indian-brand");
 const { page: missionPage } = useCmsRecord("our-mission");
 const { page: choosePage } = useCmsRecord("why-choose-us");
 
@@ -31,9 +29,6 @@ storyPage?.sections?.[0] || FALLBACK_ABOUT.story;
 
 const valuesSection =
 valuesPage?.sections?.[0] || FALLBACK_ABOUT.values;
-
-const brandSection =
-brandsPage?.sections?.[0] || FALLBACK_ABOUT.brands;
 
 const missionSection =
 missionPage?.sections?.[0] || FALLBACK_ABOUT.mission;
@@ -78,6 +73,7 @@ return (
 
 
   <AboutBanner
+    data={bannerSection}
     image={
       bannerSection?.image?.url ||
       FALLBACK_ABOUT.banner.image
@@ -92,9 +88,9 @@ return (
     <ValuesSection data={valuesSection} />
   </div>
 
-  <BrandCarousel data={brandSection} />
-
-  <InfoSection data={missionSection} />
+  <div id="what-we-are-building" style={{ scrollMarginTop: "160px" }}>
+    <InfoSection data={missionSection} />
+  </div>
 
   <div id="why-choose-us" style={{ scrollMarginTop: "160px" }}>
     <WhyChooseSection data={chooseSection} />

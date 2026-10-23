@@ -327,15 +327,15 @@ export const CANONICAL_POLICY_DATA = {
   terms: policy(
     "Terms of Use",
     "Please Read Carefully",
-    "These Terms & Conditions (“Terms”) govern your access to and use of the Sam Global website, platform, and services (collectively, the “Platform”). By accessing, browsing, or using the Platform, you agree to be bound by these Terms. If you do not agree, please do not use the Platform.",
+    "These Terms & Conditions (Terms) govern your access to and use of the Sam Global website, platform, and services (collectively, the Platform). By accessing, browsing, or using the Platform, you agree to be bound by these Terms. If you do not agree, please do not use the Platform.",
     [
       point(
         "1. Definitions",
         [
-          "“Platform” refers to the Sam Global website, mobile application, and related services",
-          "“User” / “Customer” refers to any individual accessing or using the Platform",
-          "“Seller” refers to third-party vendors offering products through the Platform (where applicable)",
-          "“Services” refers to all functionalities provided through the Platform",
+          "Platform refers to the Sam Global website, mobile application, and related services",
+          "User / Customer refers to any individual accessing or using the Platform",
+          "Seller refers to third-party vendors offering products through the Platform (where applicable)",
+          "Services refers to all functionalities provided through the Platform",
         ],
         1,
       ),

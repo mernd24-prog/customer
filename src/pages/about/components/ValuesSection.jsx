@@ -6,11 +6,15 @@ export default function ValuesSection({ data }) {
   const loading = useDelayedLoading();
 
   return (
-    <section className="pt-8 md:pt-18">
+    <section className="pt-6 md:pt-12">
       <div className="w-full flex flex-col items-center gap-4 ">
         <h2 className=" text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold py-2">
           {data?.title}
         </h2>
+
+        {data?.intro && (
+          <p className="text-center text-base md:text-lg text-ink/80">{data.intro}</p>
+        )}
       </div>
       {loading ? (
         <SkeletonLoader
@@ -20,7 +24,7 @@ export default function ValuesSection({ data }) {
           wrapperClass="rounded-[var(--customer-radius)] border border-card-border bg-white p-2"
         />
       ) : (
-        <div className="flex justify-center gap-8 my-8 flex-wrap ">
+        <div className="my-8 flex flex-wrap justify-center gap-8">
           {data?.points?.map((item) => (
             <ValueCard key={item.title} data={item} />
           ))}
