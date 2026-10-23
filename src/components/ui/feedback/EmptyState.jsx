@@ -27,7 +27,10 @@ export default function EmptyState({
           />
         </div>
       ) : (
-        <img loading="lazy" width="400" height="400"
+        <img
+          loading="lazy"
+          width="400"
+          height="400"
           src={imageSrc}
           alt={title}
           className="h-28 w-28 object-contain xs:h-32 xs:w-32 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-52 lg:w-52 xl:h-60 xl:w-60"
@@ -43,10 +46,10 @@ export default function EmptyState({
       </p>
 
       {resolvedActionLabel && resolvedAction && (
-        <div className="mt-6 w-full max-w-xs sm:w-auto">
+        <div className="mt-6 flex justify-center">
           <ContinueShoppingButton
             onClick={resolvedAction}
-            className="w-full sm:w-auto "
+            className="!mx-0 !mt-0 !h-[46px] !w-[206px] !min-w-[206px] !max-w-none !shrink-0 !rounded-full"
           >
             {resolvedActionLabel}
           </ContinueShoppingButton>
@@ -56,4 +59,4 @@ export default function EmptyState({
       {children && <div className="mt-6 w-full">{children}</div>}
     </div>
   );
-}   
+}

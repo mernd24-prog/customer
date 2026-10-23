@@ -297,7 +297,7 @@ export default function BrandOutletPage() {
                 <div className="flex flex-wrap items-center justify-center gap-3.5">
                   <Link
                     to="/products"
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] px-6 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:from-[#3E4093] hover:to-[#1B1D60] hover:shadow-md"
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] px-6 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:from-[#3E4093] hover:to-[#1B1D60] hover:shadow-md"
                   >
                     <span>Explore Products</span>
                     <ArrowRight size={16} />
@@ -305,7 +305,7 @@ export default function BrandOutletPage() {
 
                   <Link
                     to="/categories"
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-[#CE9F2D] px-6 text-sm font-bold text-[#1B1D60] transition-all duration-200 hover:border-[#B8891F] hover:bg-[#FAF8F3]"
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-6 text-sm font-bold text-[#1B1D60] transition-all duration-200 hover:border-[#B8891F] hover:bg-[#FAF8F3]"
                   >
                     <span>Browse Categories</span>
                   </Link>

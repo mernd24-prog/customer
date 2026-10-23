@@ -22,7 +22,7 @@ export default function OurStory({ data }) {
           <SkeletonLoader preset="OUR_STORY" />
         </div>
       ) : (
-        <section className="flex  flex-col lg:flex-row  lg:gap-12 gap-2 py-8 lg:py-20">
+        <section className="flex flex-col gap-4 py-6 lg:flex-row lg:gap-12 lg:py-14">
           <div className=" w-full xl:w-[45%]  flex justify-center">
             <FallbackImage
               src={data?.image?.url || data?.image}
@@ -36,8 +36,14 @@ export default function OurStory({ data }) {
           </div>
           <div className="w-full xl:w-[45%]  flex flex-col lg:mt-8 justify-between">
             <div>
+              {data?.title && (
+                  <h2 className=" text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold py-2">
+          {data?.title}
+        </h2>
+              )}
+
               <p
-                className="text-base md:text-lg lg:text-xl font-light mt-4 lg:mt-8 "
+                className="mt-4 text-base font-light leading-8 text-[var(--customer-navy)]/80 md:text-lg lg:mt-8 lg:text-xl"
                 dangerouslySetInnerHTML={{ __html: data?.description }}
               />
             </div>

@@ -1,6 +1,16 @@
 
 import { useState } from "react";
-import { CheckCircle, Clock3, Mail, MapPin, Phone, Send } from "lucide-react";
+import {
+  CheckCircle,
+  Handshake,
+  Headset,
+  Mail,
+  MapPin,
+  MessageSquareText,
+  Phone,
+  Send,
+  Store,
+} from "lucide-react";
 import Seo from "../../components/ui/Seo";
 import CustomDropdown from "../../components/ui/CustomDropdown";
 import BaseModal from "../../components/ui/overlay/BaseModal";
@@ -35,8 +45,7 @@ const getContactIcon = (title = "") => {
       return Mail;
     case "phone":
       return Phone;
-    case "working hours":
-      return Clock3;
+    case "address":
     case "office":
       return MapPin;
     default:
@@ -138,6 +147,10 @@ export default function ContactUs() {
     FALLBACK_CONTACT_PAGE?.excerpt ||
     "Get in touch with Sam Global for support, inquiries, or feedback.";
 
+  const businessEmail =
+    contactInformation.find((item) => item.title.toLowerCase() === "email")
+      ?.value || "maintenancestesting@gmail.com";
+
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -215,33 +228,31 @@ export default function ContactUs() {
         </div>
       ) : (
         <>
-          {/* Page Banner */}
-          <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-10 md:py-12 lg:py-14">
+          {/* Contact Content */}
+          <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
             <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-              <h1 className="text-center text-2xl font-bold text-white md:text-3xl lg:text-[32px]">
-                {pageTitle}
+              <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
+                Contact Us
               </h1>
             </div>
           </section>
 
-          {/* Contact Content */}
-          <section className="w-full pt-3 pb-10 md:pb-12">
+          <section className="w-full pb-10 pt-4 md:pb-12 md:pt-6">
             <PageContainer>
-              <div className="grid items-start gap-8 lg:grid-cols-3 lg:gap-10">
-                {/* Left - Contact Information */}
-                <div className="rounded-lg bg-white p-6 shadow-[0_6px_24px_rgba(0,0,0,0.10)] sm:p-8 lg:col-span-1">
+              
+
+              <div className="mt-10 grid items-start gap-8 lg:grid-cols-[0.9fr_1.6fr] lg:gap-10">
+                <aside className="rounded-lg bg-white p-6 shadow-[0_18px_40px_rgba(30,35,76,0.12)] sm:p-8">
                   <div className="mb-7">
-                    <h2 className="text-2xl font-bold text-[#1d2377]">
-                      Contact Information
+                    <h2 className="text-[2.1rem] font-bold leading-tight tracking-[-0.04em] text-[#1d2377]">
+                      Get in Touch
                     </h2>
 
-                    <div className="mt-2 h-[2px] w-12 bg-[#d4a12f]" />
+                    <div className="mt-2 h-[2px] w-16 bg-[#d4a12f]" />
 
-                    {cmsContactSection?.description?.trim() && (
-                      <p className="mt-3 text-sm leading-6 text-gray-500">
-                        {cmsContactSection.description.trim()}
-                      </p>
-                    )}
+                    <p className="mt-4 text-base leading-7 text-[#2f315d]">
+                      We&apos;d love to hear from you.
+                    </p>
                   </div>
 
                   <div className="space-y-7">
@@ -253,7 +264,7 @@ export default function ContactUs() {
                           key={`${item.title}-${index}`}
                           className="group flex items-start gap-4"
                         >
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#fff8e8] transition-all duration-300 group-hover:bg-[#d4a12f]">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#fff8e8] transition-all duration-300 group-hover:bg-[#d4a12f]">
                             <Icon
                               size={20}
                               strokeWidth={1.8}
@@ -262,11 +273,11 @@ export default function ContactUs() {
                           </div>
 
                           <div className="min-w-0 pt-0.5">
-                            <p className="mb-1 text-sm font-semibold text-[#1d2377]">
+                            <p className="mb-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
                               {item.title}
                             </p>
 
-                            <p className="whitespace-pre-line break-words text-sm leading-6 text-gray-500">
+                            <p className="whitespace-pre-line break-words text-[15px] leading-6 text-[#4c4f6d]">
                               {item.value}
                             </p>
                           </div>
@@ -274,19 +285,66 @@ export default function ContactUs() {
                       );
                     })}
                   </div>
-                </div>
 
-                {/* Right - Contact Form */}
-                <div className="rounded-lg bg-white p-6 shadow-[0_6px_24px_rgba(0,0,0,0.10)] sm:p-7 lg:col-span-2">
+                  <div className="mt-8 rounded-lg border border-[#e7d9b8] bg-white/80 p-4 shadow-[0_8px_18px_rgba(27,35,70,0.04)]">
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
+                      For Brand &amp; Business Inquiries
+                    </p>
+                    <p className="mt-3 text-[15px] leading-7 text-[#4c4f6d]">
+                      Looking to partner with us or expand with Sam Global?
+                    </p>
+                    <p className="mt-2 text-[15px] leading-7 text-[#4c4f6d]">
+                      Write to us at: <span className="font-semibold text-[#1d2377]">{businessEmail}</span>
+                    </p>
+                  </div>
+                </aside>
+
+                <div className="rounded-lg bg-white p-6 shadow-[0_18px_40px_rgba(30,35,76,0.10)] sm:p-7">
                   <div className="mb-7">
-                    <h2 className="text-2xl font-bold text-[#1d2377]">
-                      Send us a Message
+                    <h2 className="text-[2rem] font-bold leading-tight tracking-[-0.04em] text-[#1d2377]">
+                      How Can We Help You?
                     </h2>
 
-                    <div className="mt-2 h-[2px] w-12 bg-[#d4a12f]" />
+                    <div className="mt-2 h-[2px] w-16 bg-[#d4a12f]" />
+
+                    <p className="mt-4 max-w-2xl text-base leading-7 text-[#4c4f6d]">
+                      From product queries to partnership opportunities, our team is available to support you at every step.
+                    </p>
                   </div>
 
-                  {/* Success Modal */}
+                  <div className="mb-6 grid gap-4 md:grid-cols-4">
+                    {[
+                      {
+                        label: "General inquiries",
+                        icon: MessageSquareText,
+                      },
+                      {
+                        label: "Brand and partnership discussions",
+                        icon: Handshake,
+                      },
+                      {
+                        label: "Store and retail opportunities",
+                        icon: Store,
+                      },
+                      {
+                        label: "Customer support",
+                        icon: Headset,
+                      },
+                    ].map(({ label, icon: Icon }) => (
+                      <div
+                        key={label}
+                        className="flex min-h-[110px] flex-col items-center justify-center rounded-lg border border-[#e7d4a1] bg-[#f6efe4] px-3 py-4 text-center shadow-[0_12px_24px_rgba(29,35,119,0.10)]"
+                      >
+                        <span className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-full border border-[#e7d4a1] bg-[#fffaf1] text-[#1d2377] shadow-[0_6px_12px_rgba(212,161,47,0.18)]">
+                          <Icon size={18} strokeWidth={2} />
+                        </span>
+                        <span className="text-sm font-medium leading-5 text-[#1d2377]">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
                   {submitted && (
                     <BaseModal
                       onClose={() => setSubmitted(false)}
@@ -303,14 +361,13 @@ export default function ContactUs() {
                           </h3>
 
                           <p className="mb-8 text-[1.05rem] leading-relaxed text-gray-500">
-                            Your message has been submitted successfully. Our
-                            team will contact you within 24 hours.
+                            Your message has been submitted successfully. Our team will contact you within 24 hours.
                           </p>
 
                           <button
                             type="button"
                             onClick={() => setSubmitted(false)}
-                            className="w-full rounded-xl border border-[#E7D9B8] bg-[#d4a12f] px-8 py-4 font-semibold text-white shadow-yellow-500/20 transition-all duration-300 hover:bg-yellow-500"
+                            className="w-full rounded-lg border border-[#E7D9B8] bg-[#d4a12f] px-8 py-4 font-semibold text-white shadow-yellow-500/20 transition-all duration-300 hover:bg-yellow-500"
                           >
                             Done
                           </button>
@@ -321,7 +378,6 @@ export default function ContactUs() {
 
                   <form onSubmit={handleSubmit}>
                     <div className="grid gap-5 md:grid-cols-2">
-                      {/* Name */}
                       <div>
                         <label
                           htmlFor="contact-name"
@@ -340,13 +396,10 @@ export default function ContactUs() {
                         />
 
                         {errors.name && (
-                          <p className="mt-1 text-sm text-red-500">
-                            {errors.name}
-                          </p>
+                          <p className="mt-1 text-sm text-red-500">{errors.name}</p>
                         )}
                       </div>
 
-                      {/* Email */}
                       <div>
                         <label
                           htmlFor="contact-email"
@@ -366,13 +419,10 @@ export default function ContactUs() {
                         />
 
                         {errors.email && (
-                          <p className="mt-1 text-sm text-red-500">
-                            {errors.email}
-                          </p>
+                          <p className="mt-1 text-sm text-red-500">{errors.email}</p>
                         )}
                       </div>
 
-                      {/* Phone */}
                       <div>
                         <label
                           htmlFor="contact-phone"
@@ -392,13 +442,10 @@ export default function ContactUs() {
                         />
 
                         {errors.phone && (
-                          <p className="mt-1 text-sm text-red-500">
-                            {errors.phone}
-                          </p>
+                          <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
                         )}
                       </div>
 
-                      {/* Subject */}
                       <div>
                         <label className="mb-2 block text-sm font-medium text-[#1d2377]">
                           Subject
@@ -408,15 +455,8 @@ export default function ContactUs() {
                           options={subjectOptions}
                           value={form.subject}
                           onChange={(val) => {
-                            setForm((prev) => ({
-                              ...prev,
-                              subject: val,
-                            }));
-
-                            setErrors((prev) => ({
-                              ...prev,
-                              subject: "",
-                            }));
+                            setForm((prev) => ({ ...prev, subject: val }));
+                            setErrors((prev) => ({ ...prev, subject: "" }));
                           }}
                           placeholder="Select Subject"
                           buttonClassName="!h-11 !rounded-lg !border !border-[#E7D9B8] !bg-[#fafafa] !text-sm !outline-none !shadow-none focus:!border-[#E7D9B8] focus:!outline-none focus:!ring-0 focus:!shadow-none focus-visible:!outline-none focus-visible:!ring-0 focus-visible:!shadow-none"
@@ -424,7 +464,6 @@ export default function ContactUs() {
                         />
                       </div>
 
-                      {/* Message */}
                       <div className="md:col-span-2">
                         <label
                           htmlFor="contact-message"
@@ -444,19 +483,16 @@ export default function ContactUs() {
                         />
 
                         {errors.message && (
-                          <p className="mt-1 text-sm text-red-500">
-                            {errors.message}
-                          </p>
+                          <p className="mt-1 text-sm text-red-500">{errors.message}</p>
                         )}
                       </div>
                     </div>
 
-                    {/* Submit */}
-                    <div className="mt-5 flex justify-center">
+                    <div className="mt-6 flex justify-center">
                       <button
                         type="submit"
                         disabled={loadingForm}
-                        className="flex h-11 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-[#d4a12f] px-6 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="flex h-11 min-w-[160px] items-center justify-center gap-2 rounded-lg bg-[#d4a12f] px-6 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(212,161,47,0.25)] transition-all duration-300 hover:bg-[#c08d1f] disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <Send size={17} />
                         {loadingForm ? "Sending..." : "Send Message"}

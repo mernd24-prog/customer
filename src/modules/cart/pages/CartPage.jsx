@@ -11,7 +11,7 @@ import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { ConfirmModal } from "../../../components/ui";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";
-import { OutlineSmallButton } from "../../../components/ui/button/static";
+import { ContinueShoppingButton } from "../../../components/ui/button/static";
 import { ArrowRight } from "lucide-react";
 import { CART_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../../utils/ecommerce/money";
@@ -274,7 +274,7 @@ export default function CartPage() {
 
                     {hasCartItems && (
                       <div className="flex items-center gap-3 pt-2">
-                        <OutlineSmallButton
+                        <ContinueShoppingButton
                           to="/products"
                           rightIcon={
                             <ArrowRight
@@ -282,10 +282,10 @@ export default function CartPage() {
                               strokeWidth={2.5}
                             />
                           }
-                          className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
+                          
                         >
                           Continue Shopping
-                        </OutlineSmallButton>
+                        </ContinueShoppingButton>
                       </div>
                     )}
                   </div>

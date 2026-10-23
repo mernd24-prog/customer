@@ -194,8 +194,18 @@ export default function SupportHelpCenter() {
         description={pageDescription}
       />
 
-      <main className="main-container sm:px-6 sm:py-6 lg:px-0 lg:py-8">
-        <Breadcrumbs items={breadcrumbs} />
+      <main className="main-container px-0 pb-6 pt-0 sm:px-6 sm:pb-6 sm:pt-0 lg:px-0 lg:pb-8">
+        <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
+          <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
+            <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
+              Help &amp; Support
+            </h1>
+          </div>
+        </section>
+
+        <div className="px-4 pt-4 sm:px-0 sm:pt-6">
+          <Breadcrumbs items={breadcrumbs} />
+        </div>
 
         {/* Mobile Quick Actions */}
         {quickActions.length > 0 && (
@@ -487,7 +497,7 @@ export default function SupportHelpCenter() {
                         to={`/support/tickets/${encodeURIComponent(ticket.id)}`}
                         className="w-full cursor-pointer rounded-lg px-2 py-4 text-left transition-colors"
                       >
-                        <div className="flex items-start justify-between gap-3">
+                        <div className="d flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <p className="truncate text-sm font-bold text-[#1B1D60]">
                               {ticket.subject}

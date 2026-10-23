@@ -12,12 +12,11 @@ export default function WhyChooseCard({ data }) {
     FALLBACK_ABOUT.whyChoose.points?.[0]?.image?.url || "";
 
   return (
-    <article className="group">
-      <div className="bg-white relative rounded-xl group-hover:bg-primary transition-all duration-300 ease-in-out shadow-md md:shadow-lg max-w-lg gap-8 p-4 lg:p-5">
-        <div className="bg-blue w-[6rem] h-[5px] rounded-full absolute top-0 left-20" />
-        <div className="flex flex-row gap-4 ">
+    <article className="group w-full max-w-[500px]">
+      <div className="relative h-full rounded-xl bg-white p-4 shadow-md transition-all duration-300 ease-in-out group-hover:bg-primary md:shadow-lg lg:p-5">
+<div className="absolute left-1/2 top-0 h-[5px] w-[6rem] -translate-x-1/2 rounded-full bg-[#d9b15a] transition-colors duration-300 group-hover:bg-white" />        <div className="flex items-start gap-4 pt-5">
           {imageUrl || fallbackImage ? (
-            <div>
+            <div className="flex-shrink-0">
               <FallbackImage
                 src={imageUrl}
                 fallbackSrc={fallbackImage}
@@ -25,15 +24,15 @@ export default function WhyChooseCard({ data }) {
                 width="40"
                 height="40"
                 loading="lazy"
-                className="aspect-square object-contain bg-primary rounded-lg group-hover:bg-blue transition-all duration-300 ease-in-out p-1 md:p-2"
+                className="aspect-square object-contain rounded-lg bg-primary p-1 transition-all duration-300 ease-in-out group-hover:bg-blue md:p-2"
               />
             </div>
           ) : null}
-          <div>
-            <h4 className=" text-blue font-semibold  text-md lg:text-lg group-hover:text-white transition-all duration-300 ease-in-out">
+          <div className="flex-1">
+            <h4 className="text-md font-semibold text-blue transition-all duration-300 ease-in-out group-hover:text-white lg:text-lg">
               {card?.title}
             </h4>
-            <p className="  text-sm lg:text-base max-w-sm py-2 group-hover:text-white transition-all duration-300 ease-in-out">
+            <p className="max-w-sm whitespace-pre-line py-2 text-sm leading-relaxed text-ink transition-all duration-300 ease-in-out group-hover:text-white lg:text-base">
               {card?.description}
             </p>
           </div>

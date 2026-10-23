@@ -1,6 +1,9 @@
 import { useRef, useState, useEffect } from "react";
+
 import { Link } from "react-router-dom";
+
 import { IoChevronForward, IoChevronBack } from "react-icons/io5";
+
 import { FALLBACK_PROMO_CARDS } from "../../data/fallbackCmsData";
 
 function normalizeCards(data) {
@@ -26,8 +29,10 @@ function normalizeCards(data) {
   }
 
   return rawList
+
     .map((item) => {
       if (!item) return null;
+
       const imageUrl =
         item?.image?.url ||
         (typeof item?.image === "string" ? item.image : "") ||
@@ -35,48 +40,70 @@ function normalizeCards(data) {
         item?.imageUrl ||
         item?.url ||
         "";
+
       const title = item?.title || item?.name || item?.image?.title || "";
+
       const description = item?.description || item?.subtitle || "";
+
       const ctaUrl =
         item?.cta?.url || item?.link || item?.href || item?.targetUrl || "";
+
       const ctaLabel = item?.cta?.label || "";
+
       const ctaTarget = item?.cta?.target || "_self";
 
       return {
         image: imageUrl,
+
         title,
+
         description,
+
         link: ctaUrl,
+
         ctaLabel,
+
         ctaTarget,
       };
     })
+
     .filter((card) => card && (card.image || card.title));
 }
 
 export default function PromoCampaignCarousel({ data = null, className = "" }) {
   const cmsCards = normalizeCards(data);
+
   const cards = cmsCards.length ? cmsCards : FALLBACK_PROMO_CARDS;
+
   const scrollRef = useRef(null);
+
   const [canScrollLeft, setCanScrollLeft] = useState(false);
+
   const [canScrollRight, setCanScrollRight] = useState(false);
 
   const checkScrollButtons = () => {
     if (scrollRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+
       setCanScrollLeft(scrollLeft > 5);
+
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
     }
   };
 
   useEffect(() => {
     checkScrollButtons();
+
     const el = scrollRef.current;
+
     if (el) {
       el.addEventListener("scroll", checkScrollButtons);
+
       window.addEventListener("resize", checkScrollButtons);
+
       return () => {
         el.removeEventListener("scroll", checkScrollButtons);
+
         window.removeEventListener("resize", checkScrollButtons);
       };
     }
@@ -85,8 +112,10 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
   const handleScroll = (direction) => {
     if (scrollRef.current) {
       const scrollAmount = scrollRef.current.clientWidth * 0.75;
+
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
+
         behavior: "smooth",
       });
     }
@@ -114,6 +143,7 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
               <IoChevronBack className="text-lg sm:text-xl text-[#333]" />
             </button>
           )}
+
           {canScrollRight && (
             <button
               type="button"
@@ -123,14 +153,17 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
             >
               <IoChevronForward className="text-lg sm:text-xl text-[#333]" />
             </button>
-          )} 
+          )}
+
           <div
             ref={scrollRef}
             className="flex items-center gap-3 sm:gap-4 lg:gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth py-1 w-full"
           >
             {cards.map((card, index) => {
               const rawLink = (card.link || "").trim();
+
               const hasLink = rawLink.length > 0;
+
               const isExternal = hasLink && /^https?:\/\//i.test(rawLink);
 
               const cardClasses =
@@ -149,6 +182,7 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                       className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                     />
                   )}
+
                   <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
@@ -156,27 +190,29 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                         "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.1) 60%, transparent 75%)",
                     }}
                   />
+
                   <div className="absolute bottom-0 left-0 right-0 p-2.5 sm:p-4 lg:p-5 flex flex-col justify-end text-white z-10">
                     {card.title && (
-                      <h3 className="text-xs min-[375px]:text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-1 leading-snug drop-shadow-md line-clamp-2">
+                      <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-1 leading-snug drop-shadow-md line-clamp-2">
                         {card.title}
                       </h3>
                     )}
 
                     {card.description && (
-                      <p className=" text-[12px] sm:text-[15px]  line-clamp-1 mb-1 drop-shadow">
+                      <p className="text-xs sm:text-sm leading-relaxed line-clamp-2 mb-1 drop-shadow">
                         {card.description}
                       </p>
                     )}
+
                     {card.ctaLabel && (
-                      <span className="mt-1 sm:mt-2 inline-flex items-center gap-1 sm:gap-1.5 h-[28px] sm:h-[32px] md:h-[36px] w-fit rounded-lg bg-[#CE9F2D] px-2.5 sm:px-4 text-[11px] sm:text-xs md:text-sm font-bold leading-none text-white shadow-md transition-colors duration-300 group-hover:bg-[#B88B22] group-hover:shadow-lg">
+                      <span className="mt-2 inline-flex h-8 sm:h-9 w-fit items-center justify-center rounded-md bg-[#CE9F2D] px-4 sm:px-5 text-xs sm:text-sm font-semibold leading-none text-white shadow-sm transition-colors duration-200 group-hover:bg-[#B88B22]">
                         {card.ctaLabel}
-                        <IoChevronForward className="text-[10px] sm:text-xs shrink-0" />
                       </span>
                     )}
                   </div>
                 </>
               );
+
               if (!hasLink) {
                 return (
                   <div key={index} className={cardClasses}>

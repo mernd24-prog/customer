@@ -5,22 +5,28 @@ import {
 } from "./canonicalLegalContent";
 
 const image = (url, alt = "") => ({ url, alt });
+
+export const FALLBACK_COMPANY_CONTACT = {
+  email: "info@samglobal1.com",
+  phone: "+91 99154 29897",
+  address:
+    "202, KINGSTON1 OMAXE ROYAL RESIDENCY, PAKHOWAL ROAD, Lalton Kalan, Ludhiana, Ludhiana punjab 142022",
+};
+
 export const FALLBACK_CONTACT_PAGE = {
-  title: "Contact us",
-  excerpt: "Get in touch with The Bear House for support, inquiries, or feedback.",
+  title: "CONTACT US – SAM GLOBAL",
+  excerpt: "Every great experience begins with a conversation.",
   sections: [
     {
       type: "content",
       title: "contact-info",
-      description: "",
+      description: "We’d love to hear from you.",
       points: [
-        { title: "Email", description: "maintenancestesting@gmail.com" },
-        { title: "Phone", description: "+91 7879057767" },
-        { title: "Working Hours", description: "Mon - Sat\n 09:00 AM - 07:00 PM" },
+        { title: "Email", description: FALLBACK_COMPANY_CONTACT.email },
+        { title: "Phone", description: FALLBACK_COMPANY_CONTACT.phone },
         {
-          title: "Office",
-          description:
-            "Plot No. 24, 2nd Floor, Orion Business Park, Indore, Madhya Pradesh, 452010, India",
+          title: "Address",
+          description: FALLBACK_COMPANY_CONTACT.address,
         },
       ],
     },
@@ -29,11 +35,10 @@ export const FALLBACK_CONTACT_PAGE = {
       title: "subject",
       description: "",
       points: [
-        { title: "Order Issue", description: "" },
-        { title: "Payment", description: "" },
-        { title: "Return", description: "" },
-        { title: "Seller Support", description: "" },
-        { title: "Technical", description: "" },
+        { title: "General inquiries", description: "" },
+        { title: "Brand and partnership discussions", description: "" },
+        { title: "Store and retail opportunities", description: "" },
+        { title: "Customer support", description: "" },
       ],
     },
   ],
@@ -495,115 +500,78 @@ export const FALLBACK_SELLER_PAGE = {
 /* -------------------------------------------------------------------------- */ /* About                                                                      */ /* -------------------------------------------------------------------------- */
 export const FALLBACK_ABOUT = {
   banner: {
-    image: "/image/png/fallback/become-a-seller/About-banner.png",
-    badge: "Your Next Chapter Starts Here",
-    title: "Grow Your Business With Sam Global",
+    image: "/image/png/fallback/become-a-seller/ABOUT-BANNER.png",
+    badge: "A New Way to Experience Retail",
+    title: "A New Way to Experience Retail",
     description:
-      "Reach more customers, manage orders easily, and grow with reliable support.",
+      "Retail is evolving. Consumers are seeking more than just products—they seek experience, authenticity, and choice.",
     cta: {
-      label: "Learn More",
+      label: "Explore Our Platform",
       href: "#who-we-are",
     },
-    highlights: ["Simple onboarding", "Secure payouts", "Dedicated support"],
-  },
-
-  story: {
-    description:
-      "Sam Global is built on over 18+ years of experience in FMCG distribution and customer selling, with a strong foundation in execution and scale. From building high-performance sales networks to now expanding into organized apparel retail, our journey is driven by a clear vision — to create a scalable, execution-focused retail platform across India. Starting from Ludhiana, we are expanding into key markets with a structured, disciplined approach focused on performance, consistency, and long-term growth.",
-    image: image("/image/png/fallback/become-a-seller/outStory.png", "Sam Global story"),
+    highlights: [],
   },
 
   values: {
-    title: "Our Values",
+    title: "Our Philosophy",
+    intro: "We believe retail is no longer transactional—it is experiential.",
     points: [
       {
-        title: "Execution Excellence",
-        description:
-          "We believe in strong ground-level execution. Every store, every customer interaction, and every process is driven by performance and discipline.",
+        title: "Confidence of Choice",
+        description: "Curated brands and categories that customer \ntrust ",
         image: image("/image/png/fallback/icons/excellence.png"),
       },
       {
-        title: "Customer First",
-        description:
-          "Our approach is built around understanding Indian consumers and delivering consistent, high-quality retail experiences.",
+        title: "Ease of Discovery",
+        description: "Seamless browsing across physical and digital platforms",
         image: image("/image/png/fallback/icons/customer.png"),
       },
       {
-        title: "Scalable Growth",
-        description:
-          "We focus on building systems and processes that enable sustainable, long-term expansion across markets.",
+        title: "Consistency of Experience",
+        description: "Every touchpoint designed to deliver quality and reliability",
         image: image("/image/png/fallback/icons/growth.png"),
       },
     ],
   },
+  story: {
+    title: "Our Story",
+    description:
+      "Our journey is rooted in over 18 years of deep market experience—understanding how India shops, what drives decisions, and what creates lasting value. From building strong distribution networks to now creating a multi-category premium retail ecosystem, our evolution has been guided by one belief: Great retail is built on execution, but remembered for experience.",
+    image: image("/image/png/fallback/become-a-seller/outStory.png", "Sam Global story"),
+  },
+
 
   brands: {
-    title: "Indian Brands",
-    description: "Experience Across Leading Global Brands",
-    points: ["zara", "gq", "lacoste", "gucci", "prada", "vogue"].map(
+    title: "Experience Across Leading Brands",
+    description: "",
+    points: ["Adidas", "Reebok", "Levi's", "Pepe Jeans", "Benetton"].map(
       (brand) => ({
-        title: brand.toUpperCase(),
-        image: image(`/image/png/fallback/brands/${brand}.png`),
+        title: brand,
+        image: image(`/image/png/fallback/brands/${brand.toLowerCase().replace(/[^a-z]/g, "")}.png`),
       }),
     ),
   },
 
   mission: {
-    title: "Our Mission",
+    title: "What We Are Building",
     description:
-      "Our mission is to build a trusted digital marketplace where customers can shop with clarity and sellers can grow with confidence.</br> </br> We aim to make quality products more accessible through dependable technology, transparent service, and a customer-first approach.",
+      "Sam Global is not just a retail business. It is a curated retail platform designed for a new generation of consumers. A space where: <ul><li>Premium and aspirational brands find the right audience</li><li>Customers discover quality across categories</li><li>Every interaction feels seamless, consistent, and elevated</li></ul> From physical retail stores to digital touchpoints, we are creating an ecosystem that is scalable, accessible, and experience-driven.",
     image: image("/image/png/fallback/become-a-seller/hand.png", "Our mission"),
   },
 
   whyChoose: {
-    title: "Why Choose Us",
-    description:
-      "A strong retail partner focused on execution, growth, and long-term success.",
+    title: "Our Commitment",
+    description: "",
     points: [
       {
-        title: "Proven Sales Expertise",
-        description: "18+ years of experience in high-volume product selling and distribution.",
+        title: "To our customers, we promise:",
+        description: "Quality and curated selection \n• Seamless shopping experience \n• Trust and consistency",
         image: image("/image/png/fallback/icons/dummy.png"),
       },
       {
-        title: "Strong Retail Execution",
-        description: "Disciplined store-level execution driving performance and consistency.",
+        title: "To our partners, we offer:",
+        description: "Scalable growth opportunities \n• Strong execution and performance \n• Structured and reliable retail expansion",
         image: image("/image/png/fallback/icons/dummy1.png"),
-      },
-      {
-        title: "Consumer Understanding",
-        description: "Deep insights into Indian consumer behaviour and buying patterns.",
-        image: image("/image/png/fallback/icons/dummy2.png"),
-      },
-      {
-        title: "Global Brand Experience",
-        description: "Leadership experience with Adidas, Reebok, Levi's, Pepe Jeans, and Benetton.",
-        image: image("/image/png/fallback/icons/dummy3.png"),
-      },
-      {
-        title: "Structured Expansion",
-        description: "Planned multi-city growth strategy with scalable systems.",
-        image: image("/image/png/fallback/icons/dummy4.png"),
-      },
-      {
-        title: "Performance-Driven Approach",
-        description: "Focused on sell-through, inventory movement, and profitability.",
-        image: image("/image/png/fallback/icons/dummy5.png"),
-      },
-      {
-        title: "Financial Discipline",
-        description: "Strong governance and structured financial planning.",
-        image: image("/image/png/fallback/icons/dummy3.png"),
-      },
-      {
-        title: "SOP-Driven Operations",
-        description: "Ensuring brand compliance and operational consistency.",
-        image: image("/image/png/fallback/icons/dummy4.png"),
-      },
-      {
-        title: "Long-Term Partnerships",
-        description: "Committed to building sustainable brand relationships.",
-        image: image("/image/png/fallback/icons/dummy5.png"),
       },
     ],
   },
@@ -791,8 +759,7 @@ export const FALLBACK_POLICY_DATA = {
   },
   privacy: {
     title: "Privacy Policy",
-    description:
-      "",
+    description: "",
     sections: [
       {
         type: "content",
@@ -803,84 +770,92 @@ export const FALLBACK_POLICY_DATA = {
         gallery: [],
         points: [
           {
-            title: "Information We Collect",
+            title: "1. Information We Collect",
             description:
-              "Personal Information: Name, phone number, email address, shipping and billing address.\nAccount Information: Login details, preferences, and order history.\nTransaction Data: Payment details processed securely via third-party gateways.\nTechnical Data: IP address, browser type, device information, and website usage data.",
+              "Personal Information: Name, phone number, email address; shipping and billing address. Account Information: Login details, preferences, and order history. Transaction Data: Payment details processed securely via third-party gateways. Technical Data: IP address, browser type, device information, website usage and interaction data.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 1,
           },
           {
-            title: "How We Use Your Information",
+            title: "2. How We Use Your Information",
             description:
-              "Your information is used to process and deliver your orders, provide customer support, improve the platform and user experience, send order updates and relevant offers, and prevent fraud and ensure platform security.",
+              "Process and deliver your orders; provide customer support; improve our platform and user experience; send order updates, service notifications, and relevant offers; prevent fraud and ensure platform security.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 2,
           },
           {
-            title: "Sharing of Information",
+            title: "3. Sharing of Information",
             description:
-              "We do not sell your personal data. We may share your information with logistics partners, payment gateways, technology and analytics providers, and sellers where required to fulfil your order.",
+              "We do not sell your personal data.\nWe may share your information with:\nLogistics partners for order delivery\nPayment gateways for secure transactions\nTechnology and analytics providers for platform improvement\nSellers (if applicable) to fulfil your order\nAll partners are expected to maintain data confidentiality and security.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 3,
           },
           {
-            title: "Data Security",
+            title: "4. Data Security",
             description:
-              "We implement appropriate technical and organisational measures to protect your data. However, no system is completely secure, and we cannot guarantee absolute security.",
+              "We implement appropriate technical and organizational measures to protect your data.\nHowever, no system is completely secure, and we cannot guarantee absolute security.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 4,
           },
           {
-            title: "Cookies & Tracking",
+            title: "5. Cookies & Tracking",
             description:
-              "We use cookies and similar technologies to enhance your browsing experience, remember your preferences, and analyse platform usage. Please refer to our Cookie Policy for more details.",
+              "We use cookies and similar technologies to:\nEnhance your browsing experience\nRemember your preferences\nAnalyse platform usage\n(Refer to our Cookie Policy for more details)",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 5,
           },
           {
-            title: "Your Rights",
+            title: "6. Your Rights",
             description:
-              "You may access or update your personal information, request deletion of your data subject to legal requirements, and opt out of marketing communications.",
+              "You may:\nAccess or update your personal information\nRequest deletion of your data (subject to legal requirements)\nOpt out of marketing communications",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 6,
           },
           {
-            title: "Data Retention",
+            title: "7. Data Retention",
             description:
-              "We retain your data only as long as necessary for order fulfilment, legal compliance, and business operations.",
+              "We retain your data only as long as necessary for:\nOrder fulfilment\nLegal and regulatory compliance\nBusiness operations",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 7,
           },
           {
-            title: "Third-Party Links",
+            title: "8. Third-Party Links",
             description:
-              "Our platform may contain links to external websites. We are not responsible for the privacy practices of such third parties.",
+              "Our platform may contain links to external websites.\nWe are not responsible for the privacy practices of such third parties.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 8,
           },
           {
-            title: "Policy Updates",
+            title: "9. Policy Updates",
             description:
-              "We may update this Privacy Policy from time to time. Continued use of the platform implies acceptance of the updated policy.",
+              "We may update this Privacy Policy from time to time.\nContinued use of the platform implies acceptance of the updated policy.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 9,
           },
           {
-            title: "Contact Us",
+            title: "10. Contact Us",
             description:
               "For any privacy-related concerns, please contact us through our Contact page.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 10,
+          },
+          {
+            title: "Closing Line",
+            description:
+              "Your trust is important to us, and we are committed to protecting it.",
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 11,
           },
         ],
         cta: { label: "", url: "", target: "_self" },
@@ -902,52 +877,68 @@ export const FALLBACK_POLICY_DATA = {
         gallery: [],
         points: [
           {
-            title: "What Are Cookies?",
+            title: "1. What Are Cookies?",
             description:
-              "Cookies are small text files stored on your device when you visit a website. They help improve functionality, performance, and user experience.",
+              "Cookies are small text files stored on your device when you visit a website.\nThey help improve functionality, performance, and user experience.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 1,
           },
           {
-            title: "Types of Cookies We Use",
+            title: "2. Types of Cookies We Use",
             description:
-              "Essential Cookies: Required for basic website functionality such as login and checkout.\nPerformance Cookies: Help us understand how users interact with our platform to improve performance.\nFunctional Cookies: Remember your preferences and settings for a personalised experience.\nAdvertising Cookies: Used to deliver relevant ads and measure campaign effectiveness.",
+              "Essential Cookies\n Required for basic website functionality such as login and checkout.\nPerformance Cookies\n Help us understand how users interact with our platform to improve performance.\nFunctional Cookies\n Remember your preferences and settings for a personalized experience.\nAdvertising Cookies\n Used to deliver relevant ads and measure campaign effectiveness.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 2,
           },
           {
-            title: "How We Use Cookies",
+            title: "3. How We Use Cookies",
             description:
-              "We use cookies to enable smooth navigation and functionality, remember your preferences and login details, analyse website traffic and usage patterns, improve performance and user experience, and support marketing and advertising efforts.",
+              "We use cookies to:\nEnable smooth navigation and functionality\nRemember your preferences and login details\nAnalyse website traffic and usage patterns\nImprove performance and user experience\nSupport marketing and advertising efforts",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 3,
           },
           {
-            title: "Third-Party Cookies",
+            title: "4. Third-Party Cookies",
             description:
-              "We may allow trusted third-party services such as analytics or advertising platforms to place cookies on your device. These providers may use the information to help us understand traffic and improve our platform and campaigns.",
+              "We may allow trusted third-party services (such as analytics or advertising platforms) to place cookies on your device.\nThese cookies are governed by the respective third parties’ policies.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 4,
           },
           {
-            title: "Managing Cookies",
+            title: "5. Managing Cookies",
             description:
-              "You can manage your cookie settings through your browser preferences. Please note that disabling certain cookies may affect website functionality and access to some features.",
+              "You can control or disable cookies through your browser settings.\nPlease note that disabling cookies may affect certain features and functionality of the platform.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 5,
           },
           {
-            title: "Updates",
+            title: "6. Consent",
             description:
-              "We may update this Cookie Policy from time to time to reflect changes in technology, services, or legal requirements. Updated versions will be posted on the Platform.",
+              "By continuing to use our platform, you consent to our use of cookies as described in this policy.",
             image: { url: "", alt: "", title: "", caption: "", type: "" },
             cta: { label: "", url: "", target: "_self" },
             sortOrder: 6,
+          },
+          {
+            title: "7. Updates to This Policy",
+            description:
+              "We may update this Cookie Policy from time to time.",
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 7,
+          },
+          {
+            title: "Closing Line",
+            description:
+              "Designed to enhance your experience while respecting your privacy.",
+            image: { url: "", alt: "", title: "", caption: "", type: "" },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 8,
           },
         ],
         cta: { label: "", url: "", target: "_self" },
@@ -956,267 +947,267 @@ export const FALLBACK_POLICY_DATA = {
     ],
   },
   terms: {
-  title: "Terms of Use",
-  description: "",
-  sections: [
-    {
-      type: "content",
-      title: "Please Read Carefully",
-      description:
-        'These Terms & Conditions <strong>Terms</strong> govern your access to and use of the Sam Global website, platform, and services  <strong> collectively, the Platform</strong>\n\nBy accessing, browsing, or using the Platform, you agree to be bound by these Terms. If you do not agree, please do not use the Platform.',
-      image: {
-        url: "",
-        alt: "Please Read Carefully",
-        title: "",
-        caption: "",
-        type: "section",
+    title: "Terms of Use",
+    description: "",
+    sections: [
+      {
+        type: "content",
+        title: "Please Read Carefully",
+        description:
+          "These Terms & Conditions (“Terms”) govern your access to and use of the Sam Global website, platform, and services (collectively, the “Platform”).\nBy accessing, browsing, or using the Platform, you agree to be bound by these Terms. If you do not agree, please do not use the Platform.",
+        image: {
+          url: "",
+          alt: "Please Read Carefully",
+          title: "",
+          caption: "",
+          type: "section",
+        },
+        gallery: [],
+        points: [
+          {
+            title: "1. DEFINITIONS",
+            description:
+              '“Platform” refers to the Sam Global website, mobile application, and related services\n“User” / “Customer” refers to any individual accessing or using the Platform\n“Seller” refers to third-party vendors offering products through the Platform (where applicable)\n“Services” refers to all functionalities provided through the Platform',
+            image: {
+              url: "",
+              alt: "Definitions",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 1,
+          },
+          {
+            title: "2. ELIGIBILITY",
+            description:
+              "Users must be at least 18 years of age or legally competent to enter into a contract\nBy using the Platform, you represent that all information provided is accurate and complete",
+            image: {
+              url: "",
+              alt: "Eligibility",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 2,
+          },
+          {
+            title: "3. ACCOUNT & USER RESPONSIBILITY",
+            description:
+              "Users may be required to create an account to access certain features\nYou are responsible for maintaining the confidentiality of your login credentials\nAny activity conducted through your account shall be deemed your responsibility\nSam Global shall not be liable for unauthorized access arising from user negligence.",
+            image: {
+              url: "",
+              alt: "Account & User Responsibility",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 3,
+          },
+          {
+            title: "4. PLATFORM USAGE",
+            description:
+              "You agree not to:\nUse the Platform for unlawful or fraudulent purposes\nInterfere with the operation, security, or functionality of the Platform\nAttempt unauthorized access to systems, data, or accounts\nUse automated tools (bots, scraping, etc.) without permission\nSam Global reserves the right to restrict or terminate access for violations.",
+            image: {
+              url: "",
+              alt: "Platform Usage",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 4,
+          },
+          {
+            title: "5. PRODUCT INFORMATION & PRICING",
+            description:
+              "Product descriptions, images, and pricing are provided for informational purposes\nWhile efforts are made to ensure accuracy, errors may occur\nSam Global reserves the right to correct errors, update information, or cancel orders without prior notice\nPrices and availability are subject to change.",
+            image: {
+              url: "",
+              alt: "Product Information & Pricing",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 5,
+          },
+          {
+            title: "6. ORDERS & ACCEPTANCE",
+            description:
+              "Placing an order constitutes an offer to purchase\nSam Global reserves the right to accept or reject any order at its discretion\nOrder confirmation does not guarantee acceptance; orders may be cancelled due to stock issues, pricing errors, or verification concerns",
+            image: {
+              url: "",
+              alt: "Orders & Acceptance",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 6,
+          },
+          {
+            title: "7. PAYMENTS",
+            description:
+              "All payments must be made through approved payment methods available on the Platform\nTransactions are processed through secure third-party payment gateways\nSam Global shall not be liable for payment failures or delays caused by third-party providers",
+            image: {
+              url: "",
+              alt: "Payments",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 7,
+          },
+          {
+            title: "8. SHIPPING, RETURNS & REFUNDS",
+            description:
+              "All policies relating to shipping, returns, and refunds are governed by separate policy pages available on the Platform.\nBy using the Platform, you agree to be bound by such policies.",
+            image: {
+              url: "",
+              alt: "Shipping, Returns & Refunds",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 8,
+          },
+          {
+            title: "9. MARKETPLACE DISCLAIMER (IF APPLICABLE)",
+            description:
+              "The Platform may act as an intermediary connecting customers and third-party sellers\nSam Global does not manufacture, own, or directly control products listed by sellers\nResponsibility for product quality, legality, and compliance rests solely with the respective seller\nSam Global shall not be liable for disputes arising between users and sellers.",
+            image: {
+              url: "",
+              alt: "Marketplace Disclaimer",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 9,
+          },
+          {
+            title: "10. INTELLECTUAL PROPERTY",
+            description:
+              "All content on the Platform, including text, images, logos, design, and software, is the property of Sam Global or its licensors\nUnauthorized use, reproduction, or distribution is strictly prohibited",
+            image: {
+              url: "",
+              alt: "Intellectual Property",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 10,
+          },
+          {
+            title: "11. LIMITATION OF LIABILITY",
+            description:
+              "To the maximum extent permitted by law, Sam Global shall not be liable for:\nIndirect, incidental, or consequential damages\nLoss of profits, data, business, or goodwill\nDelays, interruptions, or technical failures\nActions or omissions of third-party sellers, logistics providers, or payment gateways",
+            image: {
+              url: "",
+              alt: "Limitation of Liability",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 11,
+          },
+          {
+            title: "12. INDEMNITY",
+            description:
+              "You agree to indemnify and hold harmless Sam Global from any claims, damages, losses, or liabilities arising from:\nYour use of the Platform\nViolation of these Terms\nInfringement of third-party rights",
+            image: {
+              url: "",
+              alt: "Indemnity",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 12,
+          },
+          {
+            title: "13. TERMINATION",
+            description:
+              "Sam Global reserves the right to:\nSuspend or terminate user access at any time without prior notice\nRemove content or restrict access in case of policy violations",
+            image: {
+              url: "",
+              alt: "Termination",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 13,
+          },
+          {
+            title: "14. FORCE MAJEURE",
+            description:
+              "Sam Global shall not be liable for failure or delay caused by events beyond reasonable control, including natural disasters, government actions, or technical disruptions.",
+            image: {
+              url: "",
+              alt: "Force Majeure",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 14,
+          },
+          {
+            title: "15. GOVERNING LAW & JURISDICTION",
+            description:
+              "These Terms shall be governed by the laws of India.\nAny disputes shall be subject to the jurisdiction of courts located in [Insert City].",
+            image: {
+              url: "",
+              alt: "Governing Law & Jurisdiction",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 15,
+          },
+          {
+            title: "16. MODIFICATIONS",
+            description:
+              "Sam Global reserves the right to update or modify these Terms at any time.\nContinued use of the Platform constitutes acceptance of revised Terms.",
+            image: {
+              url: "",
+              alt: "Modifications",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 16,
+          },
+          {
+            title: "17. CONTACT",
+            description:
+              "For any queries regarding these Terms, please contact us through the Contact Us page.",
+            image: {
+              url: "",
+              alt: "Contact",
+              title: "",
+              caption: "",
+              type: "point",
+            },
+            cta: { label: "", url: "", target: "_self" },
+            sortOrder: 17,
+          },
+        ],
+        cta: { label: "", url: "", target: "_self" },
+        sortOrder: 1,
       },
-      gallery: [],
-      points: [
-        {
-          title: "Definitions",
-          description:
-            '<strong>Platform</strong> refers to the Sam Global website, mobile application, and related services.\n<strong>User</strong> or <strong>Customer</strong> refers to any individual accessing or using the Platform.\n<strong>Seller</strong> refers to third-party vendors offering products through the Platform, where applicable.\n<strong>Services</strong> refers to all functionalities provided through the Platform.',
-          image: {
-            url: "",
-            alt: "Definitions",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 1,
-        },
-        {
-          title: "Eligibility",
-          description:
-            "Users must be at least 18 years of age or legally competent to enter into a contract.\nBy using the Platform, you represent that all information you provide is accurate and complete.",
-          image: {
-            url: "",
-            alt: "Eligibility",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 2,
-        },
-        {
-          title: "Account & User Responsibility",
-          description:
-            "Users may be required to create an account to access certain features.\nYou are responsible for maintaining the confidentiality of your login credentials.\nAny activity conducted through your account shall be deemed your responsibility.\nSam Global shall not be liable for unauthorized access arising from user negligence, to the extent permitted by applicable law.",
-          image: {
-            url: "",
-            alt: "Account & User Responsibility",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 3,
-        },
-        {
-          title: "Platform Usage",
-          description:
-            "You agree not to use the Platform for unlawful or fraudulent purposes.\nYou must not interfere with the operation, security, or functionality of the Platform.\nYou must not attempt unauthorized access to systems, data, or accounts.\nYou must not use automated tools, including bots or scraping tools, without permission.\nSam Global reserves the right to restrict or terminate access for violations of these Terms.",
-          image: {
-            url: "",
-            alt: "Platform Usage",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 4,
-        },
-        {
-          title: "Product Information & Pricing",
-          description:
-            "Product descriptions, images, and pricing are provided for informational purposes.\nAlthough we make reasonable efforts to ensure accuracy, errors may occur.\nSam Global reserves the right to correct errors, update information, or cancel orders affected by pricing or product information errors, subject to applicable law.\nPrices and product availability are subject to change.",
-          image: {
-            url: "",
-            alt: "Product Information & Pricing",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 5,
-        },
-        {
-          title: "Orders & Acceptance",
-          description:
-            "Placing an order constitutes an offer to purchase the selected products.\nSam Global reserves the right to accept or reject an order, subject to applicable law.\nAn order confirmation does not necessarily constitute final acceptance. Orders may be cancelled due to stock issues, pricing errors, or verification concerns, subject to applicable law and the applicable order policies.",
-          image: {
-            url: "",
-            alt: "Orders & Acceptance",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 6,
-        },
-        {
-          title: "Payments",
-          description:
-            "All payments must be made through the approved payment methods available on the Platform.\nTransactions are processed through third-party payment gateways.\nSam Global is not responsible for payment failures or delays caused by third-party providers, except where liability cannot be excluded under applicable law.",
-          image: {
-            url: "",
-            alt: "Payments",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 7,
-        },
-        {
-          title: "Shipping, Returns & Refunds",
-          description:
-            "Shipping, returns, and refunds are governed by the separate policies published on the Platform.\nBy placing an order, you agree to the applicable policies, subject to your rights under applicable law.",
-          image: {
-            url: "",
-            alt: "Shipping, Returns & Refunds",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 8,
-        },
-        {
-          title: "Marketplace Disclaimer",
-          description:
-            "The Platform may act as an intermediary connecting customers with third-party sellers.\nSam Global may not manufacture, own, or directly control products listed by third-party sellers.\nResponsibility for product quality, legality, and compliance rests with the respective seller, subject to applicable law and Sam Global's obligations.\nSam Global is not responsible for disputes between users and sellers except to the extent required by applicable law.",
-          image: {
-            url: "",
-            alt: "Marketplace Disclaimer",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 9,
-        },
-        {
-          title: "Intellectual Property",
-          description:
-            "All content on the Platform, including text, images, logos, designs, and software, is owned by Sam Global or its licensors.\nUnauthorized use, reproduction, or distribution of this content is prohibited unless permitted by the owner or applicable law.",
-          image: {
-            url: "",
-            alt: "Intellectual Property",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 10,
-        },
-        {
-          title: "Limitation of Liability",
-          description:
-            "To the maximum extent permitted by applicable law, Sam Global shall not be liable for indirect, incidental, or consequential damages; loss of profits, data, business, or goodwill; delays, interruptions, or technical failures; or the acts or omissions of third-party sellers, logistics providers, or payment gateways.\nNothing in these Terms excludes or limits liability that cannot legally be excluded or limited.",
-          image: {
-            url: "",
-            alt: "Limitation of Liability",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 11,
-        },
-        {
-          title: "Indemnity",
-          description:
-            "To the extent permitted by applicable law, you agree to indemnify and hold harmless Sam Global against claims, damages, losses, or liabilities arising from your unlawful use of the Platform, violation of these Terms, or infringement of third-party rights.",
-          image: {
-            url: "",
-            alt: "Indemnity",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 12,
-        },
-        {
-          title: "Termination",
-          description:
-            "Sam Global may suspend or terminate access to the Platform or remove content where necessary due to violations of these Terms, security concerns, or other legitimate reasons, subject to applicable law.",
-          image: {
-            url: "",
-            alt: "Termination",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 13,
-        },
-        {
-          title: "Force Majeure",
-          description:
-            "Sam Global shall not be responsible for failures or delays caused by events beyond its reasonable control, including natural disasters, government actions, or technical and infrastructure disruptions, subject to applicable law.",
-          image: {
-            url: "",
-            alt: "Force Majeure",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 14,
-        },
-        {
-          title: "Governing Law & Jurisdiction",
-          description:
-            "These Terms shall be governed by the laws of India. Any disputes shall be subject to the jurisdiction of the competent courts in India, as determined under applicable law.",
-          image: {
-            url: "",
-            alt: "Governing Law & Jurisdiction",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 15,
-        },
-        {
-          title: "Modifications",
-          description:
-            "Sam Global reserves the right to update or modify these Terms from time to time.\nUpdated Terms will be published on the Platform with the revised effective date, where applicable.\nYour continued use of the Platform after revised Terms become effective may constitute acceptance where permitted by applicable law.",
-          image: {
-            url: "",
-            alt: "Modifications",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 16,
-        },
-        {
-          title: "Contact",
-          description:
-            "For any questions or concerns regarding these Terms, please contact us through the Contact Us page on the Platform.",
-          image: {
-            url: "",
-            alt: "Contact",
-            title: "",
-            caption: "",
-            type: "point",
-          },
-          cta: { label: "", url: "", target: "_self" },
-          sortOrder: 17,
-        },
-      ],
-      cta: { label: "", url: "", target: "_self" },
-      sortOrder: 1,
-    },
-  ],
-},
+    ],
+  },
 };
 Object.assign(FALLBACK_POLICY_DATA, CANONICAL_POLICY_DATA);
 export const FALLBACK_CMS_PAGE_CONTENT = {
@@ -1227,44 +1218,75 @@ export const FALLBACK_CMS_PAGE_CONTENT = {
     description:
       "At Sam Global, we are committed to protecting your personal information and ensuring transparency in how your data is collected, used, and safeguarded.",
     body: `
+      PRIVACY POLICY – SAM GLOBAL
       Your Privacy Matters
-
       At Sam Global, we are committed to protecting your personal information and ensuring transparency in how your data is collected, used, and safeguarded.
 
       1. Information We Collect
       We may collect the following types of information:
-      Personal Information: Name, phone number, email address, shipping and billing address.
-      Account Information: Login details, preferences, and order history.
-      Transaction Data: Payment details processed securely via third-party gateways.
-      Technical Data: IP address, browser type, device information, and website usage data.
+      Personal Information
+      Name, phone number, email address
+      Shipping and billing address
+      Account Information
+      Login details, preferences, and order history
+      Transaction Data
+      Payment details (processed securely via third-party gateways)
+      Technical Data
+      IP address, browser type, device information
+      Website usage and interaction data
 
       2. How We Use Your Information
-      Your information is used to process and deliver your orders, provide customer support, improve the platform and user experience, send order updates and relevant offers, and prevent fraud and ensure platform security.
+      Your information is used to:
+      Process and deliver your orders
+      Provide customer support
+      Improve our platform and user experience
+      Send order updates, service notifications, and relevant offers
+      Prevent fraud and ensure platform security
 
       3. Sharing of Information
-      We do not sell your personal data. We may share your information with logistics partners, payment gateways, technology and analytics providers, and sellers where required to fulfil your order.
+      We do not sell your personal data.
+      We may share your information with:
+      Logistics partners for order delivery
+      Payment gateways for secure transactions
+      Technology and analytics providers for platform improvement
+      Sellers (if applicable) to fulfil your order
+      All partners are expected to maintain data confidentiality and security.
 
       4. Data Security
-      We implement appropriate technical and organisational measures to protect your data. However, no system is completely secure, and we cannot guarantee absolute security.
+      We implement appropriate technical and organizational measures to protect your data.
+      However, no system is completely secure, and we cannot guarantee absolute security.
 
       5. Cookies & Tracking
-      We use cookies and similar technologies to enhance your browsing experience, remember your preferences, and analyse platform usage. Please refer to our Cookie Policy for more details.
+      We use cookies and similar technologies to:
+      Enhance your browsing experience
+      Remember your preferences
+      Analyse platform usage
+      (Refer to our Cookie Policy for more details)
 
       6. Your Rights
-      You may access or update your personal information, request deletion of your data subject to legal requirements, and opt out of marketing communications.
+      You may:
+      Access or update your personal information
+      Request deletion of your data (subject to legal requirements)
+      Opt out of marketing communications
 
       7. Data Retention
-      We retain your data only as long as necessary for order fulfilment, legal compliance, and business operations.
+      We retain your data only as long as necessary for:
+      Order fulfilment
+      Legal and regulatory compliance
+      Business operations
 
       8. Third-Party Links
-      Our platform may contain links to external websites. We are not responsible for the privacy practices of such third parties.
+      Our platform may contain links to external websites.
+      We are not responsible for the privacy practices of such third parties.
 
       9. Policy Updates
-      We may update this Privacy Policy from time to time. Continued use of the platform implies acceptance of the updated policy.
+      We may update this Privacy Policy from time to time.
+      Continued use of the platform implies acceptance of the updated policy.
 
       10. Contact Us
       For any privacy-related concerns, please contact us through our Contact page.
 
+      Closing Line
       Your trust is important to us, and we are committed to protecting it.
     `,
     metadata: {
@@ -1280,30 +1302,48 @@ export const FALLBACK_CMS_PAGE_CONTENT = {
     description:
       "This Cookie Policy explains how Sam Global uses cookies and similar technologies to enhance your experience on our platform.",
     body: `
+      COOKIE POLICY – SAM GLOBAL
       Understanding How We Use Cookies
-
       This Cookie Policy explains how Sam Global uses cookies and similar technologies to enhance your experience on our platform.
 
       1. What Are Cookies?
-      Cookies are small text files stored on your device when you visit a website. They help improve functionality, performance, and user experience.
+      Cookies are small text files stored on your device when you visit a website.
+      They help improve functionality, performance, and user experience.
 
       2. Types of Cookies We Use
-      Essential Cookies: Required for basic website functionality such as login and checkout.
-      Performance Cookies: Help us understand how users interact with our platform to improve performance.
-      Functional Cookies: Remember your preferences and settings for a personalised experience.
-      Advertising Cookies: Used to deliver relevant ads and measure campaign effectiveness.
+      Essential Cookies
+       Required for basic website functionality such as login and checkout.
+      Performance Cookies
+       Help us understand how users interact with our platform to improve performance.
+      Functional Cookies
+       Remember your preferences and settings for a personalized experience.
+      Advertising Cookies
+       Used to deliver relevant ads and measure campaign effectiveness.
 
       3. How We Use Cookies
-      We use cookies to enable smooth navigation and functionality, remember your preferences and login details, analyse website traffic and usage patterns, improve performance and user experience, and support marketing and advertising efforts.
+      We use cookies to:
+      Enable smooth navigation and functionality
+      Remember your preferences and login details
+      Analyse website traffic and usage patterns
+      Improve performance and user experience
+      Support marketing and advertising efforts
 
       4. Third-Party Cookies
-      We may allow trusted third-party services such as analytics or advertising platforms to place cookies on your device. These providers may use the information to help us understand traffic and improve our platform and campaigns.
+      We may allow trusted third-party services (such as analytics or advertising platforms) to place cookies on your device.
+      These cookies are governed by the respective third parties’ policies.
 
       5. Managing Cookies
-      You can manage your cookie settings through your browser preferences. Please note that disabling certain cookies may affect website functionality and access to some features.
+      You can control or disable cookies through your browser settings.
+      Please note that disabling cookies may affect certain features and functionality of the platform.
 
-      6. Updates
-      We may update this Cookie Policy from time to time to reflect changes in technology, services, or legal requirements. Updated versions will be posted on the Platform.
+      6. Consent
+      By continuing to use our platform, you consent to our use of cookies as described in this policy.
+
+      7. Updates to This Policy
+      We may update this Cookie Policy from time to time.
+
+      Closing Line
+      Designed to enhance your experience while respecting your privacy.
     `,
     metadata: {
       seoTitle: "Cookie Policy",
@@ -1550,17 +1590,18 @@ export const FALLBACK_FOOTER = {
     {
       title: "About SAM",
       links: [
+       
         {
-          label: "Who We Are",
+          label: "Our Story",
           href: "/about-us#who-we-are",
         },
         {
-          label: "Why Choose Us",
-          href: "/about-us#why-choose-us",
+          label: "Our Philosophy",
+          href: "/about-us#our-values",
         },
         {
-          label: "Our Values",
-          href: "/about-us#our-values",
+          label: "What We Are Building",
+          href: "/about-us#what-we-are-building",
         },
         {
           label: "Privacy Policy",

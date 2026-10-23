@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { X, Star, ShieldCheck } from "lucide-react";
+import { X, Star, ShieldCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { formatPageTitle } from "../../../utils/common";
 import {
   getProductTitle,
@@ -21,6 +21,30 @@ const decodeHtml = (html) => {
   return html;
 };
 
+const normalizeDescriptionHtml = (html) => {
+  if (!html || typeof html !== "string") return "";
+
+  let normalized = html.trim();
+
+  // Remove empty editor-generated blocks that create unexplained vertical gaps.
+  const emptyBlockPattern =
+    /<(p|div|section|article|h[1-6])(?:\s[^>]*)?>\s*(?:&nbsp;|&#160;|<br\s*\/?\s*>|\s)*\s*<\/\1>/gi;
+
+  let previous;
+  do {
+    previous = normalized;
+    normalized = normalized.replace(emptyBlockPattern, "");
+  } while (normalized !== previous);
+
+  // Remove stray line breaks at the very beginning or end without touching
+  // intentional line breaks inside the description.
+  normalized = normalized
+    .replace(/^(?:\s|&nbsp;|&#160;|<br\s*\/?\s*>)+/gi, "")
+    .replace(/(?:\s|&nbsp;|&#160;|<br\s*\/?\s*>)+$/gi, "");
+
+  return normalized.trim();
+};
+
 function ProductDescription({ content }) {
   const [expanded, setExpanded] = useState(false);
   const [canExpand, setCanExpand] = useState(false);
@@ -36,21 +60,27 @@ function ProductDescription({ content }) {
   if (!content) return null;
 
   return (
-    <div className="px-4 py-4 text-[#4E4E4E]">
+    <div className="w-full px-4 py-4 text-[#4E4E4E]">
       <div
         ref={contentRef}
-        className={`rich-text-content transition-all duration-300 ${
+        className={`rich-text-content w-full min-w-0 max-w-none text-base leading-relaxed text-[#4E4E4E] [&_*]:!max-w-none [&_p]:!w-full [&_p]:!text-base [&_p]:!leading-relaxed [&_p]:!text-[#4E4E4E] [&_li]:!text-base [&_li]:!leading-relaxed [&_li]:!text-[#4E4E4E] [&_div]:!text-base [&_div]:!leading-relaxed [&_div]:!text-[#4E4E4E] [&_h1]:!mb-3 [&_h1]:!mt-5 [&_h1]:!text-xl [&_h1]:!font-bold [&_h1]:!leading-snug [&_h1]:!text-[#1B1D60] [&_h2]:!mb-3 [&_h2]:!mt-5 [&_h2]:!text-xl [&_h2]:!font-bold [&_h2]:!leading-snug [&_h2]:!text-[#1B1D60] [&_h3]:!mb-2 [&_h3]:!mt-4 [&_h3]:!text-lg [&_h3]:!font-semibold [&_h3]:!leading-snug [&_h3]:!text-[#1B1D60] [&_ul]:!my-3 [&_ol]:!my-3 [&_li]:!my-1 transition-[max-height] duration-300 ${
           !expanded && canExpand ? "max-h-[200px] overflow-hidden" : ""
         }`}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: normalizeDescriptionHtml(content) }}
       />
       {canExpand && (
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="inline-block mt-3 text-sm font-bold text-[#CE9F2D] hover:underline cursor-pointer bg-transparent border-0 p-0 outline-none shadow-none focus:outline-none"
+          aria-expanded={expanded}
+          className="mt-4 inline-flex items-center gap-1.5 bg-transparent p-0 text-sm font-semibold text-[#1B1D60] transition-colors duration-200 hover:text-[#CE9F2D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CE9F2D]"
         >
-          {expanded ? "Read Less" : "Read More"}
+          <span>{expanded ? "Read Less" : "Read More"}</span>
+          {expanded ? (
+            <ChevronUp size={15} aria-hidden="true" />
+          ) : (
+            <ChevronDown size={15} aria-hidden="true" />
+          )}
         </button>
       )}
     </div>
@@ -117,9 +147,9 @@ function InfoCard({ title, children, roundedClass = "rounded-xl" }) {
 function DetailRows({
   rows,
   children,
-  rowClassName = "grid grid-cols-1 gap-1 px-4 py-3 d text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]",
-  labelClassName = "font-medium text-ink",
-  valueClassName = "text-left font-bold text-navy md:text-right",
+  rowClassName = "grid grid-cols-1 gap-1 px-4 py-3 text-sm leading-relaxed text-[#4E4E4E] lg:text-base sm:grid-cols-[220px_minmax(0,1fr)]",
+  labelClassName = "font-medium text-[#1B1D60]",
+  valueClassName = "text-left font-semibold text-navy sm:text-right",
 }) {
   return (
     <dl className="divide-y divide-border">
@@ -244,9 +274,9 @@ export default function ProductInfoSection({
                 formatPageTitle(key),
                 value,
               ])}
-              rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
-              labelClassName="font-medium text-[#2E2E2E]"
-              valueClassName="text-left font-bold text-navy sm:text-right"
+              rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-sm leading-relaxed text-[#4E4E4E] lg:text-base sm:grid-cols-[220px_minmax(0,1fr)]"
+              labelClassName="font-medium text-[#1B1D60]"
+              valueClassName="text-left font-semibold text-navy sm:text-right"
             ></DetailRows>
           ) : (
             <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
@@ -278,10 +308,10 @@ export default function ProductInfoSection({
 
         {activeInfoTab === "warranty" && (
           <InfoCard title="Warranty & Return Information" roundedClass="rounded-lg">
-            <div className="space-y-6 px-4 py-5 text-sm lg:text-base text-[#4E4E4E] leading-relaxed">
+            <div className="space-y-6 px-4 py-5 text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
               {!hasWarranty && (
                 <div>
-                  <h3 className="text-base font-bold text-ink">Warranty</h3>
+                  <h3 className="text-base font-bold text-[#1B1D60]">Warranty</h3>
                   <p className="mt-2">No warranty is offered for this product.</p>
                 </div>
               )}
@@ -291,7 +321,7 @@ export default function ProductInfoSection({
                 effectiveWarranty.type ||
                 effectiveWarranty.provider) && (
                 <div>
-                  <h3 className="text-base font-bold text-ink">
+                  <h3 className="text-base font-bold text-[#1B1D60]">
                     Warranty Summary
                   </h3>
 
@@ -308,14 +338,14 @@ export default function ProductInfoSection({
                       <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
                         {warrantyPeriod && (
                           <div>
-                            <span className="font-medium text-ink">Period:</span>{" "}
+                            <span className="font-medium text-[#1B1D60]">Period:</span>{" "}
                             {capitalizeFirst(warrantyPeriod)}
                           </div>
                         )}
 
                         {effectiveWarranty.type && (
                           <div>
-                            <span className="font-medium text-ink">Type:</span>{" "}
+                            <span className="font-medium text-[#1B1D60]">Type:</span>{" "}
                             {capitalizeFirst(
                               effectiveWarranty.type.replace(/_/g, " "),
                             )}
@@ -324,7 +354,7 @@ export default function ProductInfoSection({
 
                         {effectiveWarranty.provider && (
                           <div>
-                            <span className="font-medium text-ink">
+                            <span className="font-medium text-[#1B1D60]">
                               Provider:
                             </span>{" "}
                             {capitalizeFirst(
@@ -341,7 +371,7 @@ export default function ProductInfoSection({
               {hasWarranty && (effectiveWarranty.coveredInWarranty ||
                 effectiveWarranty.terms) && (
                 <div>
-                  <h3 className="text-base font-bold text-ink">
+                  <h3 className="text-base font-bold text-[#1B1D60]">
                     Covered in Warranty
                   </h3>
                   <div
@@ -358,7 +388,7 @@ export default function ProductInfoSection({
 
               {hasWarranty && effectiveWarranty.notCoveredInWarranty && (
                 <div>
-                  <h3 className="text-base font-bold text-ink">
+                  <h3 className="text-base font-bold text-[#1B1D60]">
                     Not Covered in Warranty
                   </h3>
                   <div
@@ -372,7 +402,7 @@ export default function ProductInfoSection({
 
               {Object.keys(returnPolicy).length > 0 && (
                 <div className="border-t border-border pt-4">
-                  <h3 className="mb-3 text-base font-bold text-ink">
+                  <h3 className="mb-3 text-base font-bold text-[#1B1D60]">
                     Return Terms
                   </h3>
                   <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
@@ -420,7 +450,7 @@ export default function ProductInfoSection({
                   return (
                     <div
                       key={`${image}-${index}`}
-                      className="relative flex aspect-square flex-1 min-w-[110px] max-w-[190px] sm:min-w-[130px] sm:max-w-[200px] md:min-w-[150px] md:max-w-[210px] items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-all hover:border-gold hover:shadow-md"
+                      className="relative flex aspect-square flex-1 min-w-[110px] max-w-[190px] sm:min-w-[130px] sm:max-w-[200px] md:min-w-[150px] md:max-w-[210px] items-center justify-center overflow-hidden rounded-lg  bg-white cursor-pointer transition-all hover:border-gold hover:shadow-md"
                       onClick={() => setIsModalOpen(true)}
                     >
                       <img
@@ -448,31 +478,22 @@ export default function ProductInfoSection({
         )}
 
       {activeInfoTab === "seller" && (
-        <InfoCard title="Seller Information"roundedClass="rounded-lg">
+        <InfoCard title="Seller Information" roundedClass="rounded-lg">
           {product.seller || product.sellerName ? (
-            <div className="overflow-hidden">
-              {/* Seller Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-3">
-                {/* Store Name */}
-                <div className="px-5 py-5 sm:px-6 sm:border-r border-border/70">
-                  <span className="mb-1.5 block text-xs font-medium text-muted">
-                    Store Name
-                  </span>
+            <div className="w-full divide-y divide-border text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
+              <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
+                <h3 className="font-medium text-[#2E2E2E]">Store Name</h3>
+                <p className="min-w-0 break-words font-semibold text-[#1B1D60] sm:text-right">
+                  {product.seller?.name ||
+                    product.seller?.storeName ||
+                    product.sellerName ||
+                    "Seller"}
+                </p>
+              </div>
 
-                  <p className="text-sm font-semibold text-ink">
-                    {product.seller?.name ||
-                      product.seller?.storeName ||
-                      product.sellerName ||
-                      "Seller"}
-                  </p>
-                </div>
-
-                {/* Rating */}
-                <div className="px-5 py-5 sm:px-6 sm:border-r border-border/70">
-                  <span className="mb-1.5 block text-xs font-medium text-muted">
-                    Seller Rating
-                  </span>
-
+              <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
+                <h3 className="font-medium text-[#2E2E2E]">Seller Rating</h3>
+                <div className="min-w-0 sm:flex sm:justify-end">
                   {(() => {
                     const rawRating = Number(
                       product.seller?.rating ??
@@ -487,93 +508,82 @@ export default function ProductInfoSection({
                         0,
                     );
                     const hasRating =
-                      !isNaN(rawRating) && rawRating > 0 && !isNaN(rawCount) && rawCount > 0;
+                      !Number.isNaN(rawRating) &&
+                      rawRating > 0 &&
+                      !Number.isNaN(rawCount) &&
+                      rawCount > 0;
 
                     if (!hasRating) {
                       return (
-                        <p className="text-sm font-semibold text-ink">
+                        <p className="font-semibold text-[#1B1D60]">
                           No Rating
                         </p>
                       );
                     }
 
                     return (
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <div className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-2.5 py-1 text-white">
                           <Star size={12} className="fill-white text-white" />
-
                           <span className="text-xs font-bold leading-none">
                             {rawRating.toFixed(1)}
                           </span>
                         </div>
-
-                        <span className="text-xs text-muted">
+                        <span className="text-xs text-[#6B7280] sm:text-sm">
                           {rawCount} {rawCount === 1 ? "Rating" : "Ratings"}
                         </span>
                       </div>
                     );
                   })()}
                 </div>
-
-                {/* Joined Date */}
-                <div className="px-5 py-5 sm:px-6">
-                  <span className="mb-1.5 block text-xs font-medium text-muted">
-                    Joined SamGlobal
-                  </span>
-
-                  <p className="text-sm font-semibold text-ink">
-                    {(() => {
-                      const joinedDate =
-                        product.seller?.joinAt ||
-                        product.seller?.createdAt ||
-                        product.joinAt ||
-                        product.sellerCreatedAt ||
-                        product.createdAt;
-
-                      if (!joinedDate) return "N/A";
-
-                      const date = new Date(joinedDate);
-
-                      if (Number.isNaN(date.getTime())) return "N/A";
-
-                      return date.toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      });
-                    })()}
-                  </p>
-                </div>
               </div>
 
-              {/* Trusted Seller Section */}
-              <div className="border-t border-border/70 bg-[#FAFCFA] px-5 py-3.5 sm:px-6">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                  {/* Trusted Badge */}
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E9F7EC] text-[#1E8A38]">
-                      <ShieldCheck size={14} strokeWidth={2.5} />
-                    </div>
+              <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
+                <h3 className="font-medium text-[#2E2E2E]">Joined SamGlobal</h3>
+                <p className="min-w-0 break-words font-semibold text-[#1B1D60] sm:text-right">
+                  {(() => {
+                    const joinedDate =
+                      product.seller?.joinAt ||
+                      product.seller?.createdAt ||
+                      product.joinAt ||
+                      product.sellerCreatedAt ||
+                      product.createdAt;
 
-                    <span className="text-sm font-semibold text-[#1E8A38]">
-                      Trusted & Verified Seller
-                    </span>
-                  </div>
+                    if (!joinedDate) return "N/A";
 
-                  {/* Divider */}
-                  <span className="hidden text-[#C7C7C7] sm:inline">•</span>
+                    const date = new Date(joinedDate);
+                    if (Number.isNaN(date.getTime())) return "N/A";
 
-                  {/* Guarantee */}
-                  <span className="text-xs text-muted sm:text-sm">
-                    100% Genuine Products & Quality Assured on SamGlobal
+                    return date.toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    });
+                  })()}
+                </p>
+              </div>
+
+              <div className="flex w-full flex-col gap-3 bg-[#FAFCFA] px-4 py-4 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E9F7EC] text-[#1E8A38]">
+                    <ShieldCheck size={14} strokeWidth={2.5} />
+                  </span>
+                  <span className="font-semibold text-[#1E8A38]">
+                    Trusted &amp; Verified Seller
                   </span>
                 </div>
+                <span className="hidden text-[#C7C7C7] sm:inline" aria-hidden="true">
+                  •
+                </span>
+                <p className="min-w-0 text-xs leading-5 text-[#6B7280] sm:text-sm">
+                  100% Genuine Products &amp; Quality Assured on SamGlobal
+                </p>
               </div>
             </div>
           ) : (
-            <div className="px-5 py-5 text-sm text-black/90">
+            <p className="px-4 py-5 text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
               Seller Information Is Not Available.
-            </div>
+            </p>
           )}
         </InfoCard>
       )}
