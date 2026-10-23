@@ -19,7 +19,9 @@ export default function useVerifyRegistration() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [deliveryMessage, setDeliveryMessage] = useState(registrationOtpMessage());
+  const [deliveryMessage, setDeliveryMessage] = useState(
+    location.state?.deliveryMessage || registrationOtpMessage(),
+  );
   const run = useToastThunk();
   const { error } = useSelector((s) => s.auth);
   const [verifying, setVerifying] = useState(false);

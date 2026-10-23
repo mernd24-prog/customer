@@ -453,7 +453,7 @@ export const CANONICAL_POLICY_DATA = {
       ),
       point(
         "15. Governing Law & Jurisdiction",
-        "These Terms shall be governed by the laws of India. Any disputes shall be subject to the jurisdiction of courts located in [Insert City].",
+        "These Terms shall be governed by the laws of India. Any disputes shall be subject to the jurisdiction of courts located in Ludhiana, Punjab.",
         15,
       ),
       point(

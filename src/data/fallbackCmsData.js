@@ -7,20 +7,20 @@ import {
 const image = (url, alt = "") => ({ url, alt });
 export const FALLBACK_CONTACT_PAGE = {
   title: "Contact us",
-  excerpt: "Get in touch with The Bear House for support, inquiries, or feedback.",
+  excerpt: "Get in touch with Sam Global for support, inquiries, or feedback.",
   sections: [
     {
       type: "content",
       title: "contact-info",
       description: "",
       points: [
-        { title: "Email", description: "maintenancestesting@gmail.com" },
-        { title: "Phone", description: "+91 7879057767" },
+        { title: "Email", description: "info@samglobal1.com" },
+        { title: "Phone", description: "+91 99154 29897" },
         { title: "Working Hours", description: "Mon - Sat\n 09:00 AM - 07:00 PM" },
         {
           title: "Office",
           description:
-            "Plot No. 24, 2nd Floor, Orion Business Park, Indore, Madhya Pradesh, 452010, India",
+            "202, KINGSTON1 OMAXE ROYAL RESIDENCY, PAKHOWAL ROAD, Lalton Kalan, Ludhiana, Ludhiana punjab 142022",
         },
       ],
     },
