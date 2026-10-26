@@ -158,7 +158,7 @@ function Footer({ data }) {
 
       {/* Logo + App Download */}
 
-      <div className="customer-container flex flex-col justify-between gap-2 pt-4 sm:pt-0 md:flex-row md:gap-16 lg:gap-4">
+     <div className="customer-container flex flex-col justify-between gap-2 py-5 md:flex-row md:gap-16 lg:gap-4">
         <div className="my-2 flex gap-3 md:items-center">
           <Link to="/">
             <img
@@ -181,7 +181,7 @@ function Footer({ data }) {
             )}
 
             {appDownloadLinks.length > 0 && (
-              <div className="my-4 flex flex-wrap gap-6 lg:my-6">
+              <div className="mt-4 flex flex-wrap gap-6 lg:mt-6">
                 {appDownloadLinks.map((app, index) => {
                   if (!app?.image) return null;
 
@@ -284,11 +284,20 @@ function Footer({ data }) {
           })}
         </div>
       )}
-      <section className="bg-black py-2">
-        <div className="customer-container flex flex-col justify-center gap-2 text-xs text-white md:text-base lg:flex-row lg:gap-10">
-          <p className="text-center">{footer?.copyright}</p>
-        </div>
-      </section>
+     <section className="bg-black py-2">
+  <div className="customer-container flex flex-col justify-center gap-2 text-xs text-white md:text-base lg:flex-row lg:gap-10">
+    <p className="text-center">
+      © 2026{" "}
+      <Link
+        to={import.meta.env.VITE_SITE_URL }
+        className="transition-colors hover:text-[#CE9F2D]"
+      >
+        Samglobal Marketplace Pvt. Ltd.
+      </Link>{" "}
+      All Rights Reserved.
+    </p>
+  </div>
+</section>
     </footer>
   );
 }

@@ -393,7 +393,7 @@ export const Navbar = ({ icons: propIcons }) => {
                       height="400"
                       src={item?.img}
                       alt={getNavbarIconLabel(item)}
-                      className={`object-contain ${
+                      className={`object-contain border ${
                         item?.name === "IN"
                           ? "h-[22px] w-[24px]"
                           : "h-[17px] w-[17px]"
@@ -414,46 +414,43 @@ export const Navbar = ({ icons: propIcons }) => {
               {utilityIcons.length > 0 && (
                 <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
               )}
+<HeaderIconButton
+  to="/cart"
+  className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
+    location.pathname === "/cart"
+      ? "border-[#1B1D6099]"
+      : ""
+  }`}
+  aria-label={`Cart with ${cartItemCount} ${
+    cartItemCount === 1 ? "item" : "items"
+  }`}
+>
+  <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
-              <HeaderIconButton
-                to="/cart"
-                className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
-                  location.pathname === "/cart"
-                    ? "border border-[#1B1D6099]"
-                    : "border border-transparent"
-                }`}
-                aria-label={`Cart with ${cartItemCount} ${
-                  cartItemCount === 1 ? "item" : "items"
-                }`}
-              >
-                <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+  {cartItemCount > 0 && (
+    <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+      {cartItemCount > 99 ? "99+" : cartItemCount}
+    </span>
+  )}
+</HeaderIconButton>
 
-                {cartItemCount > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
-                    {cartItemCount > 99 ? "99+" : cartItemCount}
-                  </span>
-                )}
-              </HeaderIconButton>
+             <HeaderIconButton
+  to="/wishlist"
+  className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
+    location.pathname === "/wishlist" ? "border-[#1B1D6099]" : ""
+  }`}
+  aria-label={`Watchlist with ${wishlistCount} ${
+    wishlistCount === 1 ? "item" : "items"
+  }`}
+>
+  <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
-              <HeaderIconButton
-                to="/wishlist"
-                className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
-                  location.pathname === "/wishlist"
-                    ? "border border-[#1B1D6099]"
-                    : "border border-transparent"
-                }`}
-                aria-label={`Watchlist with ${wishlistCount} ${
-                  wishlistCount === 1 ? "item" : "items"
-                }`}
-              >
-                <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
-
-                {wishlistCount > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
-                    {wishlistCount > 99 ? "99+" : wishlistCount}
-                  </span>
-                )}
-              </HeaderIconButton>
+  {wishlistCount > 0 && (
+    <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+      {wishlistCount > 99 ? "99+" : wishlistCount}
+    </span>
+  )}
+</HeaderIconButton>
             </div>
 
             {currentUser ? (

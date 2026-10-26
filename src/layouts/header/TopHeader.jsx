@@ -36,7 +36,7 @@ export const TopHeader = () => {
               <Link
                 key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
                 to={hrefOr(link?.path)}
-                className="text-[#FFFFFF] transition-all duration-300 ease-in-out hover:text-[#FFFFFF]"
+                className="text-[#FFFFFF] transition-colors duration-300 ease-in-out hover:text-[#CE9F2D]"
               >
                 {textOr(link?.name, "Link")}
               </Link>
@@ -46,7 +46,7 @@ export const TopHeader = () => {
           <div className="flex h-full items-center gap-[20px]">
             <Link
               to="/become-a-seller"
-              className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-gray-300"
+              className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
             >
               Become a Seller
             </Link>
@@ -55,7 +55,7 @@ export const TopHeader = () => {
               to="/support"
               title="Help & Support"
               aria-label="Help & Support"
-              className="flex items-center justify-center text-[#FFFFFF]"
+              className="flex items-center justify-center text-[#FFFFFF] "
             >
               <img
                 src="/image/svg/customer-support.svg"
