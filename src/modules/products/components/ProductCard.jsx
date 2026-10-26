@@ -743,9 +743,9 @@ export default function ProductCard({
             className={cn(
               `
                 flex
-                h-10
-                w-10
-                min-w-10
+                h-8
+                w-8
+                min-w-8
                 shrink-0
                 items-center
                 justify-center

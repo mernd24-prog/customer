@@ -50,10 +50,11 @@ export default function LoginPage() {
             autoComplete="email"
             placeholder="you@example.com"
             disabled={loading || googleLoading}
+            required
           />
 
           <div className="grid gap-1">
-            <FormField                                                                 
+            <FormField
               id="password"
               label="Password"
               type="password"
@@ -62,6 +63,7 @@ export default function LoginPage() {
               autoComplete="current-password"
               placeholder="••••••••"
               disabled={loading || googleLoading}
+              required
             />
 
             <div className="mt-1 flex justify-end">

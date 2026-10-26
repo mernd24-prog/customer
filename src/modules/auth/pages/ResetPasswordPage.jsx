@@ -30,8 +30,7 @@ export default function ResetPasswordPage() {
         subtitle="Enter your new password below and make sure it’s something strong and unique."
         icon="/image/png/done.png"
         image="/image/png/authImage.png"
-        maxWidth="max-w-[65rem]"
-        maxHeight="h-[440px]"
+        maxWidth="max-w-[56rem]"
       >
         <form className="grid gap-4" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
@@ -42,9 +41,12 @@ export default function ResetPasswordPage() {
             error={errors.email}
             autoComplete="email"
             placeholder="you@example.com"
+            required
           />
 
-          <label className="text-sm font-semibold text-ink">Otp Code</label>
+          <label className="text-sm font-semibold text-ink">
+            Otp Code<span className="ml-0.5 text-red-500">*</span>
+          </label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
@@ -62,6 +64,7 @@ export default function ResetPasswordPage() {
             error={errors.newPassword}
             autoComplete="new-password"
             placeholder="Enter a Strong New Password"
+            required
           />
 
           {error && (

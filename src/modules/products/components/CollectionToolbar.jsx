@@ -23,7 +23,7 @@ export default function CollectionToolbar({
   return (
     <div className={shellClassName}>
       {countText && (
-        <p className="text-sm font-semibold text-[var(--customer-muted)]">
+        <p className="text-sm font-semibold  text-[var(--customer-muted)]">
           {countText}
         </p>
       )}

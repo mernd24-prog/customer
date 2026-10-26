@@ -27,7 +27,7 @@ const PAGE_SIZE_OPTIONS = [10, 20, 30, 40];
 const DEFAULT_PAGE_SIZE = 10;
 
 const categoryGridClass =
-  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
+  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 lg:gap-5"
 
 function getRootCategoriesForListing(list = []) {
   const categories = getCategoryListFromResponse(list);
@@ -93,14 +93,14 @@ function CategoryTile({ category }) {
       >
         <div
           className="
-            flex h-[140px] w-full
+            relative flex h-[140px] w-full
             items-center justify-center
             overflow-hidden rounded-lg
             bg-white
             p-3
             transition-all duration-300
             sm:h-[150px]
-            lg:h-[165px]
+            lg:h-[115px]
           "
         >
           {imageSrc ? (
@@ -116,21 +116,28 @@ function CategoryTile({ category }) {
                 event.currentTarget.src = "/image/png/favicon.png";
               }}
               className="
-                h-[70px] w-[70px]
+                h-[52px] w-[52px]
                 object-contain
                 transition-transform duration-300
-                sm:h-[80px] sm:w-[80px]
-                lg:h-[90px] lg:w-[90px]
+                sm:h-[60px] sm:w-[60px]
+                lg:h-[76px] lg:w-[76px]
                 group-hover:scale-[1.04]
               "
             />
           ) : (
-            <Grid2X2
+            <Grid2X2 
               size={36}
               strokeWidth={1.4}
               className="text-[var(--customer-border-strong)]"
             />
           )}
+
+          <span
+            aria-hidden="true"
+            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
+          >
+            <ArrowRight size={14} strokeWidth={1.8} />
+          </span>
         </div>
       </div>
 
@@ -138,13 +145,13 @@ function CategoryTile({ category }) {
         {category.displayName}
       </h2>
 
-      {count !== undefined &&
+      {/* {count !== undefined &&
       count !== null &&
       count !== "" ? (
         <p className="mt-0.5 text-xs font-semibold text-muted">
           {Number(count).toLocaleString()} Products
         </p>
-      ) : null}
+      ) : null} */}
     </Link>
   );
 }

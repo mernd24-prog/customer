@@ -39,52 +39,75 @@ export default function BrandCard({
   const content = (
     <article
       className={cn(
-        "group flex h-full min-h-[188px] flex-col items-center border-border bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-lg",
+        "group block text-center",
         active && "ring-2 ring-gold/50",
         className
       )}
     >
-      <div className="relative flex h-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-cream p-4 w-full">
-        <img
-          src={getOptimizedCloudinaryUrl(displayImage || "/image/webp/favicon.webp", 200)}
-          alt=""
-          width="200"
-          height="100"
-          className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
-          loading="lazy"
-          decoding="async"
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = "/image/webp/favicon.webp";
-          }}
-        />
-
-
-        <span
-          aria-hidden="true"
-          className=" absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
+      <div
+        className="
+          mt-2 overflow-hidden rounded-lg
+          border border-[#EEE8DA]
+          bg-[#FAF8F3]
+          p-1.5
+          shadow-[0_2px_8px_rgba(0,0,0,0.04)]
+          transition-all duration-300
+          hover:-translate-y-0.5
+          hover:border-[#E5D6B5]
+          hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]
+        "
+      >
+        <div
+          className="
+            relative flex h-[140px] w-full
+            items-center justify-center
+            overflow-hidden rounded-lg
+            bg-white
+            p-3
+            transition-all duration-300
+            sm:h-[150px]
+            lg:h-[115px]
+          "
         >
-          <ArrowUpRight size={14} strokeWidth={1.8} />
-        </span>
+          <img
+            src={getOptimizedCloudinaryUrl(displayImage || "/image/webp/favicon.webp", 200)}
+            alt=""
+            width="200"
+            height="100"
+            className="
+              h-[52px] w-[52px]
+              object-contain
+              transition-transform duration-300
+              sm:h-[60px] sm:w-[60px]
+              lg:h-[76px] lg:w-[76px]
+              group-hover:scale-[1.04]
+            "
+            loading="lazy"
+            decoding="async"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/image/webp/favicon.webp";
+            }}
+          />
+
+          <span
+            aria-hidden="true"
+            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
+          >
+            <ArrowUpRight size={14} strokeWidth={1.8} />
+          </span>
+        </div>
       </div>
 
-      <div className="mt-3 flex flex-1 flex-col">
-        <h3 className="line-clamp-1 text-[14px] font-semibold text-ink sm:text-[15px]">
-          {name}
-        </h3>
+      <h2 className="mt-2 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+        {name}
+      </h2>
 
-        {subtitle && (
-          <p className="mt-1 line-clamp-2 text-[12px] leading-5 text-muted">
-            {subtitle}
-          </p>
-        )}
-
-        {productCount != null && (
-          <p className="mt-auto pt-2 text-[11px] font-medium text-muted">
-            {Number(productCount).toLocaleString()} Products
-          </p>
-        )}
-      </div>
+      {productCount != null && (
+        <p className="mt-0.5 text-xs font-semibold text-muted">
+          {Number(productCount).toLocaleString()} Products
+        </p>
+      )}
     </article>
   );
  

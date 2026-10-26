@@ -32,7 +32,7 @@ export default function ActiveFilterChips({
   return (
     <div className={`${className} flex flex-col gap-2`}>
       <div
-        className={`mt-3 w-full overflow-hidden transition-all duration-300 ${
+        className={`mt-8  w-full overflow-hidden transition-all duration-300 ${
           expanded ? "max-h-[1000px]" : "max-h-[50px]"
         }`}
       >
@@ -47,7 +47,7 @@ export default function ActiveFilterChips({
               group inline-flex shrink-0 items-center gap-1.5
               rounded-[5px] border border-[#e3d6b6]
               bg-white px-2 py-1.5
-              text-[10px] font-medium leading-[14px]
+              text-sm  font-medium leading-[14px]
               text-[#172033]
               transition-colors duration-200
               hover:border-[#D1A128]

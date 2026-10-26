@@ -146,7 +146,7 @@ export default function DeliveryChecker({
                 <MapPin size={15} />
               )}
             </div>
-            <span className="underline decoration-gold/50 underline-offset-4 leading-normal transition-colors">
+            <span className="text-base underline decoration-gold/50 underline-offset-4 leading-normal transition-colors">
               {loading
                 ? "Checking Availability..."
                 : lastCheckedPincode

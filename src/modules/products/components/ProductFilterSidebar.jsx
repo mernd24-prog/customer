@@ -920,54 +920,46 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full rounded-lg border 
-        border-[#EEDFB9]
-         bg-[#FFFDF8] lg:sticky
-          lg:top-[calc(var(--customer-header-height,95px)+62px)]
-           lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] 
-           max-h-[calc(100vh-var(--customer-header-height,95px)-78px)] overflow-y-auto sidebar-scrollbar filter-scrollbar ${className}`}
+      className={`flex max-h-[calc(100vh-var(--customer-header-height,95px)-78px)] w-full flex-col overflow-hidden rounded-lg border border-[#EEDFB9] bg-[#FFFDF8] lg:sticky lg:top-[calc(var(--customer-header-height,95px)+62px)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
-      <div className="pt-6 pb-4">
-        <div
-          className="max-h-[calc(100vh-var(--customer-header-height,95px)-120px)]
-            overflow-y-auto sidebar-scrollbar filter-scrollbar"
-        >
-          <div className="w-full shadow-none">
-            <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">
-              <h3 className="text-h4 font-semibold text-[#373737]">
-                Filters
-              </h3>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="w-full shadow-none">
+          <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">
+            <h3 className="text-h4 font-semibold text-[#373737]">
+              Filters
+            </h3>
 
-              {onClearAll && (
-                <button
-                  type="button"
-                  onClick={onClearAll}
-                  className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[14px] text-[14px] font-semibold text-[#5960B8] sm:text-[16px]"
-                >
-                  Clear All
-                </button>
-              )}
-            </div>
-
-            {topContent}
-
-            {loading ? (
-              <FilterSkeleton />
-            ) : (
-              <div className="px-4 pb-6 min-[375px]:px-5">
-                {sections.map((section) => (
-                  <FilterSection
-                    key={section.key || section.title}
-                    title={section.title}
-                    defaultOpen={section.defaultOpen}
-                    searchable={section.searchable}
-                  >
-                    {section.content}
-                  </FilterSection>
-                ))}
-              </div>
+            {onClearAll && (
+              <button
+                type="button"
+                onClick={onClearAll}
+                className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[14px] text-[14px] font-semibold text-[#5960B8] sm:text-[16px]"
+              >
+                Clear All
+              </button>
             )}
           </div>
+
+          {topContent}
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto sidebar-scrollbar filter-scrollbar">
+          {loading ? (
+            <FilterSkeleton />
+          ) : (
+            <div className="px-4 pb-6 min-[375px]:px-5">
+              {sections.map((section) => (
+                <FilterSection
+                  key={section.key || section.title}
+                  title={section.title}
+                  defaultOpen={section.defaultOpen}
+                  searchable={section.searchable}
+                >
+                  {section.content}
+                </FilterSection>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </aside>

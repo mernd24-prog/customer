@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   aadhaarField,
+  commonFieldValidators,
   confirmPasswordField,
   emailField,
   firstNameField,
@@ -18,29 +19,29 @@ import {
 } from "../common/commonValidations";
 
 export const loginSchema = z.object({
-  email: emailField,
-  password: loginPasswordField,
+  email: commonFieldValidators.email,
+  password: commonFieldValidators.loginPassword,
 });
 
 export const forgotPasswordSchema = z.object({
-  email: emailField,
+  email: commonFieldValidators.email,
 });
 
 export const verifyOtpSchema = z.object({
-  email: emailField,
-  otp: otpField,
+  email: commonFieldValidators.email,
+  otp: commonFieldValidators.otp,
 });
 
 export const otpSchema = verifyOtpSchema;
 export const emailSchema = forgotPasswordSchema;
 
 export const registerSchema = z.object({
-  firstName: firstNameField(),
-  lastName: lastNameField(),
-  email: emailField,
+  firstName: commonFieldValidators.firstName,
+  lastName: commonFieldValidators.lastName,
+  email: commonFieldValidators.email,
   dialCode: z.string().optional(),
-  phone: phoneField,
-  password: strongPasswordField,
+  phone: commonFieldValidators.phone,
+  password: commonFieldValidators.password,
   referralCode: referralCodeField,
 });
 
@@ -66,9 +67,9 @@ export const buyerRegisterSchema = registerOtpSchema;
 // );
 
 export const resetSchema = z.object({
-  email: emailField,
-  otp: otpField,
-  newPassword: strongPasswordField,
+  email: commonFieldValidators.email,
+  otp: commonFieldValidators.otp,
+  newPassword: commonFieldValidators.password,
 });
 
 export const profileSchema = z.object({

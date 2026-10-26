@@ -534,7 +534,7 @@ export function OrderItemCard({
             <p className="text-lg font-extrabold text-[#1F2430] sm:text-xl">
               {formatMoney(getItemLineTotal(item), currency)}
             </p>
-            <p className="mt-0.5 text-xs font-medium text-[#6F7480]">
+            <p className="mt-0.5 text-xs font-base text-[#6F7480]">
               Inclusive of all taxes
             </p>
           </div>
