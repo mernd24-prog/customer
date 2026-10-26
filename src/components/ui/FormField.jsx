@@ -10,12 +10,14 @@ export default function FormField({
   type = "text",
   className = "",
   loading = false,
+  required = false,
   ...props
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
   const isWallet = props.mode === "wallet";
+  const isRequired = Boolean(required || registration?.required || props.required);
 
   const isPhone =
     type === "tel" ||
@@ -24,6 +26,10 @@ export default function FormField({
   const isPostalCode =
     id?.toLowerCase().includes("postalcode") ||
     registration?.name?.toLowerCase().includes("postalcode");
+  const isEmail =
+    type === "email" ||
+    id?.toLowerCase().includes("email") ||
+    registration?.name?.toLowerCase().includes("email");
   const isTextOnly =
     id?.toLowerCase().includes("name") ||
     registration?.name?.toLowerCase().includes("name") ||
@@ -42,6 +48,8 @@ export default function FormField({
       e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
     } else if (isPostalCode) {
       e.target.value = e.target.value.replace(/\D/g, "");
+    } else if (isEmail) {
+      e.target.value = e.target.value.trim().slice(0, 254);
     } else if (isTextOnly) {
       e.target.value = e.target.value.replace(/[^A-Za-z\s'.-]/g, "");
     } else if (isCoupon) {
@@ -57,7 +65,10 @@ export default function FormField({
       className="grid gap-1.5 text-sm lg:text-base font-medium text-[var(--customer-ink)]"
       htmlFor={id}
     >
-      <span>{label}</span>
+      <span>
+        {label}
+        {isRequired && <span className="ml-0.5 text-red-500">*</span>}
+      </span>
       <span className="relative">
         <input
           placeholder={placeholder}
@@ -69,7 +80,7 @@ export default function FormField({
           {...registration}
           {...props}
           onChange={handleChange}
-          maxLength={props.maxLength}
+          maxLength={props.maxLength ?? (isEmail ? 254 : undefined)}
         />
         {loading ? (
           <div className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-[#CE9F2D]">

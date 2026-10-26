@@ -45,6 +45,7 @@ export default function RegisterOtpPage() {
               registration={register("firstName")}
               error={errors.firstName}
               autoComplete="given-name"
+              required
             />
             <FormField
               id="lastName"
@@ -53,6 +54,7 @@ export default function RegisterOtpPage() {
               error={errors.lastName}
               autoComplete="family-name"
               placeholder="Enter Last Name"
+              required
             />
           </div>
 
@@ -64,6 +66,7 @@ export default function RegisterOtpPage() {
             error={errors.email}
             autoComplete="email"
             placeholder="you@example.com"
+            required
           />
 
           <FormField
@@ -74,6 +77,7 @@ export default function RegisterOtpPage() {
             error={errors.phone}
             autoComplete="tel"
             placeholder="Enter Phone Number"
+            required
           />
 
           <FormField
@@ -95,6 +99,7 @@ export default function RegisterOtpPage() {
               autoComplete="new-password"
               placeholder="••••••••"
               disabled={loading}
+              required
             />
 
             <FormField
@@ -106,6 +111,7 @@ export default function RegisterOtpPage() {
               autoComplete="new-password"
               placeholder="••••••••"
               disabled={loading}
+              required
             />
           </div>
 

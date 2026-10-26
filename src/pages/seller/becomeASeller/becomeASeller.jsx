@@ -22,6 +22,7 @@ import {
 import Seo from "../../../components/ui/Seo";
 import Loader from "../../../components/ui/Loader";
 import FallbackImage from "../../../components/ui/FallbackImage";
+import Button from "../../../components/ui/buttons/Button";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
@@ -243,15 +244,17 @@ export default function BecomeASeller() {
                 )}
 
                 <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href={SELLER_LOGIN_URL}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-6 font-bold text-[#17145f] transition hover:-translate-y-0.5 hover:bg-[#e5b738] sm:px-7"
+                  <Button
+                    type="button"
+                    onClick={() => window.open(SELLER_LOGIN_URL, "_blank", "noopener,noreferrer")}
+                    variant="primary"
+                    size="lg"
+                    icon={<ArrowRight size={18} />}
+                    iconPosition="right"
+                    className="min-h-12 rounded-lg px-6 font-bold sm:px-7"
                   >
                     Seller Login
-                    <ArrowRight size={18} />
-                  </a>
+                  </Button>
                 </div>
 
                 <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5 text-sm text-white/75 sm:mt-8 sm:gap-x-6 sm:gap-y-3">

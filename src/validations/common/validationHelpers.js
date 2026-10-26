@@ -66,6 +66,16 @@ export const trimString = z.string().trim();
 export const compactSpaces = (value = "") =>
   String(value).replace(/\s+/g, " ").trim();
 
+export const getPreviousPasswordValue = () => {
+  if (typeof window === "undefined") return "";
+
+  return (
+    window.sessionStorage.getItem("sam_global_previous_password") ||
+    window.localStorage.getItem("sam_global_previous_password") ||
+    ""
+  );
+};
+
 export const sanitizeTextInput = (value = "") =>
   compactSpaces(value)
     .split("")
@@ -332,6 +342,11 @@ export const strongPasswordField = passwordField
   .regex(REGEX.passwordLowercase, ERROR_MESSAGES.passwordLowercase)
   .regex(REGEX.passwordNumber, ERROR_MESSAGES.passwordNumber)
   .regex(REGEX.passwordSpecial, ERROR_MESSAGES.passwordSpecial)
+  .refine((value) => {
+    const previousPassword = getPreviousPasswordValue();
+    if (!previousPassword) return true;
+    return String(value || "") !== previousPassword;
+  }, "Use a different password — this matches your previous account password.")
   .refine((value) => !/\s/.test(value), "Password cannot contain spaces");
 
 export const otpField = trimString.regex(REGEX.otp, ERROR_MESSAGES.otp);
@@ -339,6 +354,19 @@ export const otpField = trimString.regex(REGEX.otp, ERROR_MESSAGES.otp);
 export const postalCodeField = trimString
   .min(1, ERROR_MESSAGES.required("Postal Code"))
   .regex(REGEX.postalCode, ERROR_MESSAGES.postalCode);
+
+export const commonFieldValidators = Object.freeze({
+  email: emailField,
+  password: strongPasswordField,
+  loginPassword: loginPasswordField,
+  name: nameField("Name"),
+  firstName: firstNameField(),
+  lastName: lastNameField(),
+  phone: phoneField,
+  otp: otpField,
+  postalCode: postalCodeField,
+  confirmPassword: confirmPasswordField,
+});
 
 export const indianPostalCodeField = trimString
   .min(1, ERROR_MESSAGES.required("PIN code"))

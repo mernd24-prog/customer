@@ -74,6 +74,7 @@ export default function AddressFormFields({
             options={addressLabels}
             registration={register("label")}
             error={errors.label}
+            required
           />
         )}
         <FormField
@@ -83,6 +84,7 @@ export default function AddressFormFields({
           registration={register("fullName")}
           error={errors.fullName}
           autoComplete="name"
+          required
         />
       </div>
       <PhoneField
@@ -92,6 +94,7 @@ export default function AddressFormFields({
         phoneRegistration={register("phone")}
         dialCodeRegistration={register("dialCode")}
         error={errors.phone || errors.dialCode}
+        required
       />
       <FormField
         id={`${idPrefix}-line1`}
@@ -99,6 +102,7 @@ export default function AddressFormFields({
         registration={register("line1")}
         error={errors.line1}
         autoComplete="address-line1"
+        required
       />
       <FormField
         id={`${idPrefix}-line2`}
@@ -109,16 +113,6 @@ export default function AddressFormFields({
       />
       <div className="grid gap-4 sm:grid-cols-2">
         <input type="hidden" {...register("country")} value="India" />
-        <SelectField
-          id={`${idPrefix}-country`}
-          label="Country"
-          placeholder="India"
-          options={countries}
-          value="India"
-          defaultValue="India"
-          error={errors.country}
-          disabled={true}
-        />
         <SelectField
           id={`${idPrefix}-state`}
           label="State"
@@ -132,7 +126,7 @@ export default function AddressFormFields({
             },
           })}
           error={errors.state}
-          disabled={!selectedCountry}
+          required
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -147,6 +141,7 @@ export default function AddressFormFields({
           })}
           error={errors.city}
           autoComplete="address-level2"
+          required
         />
         <FormField
           id={`${idPrefix}-postalCode`}
@@ -171,6 +166,7 @@ export default function AddressFormFields({
           })}
           error={errors.postalCode}
           autoComplete="postal-code"
+          required
         />
       </div>
       {showDefault && (

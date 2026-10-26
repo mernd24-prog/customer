@@ -168,7 +168,7 @@ export default function BrandOutletPage() {
   ];
 
   const brandGridClass =
-    "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
+    "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 lg:gap-5";
 
   return (
     <>
@@ -252,28 +252,7 @@ export default function BrandOutletPage() {
                       logo={getBrandLogo(brand)}
                       image={getBrandLogo(brand)}
                       subtitle=""
-                      href={CUSTOMER_ROUTES.brand(
-                        getBrandRouteKey(brand)
-                      )}
-                      className="
-                        min-h-0 items-center rounded-lg
-                        border border-[#EEE8DA] bg-[#FAF8F3] p-1.5 text-center
-                        shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300 ease-out
-                        hover:-translate-y-0.5 hover:border-[#E5D6B5]
-                        hover:bg-[#F9F5EC] hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]
-                        [&>div:first-child]:h-[150px] [&>div:first-child]:w-full
-                        [&>div:first-child]:rounded-[9px] [&>div:first-child]:border-0
-                        [&>div:first-child]:bg-white [&>div:first-child]:p-4
-                        [&>div:first-child_img]:max-h-[90px] [&>div:first-child_img]:max-w-[120px]
-                        [&>div:first-child_img]:object-contain [&>div:first-child_img]:transition-transform
-                        [&>div:first-child_img]:duration-300 group-hover:[&>div:first-child_img]:scale-[1.04]
-                        [&>div:nth-child(2)]:mt-2.5 [&>div:nth-child(2)]:flex-none
-                        [&>div:nth-child(2)_p]:hidden
-                        sm:[&>div:first-child]:h-[165px]
-                        sm:[&>div:first-child_img]:max-h-[100px] sm:[&>div:first-child_img]:max-w-[135px]
-                        lg:[&>div:first-child]:h-[180px]
-                        lg:[&>div:first-child_img]:max-h-[115px] lg:[&>div:first-child_img]:max-w-[150px]
-                      "
+                      href={CUSTOMER_ROUTES.brand(getBrandRouteKey(brand))}
                     />
                   ))}
                 </div>

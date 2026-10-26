@@ -38,6 +38,7 @@ export default function ForgotPasswordPage() {
             error={errors.email}
             autoComplete="email"
             placeholder="you@example.com"
+            required
           />
 
           {error && (

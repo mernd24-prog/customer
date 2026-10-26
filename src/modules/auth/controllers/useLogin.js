@@ -85,6 +85,17 @@ export default function useLogin() {
         }),
       );
 
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(
+          "sam_global_previous_password",
+          values.password,
+        );
+        window.localStorage.setItem(
+          "sam_global_previous_password",
+          values.password,
+        );
+      }
+
       await run(dispatch, checkAuthStatus(), "Welcome back!");
       await syncGuestCartWithServer(dispatch, {
         fetchCartAction: fetchCart,

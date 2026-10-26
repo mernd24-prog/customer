@@ -26,8 +26,6 @@ async function fetchFullList(dispatch, thunkAction, params = {}) {
 }
 
 export default function BuyerRegisterForm({ error, loading, onSubmit }) {
-  const dispatch = useDispatch();
-  const [countries, setCountries] = useState([]);
   const {
     formState: { errors },
     handleSubmit,
@@ -47,13 +45,6 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
     },
   });
 
-  useEffect(() => {
-    fetchFullList(dispatch, fetchCountries).then((list) => {
-      setCountries(list);
-    });
-    // .catch((err) => console.error("Error fetching countries:", err));
-  }, [dispatch]);
-
   const submit = (values) => onSubmit(buildBuyerRegistrationPayload(values));
 
   return (
@@ -66,6 +57,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           error={errors.firstName}
           autoComplete="given-name"
           placeholder="Enter First Name"
+          required
         />
         <FormField
           id="lastName"
@@ -74,6 +66,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           error={errors.lastName}
           autoComplete="family-name"
           placeholder="Enter Last Name"
+          required
         />
       </div>
 
@@ -86,16 +79,17 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           error={errors.email}
           autoComplete="email"
           placeholder="you@example.com"
+          required
         />
         <PhoneField
           id="phone"
           label="Phone"
-          countries={countries}
           phoneRegistration={register("phone")}
           dialCodeRegistration={register("dialCode")}
           error={errors.phone || errors.dialCode}
           autoComplete="tel"
           placeholder="Enter Phone Number"
+          required
         />
       </div>
 
@@ -108,6 +102,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           error={errors.password}
           autoComplete="new-password"
           placeholder="••••••••"
+          required
         />
         <FormField
           id="confirmPassword"
@@ -117,6 +112,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           error={errors.confirmPassword}
           autoComplete="new-password"
           placeholder="••••••••"
+          required
         />
       </div>
 
@@ -154,7 +150,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           Login
         </Link>
       </p>
-      <p className="text-center  text-[0.8rem] text-muted">
+      {/* <p className="text-center  text-[0.8rem] text-muted">
         Prefer Otp Registration?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
@@ -162,7 +158,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         >
           Continue with OTP
         </Link>
-      </p>
+      </p> */}
     </form>
   );
 }

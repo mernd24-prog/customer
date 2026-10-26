@@ -1,8 +1,8 @@
-
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { X } from "lucide-react";
 
 import { cn } from "../../../utils/common";
 import AuthCard from "../../ui/AuthCard";
@@ -13,7 +13,8 @@ import { AUTH_ROUTES } from "../../../modules/auth/routes/apiRoutes";
 import { fetchCart, updateCart } from "../../../modules/cart/slices/cartSlice";
 import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
-import { X } from "lucide-react";
+
+const FIXED_INDIAN_DIAL_CODE = "+91";
 
 export default function GuestOtpAuthModal({
   open,
@@ -21,6 +22,8 @@ export default function GuestOtpAuthModal({
   onSuccess,
   image = "/image/png/authImage.png",
   icon = "/image/png/person.png",
+  countries = [],
+  dialCodes = [],
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -33,6 +36,7 @@ export default function GuestOtpAuthModal({
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [selectedDialCode] = useState(FIXED_INDIAN_DIAL_CODE);
 
   const mobileInputRef = useRef(null);
 
@@ -81,7 +85,15 @@ export default function GuestOtpAuthModal({
 
   const validateMobile = (number) => {
     const cleanedNumber = String(number || "").replace(/\D/g, "");
-    return /^[6-9]\d{9}$/.test(cleanedNumber);
+
+    // Current OTP API validation supports Indian 10-digit mobile numbers.
+    if (selectedDialCode === "+91") {
+      return /^[6-9]\d{9}$/.test(cleanedNumber);
+    }
+
+    // International OTP validation must be supported by the backend before
+    // non-Indian dial codes can be used for authentication.
+    return false;
   };
 
   const getErrorMessage = (error, fallbackMessage) => {
@@ -101,6 +113,13 @@ export default function GuestOtpAuthModal({
 
     const cleanedMobile = mobile.replace(/\D/g, "").slice(0, 10);
 
+    if (selectedDialCode !== "+91") {
+      setErrorMessage(
+        "OTP login for this country code is not supported yet. Please select +91.",
+      );
+      return;
+    }
+
     if (!validateMobile(cleanedMobile)) {
       if (cleanedMobile.length !== 10) {
         setErrorMessage("Please enter a valid 10-digit mobile number.");
@@ -117,7 +136,7 @@ export default function GuestOtpAuthModal({
     try {
       await dispatch(otpAuth({ mobile: cleanedMobile })).unwrap();
 
-      notify.success(`OTP sent successfully to ${cleanedMobile}`);
+      notify.success(`OTP sent successfully to ${selectedDialCode} ${cleanedMobile}`);
       setMobile(cleanedMobile);
       setOtp("");
       setStep(2);
@@ -139,7 +158,7 @@ export default function GuestOtpAuthModal({
     const cleanedOtp = otp.replace(/\D/g, "").slice(0, 6);
 
     if (!validateMobile(cleanedMobile)) {
-      setErrorMessage("Please enter a valid 10-digit mobile number.");
+      setErrorMessage("Please enter a valid 10-digit Indian mobile number.");
       setStep(1);
       return;
     }
@@ -203,13 +222,12 @@ export default function GuestOtpAuthModal({
   }
 
   const isSubmitting = loading || authLoading;
-
   const cardTitle = step === 1 ? "Login with Phone" : "Verify OTP";
 
   const cardSubtitle =
     step === 1
       ? "Enter your mobile number to continue shopping with Sam Global."
-      : `Enter the 6-digit verification code sent to +91 ${mobile}`;
+      : `Enter the 6-digit verification code sent to ${selectedDialCode} ${mobile}`;
 
   return createPortal(
     <div
@@ -278,15 +296,17 @@ export default function GuestOtpAuthModal({
 
                   <div
                     className={cn(
-                      "flex h-11 w-full overflow-hidden rounded-md border bg-white transition-all duration-200",
+                      "flex h-11 w-full min-w-0 overflow-hidden rounded-md border bg-transparent transition-all duration-200",
                       errorMessage
                         ? "border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500/20"
                         : "border-[#D6D9DE] focus-within:border-[#CE9F2D] focus-within:ring-2 focus-within:ring-[#CE9F2D]/20",
                     )}
                   >
-                    <div className="flex shrink-0 items-center border-r border-[#D6D9DE] bg-[#FAFAFA] px-3.5 text-sm font-medium text-[#5F6470]">
-                      +91
+                    <div className="flex w-[92px] shrink-0 items-center justify-center gap-1 rounded-l-md bg-transparent px-2 text-sm font-medium text-[#5F6470]">
+                      <span>{selectedDialCode}</span>
                     </div>
+
+                    <div className="my-auto h-5 w-px shrink-0 bg-[#D6D9DE]" />
 
                     <input
                       id="guest-mobile"
@@ -296,14 +316,18 @@ export default function GuestOtpAuthModal({
                       autoComplete="tel-national"
                       maxLength={10}
                       value={mobile}
-                      onChange={(e) => {
-                        const value = e.target.value
+                      onChange={(event) => {
+                        const value = event.target.value
                           .replace(/\D/g, "")
                           .slice(0, 10);
 
                         setMobile(value);
 
-                        if (value.length === 10 && !/^[6-9]/.test(value)) {
+                        if (
+                          value.length === 10 &&
+                          selectedDialCode === "+91" &&
+                          !/^[6-9]/.test(value)
+                        ) {
                           setErrorMessage(
                             "Mobile number must start with 6, 7, 8, or 9.",
                           );
@@ -312,13 +336,16 @@ export default function GuestOtpAuthModal({
                         }
                       }}
                       placeholder="Mobile Number"
-                      className="h-full min-w-0 flex-1 border-0 bg-transparent px-3.5 text-sm font-medium text-[#2E2E2E] placeholder:font-normal placeholder:text-muted focus:border-0 focus:outline-none focus:ring-0"
+                      className="h-full min-w-0 flex-1 rounded-r-md border-0 bg-transparent px-3 text-sm font-medium text-[#2E2E2E] placeholder:font-normal placeholder:text-muted focus:border-0 focus:outline-none focus:ring-0 autofill:[-webkit-box-shadow:0_0_0_1000px_transparent_inset] autofill:[-webkit-text-fill-color:#2E2E2E]"
                       required
                     />
                   </div>
 
                   {errorMessage && (
-                    <p className="mt-1.5 text-xs font-semibold text-red-600">
+                    <p
+                      role="alert"
+                      className="mt-1.5 text-xs font-semibold text-red-600"
+                    >
                       {errorMessage}
                     </p>
                   )}

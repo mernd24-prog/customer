@@ -52,6 +52,17 @@ export default function useResetPassword() {
         "Password reset successfully",
       );
 
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(
+          "sam_global_previous_password",
+          values.newPassword,
+        );
+        window.localStorage.setItem(
+          "sam_global_previous_password",
+          values.newPassword,
+        );
+      }
+
       window.setTimeout(() => {
         navigate(AUTH_ROUTES.login, { state: { email: values.email } });
       }, 1500);

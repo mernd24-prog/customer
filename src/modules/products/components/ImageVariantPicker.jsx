@@ -23,10 +23,11 @@ export default function ImageVariantPicker({
 
   return (
     <div className="w-full">
-      <p className="mb-3 text-lg font-semibold capitalize text-ink">Style:</p>
+      <p className="mb-3 text-base font-semibold capitalize text-ink">Style:</p>
 
-      <div className="flex w-fit flex-wrap gap-3">
-        {variants.map((variant, index) => {
+      <div className="w-full overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex min-w-max flex-nowrap gap-3">
+          {variants.map((variant, index) => {
           const variantId = variant._id || variant.id || variant.sku || index;
           const isSelected = String(variantId) === String(selectedId);
 
@@ -50,7 +51,7 @@ export default function ImageVariantPicker({
               key={variantId}
               type="button"
               onClick={() => setSelectedVariant(variant)}
-              className={`relative h-[80px] w-[80px] overflow-hidden rounded-lg border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
+              className={`relative h-[80px] w-[70px] shrink-0 overflow-hidden rounded-lg border bg-white transition-all duration-300 ease-in-out sm:h-[100px] sm:w-[80px] ${
                 isSelected
                   ? "border border-gold shadow-sm"
                   : "border border-gold/20 hover:border-gold/50"
@@ -81,7 +82,6 @@ export default function ImageVariantPicker({
                 </span>
               )}
 
-              {/* Out Of Stock badge */}
               {isOutOfStock && (
                 <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
                   Out Of Stock
@@ -90,6 +90,7 @@ export default function ImageVariantPicker({
             </button>
           );
         })}
+        </div>
       </div>
     </div>
   );

@@ -173,7 +173,7 @@ export default function AddedToCartModal({
 
   return (
     <ModalOverlay onClose={onClose} showCloseButton={false}>
-      <div className="relative grid max-h-[92vh] w-full grid-cols-1 overflow-y-auto rounded-2xl bg-white shadow-2xl md:max-h-[80vh] md:grid-cols-[minmax(0,1fr)_360px] md:overflow-hidden">
+      <div className="relative grid max-h-[92vh] w-full grid-cols-1 overflow-y-auto rounded-lg  bg-white shadow-2xl md:max-h-[80vh] md:grid-cols-[minmax(0,1fr)_360px] md:overflow-hidden">
         <button
           type="button"
           onClick={onClose}

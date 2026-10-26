@@ -57,6 +57,17 @@ export default function SecurityTab() {
       notify.success(message);
       return;
     }
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(
+        "sam_global_previous_password",
+        values.newPassword,
+      );
+      window.localStorage.setItem(
+        "sam_global_previous_password",
+        values.newPassword,
+      );
+    }
+
     notify.success("Password changed successfully. Please sign in with your new password.");
     setOtpRequired(false);
     setOtp("");

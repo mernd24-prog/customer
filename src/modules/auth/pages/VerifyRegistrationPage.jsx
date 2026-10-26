@@ -49,9 +49,12 @@ export default function VerifyRegistrationPage() {
             error={errors.email}
             autoComplete="email"
             placeholder="you@example.com"
+            required
           />}
 
-          <label className=" text-sm font-semibold text-ink">Otp Code</label>
+          <label className="text-sm font-semibold text-ink">
+            Otp Code<span className="ml-0.5 text-red-500">*</span>
+          </label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
