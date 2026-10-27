@@ -6,7 +6,7 @@ export default function WhyChooseSection({ data }) {
   const loading = useDelayedLoading();
 
   return (
-    <section className="pt-10 md:pt-14">
+    <section className="pt-10 md:pt-10">
       <div className="text-center">
         <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl text-ink font-bold">
           {data?.title}

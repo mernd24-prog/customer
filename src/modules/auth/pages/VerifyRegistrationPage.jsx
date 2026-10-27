@@ -64,14 +64,14 @@ export default function VerifyRegistrationPage() {
             error={errors.otp?.message}
           />
 
-          {error && (
+          {/* {error && (
             <div
               className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
               role="alert"
             >
               {error}
             </div>
-          )}
+          )} */}
 
           <Button
             type="submit"

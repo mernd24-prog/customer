@@ -6,14 +6,16 @@ export default function ValuesSection({ data }) {
   const loading = useDelayedLoading();
 
   return (
-    <section className="pt-6 md:pt-12">
+    <section className="pt-10 md:pt-10 pb-6 md:pb-6">
       <div className="w-full flex flex-col items-center gap-4 ">
         <h2 className=" text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold py-2">
           {data?.title}
         </h2>
 
         {data?.intro && (
-          <p className="text-center text-base md:text-lg text-ink/80">{data.intro}</p>
+          <p className="text-center text-base md:text-lg text-ink/80">
+            {data.intro}
+          </p>
         )}
       </div>
       {loading ? (

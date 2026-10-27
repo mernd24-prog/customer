@@ -163,10 +163,8 @@ export default function PoliciesPages({ slugOverride }) {
         </div>
       </section>
 
-      <section className="w-full pt-3 pb-10 md:pb-12">
+      <section className="w-full  pt-3 pb-10 md:pb-3">
         <PageContainer>
-          
-
           <ApiState
             loading={loading && !page && !fallbackPolicy}
             error={error && !fallbackPolicy ? error : null}
