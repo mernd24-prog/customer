@@ -146,14 +146,20 @@ export default function DeliveryChecker({
                 <MapPin size={15} />
               )}
             </div>
-            <span className="text-base underline decoration-gold/50 underline-offset-4 leading-normal transition-colors">
-              {loading
-                ? "Checking Availability..."
-                : lastCheckedPincode
-                  ? `Delivering to ${lastCheckedPincode} (Change)`
-                  : "Check Delivery & Pincode Availability"}
-            </span>
-            <ArrowRight size={20} className="shrink-0 text-gold" />
+        <div className="group flex items-center gap-2">
+  <span className="text-base leading-normal underline decoration-gold/50 underline-offset-4 transition-all duration-300 ease-in-out group-hover:text-[#CE9F2D] group-hover:decoration-[#CE9F2D]">
+    {loading
+      ? "Checking Availability..."
+      : lastCheckedPincode
+        ? `Delivering to ${lastCheckedPincode} (Change)`
+        : "Check Delivery & Pincode Availability"}
+  </span>
+
+  <ArrowRight
+    size={20}
+    className="shrink-0 text-gold transition-transform duration-300 ease-in-out group-hover:translate-x-1"
+  />
+</div>
           </button>
 
           {/* Quick inline status if already checked */}

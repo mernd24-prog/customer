@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
 
 import AddToCartButton from "./AddToCartButton";
 import Label from "../../../components/ui/label/Label";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 import {
   IconCircleButton,
@@ -225,6 +227,8 @@ export default function ProductCard({
 
   const [isHovered, setIsHovered] = useState(false);
 
+  const swiperRef = useRef(null);
+
   const allImages = useMemo(() => {
     const list = [];
 
@@ -289,10 +293,13 @@ export default function ProductCard({
 
   useEffect(() => {
     if (!isHovered || allImages.length <= 1) {
+      // Reset to first slide smoothly when not hovered
+      swiperRef.current?.slideTo(0, 300);
       setActiveImageIndex(0);
       return;
     }
 
+    // Preload all images
     allImages.forEach((imgUrl) => {
       if (imgUrl) {
         const img = new Image();
@@ -300,9 +307,10 @@ export default function ProductCard({
       }
     });
 
+    // Advance slides using slideNext() on an interval
     const interval = setInterval(() => {
-      setActiveImageIndex((prev) => (prev + 1) % allImages.length);
-    }, 1200);
+      swiperRef.current?.slideNext(400);
+    }, 1300);
 
     return () => clearInterval(interval);
   }, [isHovered, allImages]);
@@ -488,8 +496,6 @@ export default function ProductCard({
    */
   return (
     <article
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out sm:rounded-lg",
         className,
@@ -578,48 +584,76 @@ export default function ProductCard({
         className="flex min-w-0 flex-1 flex-col"
       >
         {/* IMAGE */}
-        <div className="relative flex h-[160px] w-full items-center justify-center overflow-hidden rounded-t-[14px] xs:h-[190px] sm:h-[230px] sm:rounded-t-[20px] md:h-[260px]">
-          {activeImage ? (
-            <>
-              <img
-                src={getOptimizedCloudinaryUrl(activeImage, 400)}
-                srcSet={generateCloudinarySrcSet(activeImage, [300, 400, 800])}
-                sizes="(max-width: 640px) 250px, (max-width: 1024px) 400px, 800px"
-                alt=""
-                width="400"
-                height="400"
-                className="h-full w-full object-contain object-center p-2 "
-                loading="lazy"
-                decoding="async"
-                onError={handleImageError}
-              />
-
-              {isHovered && allImages.length > 1 && (
-                <div
-                  className={cn(
-                    "pointer-events-none absolute inset-x-0 z-20 flex items-center justify-center gap-1.5 px-2",
-                    isDealProduct && dealEndDate ? "bottom-8" : "bottom-3",
-                  )}
-                >
-                  {allImages.slice(0, 6).map((_, idx) => (
-                    <div
-                      key={idx}
-                      className={cn(
-                        "h-1 rounded-full shadow-sm transition-all duration-300",
-                        activeImageIndex % Math.min(allImages.length, 6) === idx
-                          ? "w-4 bg-[#1B1D60]"
-                          : "w-1.5 bg-black/30",
-                      )}
+        <div
+          className="relative h-[160px] w-full cursor-pointer overflow-hidden rounded-t-[14px] xs:h-[190px] sm:h-[230px] sm:rounded-t-[20px] md:h-[260px]"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {allImages.length > 0 ? (
+            <Swiper
+              slidesPerView={1}
+              spaceBetween={0}
+              speed={500}
+              loop={allImages.length > 1}
+              allowTouchMove={allImages.length > 1}
+              simulateTouch
+              grabCursor={false}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}
+              onSlideChange={(swiper) => {
+                setActiveImageIndex(swiper.realIndex);
+              }}
+              className="h-full w-full"
+              style={{ cursor: "pointer" }}
+            >
+              {allImages.map((image, idx) => (
+                <SwiperSlide key={`${image}-${idx}`}>
+                  <div className="flex h-full w-full items-center justify-center">
+                    <img
+                      src={getOptimizedCloudinaryUrl(image, 400)}
+                      srcSet={generateCloudinarySrcSet(image, [300, 400, 800])}
+                      sizes="(max-width: 640px) 250px, (max-width: 1024px) 400px, 800px"
+                      alt=""
+                      width="400"
+                      height="400"
+                      className="h-full w-full object-contain object-center p-2"
+                      loading={idx === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                      onError={handleImageError}
                     />
-                  ))}
-                </div>
-              )}
-            </>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[var(--customer-border-strong)]">
               <ShoppingCart size={48} strokeWidth={1.4} />
             </div>
           )}
+
+          {/* IMAGE INDICATORS */}
+          {isHovered && allImages.length > 1 && (
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-x-0 z-20 flex items-center justify-center gap-1.5 px-2",
+                isDealProduct && dealEndDate ? "bottom-8" : "bottom-3",
+              )}
+            >
+              {allImages.slice(0, 6).map((_, idx) => (
+                <div
+                  key={idx}
+                  className={cn(
+                    "h-1 rounded-full shadow-sm transition-all duration-300",
+                    activeImageIndex % Math.min(allImages.length, 6) === idx
+                      ? "w-4 bg-[#1B1D60]"
+                      : "w-1.5 bg-black/30",
+                  )}
+                />
+              ))}
+            </div>
+          )}
+
           {/* DEAL END DATE */}
           {isDealProduct && dealEndDate && (
             <div className="absolute inset-x-0 bottom-0 z-20 flex h-[19px] items-center justify-between gap-1 bg-[#FFFDF8]/95 px-1.5 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] sm:h-[29px] sm:px-3">

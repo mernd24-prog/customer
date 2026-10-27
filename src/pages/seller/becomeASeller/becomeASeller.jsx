@@ -507,10 +507,13 @@ export default function BecomeASeller() {
                     target="_blank"
                     rel="noreferrer"
                     href={SELLER_LOGIN_URL}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-7 font-bold text-[#17145f] transition-colors duration-200 hover:bg-[#e5b738] sm:px-8"
+                    className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-7 font-bold text-[#17145f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-px hover:bg-[#e5b738] hover:shadow-[0_3px_8px_rgba(214,163,35,0.14)] active:translate-y-0 sm:px-8"
                   >
                     Get Started
-                    <ChevronRight size={18} />
+                    <ChevronRight
+                      size={18}
+                      className="transition-transform duration-300 ease-in-out group-hover:translate-x-0.5"
+                    />
                   </a>
                 </div>
               </div>
