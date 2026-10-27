@@ -27,6 +27,7 @@ import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
 import { SELLER_LOGIN_URL } from "../../../config/seller";
+import { SolidLargeButton } from "../../../components/ui/button/static";
 
 const STORY_SWIPER_BREAKPOINTS = {
   640: {
@@ -113,14 +114,11 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
 
 export default function BecomeASeller() {
   const storySlidesPerView = useStorySlidesPerView();
-  const { page: cmsPage, loading, error } =
-    useCmsRecord("become-a-seller");
+  const { page: cmsPage, loading, error } = useCmsRecord("become-a-seller");
 
   const cmsPayload = getCmsPayload(cmsPage);
 
-  const sellerPage = cmsPayload?.image?.url
-    ? cmsPayload
-    : FALLBACK_SELLER_PAGE;
+  const sellerPage = cmsPayload?.image?.url ? cmsPayload : FALLBACK_SELLER_PAGE;
 
   const heroTitle = sellerPage?.title || "";
 
@@ -144,9 +142,7 @@ export default function BecomeASeller() {
     ? benefitsSection.points
     : [];
 
-  const steps = Array.isArray(stepsSection?.points)
-    ? stepsSection.points
-    : [];
+  const steps = Array.isArray(stepsSection?.points) ? stepsSection.points : [];
 
   const mappedExperiences = sellerStories.map((point) => ({
     quote: point?.description || "",
@@ -202,7 +198,7 @@ export default function BecomeASeller() {
                 src={heroImg}
                 fallbackSrc={FALLBACK_SELLER_PAGE.image.url}
                 alt="Sam Global Seller Growing His Online Business"
-                className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
+                className="absolute inset-0 -z-20 h-full w-full object-cover object-top 3xl:object-center"
               />
             )}
 
@@ -223,7 +219,6 @@ export default function BecomeASeller() {
               <div className="max-w-3xl">
                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-sm font-medium backdrop-blur-sm sm:mb-6 sm:px-4 sm:py-2">
                   <Sparkles size={16} className="text-[#efc75f]" />
-
                   Your Next Chapter Starts Here
                 </div>
 
@@ -231,9 +226,7 @@ export default function BecomeASeller() {
                   {titleLine1}
 
                   {titleLine2 && (
-                    <span className="block text-[#efc75f]">
-                      {titleLine2}
-                    </span>
+                    <span className="block text-[#efc75f]">{titleLine2}</span>
                   )}
                 </h1>
 
@@ -244,17 +237,12 @@ export default function BecomeASeller() {
                 )}
 
                 <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
-                  <Button
-                    type="button"
-                    onClick={() => window.open(SELLER_LOGIN_URL, "_blank", "noopener,noreferrer")}
-                    variant="primary"
-                    size="lg"
-                    icon={<ArrowRight size={18} />}
-                    iconPosition="right"
-                    className="min-h-12 rounded-lg px-6 font-bold sm:px-7"
+                  <SolidLargeButton
+                    to={SELLER_LOGIN_URL}
+                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-lg"
                   >
                     Seller Login
-                  </Button>
+                  </SolidLargeButton>
                 </div>
 
                 <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5 text-sm text-white/75 sm:mt-8 sm:gap-x-6 sm:gap-y-3">
@@ -292,14 +280,12 @@ export default function BecomeASeller() {
 
                     <h2 className="mt-4 text-h2 font-bold leading-tight text-[#201b78] sm:mt-5">
                       Their Growth Is Our{" "}
-                      <span className="text-[#b17d15]">
-                        Favourite Story.
-                      </span>
+                      <span className="text-[#b17d15]">Favourite Story.</span>
                     </h2>
 
                     <p className="mt-3 max-w-xl leading-7 text-[#6f7480] sm:mt-4">
-                      Meet the entrepreneurs building remarkable businesses
-                      with Sam Global by their side.
+                      Meet the entrepreneurs building remarkable businesses with
+                      Sam Global by their side.
                     </p>
                   </div>
 
@@ -326,7 +312,9 @@ export default function BecomeASeller() {
                   <CustomSwiper
                     prevEl=".seller-story-prev"
                     nextEl=".seller-story-next"
-                    showPagination={mappedExperiences.length > storySlidesPerView}
+                    showPagination={
+                      mappedExperiences.length > storySlidesPerView
+                    }
                     spaceBetween={16}
                     slidesPerView={1}
                     breakpoints={STORY_SWIPER_BREAKPOINTS}
@@ -414,30 +402,28 @@ export default function BecomeASeller() {
                 </div>
 
                 <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
-                  {mappedBenefits.map(
-                    ({ icon: Icon, title, text }, index) => (
-                      <div
-                        key={title || index}
-                        className="rounded-lg border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
-                      >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D]">
-                          <Icon size={24} strokeWidth={2} />
-                        </div>
-
-                        {title && (
-                          <h3 className="mt-4 text-[18px] font-bold leading-6 text-[#18156D] sm:mt-6">
-                            {title}
-                          </h3>
-                        )}
-
-                        {text && (
-                          <p className="mt-2.5 text-[14px] leading-6 text-gray-600 md:mt-3 md:text-[15px]">
-                            {text}
-                          </p>
-                        )}
+                  {mappedBenefits.map(({ icon: Icon, title, text }, index) => (
+                    <div
+                      key={title || index}
+                      className="rounded-lg border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                    >
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D]">
+                        <Icon size={24} strokeWidth={2} />
                       </div>
-                    ),
-                  )}
+
+                      {title && (
+                        <h3 className="mt-4 text-[18px] font-bold leading-6 text-[#18156D] sm:mt-6">
+                          {title}
+                        </h3>
+                      )}
+
+                      {text && (
+                        <p className="mt-2.5 text-[14px] leading-6 text-gray-600 md:mt-3 md:text-[15px]">
+                          {text}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </section>
@@ -464,34 +450,32 @@ export default function BecomeASeller() {
                   <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-7 hidden border-t border-dashed border-white/20 lg:block" />
 
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-                    {mappedSteps.map(
-                      ({ icon: Icon, number, title, text }) => (
-                        <article
-                          key={number}
-                          className="relative flex min-h-[190px] flex-col rounded-lg border border-white/10 bg-white/[0.075] p-4 text-white backdrop-blur-sm sm:min-h-[214px] sm:p-6"
-                        >
-                          <div className="relative z-10 flex items-center justify-between">
-                            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-[#d6a323] text-[#17145f] shadow-[0_8px_20px_rgba(0,0,0,0.12)] sm:h-14 sm:w-14">
-                              <Icon size={24} strokeWidth={1.9} />
-                            </span>
+                    {mappedSteps.map(({ icon: Icon, number, title, text }) => (
+                      <article
+                        key={number}
+                        className="relative flex min-h-[190px] flex-col rounded-lg border border-white/10 bg-white/[0.075] p-4 text-white backdrop-blur-sm sm:min-h-[214px] sm:p-6"
+                      >
+                        <div className="relative z-10 flex items-center justify-between">
+                          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-[#d6a323] text-[#17145f] shadow-[0_8px_20px_rgba(0,0,0,0.12)] sm:h-14 sm:w-14">
+                            <Icon size={24} strokeWidth={1.9} />
+                          </span>
 
-                            <span className="text-[32px] font-bold leading-none tracking-tight text-white/10 sm:text-[34px]">
-                              {number}
-                            </span>
-                          </div>
+                          <span className="text-[32px] font-bold leading-none tracking-tight text-white/10 sm:text-[34px]">
+                            {number}
+                          </span>
+                        </div>
 
-                          <div className="mt-4 sm:mt-5">
-                            <h3 className="text-[18px] font-bold leading-6 sm:text-[19px]">
-                              {title}
-                            </h3>
+                        <div className="mt-4 sm:mt-5">
+                          <h3 className="text-[18px] font-bold leading-6 sm:text-[19px]">
+                            {title}
+                          </h3>
 
-                            <p className="mt-2.5 max-w-[270px] text-[14px] leading-6 text-white/65">
-                              {text}
-                            </p>
-                          </div>
-                        </article>
-                      ),
-                    )}
+                          <p className="mt-2.5 max-w-[270px] text-[14px] leading-6 text-white/65">
+                            {text}
+                          </p>
+                        </div>
+                      </article>
+                    ))}
                   </div>
                 </div>
 

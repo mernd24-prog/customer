@@ -143,16 +143,24 @@ const normalizeSuggestion = (suggestion, source = "api") => ({
   label: getSuggestionLabel(suggestion).trim(),
   subtitle: getSuggestionSubtitle(suggestion),
   image: getSuggestionImage(suggestion),
-  images: Array.isArray(suggestion?.images) ? suggestion.images.map(getImageUrlFromValue).filter(Boolean) : [],
+  images: Array.isArray(suggestion?.images)
+    ? suggestion.images.map(getImageUrlFromValue).filter(Boolean)
+    : [],
   source,
 });
 
 const SuggestionImage = ({ images }) => {
   const [index, setIndex] = useState(0);
   return images[index] ? (
-    <img width="40" height="40" src={images[index]} alt=""
-      className="h-10 w-10 shrink-0 rounded-md object-contain" loading="lazy"
-      onError={() => setIndex(value => value + 1)} />
+    <img
+      width="40"
+      height="40"
+      src={images[index]}
+      alt=""
+      className="h-10 w-10 shrink-0 rounded-md object-contain"
+      loading="lazy"
+      onError={() => setIndex((value) => value + 1)}
+    />
   ) : (
     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#F8F3E7] text-[#CE9F2D]">
       <Search size={17} />
@@ -270,7 +278,13 @@ const SearchBar = ({
 
     dispatch(
       searchAutocomplete({
-        params: { q: query, limit: autocompleteLimit, categoryId: selectedCategory ? getCategoryId(selectedCategory) : undefined },
+        params: {
+          q: query,
+          limit: autocompleteLimit,
+          categoryId: selectedCategory
+            ? getCategoryId(selectedCategory)
+            : undefined,
+        },
         cacheKey: `search-autocomplete-${query}-${autocompleteLimit}-${selectedCategory ? getCategoryId(selectedCategory) : "all"}`,
       }),
     ).catch(() => {});
@@ -602,7 +616,7 @@ const SearchBar = ({
             aria-controls={
               enableAutocomplete ? "search-suggestions" : undefined
             }
-            className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-[11px] font-medium leading-[16px] tracking-[0%] text-[#2E2E2E] outline-none ring-0 text-ellipsis overflow-hidden whitespace-nowrap placeholder:text-[#2E2E2E] placeholder:text-ellipsis focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-[12px] min-[425px]:text-[13px] sm:px-4 xl:text-[15px]"
+            className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-[11px] font-medium leading-[16px] tracking-[0%] text-[#2E2E2E] outline-none ring-0 text-ellipsis overflow-hidden whitespace-nowrap placeholder:text-[#6e6d6d] placeholder:text-ellipsis focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-[12px] min-[425px]:text-[13px] sm:px-4 xl:text-[15px]"
           />
 
           {/* Clear Button */}
@@ -656,7 +670,11 @@ const SearchBar = ({
               >
                 <SuggestionImage
                   key={[image, ...(suggestion.images || [])].join("|")}
-                  images={[...new Set([image, ...(suggestion.images || [])].filter(Boolean))]}
+                  images={[
+                    ...new Set(
+                      [image, ...(suggestion.images || [])].filter(Boolean),
+                    ),
+                  ]}
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium leading-5 text-[var(--customer-ink)]">

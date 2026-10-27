@@ -21,7 +21,7 @@ export default function VerifyRegistrationPage() {
     submit,
     deliveryMessage,
     registrationEmail,
-    handleResendOtp
+    handleResendOtp,
   } = useVerifyRegistration();
 
   return (
@@ -36,24 +36,32 @@ export default function VerifyRegistrationPage() {
         maxWidth="max-w-[65rem]"
       >
         <form className="grid gap-3" onSubmit={handleSubmit(submit)} noValidate>
-          <p role="status" aria-live="polite" className="rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-800">{deliveryMessage}</p>
+          <p
+            role="status"
+            aria-live="polite"
+            className="rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-800"
+          >
+            {deliveryMessage}
+          </p>
           {registrationEmail ? (
             <>
               <input type="hidden" {...register("email")} />
             </>
-          ) : <FormField
-            id="email"
-            label="Email Address"
-            type="email"
-            registration={register("email")}
-            error={errors.email}
-            autoComplete="email"
-            placeholder="you@example.com"
-            required
-          />}
+          ) : (
+            <FormField
+              id="email"
+              label="Email Address"
+              type="email"
+              registration={register("email")}
+              error={errors.email}
+              autoComplete="email"
+              placeholder="you@example.com"
+              required
+            />
+          )}
 
           <label className="text-sm font-semibold text-ink">
-            Otp Code<span className="ml-0.5 text-red-500">*</span>
+            OTP Code<span className="ml-0.5 text-red-500">*</span>
           </label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
