@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut } from "lucide-react";
 
@@ -15,6 +15,7 @@ import { DEFAULT_TOP_NAV_LINKS } from "../../constants/header.constant";
 export const TopHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const currentUser = useSelector((s) => s.auth.current);
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -32,30 +33,47 @@ export const TopHeader = () => {
       <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
         <div className="customer-container flex h-full items-center justify-between">
           <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
-            {asArray(DEFAULT_TOP_NAV_LINKS).map((link, index) => (
-              <Link
-                key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
-                to={hrefOr(link?.path)}
-                className="text-[#FFFFFF] transition-colors duration-300 ease-in-out hover:text-[#CE9F2D]"
-              >
-                {textOr(link?.name, "Link")}
-              </Link>
-            ))}
+            {asArray(DEFAULT_TOP_NAV_LINKS).map((link, index) => {
+              const path = hrefOr(link?.path);
+              const isActive =
+                location.pathname === path ||
+                (path !== "/" && location.pathname.startsWith(`${path}/`));
+
+              return (
+                <Link
+                  key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
+                  to={path}
+                  aria-current={isActive ? "page" : undefined}
+                  className="text-[#FFFFFF] transition-colors duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D]"
+                >
+                  {textOr(link?.name, "Link")}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="flex h-full items-center gap-[20px]">
             <Link
               to="/become-a-seller"
-              className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
+              aria-current={
+                location.pathname === "/become-a-seller" ? "page" : undefined
+              }
+              className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D]"
             >
               Become a Seller
             </Link>
 
             <Link
               to="/support"
+              aria-current={
+                location.pathname === "/support" ||
+                location.pathname.startsWith("/support/")
+                  ? "page"
+                  : undefined
+              }
               title="Help & Support"
               aria-label="Help & Support"
-              className="flex items-center justify-center text-[#FFFFFF] "
+              className="flex items-center justify-center rounded-full text-[#FFFFFF] transition-colors hover:bg-[#CE9F2D]/20 aria-[current=page]:bg-[#CE9F2D]/20"
             >
               <img
                 src="/image/svg/customer-support.svg"

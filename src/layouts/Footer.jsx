@@ -8,6 +8,20 @@ import { FALLBACK_FOOTER } from "../data/fallbackCmsData";
 import { useFooterData } from "./footer/useFooterData";
 import { capitalizeFirst } from "../utils/stringUtils";
 
+const normalizePath = (path = "/") => {
+  const pathname = String(path).split(/[?#]/, 1)[0] || "/";
+  return pathname !== "/" ? pathname.replace(/\/+$/, "") : pathname;
+};
+
+const isCurrentPath = (pathname, target) => {
+  const currentPath = normalizePath(pathname);
+  const targetPath = normalizePath(target);
+
+  return targetPath === "/"
+    ? currentPath === targetPath
+    : currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
+};
+
 function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = false }) {
   const location = useLocation();
 
@@ -64,12 +78,17 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
                           ) : (
                             <Link
                               to={toPath}
+                              aria-current={
+                                isCurrentPath(location.pathname, toPath)
+                                  ? "page"
+                                  : undefined
+                              }
                               onClick={() => {
                                 if (location.pathname === toPath) {
                                   window.scrollTo({ top: 0, behavior: "smooth" });
                                 }
                               }}
-                              className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-base"
+                              className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D] md:text-base"
                             >
                               {capitalizeFirst(link?.label)}
                             </Link>
@@ -276,7 +295,10 @@ function Footer({ data }) {
               <Link
                 key={`${label}-${href}-${index}`}
                 to={toPath}
-                className="hover:text-white"
+                aria-current={
+                  isCurrentPath(location.pathname, toPath) ? "page" : undefined
+                }
+                className="hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D]"
               >
                 {label}
               </Link>

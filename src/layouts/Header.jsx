@@ -330,7 +330,11 @@ export const Navbar = ({ icons: propIcons }) => {
       <header className="customer-container w-full">
         <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
           <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
-            <Link to="/" aria-label="Sam Global Home">
+            <Link
+              to="/"
+              aria-label="Sam Global Home"
+              aria-current={location.pathname === "/" ? "page" : undefined}
+            >
               <picture>
                 <source
                   srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x"
@@ -385,7 +389,17 @@ export const Navbar = ({ icons: propIcons }) => {
                 >
                   <HeaderIconButton
                     to={getNavbarIconPath(item)}
+                    aria-current={
+                      location.pathname === getNavbarIconPath(item)
+                        ? "page"
+                        : undefined
+                    }
                     aria-label={getNavbarIconLabel(item)}
+                    className={`transition-colors hover:bg-[#CE9F2D]/15 ${
+                      location.pathname === getNavbarIconPath(item)
+                        ? "bg-[#CE9F2D]/15"
+                        : ""
+                    }`}
                   >
                     <img
                       loading="lazy"
@@ -416,9 +430,10 @@ export const Navbar = ({ icons: propIcons }) => {
               )}
 <HeaderIconButton
   to="/cart"
+  aria-current={location.pathname === "/cart" ? "page" : undefined}
   className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
     location.pathname === "/cart"
-      ? "border-[#1B1D6099]"
+      ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
       : ""
   }`}
   aria-label={`Cart with ${cartItemCount} ${
@@ -436,8 +451,11 @@ export const Navbar = ({ icons: propIcons }) => {
 
              <HeaderIconButton
   to="/wishlist"
+  aria-current={location.pathname === "/wishlist" ? "page" : undefined}
   className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
-    location.pathname === "/wishlist" ? "border-[#1B1D6099]" : ""
+    location.pathname === "/wishlist"
+      ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
+      : ""
   }`}
   aria-label={`Watchlist with ${wishlistCount} ${
     wishlistCount === 1 ? "item" : "items"
@@ -894,6 +912,7 @@ export const CategoryBar = ({
                       `compact-category-${index}`,
                     )}
                     to={categoryHref}
+                    aria-current={isActive ? "page" : undefined}
                     onMouseEnter={() =>
                       handleCategoryMouseEnter(item)
                     }
@@ -902,7 +921,7 @@ export const CategoryBar = ({
                     }
                     className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
                       isActive
-                        ? "text-[#03014D]"
+                        ? "!text-[#03014D]"
                         : "text-[#2E2E2E]"
                     }`}
                   >
@@ -927,9 +946,12 @@ export const CategoryBar = ({
               {categories.length > 10 && (
                 <Link
                   to="/categories"
+                  aria-current={
+                    location.pathname === "/categories" ? "page" : undefined
+                  }
                   className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
                     location.pathname === "/categories"
-                      ? "text-[#03014D]"
+                      ? "!text-[#03014D]"
                       : "text-[#2E2E2E]"
                   }`}
                 >
@@ -1011,6 +1033,7 @@ export const CategoryBar = ({
                 >
                   <Link
                     to={categoryHref}
+                    aria-current={isActive ? "page" : undefined}
                     className={`group relative flex h-full w-full flex-col items-center justify-center px-1 pb-2 pt-3 transition-all duration-200 ease-in-out sm:px-2 sm:pb-2.5 sm:pt-4 lg:px-3 lg:pb-3 lg:pt-4.5 ${
                       isActive
                         ? "bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]"
@@ -1113,6 +1136,7 @@ export const CategoryBar = ({
                       `sticky-category-${index}`,
                     )}
                     to={categoryHref}
+                    aria-current={isActive ? "page" : undefined}
                     onMouseEnter={() =>
                       handleCategoryMouseEnter(item)
                     }
@@ -1121,7 +1145,7 @@ export const CategoryBar = ({
                     }
                     className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
                       isActive
-                        ? "text-[#03014D]"
+                        ? "!text-[#03014D]"
                         : "text-[#2E2E2E]"
                     }`}
                   >
@@ -1146,9 +1170,12 @@ export const CategoryBar = ({
               {categories.length > 10 && (
                 <Link
                   to="/categories"
+                  aria-current={
+                    location.pathname === "/categories" ? "page" : undefined
+                  }
                   className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
                     location.pathname === "/categories"
-                      ? "text-[#03014D]"
+                      ? "!text-[#03014D]"
                       : "text-[#2E2E2E]"
                   }`}
                 >

@@ -66,11 +66,11 @@ function AccountMenuItem({
       aria-current={active ? "page" : undefined}
       className={
         isMobile
-          ? `flex w-full min-w-0 items-start gap-3 border-b border-[#04258626] p-3 text-[#2E2E2E] last:border-b-0 ${
-              active ? "bg-[#FFF9E9]" : "bg-white"
+          ? `group flex w-full min-w-0 items-start gap-3 border-b border-[#04258626] p-3 text-[#2E2E2E] transition-colors last:border-b-0 ${
+              active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"
             }`
-          : `flex w-full min-w-0 items-center gap-3 border-b border-[#04258626] p-6 px-6 text-[#2E2E2E] last:border-b-0 sm:gap-4 sm:px-4 ${
-              active ? "bg-[#FFF9E9]" : "bg-white"
+          : `group flex w-full min-w-0 items-center gap-3 border-b border-[#04258626] p-6 px-6 text-[#2E2E2E] transition-colors last:border-b-0 sm:gap-4 sm:px-4 ${
+              active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"
             }`
       }
     >
@@ -113,8 +113,14 @@ function AccountMenuItem({
         <span
           className={
             isMobile
-              ? "block text-sm font-semibold"
-              : "block text-sm font-semibold text-[#2E2E2E] sm:text-base"
+              ? `block text-sm font-semibold transition-colors ${
+                  active ? "text-[#1B1D60]" : "group-hover:text-[#1B1D60]"
+                }`
+              : `block text-sm font-semibold transition-colors sm:text-base ${
+                  active
+                    ? "text-[#1B1D60]"
+                    : "text-[#2E2E2E] group-hover:text-[#1B1D60]"
+                }`
           }
         >
           {item.label}

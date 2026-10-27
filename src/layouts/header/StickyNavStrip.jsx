@@ -33,10 +33,11 @@ export function StickyNavStrip({
           <Link
             key={keyOr(item?.name, `nav-category-${index}`)}
             to={categoryHref}
+            aria-current={isActive ? "page" : undefined}
             onMouseEnter={() => onEnter?.(item)}
             onMouseLeave={onLeave}
             className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-              isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
+              isActive ? "!text-[#03014D]" : "text-[#2E2E2E]"
             }`}
           >
             <span>{textOr(item?.name, "Category")}</span>

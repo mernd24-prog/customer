@@ -15,6 +15,8 @@ import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
 
 const FIXED_INDIAN_DIAL_CODE = "+91";
+const GENERIC_OTP_AUTH_ERROR =
+  "We couldn’t continue with this mobile number. Check the number or use another sign-in method.";
 
 export default function GuestOtpAuthModal({
   open,
@@ -97,14 +99,19 @@ export default function GuestOtpAuthModal({
   };
 
   const getErrorMessage = (error, fallbackMessage) => {
-    if (typeof error === "string") return error;
+    const message =
+      typeof error === "string"
+        ? error
+        : error?.response?.data?.message ||
+          error?.data?.message ||
+          error?.message ||
+          fallbackMessage;
 
-    return (
-      error?.response?.data?.message ||
-      error?.data?.message ||
-      error?.message ||
-      fallbackMessage
-    );
+    if (/^invalid credentials$/i.test(String(message).trim())) {
+      return GENERIC_OTP_AUTH_ERROR;
+    }
+
+    return message;
   };
 
   const handleSendOtp = async (event) => {

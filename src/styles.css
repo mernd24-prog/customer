@@ -124,6 +124,55 @@
   .header {
     font-family: "DM Sans", var(--font-sans);
   }
+
+  /*
+   * Every real link gets a visible interaction state. Component-level
+   * Tailwind classes can still provide context-specific colours because the
+   * utilities layer is emitted after base styles.
+   */
+  a[href]:not([aria-disabled="true"]) {
+    transition-property: color, background-color, border-color, opacity,
+      box-shadow, text-decoration-color, transform;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in-out;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a[href]:not([aria-disabled="true"]):hover {
+      color: var(--customer-link-hover, var(--customer-gold-dark));
+    }
+  }
+
+  a[href]:not([aria-disabled="true"]):active {
+    color: var(--customer-link-active, var(--customer-navy-dark));
+    opacity: 0.82;
+  }
+
+  a[href][aria-current="page"] {
+    color: var(--customer-link-current, var(--customer-navy));
+    font-weight: 700;
+  }
+
+  header a[href][aria-current="page"],
+  nav[aria-label*="Category"] a[href][aria-current="page"] {
+    color: #03014d;
+  }
+
+  footer a[href][aria-current="page"] {
+    color: #ce9f2d;
+  }
+
+  a[href]:focus-visible {
+    border-radius: 4px;
+    outline: 2px solid var(--customer-gold);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a[href] {
+      transition-duration: 0.01ms;
+    }
+  }
 }
 
 @layer base {
