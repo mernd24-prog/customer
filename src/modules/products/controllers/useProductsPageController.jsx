@@ -47,6 +47,7 @@ export function useProductsPageController() {
   });
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
+  const facetRequestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
@@ -272,17 +273,19 @@ export function useProductsPageController() {
           setPageInfo(getPagination(payload, sorted));
 
           if (newContextKey !== facetsContextKey) {
-            setFacetsContextKey(newContextKey);
+            const facetRequestSequence = ++facetRequestSequenceRef.current;
             dispatch(fetchProducts({ ...getParams(), page: 1, limit: 1, view: "facets" }))
               .unwrap()
               .then((facetPayload) => {
-                if (seq !== requestSequenceRef.current) return;
+                if (facetRequestSequence !== facetRequestSequenceRef.current)
+                  return;
                 setProductFacets(
                   facetPayload?.meta?.facets ||
                     facetPayload?.data?.facets ||
                     facetPayload?.facets ||
                     {},
                 );
+                setFacetsContextKey(newContextKey);
               })
               .catch(() => {});
           }

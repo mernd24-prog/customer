@@ -828,6 +828,28 @@ select:not([multiple]):disabled {
   display: none;
 }
 
+.filter-panel-scrollbar {
+  scrollbar-color: var(--customer-gold) transparent;
+  scrollbar-width: thin;
+}
+
+.filter-panel-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-panel-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-panel-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: var(--customer-gold);
+}
+
+.filter-panel-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--customer-gold-dark);
+}
+
 .price-range-input {
   pointer-events: none;
   position: absolute;

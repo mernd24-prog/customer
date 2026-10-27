@@ -45,6 +45,7 @@ export default function useBrandPageController() {
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
+  const facetRequestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
 
   const selectedRatings = useMemo(
@@ -222,13 +223,15 @@ export default function useBrandPageController() {
           totalPages: Number(meta.totalPages || meta.pages || 1),
           total: Number(meta.total || meta.count || 0),
         });
-        setFacetsContextKey(ctxKey);
         if (!append) {
+          const facetRequestSequence = ++facetRequestSequenceRef.current;
           dispatch(fetchProducts({ ...getParams(1), page: 1, limit: 1, view: "facets" }))
             .unwrap()
             .then((facetResult) => {
-              if (requestSequence !== requestSequenceRef.current) return;
+              if (facetRequestSequence !== facetRequestSequenceRef.current)
+                return;
               setProductFacets(facetResult?.meta?.facets || facetResult?.meta?.filters || {});
+              setFacetsContextKey(ctxKey);
             })
             .catch(() => {});
         }

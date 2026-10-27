@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiState from "../../../components/ui/ApiState";
 import ActiveFilterChips from "../../../components/ui/ActiveFilterChips";
@@ -40,6 +41,7 @@ export default function ProductResultsLayout({
   children,
 }) {
   const navigate = useNavigate();
+  const stableFilterSectionsRef = useRef([]);
   const resolvedEmptyActionLabel =
     emptyActionLabel !== undefined ? emptyActionLabel : "Continue Shopping";
   const resolvedOnEmptyAction = onEmptyAction || (() => navigate("/products"));
@@ -60,6 +62,43 @@ export default function ProductResultsLayout({
   /* * Show EmptyState when the request finishes without products. * This handles: * - Empty response * - No product data * - Network/API error with no products * - Invalid/empty product payload */ const shouldShowEmpty =
     !loading && !refreshing && productCount === 0 && (empty || Boolean(error));
   const resolvedError = shouldShowEmpty ? null : error;
+  const nextFilterSections = Array.isArray(filterSections)
+    ? filterSections.filter(
+        (section) =>
+          section &&
+          typeof section === "object" &&
+          section.title &&
+          section.content != null,
+      )
+    : [];
+  const hasActiveFilters = Array.isArray(filters) && filters.length > 0;
+
+  useEffect(() => {
+    if (nextFilterSections.length > 0) {
+      stableFilterSectionsRef.current = nextFilterSections;
+      return;
+    }
+
+    // Facet requests commonly clear their Redux payload while a newly
+    // selected filter is being applied. Keep the last usable controls so the
+    // sidebar never turns into an empty shell and users can undo the filter.
+    if (!loading && !refreshing && !hasActiveFilters) {
+      stableFilterSectionsRef.current = [];
+    }
+  }, [hasActiveFilters, loading, nextFilterSections, refreshing]);
+
+  const visibleFilterSections =
+    nextFilterSections.length > 0
+      ? nextFilterSections
+      : stableFilterSectionsRef.current;
+  const filterStructureKey = visibleFilterSections
+    .map((section) => section.key || section.title)
+    .join("|");
+  const hasFilterContent =
+    Boolean(sidebarTopContent) ||
+    visibleFilterSections.length > 0;
+  const shouldShowFilters = !shouldShowEmpty && (loading || hasFilterContent);
+
   return (
     <>
       {" "}
@@ -67,26 +106,27 @@ export default function ProductResultsLayout({
       <div className="flex items-start gap-8 w-full mt-8">
         {" "}
         {/* Hide desktop filter completely on empty state */}{" "}
-        {!shouldShowEmpty && (
-          <div className="hidden lg:block lg:sticky lg:top-[calc(var(--customer-header-height,95px)+62px)] lg:self-start">
-            {" "}
+        {shouldShowFilters && (
+          <div className="hidden lg:block lg:sticky lg:top-[calc(var(--customer-header-height,95px)+16px)] lg:self-start">
             <ProductFilterSidebar
-              sections={filterSections}
+              key={`desktop-filters-${filterStructureKey}`}
+              sections={visibleFilterSections}
               onClearAll={onClearFilters}
               topContent={sidebarTopContent}
-              loading={loading && filterSections?.length === 0}
-            />{" "}
+              loading={loading && visibleFilterSections.length === 0}
+            />
           </div>
         )}{" "}
         {/* Hide mobile filter drawer completely on empty state */}{" "}
-        {!shouldShowEmpty && (
+        {shouldShowFilters && (
           <FilterDrawer open={sidebarOpen} onClose={onCloseSidebar}>
             {" "}
             <ProductFilterSidebar
-              sections={filterSections}
+              key={`mobile-filters-${filterStructureKey}`}
+              sections={visibleFilterSections}
               onClearAll={onClearFilters}
               topContent={sidebarTopContent}
-              loading={loading && filterSections?.length === 0}
+              loading={loading && visibleFilterSections.length === 0}
             />{" "}
           </FilterDrawer>
         )}{" "}

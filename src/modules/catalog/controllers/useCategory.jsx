@@ -82,6 +82,7 @@ export default function useCategory() {
 
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
+  const facetRequestSequenceRef = useRef(0);
   const didInitialProductsLoadRef = useRef(false);
   const productLoadTimerRef = useRef(null);
   const inFlightProductLoadKeyRef = useRef("");
@@ -285,13 +286,15 @@ export default function useCategory() {
           totalPages: Number(m.totalPages || m.pages || 1),
           total: Number(m.total || m.count || list.length || 0),
         });
-        setFacetsContextKey(ctxKey);
         if (!append) {
+          const facetRequestSequence = ++facetRequestSequenceRef.current;
           dispatch(fetchProducts({ ...getParams(1), page: 1, limit: 1, view: "facets" }))
             .unwrap()
             .then((facetResult) => {
-              if (requestSequence !== requestSequenceRef.current) return;
+              if (facetRequestSequence !== facetRequestSequenceRef.current)
+                return;
               setProductFacets(facetResult?.meta?.facets || facetResult?.meta?.filters || {});
+              setFacetsContextKey(ctxKey);
             })
             .catch(() => {});
         }
