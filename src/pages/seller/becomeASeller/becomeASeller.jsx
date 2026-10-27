@@ -18,6 +18,7 @@ import {
   UserRoundPlus,
   WalletCards,
 } from "lucide-react";
+import PageHeroBanner from "../../../components/ui/banner/PageHeroBanner";
 
 import Seo from "../../../components/ui/Seo";
 import Loader from "../../../components/ui/Loader";
@@ -27,18 +28,6 @@ import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
 import { SELLER_LOGIN_URL } from "../../../config/seller";
-
-const STORY_SWIPER_BREAKPOINTS = {
-  640: {
-    slidesPerView: 2,
-  },
-  900: {
-    slidesPerView: 3,
-  },
-  1100: {
-    slidesPerView: 4,
-  },
-};
 
 function useStorySlidesPerView() {
   const getSlidesPerView = () => {
@@ -111,16 +100,75 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
   );
 }
 
+function SellerStoryCard({ story, featured = false }) {
+  return (
+    <article
+      className={`h-full overflow-hidden rounded-lg bg-white ${
+        featured
+          ? "grid grid-cols-1 gap-0 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]"
+          : "flex flex-col p-3 sm:p-4"
+      }`}
+    >
+      <div
+        className={`overflow-hidden bg-[#e8e5df] ${featured ? "min-h-[240px] md:min-h-full" : "rounded-lg"}`}
+      >
+        {story.photo ? (
+          <img
+            width="600"
+            height="400"
+            src={story.photo}
+            alt={`${story.name} at their business`}
+            className={`w-full object-cover object-top ${featured ? "h-full min-h-[240px] md:min-h-[360px]" : "h-44 sm:h-52"}`}
+            loading="lazy"
+          />
+        ) : (
+          <div
+            className={`flex items-center justify-center text-3xl font-bold text-[#201b78] ${featured ? "h-full min-h-[240px] md:min-h-[360px]" : "h-44 sm:h-52"}`}
+          >
+            {story.initials}
+          </div>
+        )}
+      </div>
+
+      <div
+        className={`flex flex-col ${featured ? "justify-center p-5 sm:p-7 lg:p-9" : "flex-1 px-2 pt-5 sm:pt-6"}`}
+      >
+        <h3 className="text-lg font-bold leading-tight text-[#181928] sm:text-xl">
+          {story.name}
+        </h3>
+
+        {story.role && (
+          <p className="mt-2 text-sm font-medium text-[#3e4093]">
+            {story.role}
+          </p>
+        )}
+
+        <div className="mt-3 h-px bg-[#eee9df] sm:mt-4" />
+
+        {story.quote && (
+          <p className="mt-3 text-sm leading-6 text-[#50545e] sm:mt-4 sm:text-[15px]">
+            {story.quote}
+          </p>
+        )}
+
+        {story.result && (
+          <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#f7f2e7] px-3 py-1.5 text-xs font-bold text-[#8d610d] sm:mt-5">
+            <BarChart3 size={14} />
+            {story.result}
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
 export default function BecomeASeller() {
   const storySlidesPerView = useStorySlidesPerView();
-  const { page: cmsPage, loading, error } =
-    useCmsRecord("become-a-seller");
+  const { page: cmsPage, loading, error } = useCmsRecord("become-a-seller");
 
   const cmsPayload = getCmsPayload(cmsPage);
 
-  const sellerPage = cmsPayload?.image?.url
-    ? cmsPayload
-    : FALLBACK_SELLER_PAGE;
+  const sellerPage = cmsPayload?.image?.url ? cmsPayload : FALLBACK_SELLER_PAGE;
 
   const heroTitle = sellerPage?.title || "";
 
@@ -144,9 +192,7 @@ export default function BecomeASeller() {
     ? benefitsSection.points
     : [];
 
-  const steps = Array.isArray(stepsSection?.points)
-    ? stepsSection.points
-    : [];
+  const steps = Array.isArray(stepsSection?.points) ? stepsSection.points : [];
 
   const mappedExperiences = sellerStories.map((point) => ({
     quote: point?.description || "",
@@ -193,98 +239,75 @@ export default function BecomeASeller() {
               HERO
           ===================================================== */}
 
-          <section className="relative isolate overflow-hidden bg-[#17145f] text-white">
-            {heroImg && (
-              <FallbackImage
-                loading="lazy"
-                width="400"
-                height="400"
-                src={heroImg}
-                fallbackSrc={FALLBACK_SELLER_PAGE.image.url}
-                alt="Sam Global Seller Growing His Online Business"
-                className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
-              />
-            )}
-
-            <div
-              className="
-                absolute inset-0 -z-10
-                bg-gradient-to-r
-                from-[#111050]/95
-                via-[#17145f]/80
-                to-transparent
-                lg:from-[#111050]/90
-                lg:via-[#17145f]/35
-                lg:to-transparent
-              "
-            />
-
-            <div className="customer-container flex min-h-[570px] items-center py-12 sm:py-16 lg:min-h-[780px] lg:py-20">
-              <div className="max-w-3xl">
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-sm font-medium backdrop-blur-sm sm:mb-6 sm:px-4 sm:py-2">
-                  <Sparkles size={16} className="text-[#efc75f]" />
-
-                  Your Next Chapter Starts Here
-                </div>
-
-                <h1 className="banner-heading font-bold">
-                  {titleLine1}
-
-                  {titleLine2 && (
-                    <span className="block text-[#efc75f]">
-                      {titleLine2}
+          <PageHeroBanner
+            image={heroImg}
+            badge={
+              <>
+                <Sparkles size={16} className="text-[#efc75f]" />
+                <span>Your Next Chapter Starts Here</span>
+              </>
+            }
+            title={
+              <>
+                {titleLine1}
+                {titleLine2 && <span className="block text-[#efc75f]">{titleLine2}</span>}
+              </>
+            }
+            description={heroDesc}
+            theme="navy"
+            actions={
+              <>
+                <Button
+                  type="button"
+                  onClick={() =>
+                    window.open(
+                      SELLER_LOGIN_URL,
+                      "_blank",
+                      "noopener,noreferrer",
+                    )
+                  }
+                  variant="primary"
+                  size="lg"
+                  icon={<ArrowRight size={18} />}
+                  iconPosition="right"
+                  className="min-h-12 rounded-lg px-6 font-bold sm:px-7"
+                >
+                  Seller Login
+                </Button>
+              </>
+            }
+            bottomContent={
+              <div className="flex flex-wrap gap-x-5 gap-y-2.5 text-sm text-white/75 sm:gap-x-6 sm:gap-y-3">
+                {[
+                  "Simple onboarding",
+                  "Secure payouts",
+                  "Dedicated support",
+                ].map((item) => (
+                  <span key={item} className="flex items-center gap-2">
+                    <span className="grid h-5 w-5 place-items-center rounded-full bg-white/10">
+                      <Check size={12} className="text-[#efc75f]" />
                     </span>
-                  )}
-                </h1>
 
-                {heroDesc && (
-                  <p className="mt-5 max-w-xl text-base text-white/75 sm:mt-6 sm:text-lg">
-                    {heroDesc}
-                  </p>
-                )}
-
-                <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
-                  <Button
-                    type="button"
-                    onClick={() => window.open(SELLER_LOGIN_URL, "_blank", "noopener,noreferrer")}
-                    variant="primary"
-                    size="lg"
-                    icon={<ArrowRight size={18} />}
-                    iconPosition="right"
-                    className="min-h-12 rounded-lg px-6 font-bold sm:px-7"
-                  >
-                    Seller Login
-                  </Button>
-                </div>
-
-                <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5 text-sm text-white/75 sm:mt-8 sm:gap-x-6 sm:gap-y-3">
-                  {[
-                    "Simple onboarding",
-                    "Secure payouts",
-                    "Dedicated support",
-                  ].map((item) => (
-                    <span key={item} className="flex items-center gap-2">
-                      <span className="grid h-5 w-5 place-items-center rounded-full bg-white/10">
-                        <Check size={12} className="text-[#efc75f]" />
-                      </span>
-
-                      {item}
-                    </span>
-                  ))}
-                </div>
+                    {item}
+                  </span>
+                ))}
               </div>
-            </div>
-          </section>
+            }
+          />
 
           {/* =====================================================
               SELLER STORIES
           ===================================================== */}
 
           {mappedExperiences.length > 0 && (
-            <section className="relative overflow-hidden bg-[#faf6ee] py-8 sm:py-14">
+            <section className="relative overflow-hidden bg-[#faf6ee] py-10 sm:py-14 lg:py-16">
               <div className="customer-container relative">
-                <div className="flex flex-col items-center justify-between gap-5 md:flex-row md:items-end md:gap-7">
-                  <div className="max-w-2xl text-center md:text-left">
+                <div
+                  className={`flex flex-col gap-5 md:flex-row md:items-end md:justify-between ${mappedExperiences.length < 3 ? "mb-7 sm:mb-9" : ""}`}
+                >
+                  <div
+                    className={`max-w-2xl ${mappedExperiences.length < 3 ? "mx-auto text-center" : "text-center md:text-left"}`}
+                  >
                     <span className="inline-flex items-center gap-2 rounded-lg bg-[#f1e5c9] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#8d5d08] sm:px-4 sm:py-2">
                       <Sparkles size={14} />
                       Real Seller Stories
@@ -292,100 +315,87 @@ export default function BecomeASeller() {
 
                     <h2 className="mt-4 text-h2 font-bold leading-tight text-[#201b78] sm:mt-5">
                       Their Growth Is Our{" "}
-                      <span className="text-[#b17d15]">
-                        Favourite Story.
-                      </span>
+                      <span className="text-[#b17d15]">Favourite Story.</span>
                     </h2>
 
-                    <p className="mt-3 max-w-xl leading-7 text-[#6f7480] sm:mt-4">
-                      Meet the entrepreneurs building remarkable businesses
-                      with Sam Global by their side.
+                    <p
+                      className={`mt-3 leading-7 text-[#6f7480] sm:mt-4 ${mappedExperiences.length < 3 ? "mx-auto max-w-xl" : "max-w-xl"}`}
+                    >
+                      Meet the entrepreneurs building remarkable businesses with
+                      Sam Global by their side.
                     </p>
                   </div>
 
-                  <div className="flex gap-2.5 sm:gap-3">
-                    <button
-                      type="button"
-                      className="seller-story-prev grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
-                      aria-label="Previous Seller Story"
-                    >
-                      <ArrowLeft size={19} />
-                    </button>
-
-                    <button
-                      type="button"
-                      className="seller-story-next grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
-                      aria-label="Next Seller Story"
-                    >
-                      <ArrowRight size={19} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-8 sm:mt-10">
-                  <CustomSwiper
-                    prevEl=".seller-story-prev"
-                    nextEl=".seller-story-next"
-                    showPagination={mappedExperiences.length > storySlidesPerView}
-                    spaceBetween={16}
-                    slidesPerView={1}
-                    breakpoints={STORY_SWIPER_BREAKPOINTS}
-                  >
-                    {mappedExperiences.map((story, index) => (
-                      <SwiperSlide
-                        key={story.name || index}
-                        className="!h-auto pb-2"
+                  {mappedExperiences.length > storySlidesPerView && (
+                    <div className="flex justify-center gap-2.5 sm:gap-3 md:shrink-0">
+                      <button
+                        type="button"
+                        className="seller-story-prev grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
+                        aria-label="Previous Seller Story"
                       >
-                        <article className="group h-full rounded-lg bg-white p-3 pb-5 sm:p-4 sm:pb-7">
-                          <div className="relative">
-                            <div className="overflow-hidden rounded-lg bg-[#e8e5df]">
-                              {story.photo ? (
-                                <img
-                                  width="400"
-                                  height="400"
-                                  src={story.photo}
-                                  alt={`${story.name} at their business`}
-                                  className="h-44 w-full object-cover object-top"
-                                  loading="lazy"
-                                />
-                              ) : (
-                                <div className="flex h-44 items-center justify-center text-3xl font-bold text-[#201b78]">
-                                  {story.initials}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="px-2 pt-6 sm:pt-9">
-                            <h3 className="text-lg font-bold leading-tight text-[#181928]">
-                              {story.name}
-                            </h3>
-
-                            {story.role && (
-                              <p className="mt-2 text-sm font-medium text-[#3e4093]">
-                                {story.role}
-                              </p>
-                            )}
-
-                            <div className="mt-3 h-px bg-[#eee9df] sm:mt-4" />
-
-                            <p className="mt-3 text-[15px] leading-6 text-[#50545e] sm:mt-4">
-                              {story.quote}
-                            </p>
-
-                            {story.result && (
-                              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#f7f2e7] px-3 py-1.5 text-xs font-bold text-[#8d610d] sm:mt-5">
-                                <BarChart3 size={14} />
-
-                                {story.result}
-                              </div>
-                            )}
-                          </div>
-                        </article>
-                      </SwiperSlide>
-                    ))}
-                  </CustomSwiper>
+                        <ArrowLeft size={19} />
+                      </button>
+                      <button
+                        type="button"
+                        className="seller-story-next grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
+                        aria-label="Next Seller Story"
+                      >
+                        <ArrowRight size={19} />
+                      </button>
+                    </div>
+                  )}
                 </div>
+
+                {mappedExperiences.length === 1 && (
+                  <div className="mx-auto max-w-4xl">
+                    <SellerStoryCard story={mappedExperiences[0]} featured />
+                  </div>
+                )}
+
+                {mappedExperiences.length === 2 && (
+                  <div className="mx-auto grid max-w-5xl grid-cols-1 items-stretch gap-5 sm:gap-6 md:grid-cols-2">
+                    {mappedExperiences.map((story, index) => (
+                      <SellerStoryCard
+                        key={story.name || index}
+                        story={story}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {mappedExperiences.length >= 3 && (
+                  <div className="mt-8 sm:mt-10">
+                    <CustomSwiper
+                      prevEl=".seller-story-prev"
+                      nextEl=".seller-story-next"
+                      showPagination={
+                        mappedExperiences.length > storySlidesPerView
+                      }
+                      spaceBetween={20}
+                      slidesPerView={1}
+                      breakpoints={{
+                        640: {
+                          slidesPerView: Math.min(2, mappedExperiences.length),
+                        },
+                        900: {
+                          slidesPerView: Math.min(3, mappedExperiences.length),
+                        },
+                        1100: {
+                          slidesPerView: Math.min(4, mappedExperiences.length),
+                        },
+                      }}
+                    >
+                      {mappedExperiences.map((story, index) => (
+                        <SwiperSlide
+                          key={story.name || index}
+                          className="!h-auto pb-2"
+                        >
+                          <SellerStoryCard story={story} />
+                        </SwiperSlide>
+                      ))}
+                    </CustomSwiper>
+                  </div>
+                )}
               </div>
             </section>
           )}
@@ -414,30 +424,30 @@ export default function BecomeASeller() {
                 </div>
 
                 <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
-                  {mappedBenefits.map(
-                    ({ icon: Icon, title, text }, index) => (
-                      <div
-                        key={title || index}
-                        className="rounded-lg border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
-                      >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D]">
-                          <Icon size={24} strokeWidth={2} />
-                        </div>
+                  {mappedBenefits.map(({ icon: Icon, title, text }, index) => (
+                    <div
+                      key={title || index}
+                      className="flex items-start gap-4 rounded-lg border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                    >
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D]">
+                        <Icon size={24} strokeWidth={2} />
+                      </div>
 
+                      <div className="min-w-0 flex-1">
                         {title && (
-                          <h3 className="mt-4 text-[18px] font-bold leading-6 text-[#18156D] sm:mt-6">
+                          <h3 className="text-[18px] font-bold leading-6 text-[#18156D]">
                             {title}
                           </h3>
                         )}
 
                         {text && (
-                          <p className="mt-2.5 text-[14px] leading-6 text-gray-600 md:mt-3 md:text-[15px]">
+                          <p className="mt-2 text-[14px] leading-6 text-gray-600 md:text-[15px]">
                             {text}
                           </p>
                         )}
                       </div>
-                    ),
-                  )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </section>
@@ -461,37 +471,33 @@ export default function BecomeASeller() {
                 />
 
                 <div className="relative mt-8 sm:mt-12 lg:mt-14">
-                  <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-7 hidden border-t border-dashed border-white/20 lg:block" />
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-4">
+                    {mappedSteps.map(({ icon: Icon, number, title, text }) => (
+                      <article
+                        key={number}
+                        className="flex h-full items-start gap-3 rounded-lg border border-white/15 bg-white/[0.07] p-4 text-white transition-colors duration-200 hover:border-[#d6a323]/60 hover:bg-white/[0.10] sm:gap-3.5 sm:p-4"
+                      >
+                        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#d6a323] text-[#17145f] shadow-sm sm:h-12 sm:w-12">
+                          <Icon size={23} strokeWidth={1.9} />
+                        </span>
 
-                  <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-                    {mappedSteps.map(
-                      ({ icon: Icon, number, title, text }) => (
-                        <article
-                          key={number}
-                          className="relative flex min-h-[190px] flex-col rounded-lg border border-white/10 bg-white/[0.075] p-4 text-white backdrop-blur-sm sm:min-h-[214px] sm:p-6"
-                        >
-                          <div className="relative z-10 flex items-center justify-between">
-                            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-[#d6a323] text-[#17145f] shadow-[0_8px_20px_rgba(0,0,0,0.12)] sm:h-14 sm:w-14">
-                              <Icon size={24} strokeWidth={1.9} />
-                            </span>
-
-                            <span className="text-[32px] font-bold leading-none tracking-tight text-white/10 sm:text-[34px]">
-                              {number}
-                            </span>
-                          </div>
-
-                          <div className="mt-4 sm:mt-5">
-                            <h3 className="text-[18px] font-bold leading-6 sm:text-[19px]">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="min-w-0 text-[16px] font-bold leading-5 sm:text-[17px] sm:leading-6">
                               {title}
                             </h3>
 
-                            <p className="mt-2.5 max-w-[270px] text-[14px] leading-6 text-white/65">
-                              {text}
-                            </p>
+                            <span className="shrink-0 text-[24px] font-extrabold leading-none tracking-tight text-[#d6a323] sm:text-[27px]">
+                              {String(number).padStart(2, "0")}
+                            </span>
                           </div>
-                        </article>
-                      ),
-                    )}
+
+                          <p className="mt-2 text-[13px] leading-5 text-white/70 sm:text-[14px] sm:leading-[1.4rem]">
+                            {text}
+                          </p>
+                        </div>
+                      </article>
+                    ))}
                   </div>
                 </div>
 

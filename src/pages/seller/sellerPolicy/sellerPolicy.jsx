@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
   ShieldCheck,
   PackageCheck,
@@ -13,6 +12,11 @@ import {
   TriangleAlert,
   Sparkles,
 } from "lucide-react";
+import {
+  OutlineSecondaryButton,
+  SolidLargeButton,
+} from "../../../components/ui/button/static";
+import PageHeroBanner from "../../../components/ui/banner/PageHeroBanner";
 
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
@@ -213,76 +217,41 @@ export default function SellerPolicy() {
         loading={loading && !cmsPolicy && !cmsPolicies}
         skeletonLayout={SKELETON_PRESETS.POLICY_PAGE}
       >
-        <section className="relative isolate overflow-hidden bg-[#FAF8F3]">
-          {heroImg && (
-            <FallbackImage
-              loading="lazy"
-              width="400"
-              height="400"
-              src={heroImg}
-              fallbackSrc={FALLBACK_SELLER_POLICY.image.url}
-              alt={heroTitle || "Seller Policy"}
-              className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
-            />
-          )}
-
-          <div
-            className="
-              absolute inset-0 -z-10
-              bg-gradient-to-r
-              from-[#FAF8F3]/95
-              via-[#FAF8F3]/75
-              to-transparent
-              lg:from-[#FAF8F3]/90
-              lg:via-[#FAF8F3]/30
-              lg:to-transparent
-            "
-          />
-
-          <div className="customer-container flex min-h-[570px] items-center py-12 sm:py-16 lg:min-h-[780px] lg:py-20">
-            <div className="max-w-3xl">
-              {badgeText && (
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#D4A52A]/30 bg-[#D4A52A]/15 px-3.5 py-1.5 text-sm font-medium text-[#18156D] backdrop-blur-sm sm:mb-6 sm:px-4 sm:py-2">
-                  <Sparkles size={16} className="text-[#efc75f]" />
-
-                  <span>{badgeText}</span>
-                </div>
+        <PageHeroBanner
+          image={heroImg}
+          badge={
+            badgeText && (
+              <>
+                <Sparkles size={16} className="text-[#efc75f]" />
+                <span>{badgeText}</span>
+              </>
+            )
+          }
+          title={heroTitle}
+          description={heroDesc}
+          theme="cream"
+          actions={
+            <>
+              {primaryCtaLabel && (
+                <SolidLargeButton
+                  to={primaryCtaUrl}
+                  className="h-[42px] min-w-[138px] px-4 text-[13px] font-bold whitespace-nowrap sm:h-[48px] sm:min-w-[158px] sm:px-6 sm:text-[15px]"
+                >
+                  {primaryCtaLabel}
+                </SolidLargeButton>
               )}
 
-              {heroTitle && (
-                <h1 className="banner-heading font-bold text-[#18156D]">
-                  {heroTitle}
-                </h1>
+              {secondaryCtaLabel && (
+                <OutlineSecondaryButton
+                  to={secondaryCtaUrl}
+                  className="h-[42px] min-w-[130px] px-4 text-[13px] font-semibold whitespace-nowrap text-[#18156D] sm:h-[48px] sm:min-w-[150px] sm:px-6 sm:text-[15px]"
+                >
+                  {secondaryCtaLabel}
+                </OutlineSecondaryButton>
               )}
-
-              {heroDesc && (
-                <p className="mt-5 max-w-xl text-base text-gray-700 sm:mt-6 sm:text-lg">
-                  {heroDesc}
-                </p>
-              )}
-
-              <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
-                {primaryCtaLabel && (
-                  <Link
-                    to={primaryCtaUrl}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#D4A52A] px-6 font-bold text-[#18156D] transition-colors duration-200 hover:bg-[#e5b738] sm:px-7"
-                  >
-                    {primaryCtaLabel}
-                  </Link>
-                )}
-
-                {secondaryCtaLabel && (
-                  <Link
-                    to={secondaryCtaUrl}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] backdrop-blur transition-colors duration-200 hover:bg-white sm:px-7"
-                  >
-                    {secondaryCtaLabel}
-                  </Link>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
+            </>
+          }
+        />
 
         {section1 && (highlights.length > 0 || highlightTitle) && (
           <section className="bg-[#FAF8F3] py-12 sm:py-16 lg:py-24">
@@ -317,23 +286,25 @@ export default function SellerPolicy() {
                     return (
                       <div
                         key={item.title || index}
-                        className="rounded-lg border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                        className="flex h-full items-start gap-4 rounded-lg border border-[#E8E1D4] bg-white p-4 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-5"
                       >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D]">
-                          {Icon && <Icon size={24} strokeWidth={2} />}
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D] sm:h-12 sm:w-12">
+                          {Icon && <Icon size={23} strokeWidth={2} />}
                         </div>
 
-                        {item.title && (
-                          <h3 className="mt-4 text-[18px] font-bold leading-6 text-[#18156D] sm:mt-6">
-                            {item.title}
-                          </h3>
-                        )}
+                        <div className="min-w-0 flex-1">
+                          {item.title && (
+                            <h3 className="text-[16px] font-bold leading-6 text-[#18156D] sm:text-[17px]">
+                              {item.title}
+                            </h3>
+                          )}
 
-                        {item.desc && (
-                          <p className="mt-2.5 text-[14px] leading-6 text-gray-600 md:mt-3 md:text-[15px]">
-                            {item.desc}
-                          </p>
-                        )}
+                          {item.desc && (
+                            <p className="mt-2 text-[14px] leading-5 text-gray-600 sm:leading-6">
+                              {item.desc}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
@@ -378,23 +349,25 @@ export default function SellerPolicy() {
                     return (
                       <div
                         key={item.title || index}
-                        className="rounded-2xl border border-[#ECE7DD] bg-[#FCFBF8] p-5 transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                        className="flex h-full items-start gap-4 rounded-lg border border-[#ECE7DD] bg-[#FCFBF8] p-4 transition-colors duration-200 hover:border-[#D4A52A] sm:p-5"
                       >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#18156D] text-white">
-                          {Icon && <Icon size={23} strokeWidth={2} />}
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#18156D] text-white sm:h-12 sm:w-12">
+                          {Icon && <Icon size={22} strokeWidth={2} />}
                         </div>
 
-                        {item.title && (
-                          <h3 className="mt-4 text-[17px] font-bold leading-6 text-[#18156D] sm:mt-6 md:text-[18px]">
-                            {item.title}
-                          </h3>
-                        )}
+                        <div className="min-w-0 flex-1">
+                          {item.title && (
+                            <h3 className="text-[16px] font-bold leading-6 text-[#18156D] sm:text-[17px]">
+                              {item.title}
+                            </h3>
+                          )}
 
-                        {item.desc && (
-                          <p className="mt-2.5 text-[14px] leading-6 text-gray-600 md:mt-3">
-                            {item.desc}
-                          </p>
-                        )}
+                          {item.desc && (
+                            <p className="mt-2 text-[14px] leading-5 text-gray-600 sm:leading-6">
+                              {item.desc}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
@@ -438,23 +411,25 @@ export default function SellerPolicy() {
                     return (
                       <div
                         key={item.title || index}
-                        className="rounded-lg border border-[#18156D]/10 bg-[#18156D] p-5 transition-colors duration-200 hover:bg-[#211d78] sm:p-6 lg:p-8"
+                        className="flex h-full items-start gap-4 rounded-lg border border-white/10 bg-[#18156D] p-4 transition-colors duration-200 hover:bg-[#211d78] sm:p-5"
                       >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/10 text-[#F2D37A]">
-                          {Icon && <Icon size={24} strokeWidth={2} />}
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#F2D37A] sm:h-12 sm:w-12">
+                          {Icon && <Icon size={23} strokeWidth={2} />}
                         </div>
 
-                        {item.title && (
-                          <h3 className="mt-4 text-[18px] font-bold leading-6 text-white sm:mt-6 md:text-[20px]">
-                            {item.title}
-                          </h3>
-                        )}
+                        <div className="min-w-0 flex-1">
+                          {item.title && (
+                            <h3 className="text-[16px] font-bold leading-6 text-white sm:text-[17px]">
+                              {item.title}
+                            </h3>
+                          )}
 
-                        {item.desc && (
-                          <p className="mt-2.5 text-[14px] leading-6 text-white/70 md:mt-3 md:text-[15px]">
-                            {item.desc}
-                          </p>
-                        )}
+                          {item.desc && (
+                            <p className="mt-2 text-[14px] leading-5 text-white/70 sm:leading-6">
+                              {item.desc}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     );
                   })}

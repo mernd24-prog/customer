@@ -1,8 +1,10 @@
+import React from "react";
 import {
   applyImageFallback,
   getAvailableStock,
 } from "../../../utils/ecommerce";
 import { getColorSwatchImage } from "../../../utils/pages/productUtils";
+import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
 
 export default function VariantSelector({
   variantOptions,
@@ -16,7 +18,6 @@ export default function VariantSelector({
 }) {
   const variants = product?.variants || [];
 
-  // Always show Color variant first, then all other variants
   const sortedVariantOptions = [...variantOptions].sort((a, b) => {
     const aIsColor =
       a.displayType === "color_swatch" ||
@@ -37,13 +38,11 @@ export default function VariantSelector({
     <div className="flex flex-col gap-4">
       {sortedVariantOptions.map((option) => (
         <div key={option.slug} className="w-full">
-          {/* Variant Label */}
           <div className="mb-3 flex items-center gap-4">
             <p className="text-lg font-semibold capitalize text-ink">
               {option.displayType === "color_swatch" ? "Colour" : option.name}:
             </p>
 
-            {/* Size Chart */}
             {option.name?.toLowerCase() === "size" &&
               (product?.category?.toLowerCase().includes("fashion") ||
                 product?.parentCategory?.toLowerCase().includes("fashion")) && (
@@ -57,18 +56,18 @@ export default function VariantSelector({
               )}
           </div>
 
-          {/* Variant Values */}
-          <div className="flex w-fit flex-wrap gap-4">
+          <HorizontalScrollControls
+            className="relative"
+            viewportClassName="hide-scrollbar flex max-w-full items-center gap-4 overflow-x-auto pb-1"
+            leftButtonClassName="left-0"
+            rightButtonClassName="right-0"
+          >
             {option.values.map((value, valueIndex) => {
               const isSelected =
                 String(selectedAttributes[option.slug]) === String(value);
 
-              const matchingVariant = findVariantForSelection(
-                option.slug,
-                value,
-              );
+              const matchingVariant = findVariantForSelection(option.slug, value);
 
-              // Check if this exact combination exists
               const exactVariant = variants.find((variant) =>
                 variantMatchesSelection(variant, {
                   ...selectedAttributes,
@@ -81,10 +80,6 @@ export default function VariantSelector({
                 option.slug?.toLowerCase().includes("color") ||
                 option.slug?.toLowerCase().includes("colour");
 
-              /*
-               * Storage row and Color options should not be disabled when switching,
-               * allowing fallback to available variants in that color.
-               */
               const isComboAvailable =
                 option.slug === "storage" || isColorOption
                   ? true
@@ -118,7 +113,6 @@ export default function VariantSelector({
                     matchingVariant?.isAvailable === false);
               }
 
-              // Color swatch image
               const swatchImage =
                 option.displayType === "color_swatch"
                   ? getColorSwatchImage({
@@ -132,11 +126,6 @@ export default function VariantSelector({
 
               const swatchColor = option?.valueCodes?.[value] || value;
 
-              {
-                /* =========================
-                  COLOR VARIANT
-              ========================== */
-              }
               if (option.displayType === "color_swatch") {
                 return (
                   <button
@@ -146,7 +135,7 @@ export default function VariantSelector({
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
                     }
-                    className={`relative h-[80px] w-[80px] overflow-hidden rounded-lg border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
+                    className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-lg border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
                       isSelected
                         ? "border border-gold shadow-sm"
                         : "border border-gold/20 hover:border-gold/50"
@@ -191,7 +180,6 @@ export default function VariantSelector({
                       </span>
                     )}
 
-                    {/* Out Of Stock */}
                     {isUnavailable && (
                       <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
                         Out Of Stock
@@ -201,11 +189,6 @@ export default function VariantSelector({
                 );
               }
 
-              {
-                /* =========================
-                  OTHER VARIANTS
-              ========================== */
-              }
               return (
                 <button
                   key={value}
@@ -228,7 +211,7 @@ export default function VariantSelector({
                         ? `${value} - Out Of stock`
                         : value
                   }
-                  className={`relative min-h-10 min-w-12 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
+                  className={`relative min-h-10 min-w-12 shrink-0 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
                     isSelected
                       ? "border border-gold bg-gold/10 text-gold-dark shadow-sm"
                       : "border border-gold/20 hover:border-gold/50"
@@ -246,7 +229,6 @@ export default function VariantSelector({
                     {value}
                   </span>
 
-                  {/* Out Of Stock */}
                   {isUnavailable && (
                     <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline">
                       Out Of Stock
@@ -255,7 +237,7 @@ export default function VariantSelector({
                 </button>
               );
             })}
-          </div>
+          </HorizontalScrollControls>
         </div>
       ))}
     </div>

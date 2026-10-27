@@ -33,6 +33,7 @@ import { TopHeader } from "./header/TopHeader";
 //import CategoryMegaMenu from "../modules/catalog/components/CategoryMegaMenu";
 import { navbarIcons as navData } from "../constants/image.constant";
 import { logout } from "../modules/auth/slices/authSlice";
+import { useAuthModal } from "../modules/auth/context/AuthModalContext";
 import { notify } from "../utils/notify";
 import { fetchMe } from "../features/user/userSlice";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
@@ -196,6 +197,7 @@ export const Navbar = ({ icons: propIcons }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const prevPathnameRef = useRef(location.pathname);
+  const { openGuestOtpModal } = useAuthModal();
 
   const currentUser = useSelector((s) => s.auth.current);
   const profileUser = useSelector((s) => s.user.current) || currentUser;
@@ -277,6 +279,14 @@ export const Navbar = ({ icons: propIcons }) => {
       setSearchQuery("");
     }
   }, [location.pathname, location.search]);
+
+  const handleWishlistClick = (event) => {
+    if (currentUser) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    openGuestOtpModal(() => navigate("/wishlist"));
+  };
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();

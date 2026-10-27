@@ -50,28 +50,31 @@ const HeroSwiper = memo(({ slides }) => {
 
           <div className="customer-container relative z-20 flex h-full flex-col items-center justify-between gap-6 pb-8 pt-12 sm:pb-8 sm:pt-16 md:pb-10 md:pt-20 lg:flex-row lg:py-0">
             <div className="flex flex-1 flex-col items-center space-y-4 pt-4 text-center text-white md:space-y-6 lg:items-start lg:pt-0 lg:text-left">
-              <div className="flex flex-col items-center gap-2 md:gap-4 lg:items-start lg:gap-6">
-                {slide.badge && (
-                  <Label
-                    variant="seasonSale"
-                    className="max-w-[290px] px-2 py-1 text-[10px] leading-4 text-center min-[375px]:max-w-[330px] min-[375px]:text-[11px] sm:max-w-fit sm:text-[12px] lg:text-[14px]"
-                    leftIcon={
-                      <Tag
-                        size={12}
-                        className="text-[#CE9F2D] lg:h-[14px] lg:w-[14px]"
-                      />
-                    }
-                  >
-                    {slide.badge}
-                  </Label>
-                )}
-                <h2 className="banner-heading mt-4 md:mt-0 max-w-[681px] lg:max-w-[800px] font-bold">
-                  {slide.title} {slide.highlight && <br />}{" "}
-                  {slide.highlight && (
-                    <span className="text-[#CE9F2D]">{slide.highlight}</span>
-                  )}
-                </h2>
-              </div>
+            
+<div className="flex flex-col items-center gap-2 md:gap-4 lg:items-start lg:gap-6">
+  {slide.badge && (
+    <Label
+      variant="seasonSale"
+      className="max-w-[290px] rounded-full border border-[#CE9F2D]/50 bg-[#FFF8E7] px-3 py-1.5 text-center text-[10px] font-semibold leading-4 text-[#18156D] shadow-sm min-[375px]:max-w-[330px] min-[375px]:text-[11px] sm:max-w-fit sm:px-4 sm:text-[12px] lg:text-[14px]"
+      leftIcon={
+        <Tag
+          size={12}
+          className="shrink-0 text-[#A8790A] lg:h-[14px] lg:w-[14px]"
+        />
+      }
+    >
+      {slide.badge}
+    </Label>
+  )}
+
+  <h2 className="banner-heading mt-4 max-w-[681px] font-bold md:mt-0 lg:max-w-[800px]">
+    {slide.title} {slide.highlight && <br />}{" "}
+    {slide.highlight && (
+      <span className="text-[#CE9F2D]">{slide.highlight}</span>
+    )}
+  </h2>
+</div>
+
               {slide.description && (
                 <p className="max-w-xl lg:max-w-2xl font-medium text-center text-sm md:text-base xl:text-lg text-white/80 lg:text-left">
                   {slide.description}

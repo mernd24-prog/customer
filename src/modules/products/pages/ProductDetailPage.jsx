@@ -408,12 +408,7 @@ export default function ProductDetailPage() {
                       }
                     }}
                   />
-                </div>
-              </div>
-
-              {/* <ProductFeatureGrid /> */}
-
-              <Suspense
+                    <Suspense
                 fallback={
                   <div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />
                 }
@@ -430,6 +425,12 @@ export default function ProductDetailPage() {
                 />
               </Suspense>
 
+                </div>
+              </div>
+
+              {/* <ProductFeatureGrid /> */}
+
+            
               <Suspense
                 fallback={
                   <div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />
