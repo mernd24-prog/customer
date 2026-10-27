@@ -28,6 +28,7 @@ import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
 import { SELLER_LOGIN_URL } from "../../../config/seller";
+import { SolidLargeButton } from "../../../components/ui/button/static";
 
 function useStorySlidesPerView() {
   const getSlidesPerView = () => {

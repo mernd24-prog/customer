@@ -143,7 +143,9 @@ export default function GuestOtpAuthModal({
     try {
       await dispatch(otpAuth({ mobile: cleanedMobile })).unwrap();
 
-      notify.success(`OTP sent successfully to ${selectedDialCode} ${cleanedMobile}`);
+      notify.success(
+        `OTP sent successfully to ${selectedDialCode} ${cleanedMobile}`,
+      );
       setMobile(cleanedMobile);
       setOtp("");
       setStep(2);
@@ -235,11 +237,12 @@ export default function GuestOtpAuthModal({
 
   const isSubmitting = loading || authLoading;
 
-  const cardTitle = step === 1 ? "Login or Create Account" : "Verify Mobile OTP";
+  const cardTitle =
+    step === 1 ? "Login or Create Account" : "Verify Mobile OTP";
 
   const cardSubtitle =
     step === 1
-      ? "Enter your mobile number. We will log you in if an account exists, or create a new account after verification."
+      ? "Enter your mobile number to log in or create an account after verification."
       : `Enter the 6-digit OTP sent by SMS to mobile +91 ${mobile}`;
 
   return createPortal(
@@ -375,7 +378,8 @@ export default function GuestOtpAuthModal({
                 </Button>
 
                 <p className="text-center text-[0.8rem] text-muted">
-                  New numbers create a phone-verified account automatically. Prefer email and password?{" "}
+                  New numbers create a phone-verified account automatically.
+                  Prefer email and password?{" "}
                   <Link
                     to={AUTH_ROUTES.register}
                     onClick={() => onClose?.()}
@@ -446,7 +450,9 @@ export default function GuestOtpAuthModal({
                   disabled={isSubmitting || otp.length !== 6}
                   className="h-11 text-sm font-semibold uppercase"
                 >
-                  {isSubmitting ? "Verifying mobile OTP..." : "Verify & Continue"}
+                  {isSubmitting
+                    ? "Verifying mobile OTP..."
+                    : "Verify & Continue"}
                 </Button>
               </form>
             )}
