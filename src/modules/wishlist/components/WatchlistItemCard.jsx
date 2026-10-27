@@ -242,7 +242,7 @@ export function WatchlistItemCard({
     <article
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex min-w-0 flex-col overflow-hidden rounded-[14px] sm:rounded-[20px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out hover:shadow-md"
+      className="group relative flex min-w-0 flex-col overflow-hidden rounded-lg sm:rounded-lg border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out hover:shadow-md"
     >
       {/* -----------------------------------------------------
           Badges (Discount % Off)
@@ -253,7 +253,7 @@ export function WatchlistItemCard({
             variant="success"
             className="
               flex h-[20px] min-w-[54px] items-center justify-center
-              rounded-[50px]
+              rounded-full
               bg-blue
               px-[8px] py-[3px]
               font-dmSans
@@ -296,7 +296,7 @@ export function WatchlistItemCard({
         className="flex flex-1 flex-col min-w-0"
       >
         {/* Product Image */}
-        <div className="relative flex justify-center overflow-hidden h-[160px] xs:h-[190px] sm:h-[230px] md:h-[260px] items-center w-full rounded-t-[14px] sm:rounded-t-[20px] transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
+        <div className="relative flex justify-center overflow-hidden h-[160px] xs:h-[190px] sm:h-[230px] md:h-[260px] items-center w-full rounded-t-lg sm:rounded-t-lg transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
           {activeImage ? (
             <>
               <img

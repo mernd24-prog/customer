@@ -289,7 +289,7 @@ function Footer({ data }) {
     <p className="text-center">
       © 2026{" "}
       <Link
-        to={import.meta.env.VITE_SITE_URL }
+        to="#"
         className="transition-colors hover:text-[#CE9F2D]"
       >
         Samglobal Marketplace Pvt. Ltd.

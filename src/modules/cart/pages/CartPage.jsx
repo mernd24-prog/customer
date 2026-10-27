@@ -12,12 +12,12 @@ import { ConfirmModal } from "../../../components/ui";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";
 import { ContinueShoppingButton } from "../../../components/ui/button/static";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CircleAlert, X } from "lucide-react";
 import { CART_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../../utils/ecommerce/money";
 import { PageContainer } from "../../../components/ui/layout";
 import {
-  normalizeCartItemId,  
+  normalizeCartItemId,
   cartLineKey,
   buildSavedProductView,
 } from "../../../utils/ecommerce/cart";
@@ -100,8 +100,28 @@ export default function CartPage() {
   const checkoutButtonText = !selectedItems.length
     ? "Select products to checkout"
     : checkoutBlockedByStock
-      ? "Remove out-of-stock items"
+      ? "Review unavailable items"
       : "Proceed to Checkout";
+
+  const getStockIssueLabel = (item) => {
+    const stock = Number(item?.stock);
+    const quantity = Math.max(1, Number(item?.quantity || 1));
+
+    if (Number.isFinite(stock) && stock <= 0) return "Out of stock";
+    if (Number.isFinite(stock) && quantity > stock) {
+      return `Only ${stock} ${stock === 1 ? "unit" : "units"} available`;
+    }
+
+    return "Unavailable";
+  };
+
+  const removeOutOfStockItems = () => {
+    if (!stockBlockedItems.length) return;
+
+    stockBlockedItems.forEach((item) => {
+      if (item?.id) handleRemove(item.id);
+    });
+  };
 
   return (
     <>
@@ -147,152 +167,122 @@ export default function CartPage() {
         description="Review items in your shopping cart."
       />
 
-    <PageContainer>
-          <Breadcrumbs
-            items={breadcrumbItems} />
+      <PageContainer>
+        <Breadcrumbs items={breadcrumbItems} />
 
-          <ApiState
-            loading={cartState.loading && !cart.items}
-            error={cartState.error}
-            empty={false}
-            skeletonLayout={CART_PAGE_SKELETON}
-            skeletonContainerClass="bg-transparent"
-          >
-            {!hasCartItems && !cartState.loading ? (
-              <EmptyState
-                title="Your Cart is Empty"
-                description="Add some products to continue shopping."
-                actionLabel="Continue Shopping"
-                onAction={() => navigate("/products")}
-              />
-            ) : (
-              <StickySidebarLayout
-                sidebarPosition="right"
-                containerClass="flex flex-col lg:flex-row gap-6 sm:gap-7 lg:gap-8 xl:gap-9"
-                sidebarClass="w-full lg:w-[350px] 2xl:w-[369px] shrink-0 transition-[top] duration-300 ease-in-out"
-                mainContent={
-                  <div className="min-w-0 space-y-6 sm:space-y-7 lg:space-y-8">
-                    {hasCartItems && (
-                      <div className="flex items-center justify-between py-1">
-                        <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px] cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={
-                              selectedItems.length === items.length &&
-                              items.length > 0
-                            }
-                            onChange={(event) =>
-                              handleSelectAll(event.target.checked)
-                            }
-                            className="h-4 w-4 rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
-                          />
-                          Select All Items
-                        </label>
-                        <span className="text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
-                          {selectedItems.length}/{items.length} Items selected
-                        </span>
+        <ApiState
+          loading={cartState.loading && !cart.items}
+          error={cartState.error}
+          empty={false}
+          skeletonLayout={CART_PAGE_SKELETON}
+          skeletonContainerClass="bg-transparent"
+        >
+          {!hasCartItems && !cartState.loading ? (
+            <EmptyState
+              title="Your Cart is Empty"
+              description="Add some products to continue shopping."
+              actionLabel="Continue Shopping"
+              onAction={() => navigate("/products")}
+            />
+          ) : (
+            <StickySidebarLayout
+              sidebarPosition="right"
+              containerClass="flex flex-col gap-5 lg:flex-row lg:gap-6"
+              sidebarClass="w-full shrink-0 transition-[top] duration-300 ease-in-out lg:w-[350px] 2xl:w-[369px]"
+              mainContent={
+                <div className="min-w-0 space-y-5">
+                {checkoutBlockedByStock && (
+                  <section
+                    role="alert"
+                    aria-live="polite"
+                    className="rounded-lg border border-red-200 bg-red-50/70 px-3 py-2.5"
+                  >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex min-w-0 items-start gap-2.5">
+                        <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center text-red-600">
+                          <CircleAlert size={16} strokeWidth={2} />
+                        </div>
+
+                        <div className="min-w-0">
+                          <h3 className="text-sm font-semibold leading-5 text-red-800">
+                            {stockBlockedItems.length === 1
+                              ? "1 item is unavailable"
+                              : `${stockBlockedItems.length} items are unavailable`}
+                          </h3>
+                          <p className="mt-0.5 text-xs leading-4 text-red-700">
+                            Remove unavailable items to continue to checkout.
+                          </p>
+
+                          {stockBlockedItems.length > 0 && (
+                            <p className="mt-1 max-w-[680px] truncate text-[11px] leading-4 text-red-600/90">
+                              {stockBlockedItems
+                                .map((item) => item.title || item.name || "Product")
+                                .join(" • ")}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    )}
 
-                    {hasCartItems && (
-                      <div className="rounded-lg border border-[#F0E6D2] bg-[#FFFDF8]  sm:rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-                        {items.map((item, index) => (
-                          <div key={item.id}>
-                            <CartItemCard
-                              item={item}
-                              isLastItem={index === items.length - 1}
-                              selected={normalizedSelectedItemIds.includes(
-                                normalizeCartItemId(item),
-                              )}
-                              onSelect={handleSelectItem}
-                              onIncrease={handleIncrease}
-                              onDecrease={handleDecrease}
-                              onRemove={setItemToRemove}
-                              onSaveForLater={handleSaveForLater}
-                              onBuyNow={handleBuyNow}
-                              showCheckbox={true}
-                              isWishlisted={isWishlisted(item)}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                      <button
+                        type="button"
+                        onClick={removeOutOfStockItems}
+                        className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium leading-4 text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300"
+                      >
+                        Remove unavailable items
+                      </button>
+                    </div>
+                  </section>
+                )}
 
-                    {checkoutBlockedByStock && (
-                      <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm text-red-700">
-                        <p className="font-semibold">
-                          Out-of-stock items cannot proceed to checkout.
-                        </p>
-                        <p className="mt-1 text-xs">
-                          Deselect, remove, or move to wishlist:{" "}
-                          {stockBlockedItems.map((item) => item.title).join(", ")}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* On screens below lg, display Order Summary ABOVE Wishlist */}
-                    {hasCartItems && (
-                      <div className="block lg:hidden pt-2">
-                        <OrderPaymentSummary
-                          variant="cart"
-                          mrpSubtotal={mrpSubtotal}
-                          subtotal={sellingSubtotal}
-                          productDiscount={productSavings}
-                          couponDiscount={extraCoupon}
-                          walletDiscount={extraWallet}
-                          shipping={shippingTotal}
-                          customerAmount={totalPayable}
-                          totalSavings={totalSavings}
-                          itemCount={selectedItemCount}
-                          currency="INR"
-                          title="Order Summary"
-                          formatMoney={formatMoney}
-                          asNumber={toNum}
-                          buttonText={checkoutButtonText}
-                          disabled={
-                            !selectedItems.length || checkoutBlockedByStock
+                  {hasCartItems && (
+                    <div className="flex items-center justify-between gap-3 py-1">
+                      <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-[#2D2D2D]">
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedItems.length === items.length &&
+                            items.length > 0
                           }
-                          onCheckout={() => {
-                            if (!selectedItems.length || checkoutBlockedByStock)
-                              return;
-
-                            window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
-                            window.sessionStorage.setItem(
-                              SELECTED_CHECKOUT_STORAGE_KEY,
-                              JSON.stringify(selectedItemIds),
-                            );
-
-                            if (!currentUser) {
-                              setShowGuestOtpModal(true);
-                              return;
-                            }
-                            navigate("/checkout");
-                          }}
+                          onChange={(event) =>
+                            handleSelectAll(event.target.checked)
+                          }
+                          className="h-4 w-4 shrink-0 cursor-pointer rounded accent-[#3F4095]"
                         />
-                      </div>
-                    )}
+                        <span>Select all items</span>
+                      </label>
+                      <span className="shrink-0 text-sm font-medium text-[#555555]">
+                        {selectedItems.length} of {items.length} selected
+                      </span>
+                    </div>
+                  )}
 
-                    {hasCartItems && (
-                      <div className="flex items-center gap-3 pt-2">
-                        <ContinueShoppingButton
-                          to="/products"
-                          rightIcon={
-                            <ArrowRight
-                              className="w-3.5 h-3.5"
-                              strokeWidth={2.5}
-                            />
-                          }
-                          
-                        >
-                          Continue Shopping
-                        </ContinueShoppingButton>
-                      </div>
-                    )}
-                  </div>
-                }
-                sidebarContent={
-                  hasCartItems && (
-                    <div className="hidden lg:block w-full min-w-0">
+                  {hasCartItems && (
+                    <div className="rounded-lg border border-[#F0E6D2] bg-[#FFFDF8]  sm:rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                      {items.map((item, index) => (
+                        <div key={item.id}>
+                          <CartItemCard
+                            item={item}
+                            isLastItem={index === items.length - 1}
+                            selected={normalizedSelectedItemIds.includes(
+                              normalizeCartItemId(item),
+                            )}
+                            onSelect={handleSelectItem}
+                            onIncrease={handleIncrease}
+                            onDecrease={handleDecrease}
+                            onRemove={setItemToRemove}
+                            onSaveForLater={handleSaveForLater}
+                            onBuyNow={handleBuyNow}
+                            showCheckbox={true}
+                            isWishlisted={isWishlisted(item)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* On screens below lg, display Order Summary ABOVE Wishlist */}
+                  {hasCartItems && (
+                    <div className="block lg:hidden pt-2">
                       <OrderPaymentSummary
                         variant="cart"
                         mrpSubtotal={mrpSubtotal}
@@ -309,7 +299,9 @@ export default function CartPage() {
                         formatMoney={formatMoney}
                         asNumber={toNum}
                         buttonText={checkoutButtonText}
-                        disabled={!selectedItems.length || checkoutBlockedByStock}
+                        disabled={
+                          !selectedItems.length || checkoutBlockedByStock
+                        }
                         onCheckout={() => {
                           if (!selectedItems.length || checkoutBlockedByStock)
                             return;
@@ -324,17 +316,74 @@ export default function CartPage() {
                             setShowGuestOtpModal(true);
                             return;
                           }
-
                           navigate("/checkout");
                         }}
                       />
                     </div>
-                  )
-                }
-              />
-            )}
-          </ApiState>
-        </PageContainer>
+                  )}
+
+                  {hasCartItems && (
+                    <div className="flex items-center gap-3 pt-2">
+                      <ContinueShoppingButton
+                        to="/products"
+                        rightIcon={
+                          <ArrowRight
+                            className="w-3.5 h-3.5"
+                            strokeWidth={2.5}
+                          />
+                        }
+                      >
+                        Continue Shopping
+                      </ContinueShoppingButton>
+                    </div>
+                  )}
+                </div>
+              }
+              sidebarContent={
+                hasCartItems && (
+                  <div className="hidden lg:block w-full min-w-0">
+                    <OrderPaymentSummary
+                      variant="cart"
+                      mrpSubtotal={mrpSubtotal}
+                      subtotal={sellingSubtotal}
+                      productDiscount={productSavings}
+                      couponDiscount={extraCoupon}
+                      walletDiscount={extraWallet}
+                      shipping={shippingTotal}
+                      customerAmount={totalPayable}
+                      totalSavings={totalSavings}
+                      itemCount={selectedItemCount}
+                      currency="INR"
+                      title="Order Summary"
+                      formatMoney={formatMoney}
+                      asNumber={toNum}
+                      buttonText={checkoutButtonText}
+                      disabled={!selectedItems.length || checkoutBlockedByStock}
+                      onCheckout={() => {
+                        if (!selectedItems.length || checkoutBlockedByStock)
+                          return;
+
+                        window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
+                        window.sessionStorage.setItem(
+                          SELECTED_CHECKOUT_STORAGE_KEY,
+                          JSON.stringify(selectedItemIds),
+                        );
+
+                        if (!currentUser) {
+                          setShowGuestOtpModal(true);
+                          return;
+                        }
+
+                        navigate("/checkout");
+                      }}
+                    />
+                  </div>
+                )
+              }
+            />
+          )}
+        </ApiState>
+      </PageContainer>
     </>
   );
 }

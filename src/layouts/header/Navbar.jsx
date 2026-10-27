@@ -16,6 +16,7 @@ import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
 
 import { fetchMe } from "../../features/user/userSlice";
 import { logout } from "../../modules/auth/slices/authSlice";
+import { useAuthModal } from "../../modules/auth/context/AuthModalContext";
 import { notify } from "../../utils/notify";
 import { asArray, keyOr, textOr } from "../../utils/content";
 import { navbarIcons as navData } from "../../constants/image.constant";
@@ -36,6 +37,7 @@ export const Navbar = ({ icons: propIcons }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const prevPathnameRef = useRef(location.pathname);
+  const { openGuestOtpModal } = useAuthModal();
 
   const currentUser = useSelector((s) => s.auth.current);
   const profileUser = useSelector((s) => s.user.current) || currentUser;
@@ -117,6 +119,14 @@ export const Navbar = ({ icons: propIcons }) => {
       setSearchQuery("");
     }
   }, [location.pathname, location.search]);
+
+  const handleWishlistClick = (event) => {
+    if (currentUser) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    openGuestOtpModal(() => navigate("/wishlist"));
+  };
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
@@ -263,6 +273,7 @@ export const Navbar = ({ icons: propIcons }) => {
               {/* Watchlist */}
               <HeaderIconButton
                 to="/wishlist"
+                onClick={handleWishlistClick}
                 className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
                 aria-label={`Watchlist with ${wishlistCount} ${
                   wishlistCount === 1 ? "item" : "items"

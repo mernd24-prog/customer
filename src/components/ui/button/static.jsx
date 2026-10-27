@@ -8,18 +8,21 @@ const buttonStyles = {
     "h-[35px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[14px] py-[7px] text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-white hover:bg-[linear-gradient(#bd9025,#bd9025)]",
 
   outlineSmall:
-    "inline-flex h-[42px] px-4 items-center justify-center gap-2 rounded-[10px] border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md  cursor-pointer",
+    "inline-flex h-[42px] px-4 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md  cursor-pointer",
+
+  outlineSecondary:
+    "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] backdrop-blur transition-all duration-200 hover:bg-white hover:border-[#18156D]/30 hover:shadow-sm sm:px-7",
 
   outlineLight:
     "border border-white/50 bg-transparent text-white hover:bg-white/10",
   solidLarge:
-    "h-[48px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[22px] py-[10px] text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-white hover:bg-[linear-gradient(#bd9025,#bd9025)]",
+    "h-[48px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[22px] py-[10px] text-[15px] leading-[20px] tracking-[0.5px] font-semibold font-bold text-[#18156D] hover:bg-[linear-gradient(#bd9025,#bd9025)]",
   headerGold:
     "h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-[11px] leading-[16px] tracking-[0.5px] font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-w-[153px] sm:px-4 sm:text-[13px] sm:leading-[20px] sm:tracking-[0.5px]",
   headerIcon:
     "group relative h-10 w-10 rounded-full bg-transparent p-0 shadow-none",
 
-  pill: "inline-flex min-w-[110px]  sm:min-w-[130px] h-[40px] sm:h-[38px] items-center justify-center  gap-1 sm:gap-[15px] md:gap-2 rounded-full bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 sm:px-[34px]    font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[linear-gradient(#bd9025,#bd9025)]",
+  pill: "inline-flex min-w-[110px]  sm:min-w-[130px] h-[40px] sm:h-[38px] items-center justify-center  gap-1 sm:gap-[15px] md:gap-2 rounded-lg bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 sm:px-[34px]    font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[linear-gradient(#bd9025,#bd9025)]",
 
   ghostPill:
     "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-[12px] leading-[18px] tracking-[0.5px] font-semibold text-[#D6A323] hover:bg-black/60 xl:text-[14px] xl:leading-[20px] xl:tracking-[0.5px]",
@@ -65,6 +68,20 @@ export const OutlineLightButton = ({ children, className = "", ...props }) => (
   <DynamicButton
     variant="unstyled"
     className={cn(buttonStyles.outlineLight, className)}
+    {...props}
+  >
+    {children}
+  </DynamicButton>
+);
+
+export const OutlineSecondaryButton = ({
+  children,
+  className = "",
+  ...props
+}) => (
+  <DynamicButton
+    variant="unstyled"
+    className={cn(buttonStyles.outlineSecondary, className)}
     {...props}
   >
     {children}
