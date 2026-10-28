@@ -88,7 +88,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
                                   window.scrollTo({ top: 0, behavior: "smooth" });
                                 }
                               }}
-                              className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D] md:text-base"
+                              className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-gold aria-[current=page]:!text-gold md:text-base"
                             >
                               {capitalizeFirst(link?.label)}
                             </Link>
@@ -162,10 +162,10 @@ function Footer({ data }) {
                 </div>
 
                 <div>
-                  <h2 className="mb-0 text-base font-bold text-[#1B1D60] xl:text-lg">
+                  <h2 className="mb-0 text-base font-bold text-navy xl:text-lg">
                     {item?.title}
                   </h2>
-                  <p className="text-xs font-light text-[#2E2E2E] sm:text-sm xl:text-base">
+                  <p className="text-xs font-light text-ink sm:text-sm xl:text-base">
                     {item?.description}
                   </p>
                 </div>
@@ -298,7 +298,7 @@ function Footer({ data }) {
                 aria-current={
                   isCurrentPath(location.pathname, toPath) ? "page" : undefined
                 }
-                className="hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D]"
+                className="hover:text-gold aria-[current=page]:!text-gold"
               >
                 {label}
               </Link>
@@ -312,7 +312,7 @@ function Footer({ data }) {
       © 2026{" "}
       <Link
         to="#"
-        className="transition-colors hover:text-[#CE9F2D]"
+        className="transition-colors hover:text-gold"
       >
         Samglobal Marketplace Pvt. Ltd.
       </Link>{" "}

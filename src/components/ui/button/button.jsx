@@ -27,15 +27,15 @@ export const DynamicButton = React.forwardRef(
     ref,
   ) => {
     const baseStyles =
-      "group inline-flex items-center justify-center font-medium transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+      "group inline-flex items-center justify-center font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
     const variants = {
       unstyled: "",
       primary:
-        "bg-gradient-to-l from-gold-dark to-gold text-navy rounded-full shadow-sm hover:shadow-md",
+        "bg-gradient-to-l from-gold-dark to-gold text-navy rounded-full shadow-sm hover:-translate-y-0.5 hover:shadow-md active:translate-y-0",
       secondary:
         "bg-cream text-navy hover:bg-gold-soft focus-visible:ring-gold",
-      outline: "border border-gold-dark text-navy",
+      outline: "border border-gold-dark text-navy hover:bg-gold-soft",
       danger:
         "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600",
     };

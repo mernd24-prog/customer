@@ -30,7 +30,7 @@ export const TopHeader = () => {
 
   return (
     <>
-      <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
+      <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-sm font-medium text-[#FFFFFF] lg:flex">
         <div className="customer-container flex h-full items-center justify-between">
           <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
             {asArray(DEFAULT_TOP_NAV_LINKS).map((link, index) => {
@@ -44,7 +44,7 @@ export const TopHeader = () => {
                   key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
                   to={path}
                   aria-current={isActive ? "page" : undefined}
-                  className="text-[#FFFFFF] transition-colors duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D]"
+                  className="text-[#FFFFFF] transition-colors duration-300 ease-in-out hover:text-gold aria-[current=page]:!text-gold"
                 >
                   {textOr(link?.name, "Link")}
                 </Link>
@@ -58,7 +58,7 @@ export const TopHeader = () => {
               aria-current={
                 location.pathname === "/become-a-seller" ? "page" : undefined
               }
-              className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D]"
+              className="text-[#FFFFFF] text-sm font-medium transition-all duration-300 ease-in-out hover:text-gold aria-[current=page]:!text-gold"
             >
               Become a Seller
             </Link>
@@ -92,7 +92,7 @@ export const TopHeader = () => {
                   rounded-[5px]
                   px-3
                   py-0
-                  text-[12px] lg:text-[13px]
+                  text-xs lg:text-label
                   font-semibold
                   leading-none
                   whitespace-nowrap

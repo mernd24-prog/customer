@@ -525,7 +525,7 @@ function ReturnsRefundsPage() {
         >
           {/* ── Filter row ─────────────────────────────────────────── */}
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="font-sans text-[14px] font-semibold text-[#1B1D60] sm:text-[15px] lg:text-[18px]">
+            <p className="font-sans text-sm font-semibold text-navy sm:text-body lg:text-lg">
               {filteredReturns.length}{" "}
               {filteredReturns.length === 1 ? "Return" : "Returns"}
               {statusFilter !== "all" && (
@@ -559,10 +559,10 @@ function ReturnsRefundsPage() {
                   <button
                     type="button"
                     onClick={() => setVisibleCount((prev) => prev + 3)}
-                    className="flex items-center gap-2 rounded-xl border border-[#CE9F2D] bg-white px-6 py-3 font-sans text-[14px] font-semibold text-[#3E4093] shadow-sm transition-all hover:bg-[#FFEFC8]/40 focus:outline-none"
+                    className="flex items-center gap-2 rounded-xl border border-[#CE9F2D] bg-white px-6 py-3 font-sans text-sm font-semibold text-navy shadow-sm transition-all hover:bg-[#FFEFC8]/40 focus:outline-none"
                   >
                     Load More
-                    <ChevronDown size={16} className="text-[#CE9F2D]" />
+                    <ChevronDown size={16} className="text-gold" />
                   </button>
                 </div>
               )}

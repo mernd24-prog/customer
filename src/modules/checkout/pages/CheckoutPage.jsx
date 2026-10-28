@@ -213,11 +213,11 @@ export default function CheckoutPage() {
 
                 {addresses.length === 0 && !useNewAddress && (
                   <div className="rounded-[20px] border-[1.5px] border-dashed border-[#D9B86D] bg-[#FFFDF8] px-5 py-8 text-center shadow-[0_0_0_1px_rgba(201,163,88,0.12)] sm:px-6">
-                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60] shadow-inner shadow-[#E2CF9E]">
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F5E9C9] text-navy shadow-inner shadow-[#E2CF9E]">
                       <MapPin size={24} />
                     </div>
 
-                    <h3 className="text-[1.05rem] font-bold leading-6 text-[#1B1D60]">
+                    <h3 className="text-[1.05rem] font-bold leading-6 text-navy">
                       No addresses saved yet
                     </h3>
 

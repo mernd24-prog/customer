@@ -129,7 +129,7 @@ export function OrderItemCard({
     ) : null;
 
   const quantityBreakdown = showQuantityBreakdown ? (
-    <div className="flex flex-wrap gap-1.5 text-[11px] font-semibold">
+    <div className="flex flex-wrap gap-1.5 text-caption font-semibold">
       {deliveredQuantity > 0 && (
         <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">
           Delivered {deliveredQuantity}
@@ -258,12 +258,12 @@ export function OrderItemCard({
     item?.returnReason;
 
   const renderShipmentAndRequestDetails = () => (
-    <div className="mt-2 min-w-0 space-y-1.5 text-xs text-[#6F7480]">
+    <div className="mt-2 min-w-0 space-y-1.5 text-xs text-muted">
       {!isCancelled && !isReturned && (
         <>
           {/* <p className="flex min-w-0 flex-wrap items-center gap-x-1">
             <span>Courier:</span>
-            <span className="font-semibold text-[#1B1D60]">
+            <span className="font-semibold text-navy">
               {capitalizeFirst(shipment?.courier_name || "Seller Delivery")}
             </span>
           </p> */}
@@ -271,7 +271,7 @@ export function OrderItemCard({
           <p className="flex min-w-0 flex-wrap items-center gap-x-1">
             <span>Tracking ID:</span>
             <span
-              className="break-all font-semibold text-[#1B1D60]"
+              className="break-all font-semibold text-navy"
               title={shipment?.tracking_number || shipment?.awb_number || ""}
             >
               {shipment?.tracking_number ||
@@ -287,7 +287,7 @@ export function OrderItemCard({
           {cancellationId && (
             <p className="break-words">
               <span>Cancellation ID:</span>{" "}
-              <span className="font-semibold text-[#1B1D60]">
+              <span className="font-semibold text-navy">
                 {cancellationId}
               </span>
             </p>
@@ -296,7 +296,7 @@ export function OrderItemCard({
           {cancellationStatus && (
             <p className="break-words">
               <span>Cancellation Status:</span>{" "}
-              <span className="font-semibold text-[#1B1D60]">
+              <span className="font-semibold text-navy">
                 {String(cancellationStatus)
                   .replace(/[_-]+/g, " ")
                   .replace(/\b\w/g, (letter) => letter.toUpperCase())}
@@ -307,7 +307,7 @@ export function OrderItemCard({
           {cancellationReason && (
             <p className="break-words">
               <span>Reason:</span>{" "}
-              <span className="font-medium text-[#1F2430]">
+              <span className="font-medium text-ink">
                 {cancellationReason}
               </span>
             </p>
@@ -322,7 +322,7 @@ export function OrderItemCard({
               {returnId && (
                 <p className="break-words">
                   <span>Return ID:</span>{" "}
-                  <span className="font-semibold text-[#1B1D60]">
+                  <span className="font-semibold text-navy">
                     {returnId}
                   </span>
                 </p>
@@ -331,7 +331,7 @@ export function OrderItemCard({
               {refundAmount != null && (
                 <p className="break-words">
                   <span>Refund Amount:</span>{" "}
-                  <span className="font-semibold text-[#1B1D60]">
+                  <span className="font-semibold text-navy">
                     {formatMoney
                       ? formatMoney(refundAmount, currency)
                       : `₹${Number(refundAmount).toLocaleString("en-IN")}`}
@@ -344,7 +344,7 @@ export function OrderItemCard({
           {returnReason && (
             <p className="break-words">
               <span>Reason:</span>{" "}
-              <span className="font-medium text-[#1F2430]">{returnReason}</span>
+              <span className="font-medium text-ink">{returnReason}</span>
             </p>
           )}
         </>
@@ -354,7 +354,7 @@ export function OrderItemCard({
 
   const renderProductActions = () => {
     const buttonStyle =
-      "inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm";
+      "inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-navy transition-colors hover:bg-[#F8EDCF] sm:text-sm";
 
     return (
       <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
@@ -382,7 +382,7 @@ export function OrderItemCard({
 
   const renderProductImage = (imageWidthClass) => (
     <div
-      className={`flex aspect-square ${imageWidthClass} shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/50 p-2 shadow-2xs`}
+      className={`flex aspect-square ${imageWidthClass} shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-cream/50 p-2 shadow-2xs`}
     >
       {getItemImage(item) ? (
         productPath ? (
@@ -417,7 +417,7 @@ export function OrderItemCard({
 
   const renderProductTitle = (limit = 65, titleClassName = "") => (
     <h3
-      className={`min-w-0 flex-1 text-sm font-bold leading-snug text-[#1F2430] sm:text-base ${titleClassName}`}
+      className={`min-w-0 flex-1 text-sm font-bold leading-snug text-ink sm:text-base ${titleClassName}`}
     >
       <ShowMoreText
         text={getProductTitle(item)}
@@ -426,7 +426,7 @@ export function OrderItemCard({
         moreLabel="more"
         lessLabel="less"
         textClassName="inline"
-        buttonClassName="ml-1 text-xs font-semibold text-[#201B78] hover:underline sm:text-sm"
+        buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline sm:text-sm"
       />
     </h3>
   );
@@ -453,28 +453,28 @@ export function OrderItemCard({
             )}
 
             {deliveryDateStr ? (
-              <p className="mt-2 break-words text-xs font-medium text-[#6F7480]">
+              <p className="mt-2 break-words text-xs font-medium text-muted">
                 Estimated Delivery:{" "}
-                <span className="font-semibold text-[#1F2430]">
+                <span className="font-semibold text-ink">
                   {deliveryDateStr}
                 </span>
               </p>
             ) : eta !== undefined && eta !== null && eta !== "" ? (
-              <p className="mt-2 text-xs font-medium text-[#6F7480]">
+              <p className="mt-2 text-xs font-medium text-muted">
                 Estimated Delivery:{" "}
-                <span className="font-semibold text-[#1F2430]">
+                <span className="font-semibold text-ink">
                   {eta} {Number(eta) === 1 ? "day" : "days"}
                 </span>
               </p>
             ) : null}
 
-            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-xs font-semibold text-[#1F2430]">
-              <p className="text-lg font-bold text-[#1F2430]">
+            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-xs font-semibold text-ink">
+              <p className="text-lg font-bold text-ink">
                 {formatMoney(getItemLineTotal(item), currency)}
               </p>
 
-              <span className="inline-flex items-center gap-1 rounded-full border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5">
-                <span className="font-normal text-[#6F7480]">Qty:</span>{" "}
+              <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-cream px-2.5 py-0.5">
+                <span className="font-normal text-muted">Qty:</span>{" "}
                 {String(item?.quantity || 1).padStart(2, "0")}
               </span>
             </div>
@@ -498,21 +498,21 @@ export function OrderItemCard({
             </div>
           </div>
 
-          <div className="my-2 flex min-w-0 flex-wrap items-center gap-2 text-xs font-semibold text-[#1F2430]">
+          <div className="my-2 flex min-w-0 flex-wrap items-center gap-2 text-xs font-semibold text-ink">
             {variantAttributes.map(([key, value]) => (
               <span
                 key={key}
-                className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[#E4DDCF]/80 bg-[#FAF6EE] px-3 py-1"
+                className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-border/80 bg-cream px-3 py-1"
               >
-                <span className="font-normal text-[#6F7480]">
+                <span className="font-normal text-muted">
                   {formatAttributeLabel(key)}:
                 </span>{" "}
                 <span className="break-words">{String(value)}</span>
               </span>
             ))}
 
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E4DDCF]/80 bg-[#FAF6EE] px-3 py-1">
-              <span className="font-normal text-[#6F7480]">Qty:</span>{" "}
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-cream px-3 py-1">
+              <span className="font-normal text-muted">Qty:</span>{" "}
               {String(item?.quantity || 1).padStart(2, "0")}
             </span>
           </div>
@@ -522,19 +522,19 @@ export function OrderItemCard({
           {quantityBreakdown && <div className="mt-2">{quantityBreakdown}</div>}
 
           {deliveryDateStr && (
-            <p className="mt-2 break-words text-xs font-medium text-[#6F7480]">
+            <p className="mt-2 break-words text-xs font-medium text-muted">
               Estimated Delivery:{" "}
-              <span className="font-semibold text-[#1F2430]">
+              <span className="font-semibold text-ink">
                 {deliveryDateStr}
               </span>
             </p>
           )}
 
           <div className="mt-2">
-            <p className="text-lg font-extrabold text-[#1F2430] sm:text-xl">
+            <p className="text-lg font-extrabold text-ink sm:text-xl">
               {formatMoney(getItemLineTotal(item), currency)}
             </p>
-            <p className="mt-0.5 text-xs font-base text-[#6F7480]">
+            <p className="mt-0.5 text-xs font-base text-muted">
               Inclusive of all taxes
             </p>
           </div>

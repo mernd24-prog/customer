@@ -145,7 +145,7 @@ export default function WatchlistPage() {
                   className="mt-8 flex justify-center items-center py-4"
                 >
                   <Loader2
-                    className="animate-spin text-[#CE9F2D]"
+                    className="animate-spin text-gold"
                     size={28}
                     strokeWidth={2}
                   />
@@ -155,8 +155,8 @@ export default function WatchlistPage() {
               <div className="flex items-center gap-3 mt-6 lg:mt-8">
                 <OutlineSmallButton
                   to="/products"
-                  rightIcon={<FaAngleRight className="text-[10px]" />}
-                  className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
+                  rightIcon={<FaAngleRight className="text-micro" />}
+                  className="xl:text-lg text-sm xl:font-bold lg:text-base lg:font-semibold transition-all duration-300 ease-in-out"
                 >
                   Continue Shopping
                 </OutlineSmallButton>

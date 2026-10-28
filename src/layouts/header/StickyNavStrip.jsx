@@ -36,8 +36,8 @@ export function StickyNavStrip({
             aria-current={isActive ? "page" : undefined}
             onMouseEnter={() => onEnter?.(item)}
             onMouseLeave={onLeave}
-            className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-              isActive ? "!text-[#03014D]" : "text-[#2E2E2E]"
+            className={`relative flex h-full shrink-0 items-center text-label font-semibold transition-all duration-200 ease-in-out hover:text-navy-dark sm:text-sm ${
+              isActive ? "!text-navy-dark" : "text-ink"
             }`}
           >
             <span>{textOr(item?.name, "Category")}</span>
@@ -53,8 +53,8 @@ export function StickyNavStrip({
       {/* "More" link always at the end
       <Link
         to="/categories"
-        className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-          pathname === "/categories" ? "text-[#03014D]" : "text-[#2E2E2E]"
+        className={`relative flex h-full shrink-0 items-center text-label font-semibold transition-all duration-200 ease-in-out hover:text-navy-dark sm:text-sm ${
+          pathname === "/categories" ? "text-navy-dark" : "text-ink"
         }`}
       >
         More

@@ -17,7 +17,7 @@ export default function EmptyState({
 
   return (
     <div
-      className={`flex min-h-[280px] w-full flex-col items-center justify-center rounded-[16px] px-4 py-8 text-center sm:min-h-[320px] sm:px-6 sm:py-10 lg:min-h-[380px] ${className}`}
+      className={`flex min-h-[300px] w-full flex-col items-center justify-center rounded-[var(--customer-radius-lg)] border border-dashed border-border bg-[var(--customer-surface-soft)] px-5 py-8 text-center sm:min-h-[340px] sm:px-8 sm:py-10 ${className}`}
     >
       {Icon ? (
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--customer-gold-soft)] text-[var(--customer-gold-dark)] ring-1 ring-[var(--customer-gold)]/15 sm:h-14 sm:w-14 lg:h-16 lg:w-16">
@@ -33,15 +33,15 @@ export default function EmptyState({
           height="400"
           src={imageSrc}
           alt={title}
-          className="h-28 w-28 object-contain xs:h-32 xs:w-32 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-52 lg:w-52 xl:h-60 xl:w-60"
+          className="h-28 w-28 object-contain xs:h-32 xs:w-32 sm:h-36 sm:w-36 lg:h-40 lg:w-40"
         />
       )}
 
-      <h2 className="mt-5 max-w-lg text-lg font-bold text-[var(--customer-ink)] sm:text-xl md:text-2xl">
+      <h2 className="mt-5 max-w-lg text-xl font-extrabold leading-tight tracking-[-0.02em] text-navy sm:text-2xl">
         {title}
       </h2>
 
-      <p className="mt-3 max-w-xs text-sm leading-6 text-[var(--customer-muted)] sm:max-w-md sm:text-base lg:max-w-xl">
+      <p className="mt-2 max-w-xs text-sm leading-6 text-[var(--customer-muted)] sm:max-w-md sm:text-body">
         {description}
       </p>
 
@@ -49,7 +49,7 @@ export default function EmptyState({
         <div className="mt-6 flex justify-center">
           <ContinueShoppingButton
             onClick={resolvedAction}
-            className="!mx-0 !mt-0 !h-[46px] !w-[206px] !min-w-[206px] !max-w-none !shrink-0 !rounded-full"
+            className="!mx-0 !mt-0 !h-11 !w-auto !min-w-[180px] !max-w-none !shrink-0 !whitespace-nowrap !rounded-full !px-6 sm:!h-12"
           >
             {resolvedActionLabel}
           </ContinueShoppingButton>

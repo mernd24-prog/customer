@@ -14,14 +14,14 @@ export function TicketSuccessModal() {
           <CheckCircle2 size={40} strokeWidth={2.5} />
         </div>
 
-        <h3 className="text-xl font-bold text-[#1B1D60] mb-2">
+        <h3 className="text-xl font-bold text-navy mb-2">
           Ticket Raised Successfully!
         </h3>
 
-        <p className="text-sm text-[#4E4E4E] leading-relaxed mb-6">
+        <p className="text-sm text-ink leading-relaxed mb-6">
           Thank you for contacting us. Your ticket has been logged and our support team will get back to you shortly.
           {ticketSuccessModalData?.ticketId && (
-            <span className="block mt-2 font-semibold text-[#3E4093]">
+            <span className="block mt-2 font-semibold text-navy">
               Ticket ID: #{ticketSuccessModalData.ticketId}
             </span>
           )}

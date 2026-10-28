@@ -101,7 +101,7 @@ export default function SearchPage() {
         <div className="state-box flex flex-col items-center py-20 text-center">
           <Search size={48} className="mb-4 text-gray" />
 
-          <p className=" text-[18px] font-semibold text-ink">
+          <p className=" text-lg font-semibold text-ink">
             What Are You Looking for?
           </p>
 

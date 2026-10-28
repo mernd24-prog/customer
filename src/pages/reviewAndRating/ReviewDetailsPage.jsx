@@ -80,11 +80,11 @@ function ProductReviewSidebar({ product, productId }) {
   };
 
   return (
-    <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+24px)] lg:self-start">
+    <aside className="lg:sticky lg:top-[var(--customer-page-sticky-top)] lg:self-start">
       <Link
         to={productPath}
         onClick={handleBack}
-        className="mb-3.5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#CE9F2D] hover:text-[#1B1D60] transition-colors group cursor-pointer"
+        className="mb-3.5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-gold hover:text-navy transition-colors group cursor-pointer"
       >
         <ChevronLeft size={16} className="transition-transform group-hover:-translate-x-1" />
         Back to Product
@@ -210,7 +210,7 @@ function ReviewsHeader({ total, sort, onSort }) {
 
       <CustomDropdown
         className="z-30 w-[190px]"
-        buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] focus:ring-2 focus:ring-[#EAD9B6]"
+        buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-navy hover:bg-[#FFF9EA] focus:ring-2 focus:ring-[#EAD9B6]"
         options={sortOptions}
         value={sort}
         onChange={onSort}

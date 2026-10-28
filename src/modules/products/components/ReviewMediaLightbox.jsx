@@ -117,7 +117,7 @@ export default function ReviewMediaLightbox({
               <button
                 type="button"
                 onClick={onClose}
-                className="pointer-events-auto flex items-center justify-center h-8 w-8 rounded-full bg-white/90 text-[#1B1D60] hover:bg-white transition-all border border-[#EAD9B6] shadow-md focus:outline-none"
+                className="pointer-events-auto flex items-center justify-center h-8 w-8 rounded-full bg-white/90 text-navy hover:bg-white transition-all border border-[#EAD9B6] shadow-md focus:outline-none"
                 aria-label="Close Preview"
               >
                 <X size={18} strokeWidth={2} />
@@ -131,7 +131,7 @@ export default function ReviewMediaLightbox({
               <button
                 type="button"
                 onClick={() => onIndexChange(safeIndex - 1)}
-                className="absolute left-3 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-[#1B1D60] hover:bg-white border border-[#EAD9B6] shadow-md transition-all focus:outline-none"
+                className="absolute left-3 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-navy hover:bg-white border border-[#EAD9B6] shadow-md transition-all focus:outline-none"
                 aria-label="Previous Image"
               >
                 <ChevronLeft size={22} strokeWidth={2.5} />
@@ -152,7 +152,7 @@ export default function ReviewMediaLightbox({
               <button
                 type="button"
                 onClick={() => onIndexChange(safeIndex + 1)}
-                className="absolute right-3 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#1B1D60] hover:bg-white border border-[#EAD9B6] shadow-md transition-all focus:outline-none"
+                className="absolute right-3 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-navy hover:bg-white border border-[#EAD9B6] shadow-md transition-all focus:outline-none"
                 aria-label="Next Image"
               >
                 <ChevronRight size={22} strokeWidth={2.5} />
@@ -222,7 +222,7 @@ export default function ReviewMediaLightbox({
 
               {/* Review Body Text */}
               {cleanText && (
-                <p className="text-xs sm:text-sm text-[#4E4E4E] leading-relaxed whitespace-pre-line font-normal mt-1">
+                <p className="text-xs sm:text-sm text-ink leading-relaxed whitespace-pre-line font-normal mt-1">
                   {cleanText}
                 </p>
               )}
@@ -246,11 +246,11 @@ export default function ReviewMediaLightbox({
                   onClick={() => onHelpful && reviewId && onHelpful(reviewId)}
                   disabled={!reviewId || isOwn || !onHelpful}
                   className={`flex items-center gap-1.5 transition-colors ${
-                    alreadyVoted ? "text-[#CE9F2D] font-bold" : "hover:text-gray-900"
+                    alreadyVoted ? "text-gold font-bold" : "hover:text-gray-900"
                   }`}
                   title="Helpful"
                 >
-                  <ThumbsUp size={14} className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""} />
+                  <ThumbsUp size={14} className={alreadyVoted ? "fill-[#CE9F2D] text-gold" : ""} />
                   <span>{helpfulVotes}</span>
                 </button>
                 <button

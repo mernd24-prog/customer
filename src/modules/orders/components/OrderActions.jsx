@@ -42,12 +42,12 @@ export default function OrderActions({
   const hasAnyAction = hasRetryPayment || hasCancelAction || hasReturnAction;
 
   const buttonClass =
-    "flex h-[52px] w-full min-w-0 cursor-pointer items-center justify-center gap-2 bg-transparent px-3 py-2 text-sm font-semibold text-[#1B1D60] transition-colors duration-200 hover:bg-[#F5F0E7] disabled:cursor-not-allowed disabled:opacity-60";
+    "flex h-[52px] w-full min-w-0 cursor-pointer items-center justify-center gap-2 bg-transparent px-3 py-2 text-sm font-semibold text-navy transition-colors duration-200 hover:bg-[#F5F0E7] disabled:cursor-not-allowed disabled:opacity-60";
 
-  const iconClass = "h-4 w-4 shrink-0 text-[#1B1D60]";
+  const iconClass = "h-4 w-4 shrink-0 text-navy";
   const dividerClass = "h-4 w-px shrink-0 bg-[#D8C9A1]";
   const textClass =
-    "min-w-0 whitespace-normal break-words text-center text-sm font-semibold leading-5 text-[#1B1D60]";
+    "min-w-0 whitespace-normal break-words text-center text-sm font-semibold leading-5 text-navy";
 
   const actionItems = [];
 

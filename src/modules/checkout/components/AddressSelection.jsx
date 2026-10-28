@@ -282,7 +282,7 @@ export default function AddressSelection({
   };
 
   const infoClass =
-    "flex items-start gap-2  font-medium leading-[18px] text-[#1B1D60] text-[14px] sm:leading-[22px] md:text-[16px] md:leading-[26px] lg:text-[18px] lg:leading-[30px]";
+    "flex items-start gap-2  font-medium leading-[18px] text-navy text-sm sm:leading-[22px] md:text-base md:leading-[26px] lg:text-lg lg:leading-[30px]";
 
   return (
     <DetailSectionCard
@@ -293,7 +293,7 @@ export default function AddressSelection({
         <button
           type="button"
           onClick={onAddNewAddress}
-          className="inline-flex w-max sm:w-[150px] h-10 sm:h-auto items-center justify-center text-[#3E4093] text-center text-sm sm:text-base font-semibold leading-6 transition hover:opacity-90"
+          className="inline-flex w-max sm:w-[150px] h-10 sm:h-auto items-center justify-center text-navy text-center text-sm sm:text-base font-semibold leading-6 transition hover:opacity-90"
         >
           + Add New Address
         </button>
@@ -321,7 +321,7 @@ export default function AddressSelection({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
-                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-bold capitalize sm:text-[12px] ${
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1 text-caption font-bold capitalize sm:text-xs ${
                         label?.toLowerCase() === "work"
                           ? "bg-[#1B1D60] text-white"
                           : "bg-[#CE9F2D] text-white"
@@ -347,7 +347,7 @@ export default function AddressSelection({
                       className="mt-1 h-fit w-[18px] shrink-0 accent-[#3E4093] sm:h-5 sm:w-5"
                     />
                     <span className="min-w-0">
-                      <span className="block  font-bold leading-[24px] text-[#2E2E2E] text-[18px] sm:leading-[28px] md:text-[20px] md:leading-[30px] lg:text-[24px] lg:leading-[36px]">
+                      <span className="block  font-bold leading-[24px] text-ink text-lg sm:leading-[28px] md:text-xl md:leading-[30px] lg:text-2xl lg:leading-[36px]">
                         {addr.fullName || "Address"}
                       </span>
                       <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
@@ -385,7 +385,7 @@ export default function AddressSelection({
                 <button
                   type="button"
                   onClick={() => startEdit(addr)}
-                  className="inline-flex lg:h-10 lg:w-10 h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-[#1B1D60] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
+                  className="inline-flex lg:h-10 lg:w-10 h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-navy transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
                 >
                   <Pencil size={14} />
                 </button>

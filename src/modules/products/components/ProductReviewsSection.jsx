@@ -38,7 +38,7 @@ function StarInput({ value, onChange, size = 24 }) {
             size={size}
             className={
               n <= (hovered || value)
-                ? "fill-[#CE9F2D] text-[#CE9F2D]"
+                ? "fill-[#CE9F2D] text-gold"
                 : "fill-border text-border"
             }
           />
@@ -105,34 +105,34 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     : [];
 
   return (
-    <article className="py-3.5 border-b border-[#E7D9B8]/50 last:border-b-0">
+    <article className="py-3.5 border-b border-border/50 last:border-b-0">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-0.5 text-[#CE9F2D] text-[17px] sm:text-[19px]">
+        <span className="inline-flex items-center gap-0.5 text-gold text-title-sm sm:text-[19px]">
           {[1, 2, 3, 4, 5].map((star) => (
             <IoIosStar
               key={star}
               className={
                 star <= roundedRating
-                  ? "fill-[#CE9F2D] text-[#CE9F2D]"
+                  ? "fill-[#CE9F2D] text-gold"
                   : "fill-[#D1D5DB] text-[#D1D5DB]"
               }
             />
           ))}
         </span>
         {review.title && (
-          <span className="text-sm sm:text-base font-bold text-[#1F2430]">
+          <span className="text-sm sm:text-base font-bold text-ink">
             {review.title}
           </span>
         )}
       </div>
 
       {text && (
-        <div className="mt-1.5 text-xs sm:text-sm leading-relaxed text-[#4E4E4E]">
+        <div className="mt-1.5 text-xs sm:text-sm leading-relaxed text-ink">
           <ShowMoreText
             text={text}
             mode="lines"
             limit={3}
-            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
+            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-gold hover:underline ml-1"
           />
         </div>
       )}
@@ -144,7 +144,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               type="button"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
-              className="block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white hover:opacity-90 transition-opacity"
+              className="block size-14 shrink-0 overflow-hidden rounded-lg border border-border bg-white hover:opacity-90 transition-opacity"
             >
               <img
                 loading="lazy"
@@ -160,14 +160,14 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       )}
 
       {review.adminReply?.text && (
-        <div className="mt-2.5 rounded-lg border-l-3 border-[#CE9F2D] bg-[#FAF6EE] p-2.5 text-xs">
+        <div className="mt-2.5 rounded-lg border-l-3 border-[#CE9F2D] bg-cream p-2.5 text-xs">
           <p className="font-bold text-[#A96F14] mb-0.5">Seller Response</p>
-          <p className="font-medium text-[#6F7480]">{review.adminReply.text}</p>
+          <p className="font-medium text-muted">{review.adminReply.text}</p>
         </div>
       )}
 
       <div className="mt-3 flex items-center justify-between gap-4">
-        <p className="text-sm font-medium text-[#1F2430]/80">
+        <p className="text-sm font-medium text-ink/80">
           {name}
           {(dateStr || review.date) && (
             <span className="font-normal text-[#737373]">
@@ -183,13 +183,13 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
           disabled={!reviewId || isOwn}
           className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
             alreadyVoted
-              ? "border-[#CE9F2D] bg-[#CE9F2D]/15 text-[#1B1D60]"
-              : "border-[#E7D9B8] text-[#6F7480] hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#1B1D60]"
+              ? "border-[#CE9F2D] bg-[#CE9F2D]/15 text-navy"
+              : "border-border text-muted hover:border-[#CE9F2D] hover:bg-cream hover:text-navy"
           }`}
         >
           <ThumbsUp
             size={14}
-            className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
+            className={alreadyVoted ? "fill-[#CE9F2D] text-gold" : ""}
           />
           <span>{helpfulVotes}</span>
         </button>
@@ -255,15 +255,15 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border border-[#E7D9B8] rounded-xl bg-white p-5 sm:p-6 flex flex-col gap-4 shadow-xs"
+      className="border border-border rounded-xl bg-white p-5 sm:p-6 flex flex-col gap-4 shadow-xs"
     >
-      <h3 className="text-sm sm:text-base font-bold text-[#1B1D60]">
+      <h3 className="text-sm sm:text-base font-bold text-navy">
         Write a Review
       </h3>
 
       {deliveredOrders.length > 1 && (
         <div>
-          <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
+          <label className="text-xs font-semibold text-muted uppercase tracking-wide mb-1 block">
             Select Order
           </label>
           <select
@@ -271,7 +271,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
             onChange={(e) =>
               setForm((f) => ({ ...f, orderId: e.target.value }))
             }
-            className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-[#CE9F2D] outline-none"
+            className="w-full border border-border rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-[#CE9F2D] outline-none"
           >
             {deliveredOrders.map((o) => {
               const id = o.id || o.orderId;
@@ -286,7 +286,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
       )}
 
       <div>
-        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1.5 block">
+        <label className="text-xs font-semibold text-muted uppercase tracking-wide mb-1.5 block">
           Your Rating <span className="text-red-500">*</span>
         </label>
         <StarInput
@@ -297,7 +297,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
       </div>
 
       <div>
-        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
+        <label className="text-xs font-semibold text-muted uppercase tracking-wide mb-1 block">
           Title
         </label>
         <input
@@ -307,12 +307,12 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           maxLength={200}
           required
           placeholder="Summarize your review in a few words"
-          className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-[#CE9F2D] outline-none"
+          className="w-full border border-border rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-[#CE9F2D] outline-none"
         />
       </div>
 
       <div>
-        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
+        <label className="text-xs font-semibold text-muted uppercase tracking-wide mb-1 block">
           Review
         </label>
         <textarea
@@ -324,9 +324,9 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           maxLength={2000}
           required
           placeholder="Share your experience with this product…"
-          className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm resize-none focus:border-[#CE9F2D] outline-none"
+          className="w-full border border-border rounded-lg px-3 py-2 text-xs sm:text-sm resize-none focus:border-[#CE9F2D] outline-none"
         />
-        <p className="text-[11px] text-[#737373] text-right mt-1">
+        <p className="text-caption text-[#737373] text-right mt-1">
           {form.reviewText.length}/2000
         </p>
       </div>
@@ -562,9 +562,9 @@ export default function ProductReviewsSection({ productId, product }) {
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
         {/* Left Sidebar */}
         <aside className="w-full lg:w-[280px] xl:w-[300px] shrink-0">
-          <div className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-xs">
-            <div className="px-4 py-3 bg-[#FAF6EE] border-b border-[#E7D9B8]">
-              <h2 className="text-sm font-bold text-[#1B1D60]">
+          <div className="overflow-hidden rounded-xl border border-border bg-white shadow-xs">
+            <div className="px-4 py-3 bg-cream border-b border-border">
+              <h2 className="text-sm font-bold text-navy">
                 Product Ratings &amp; Reviews
               </h2>
             </div>
@@ -572,16 +572,16 @@ export default function ProductReviewsSection({ productId, product }) {
             <div className="p-4 sm:p-5">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
-                  <IoIosStar className="text-2xl text-[#CE9F2D]" />
-                  <span className="text-3xl font-extrabold text-[#1B1D60]">
+                  <IoIosStar className="text-2xl text-gold" />
+                  <span className="text-3xl font-extrabold text-navy">
                     {Number(displayAvgRating).toFixed(1)}
                   </span>
                 </div>
-                <span className="text-xs font-semibold text-[#6F7480] self-end mb-1">
+                <span className="text-xs font-semibold text-muted self-end mb-1">
                   / 5.0
                 </span>
               </div>
-              <p className="mt-1 text-xs font-semibold text-[#6F7480]">
+              <p className="mt-1 text-xs font-semibold text-muted">
                 {displayReviewCount}{" "}
                 {displayReviewCount === 1 ? "Rating" : "Ratings"} &amp;{" "}
                 {displayTotal} {displayTotal === 1 ? "Review" : "Reviews"}
@@ -605,18 +605,18 @@ export default function ProductReviewsSection({ productId, product }) {
                           : "opacity-100 hover:opacity-80"
                       }`}
                     >
-                      <span className="w-16 shrink-0 font-medium text-[#2E2E2E]">
+                      <span className="w-16 shrink-0 font-medium text-ink">
                         {item.label}
                       </span>
 
-                      <div className="h-2 rounded-full overflow-hidden bg-[#FAF6EE] flex-1 border border-[#E7D9B8]/40">
+                      <div className="h-2 rounded-full overflow-hidden bg-cream flex-1 border border-border/40">
                         <div
                           className={`h-full transition-all duration-300 ${item.color}`}
                           style={{ width: item.width }}
                         />
                       </div>
 
-                      <span className="w-5 shrink-0 text-right font-medium text-[#6F7480]">
+                      <span className="w-5 shrink-0 text-right font-medium text-muted">
                         {item.count}
                       </span>
                     </button>
@@ -628,7 +628,7 @@ export default function ProductReviewsSection({ productId, product }) {
                 <button
                   type="button"
                   onClick={() => setRatingFilter(0)}
-                  className="mt-3 text-xs font-bold text-[#A96F14] hover:text-[#CE9F2D] underline block"
+                  className="mt-3 text-xs font-bold text-[#A96F14] hover:text-gold underline block"
                 >
                   Clear Filter ({ratingFilter}★)
                 </button>
@@ -640,13 +640,13 @@ export default function ProductReviewsSection({ productId, product }) {
         {/* Right Section */}
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Top Bar: Heading + Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-2 border-b border-[#E7D9B8]">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-2 border-b border-border">
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-[#1B1D60]">
+              <h3 className="text-base font-bold text-navy">
                 Customer Reviews
               </h3>
               {displayTotal > 0 && (
-                <span className="rounded-full bg-[#FAF6EE] px-2.5 py-0.5 text-xs font-bold text-[#A96F14] border border-[#E7D9B8]">
+                <span className="rounded-full bg-cream px-2.5 py-0.5 text-xs font-bold text-[#A96F14] border border-border">
                   {displayTotal}
                 </span>
               )}
@@ -671,7 +671,7 @@ export default function ProductReviewsSection({ productId, product }) {
               {displayTotal > 0 && (
                 <CustomDropdown
                   className="w-[150px]"
-                  buttonClassName="h-8 text-xs rounded-lg border-[#E7D9B8] font-semibold text-[#1B1D60] bg-white hover:bg-[#FAF6EE]"
+                  buttonClassName="h-8 text-xs rounded-lg border-border font-semibold text-navy bg-white hover:bg-cream"
                   options={SORT_OPTIONS}
                   value={sort}
                   onChange={(val) => {
@@ -701,7 +701,7 @@ export default function ProductReviewsSection({ productId, product }) {
               {Array.from({ length: 2 }, (_, i) => (
                 <div
                   key={i}
-                  className="h-20 animate-pulse rounded-lg bg-[#FAF6EE]"
+                  className="h-20 animate-pulse rounded-lg bg-cream"
                 />
               ))}
             </div>
@@ -730,7 +730,7 @@ export default function ProductReviewsSection({ productId, product }) {
 
           {/* Empty State */}
           {!bucket.loading && displayReviews.length === 0 && (
-            <div className="flex flex-1 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center">
+            <div className="flex flex-1 items-center justify-center rounded-xl border border-border bg-cream/50 px-4 py-8 text-center">
               <div className="mx-auto flex w-full max-w-[320px] flex-col items-center">
                 <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D]/15">
                   <img
@@ -742,10 +742,10 @@ export default function ProductReviewsSection({ productId, product }) {
                     loading="lazy"
                   />
                 </div>
-                <p className="mt-3 text-base font-bold text-[#1B1D60]">
+                <p className="mt-3 text-base font-bold text-navy">
                   No Reviews Yet
                 </p>
-                <p className="mt-1 text-xs text-[#6F7480]">
+                <p className="mt-1 text-xs text-muted">
                   Customer reviews will appear here once verified buyers share
                   their feedback.
                 </p>
@@ -755,11 +755,11 @@ export default function ProductReviewsSection({ productId, product }) {
 
           {/* View All Reviews Link */}
           {displayTotal > 0 && (
-            <div className=" pt-3 border-t border-[#E7D9B8]/40 flex justify-start">
+            <div className=" pt-3 border-t border-border/40 flex justify-start">
               <Link
                 to={`/products/${productId}/reviews`}
                 state={{ product }}
-                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#CE9F2D] "
+                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gold "
               >
                 <span>
                   {displayTotal === 1

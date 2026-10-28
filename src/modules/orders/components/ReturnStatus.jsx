@@ -67,13 +67,13 @@ export function ReturnStatus({
           <p className="text-xs text-[#8A5A00]">
             {isReturned ? "Return ID" : "Cancellation ID"}
           </p>
-          <p className="text-sm font-semibold text-[#1B1D60] truncate">
+          <p className="text-sm font-semibold text-navy truncate">
             {requestId}
           </p>
         </div>
         <div className="min-w-0">
           <p className="text-xs text-[#8A5A00]">Refund Amount</p>
-          <p className="text-sm font-bold text-[#1B1D60] truncate">
+          <p className="text-sm font-bold text-navy truncate">
             {formatMoney ? formatMoney(refundAmount, currency) : "N/A"}
           </p>
         </div>

@@ -16,14 +16,14 @@ export default function InfoCard({
       : {};
 
   return (
-    <article className="group card-elevated rounded-[var(--customer-radius)] border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus-within:border-accent focus-within:outline-none">
+    <article className="customer-card customer-card--interactive group p-5 sm:p-6 focus-within:border-[var(--customer-gold)]">
       <div className="mb-5 flex items-center justify-between gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-[var(--customer-radius)] bg-accent/10 text-accent shadow-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-[var(--customer-radius)] bg-[var(--customer-gold-soft)] text-[var(--customer-gold-dark)]">
           {icon}
         </div>
         {actionLabel ? (
           <Component
-            className="inline-flex  items-center rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13px] font-semibold text-accent transition-all duration-300 ease-in-out hover:bg-accent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="customer-section-action"
             aria-label={actionLabel}
             {...linkProps}
           >
@@ -32,8 +32,8 @@ export default function InfoCard({
         ) : null}
       </div>
 
-      <h3 className="custom-h5 mb-3 text-slate-950">{title}</h3>
-      <p className="custom-para leading-relaxed text-slate-600">
+      <h3 className="mb-2 text-lg font-bold leading-snug text-[var(--customer-navy)]">{title}</h3>
+      <p className="text-sm leading-6 text-[var(--customer-muted)]">
         {description}
       </p>
     </article>

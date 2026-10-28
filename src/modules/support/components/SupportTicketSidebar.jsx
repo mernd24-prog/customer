@@ -14,7 +14,7 @@ const statusClass = (status = "") => {
   if (normalized === "in_progress") {
     return "border-blue-200 bg-blue-50 text-blue-700";
   }
-  return "border-[#E7D9B8] bg-[#FFF9EA] text-[#8A640D]";
+  return "border-border bg-[#FFF9EA] text-[#8A640D]";
 };
 
 export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
@@ -42,8 +42,8 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
       {/* Sidebar */}
       <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] md:w-[450px] max-w-full bg-white z-[9999] shadow-2xl flex flex-col p-6 transform transition-transform duration-300 ease-in-out">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-5 bg-white border-b border-[#E7D9B8]">
-          <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] text-center w-full px-8">
+        <div className="flex items-center justify-between p-4 sm:p-5 bg-white border-b border-border">
+          <h2 className="text-lg sm:text-xl font-bold text-navy text-center w-full px-8">
             Ticket Details
           </h2>
           <button
@@ -51,23 +51,23 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
             onClick={onClose}
             className="absolute right-4 top-4 p-1.5 rounded-full hover:bg-[#FFF9EA] transition-colors"
           >
-            <X size={20} className="text-[#CE9F2D]" />
+            <X size={20} className="text-gold" />
           </button>
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto mt-6 space-y-5 custom-scrollbar">
           <div className="shrink-0">
-            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">
               Ticket ID
             </p>
-            <p className="text-sm font-medium text-[#2E2E2E] break-all">
+            <p className="text-sm font-medium text-ink break-all">
               {ticket.id || ticket.queryId}
             </p>
           </div>
 
           <div className="border-t border-[#EFE5D2] pt-4">
-            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">
               Status
             </p>
             <span
@@ -76,43 +76,43 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
               {statusLabel(ticket.status)}
             </span>
             {ticket.resolvedAt ? (
-              <p className="mt-2 text-xs text-[#666666]">
+              <p className="mt-2 text-xs text-muted">
                 Resolved on {ticket.resolvedAt}
               </p>
             ) : null}
           </div>
 
           <div className="border-t border-[#EFE5D2] pt-4">
-            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">
               Date
             </p>
-            <p className="text-sm font-medium text-[#2E2E2E]">
+            <p className="text-sm font-medium text-ink">
               {ticket.updatedAt || ticket.createdAt}
             </p>
           </div>
           <div className="border-t border-[#EFE5D2] pt-4">
-            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">
               Category
             </p>
-            <p className="text-sm font-medium text-[#2E2E2E]">
+            <p className="text-sm font-medium text-ink">
               {ticket.categoryLabel || ticket.category}
             </p>
           </div>
 
           <div className="border-t border-[#EFE5D2] pt-4 shrink-0">
-            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">
               Subject
             </p>
-            <div className="text-sm font-medium text-[#2E2E2E] break-words max-h-24 overflow-y-auto custom-scrollbar pr-2">
+            <div className="text-sm font-medium text-ink break-words max-h-24 overflow-y-auto custom-scrollbar pr-2">
               {ticket.subject}
             </div>
           </div>
 
           <div className="border-t border-[#EFE5D2] pt-4">
-            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">
               Message
             </p>
-            <div className="text-sm text-[#4E4E4E] leading-relaxed whitespace-pre-wrap bg-[#F7EED8] mt-2 p-3 rounded-lg border border-[#E7D9B8]/50 break-words">
+            <div className="text-sm text-ink leading-relaxed whitespace-pre-wrap bg-[#F7EED8] mt-2 p-3 rounded-lg border border-border/50 break-words">
               {ticket.message || "No message provided."}
             </div>
           </div>
@@ -123,10 +123,10 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
               (sh) => (sh.note || "").trim() === (ticket.adminNotes || "").trim(),
             )) ? (
             <div className="border-t border-[#EFE5D2] pt-4 shrink-0">
-              <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">
                 Support Note
               </p>
-              <div className="text-sm text-[#4E4E4E] leading-relaxed whitespace-pre-wrap bg-green-50 p-3 rounded-lg border border-green-100 break-words">
+              <div className="text-sm text-ink leading-relaxed whitespace-pre-wrap bg-green-50 p-3 rounded-lg border border-green-100 break-words">
                 {ticket.adminNotes}
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
           {Array.isArray(ticket.statusHistory) &&
           ticket.statusHistory.length ? (
             <div className="border-t border-[#EFE5D2] pt-4 shrink-0">
-              <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-2">
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-2">
                 Status History
               </p>
               <div className="space-y-2">
@@ -150,11 +150,11 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
                       >
                         {statusLabel(item.status)}
                       </span>
-                      <span className="text-xs text-[#666666]">
+                      <span className="text-xs text-muted">
                         {item.changedAt || "-"}
                       </span>
                     </div>
-                    <p className="mt-2 whitespace-pre-wrap text-sm text-[#4E4E4E]">
+                    <p className="mt-2 whitespace-pre-wrap text-sm text-ink">
                       {item.note || "No note added."}
                     </p>
                   </div>

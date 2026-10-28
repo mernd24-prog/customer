@@ -103,11 +103,11 @@ export default function ProductResultsLayout({
     <>
       {" "}
       <ActiveFilterChips filters={filters} onRemove={onRemoveFilter} />{" "}
-      <div className="flex items-start gap-8 w-full mt-8">
+      <div className="mt-5 flex w-full items-start gap-5 lg:mt-8 lg:gap-8">
         {" "}
         {/* Hide desktop filter completely on empty state */}{" "}
         {shouldShowFilters && (
-          <div className="hidden lg:block lg:sticky lg:top-[calc(var(--customer-header-height,95px)+16px)] lg:self-start">
+          <div className="customer-sticky-panel hidden lg:block">
             <ProductFilterSidebar
               key={`desktop-filters-${filterStructureKey}`}
               sections={visibleFilterSections}
@@ -149,12 +149,12 @@ export default function ProductResultsLayout({
                 onEmptyAction={resolvedOnEmptyAction}
               >
                 {" "}
-                <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                   {" "}
-                  <h4 className="text-m md:text-[20px] m-0">
+                  <h2 className="m-0 text-base font-bold text-navy md:text-xl">
                     {" "}
                     Showing {rangeStart}-{rangeEnd} of {totalCount} Results{" "}
-                  </h4>{" "}
+                  </h2>{" "}
                   {toolbar}{" "}
                 </div>{" "}
                 <ProductGrid
@@ -182,7 +182,7 @@ export default function ProductResultsLayout({
                         }
                       }}
                       disabled={loadingMore}
-                      className="inline-flex h-[42px] px-6 items-center justify-center gap-2 rounded-[10px] border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="inline-flex h-[42px] px-6 items-center justify-center gap-2 rounded-[10px] border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-navy transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {" "}
                       {loadingMore ? (

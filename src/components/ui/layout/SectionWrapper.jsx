@@ -2,7 +2,7 @@ import { cn } from "../../../utils/common";
 
 export default function SectionWrapper({
   as: Component = "section",
-  containerClassName = "w-container",
+  containerClassName = "customer-container",
   className = "",
   children,
   ...props

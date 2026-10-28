@@ -30,9 +30,9 @@ export default function Breadcrumbs({
 
   const isCompact =
     linkClassName.includes("text-xs") ||
-    linkClassName.includes("text-[10px]") ||
-    linkClassName.includes("text-[11px]") ||
-    linkClassName.includes("text-[12px]");
+    linkClassName.includes("text-micro") ||
+    linkClassName.includes("text-caption") ||
+    linkClassName.includes("text-xs");
 
   const resolvedHomeSize = homeIconSize || (isCompact ? 13 : 16);
 
@@ -51,8 +51,8 @@ export default function Breadcrumbs({
   const resolvedHomeIconClass = cn(
     "shrink-0 transition-colors",
     isDarkBg
-      ? "text-white group-hover:text-[#CE9F2D]"
-      : "text-[#201B78] group-hover:text-[#CE9F2D]",
+      ? "text-white group-hover:text-gold"
+      : "text-navy group-hover:text-gold",
     homeIconClassName,
   );
 
@@ -116,7 +116,7 @@ export default function Breadcrumbs({
                 onClick={handleCopy}
                 title="Copy Order ID"
                 aria-label="Copy Order ID"
-                className="inline-flex shrink-0 items-center justify-center rounded p-1 text-[#2E2E2E]"
+                className="inline-flex shrink-0 items-center justify-center rounded p-1 text-ink"
               >
                 {copied ? (
                   <Check
@@ -141,7 +141,7 @@ export default function Breadcrumbs({
                 to={item.href}
                 title={item.label}
                 className={cn(
-                  "group inline-flex items-center gap-1.5 font-medium text-xs leading-tight text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D] sm:text-sm lg:text-base",
+                  "group inline-flex items-center gap-1.5 font-medium text-xs leading-tight text-ink transition-colors duration-200 hover:text-gold sm:text-sm lg:text-base",
                   linkClassName,
                 )}
               >
@@ -172,7 +172,7 @@ export default function Breadcrumbs({
                       "shrink-0",
                       isDarkBg
                         ? "text-white"
-                        : "text-[#201B78]",
+                        : "text-navy",
                       homeIconClassName,
                     )}
                     size={resolvedHomeSize}
@@ -193,7 +193,7 @@ export default function Breadcrumbs({
                   "h-3.5 w-3.5 shrink-0",
                   isDarkBg
                     ? "text-white/70"
-                    : "text-[#2E2E2E]",
+                    : "text-ink",
                   separatorClassName,
                 )}
                 aria-hidden="true"

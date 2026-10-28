@@ -60,7 +60,7 @@ function SupportStatusBadge({ status }) {
 
   return (
     <span
-      className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-[3px] text-[11px] font-semibold leading-none capitalize ${className}`}
+      className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-[3px] text-caption font-semibold leading-none capitalize ${className}`}
     >
       {normalized.replace(/_/g, " ")}
     </span>
@@ -197,7 +197,7 @@ export default function SupportHelpCenter() {
       <main className="main-container px-0 pb-6 pt-0 sm:px-6 sm:pb-6 sm:pt-0 lg:px-0 lg:pb-8">
         <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
           <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-            <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
+            <h1 className="text-center text-[26px] font-bold text-white md:text-display-sm lg:text-3xl">
               Help &amp; Support
             </h1>
           </div>
@@ -214,7 +214,7 @@ export default function SupportHelpCenter() {
               type="button"
               onClick={() => setIsQuickActionsOpen((open) => !open)}
               aria-expanded={isQuickActionsOpen}
-              className="flex w-full items-center justify-between rounded-[14px] border border-[#D7A522] bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
+              className="flex w-full items-center justify-between rounded-[14px] border border-[#D7A522] bg-white px-4 py-3 text-left font-semibold text-ink"
             >
               <span>Quick Actions</span>
 
@@ -232,7 +232,7 @@ export default function SupportHelpCenter() {
                     key={`${topic.title}-${index}`}
                     to={topic.path || "/contact-us"}
                     onClick={() => setIsQuickActionsOpen(false)}
-                    className="flex w-full items-center gap-3 border-b border-[#04258626] p-2 text-[#2E2E2E] last:border-b-0"
+                    className="flex w-full items-center gap-3 border-b border-[#04258626] p-2 text-ink last:border-b-0"
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FFC82E]">
                       <img
@@ -251,7 +251,7 @@ export default function SupportHelpCenter() {
                       </span>
 
                       {topic.description && (
-                        <span className="mt-0.5 block text-xs text-[#4E4E4E]">
+                        <span className="mt-0.5 block text-xs text-ink">
                           {topic.description}
                         </span>
                       )}
@@ -283,7 +283,7 @@ export default function SupportHelpCenter() {
                           Instant AI Help Assistant
                         </h2>
 
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-sm">
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-0.5 text-caption font-medium text-white/90 backdrop-blur-sm">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                           24/7 Live
                         </span>
@@ -312,9 +312,9 @@ export default function SupportHelpCenter() {
 
               {/* Desktop Quick Actions */}
               {quickActions.length > 0 && (
-                <section className="hidden overflow-hidden rounded-lg border border-[#E7D9B8] bg-white md:block">
+                <section className="hidden overflow-hidden rounded-lg border border-border bg-white md:block">
                   <div className="bg-[#F7EED8] px-5 py-3">
-                    <h2 className="text-[18px] font-bold text-[#2E2E2E]">
+                    <h2 className="text-lg font-bold text-ink">
                       Quick Actions
                     </h2>
                   </div>
@@ -337,7 +337,7 @@ export default function SupportHelpCenter() {
                           />
                         </div>
 
-                        <span className="mt-2 max-w-[90px] text-[13px] font-semibold leading-[15px] text-[#2E2E2E]">
+                        <span className="mt-2 max-w-[90px] text-label font-semibold leading-[15px] text-ink">
                           {topic.title}
                         </span>
                       </Link>
@@ -348,9 +348,9 @@ export default function SupportHelpCenter() {
 
               {/* FAQ Loading State */}
               {faqLoading && !faqCmsPage && (
-                <section className="overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white">
+                <section className="overflow-hidden rounded-[10px] border border-border bg-white">
                   <div className="bg-[#F7EED8] px-5 py-3">
-                    <h2 className="text-[18px] font-bold text-[#2E2E2E]">
+                    <h2 className="text-lg font-bold text-ink">
                       Frequently Asked Questions
                     </h2>
                   </div>
@@ -378,15 +378,15 @@ export default function SupportHelpCenter() {
 
               {/* Empty FAQ State */}
               {!faqLoading && !faqError && faqs.length === 0 && (
-                <section className="overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white">
+                <section className="overflow-hidden rounded-[10px] border border-border bg-white">
                   <div className="bg-[#F7EED8] px-5 py-3">
-                    <h2 className="text-[18px] font-bold text-[#2E2E2E]">
+                    <h2 className="text-lg font-bold text-ink">
                       Frequently Asked Questions
                     </h2>
                   </div>
 
                   <div className="px-5 py-6">
-                    <p className="text-sm text-[#666666]">
+                    <p className="text-sm text-muted">
                       No frequently asked questions are available.
                     </p>
                   </div>
@@ -431,15 +431,15 @@ export default function SupportHelpCenter() {
               )}
 
               {/* Recent Tickets */}
-              <section className="rounded-lg border border-[#E7D9B8] bg-white">
+              <section className="rounded-lg border border-border bg-white">
                 <div className="flex items-center justify-between gap-3 rounded-t-lg bg-[#F7EED8] px-5 py-4">
-                  <h2 className="text-lg font-bold text-[#2E2E2E]">
+                  <h2 className="text-lg font-bold text-ink">
                     Recent Tickets
                   </h2>
 
                   <CustomDropdown
                     className="w-[190px]"
-                    buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
+                    buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-navy hover:bg-[#FFF9EA]"
                     options={[
                       { value: "", label: "All" },
                       ...CUSTOMER_SUPPORT_CATEGORIES,
@@ -482,7 +482,7 @@ export default function SupportHelpCenter() {
                   {!supportLoading &&
                     !supportError &&
                     supportQueries.length === 0 && (
-                      <p className="py-5 text-sm font-medium text-[#666666]">
+                      <p className="py-5 text-sm font-medium text-muted">
                         {isSignedIn
                           ? "No support tickets found."
                           : "Login to view your tickets."}
@@ -499,11 +499,11 @@ export default function SupportHelpCenter() {
                       >
                         <div className="d flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-bold text-[#1B1D60]">
+                            <p className="truncate text-sm font-bold text-navy">
                               {ticket.subject}
                             </p>
 
-                            <p className="mt-1 truncate text-xs font-medium text-[#666666]">
+                            <p className="mt-1 truncate text-xs font-medium text-muted">
                               {ticket.categoryLabel} · {ticket.updatedAt}
                             </p>
                           </div>

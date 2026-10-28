@@ -63,13 +63,13 @@ export default function AddressTab({ user }) {
   if ((loading || !user) && !showAddForm) {
     return (
       <section className="mx-auto w-full min-w-0 space-y-5">
-        <header className="flex items-center gap-3 border-b border-[#E7D9B8] pb-4">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#F5E9C9] text-[#1B1D60]">
+        <header className="flex items-center gap-3 border-b border-border pb-4">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#F5E9C9] text-navy">
             <MapPin size={22} />
           </span>
 
           <div className="min-w-0">
-            <h2 className="text-xl font-bold text-[#1B1D60]">
+            <h2 className="text-xl font-bold text-navy">
               Saved Addresses
             </h2>
             <p className="mt-1 text-sm text-[#64708A]">
@@ -78,7 +78,7 @@ export default function AddressTab({ user }) {
           </div>
         </header>
 
-        <div className="animate-pulse rounded-xl border border-[#E7D9B8] bg-white p-6">
+        <div className="animate-pulse rounded-xl border border-border bg-white p-6">
           <div className="h-5 w-40 rounded bg-[#F5E9C9]" />
           <div className="mt-4 h-4 w-3/4 rounded bg-[#F5E9C9]" />
           <div className="mt-5 h-10 w-full rounded-lg bg-[#F5E9C9]" />
@@ -91,14 +91,14 @@ export default function AddressTab({ user }) {
     <>
       <section className="mx-auto w-full min-w-0 space-y-5">
         {/* Saved Addresses Header */}
-        <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <header className="flex flex-col gap-4 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#F5E9C9] text-[#1B1D60]">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#F5E9C9] text-navy">
               <MapPin size={22} />
             </span>
 
             <div className="min-w-0">
-              <h2 className="text-xl font-bold leading-6 text-[#1B1D60]">
+              <h2 className="text-xl font-bold leading-6 text-navy">
                 Saved Addresses
               </h2>
 
@@ -131,7 +131,7 @@ export default function AddressTab({ user }) {
               )}
               noValidate
             >
-              <div className="mb-4 flex items-center gap-2 text-lg font-bold text-[#1B1D60]">
+              <div className="mb-4 flex items-center gap-2 text-lg font-bold text-navy">
                 <MapPin size={22} className="text-gold" />
                 Add New Address
               </div>
@@ -155,7 +155,7 @@ export default function AddressTab({ user }) {
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-col-reverse gap-3 border-t border-[#E7D9B8] pt-4 sm:flex-row sm:justify-end">
+              <div className="mt-5 flex flex-col-reverse gap-3 border-t border-border pt-4 sm:flex-row sm:justify-end">
                 <Button
                   type="button"
                   variant="secondary"
@@ -179,7 +179,7 @@ export default function AddressTab({ user }) {
 
         {/* Unified Saved Addresses Panel */}
         {addresses.length > 0 ? (
-          <div className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
+          <div className="overflow-hidden rounded-xl border border-border bg-white">
             {/* Address Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2">
               {visibleAddresses.map((addr, index) => {
@@ -198,13 +198,13 @@ export default function AddressTab({ user }) {
                     className={[
                       "relative min-w-0 px-5 py-5 transition-colors sm:px-6 sm:py-6",
                       !isLastMobileItem
-                        ? "border-b border-[#E7D9B8] sm:border-b-0"
+                        ? "border-b border-border sm:border-b-0"
                         : "",
                       !isLastDesktopRow
-                        ? "sm:border-b sm:border-[#E7D9B8]"
+                        ? "sm:border-b sm:border-border"
                         : "",
                       index % 2 === 0
-                        ? "sm:border-r sm:border-[#E7D9B8]"
+                        ? "sm:border-r sm:border-border"
                         : "",
                     ].join(" ")}
                   >
@@ -243,11 +243,11 @@ export default function AddressTab({ user }) {
 
             {/* Show More Addresses */}
             {addresses.length > 4 && (
-              <div className="flex justify-center border-t border-[#E7D9B8] px-4 py-4">
+              <div className="flex justify-center border-t border-border px-4 py-4">
                 <button
                   type="button"
                   onClick={handleShowAllAddresses}
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-5 py-2 text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF8E8]"
+                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-5 py-2 text-sm font-semibold text-navy transition-colors hover:bg-[#FFF8E8]"
                 >
                   {showAllAddresses ? (
                     <>
@@ -267,11 +267,11 @@ export default function AddressTab({ user }) {
         ) : (
           /* Empty State */
           <div className="rounded-xl border border-dashed border-[#CE9F2D] bg-[#FFFCF5] px-5 py-10 text-center">
-            <span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60]">
+            <span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-navy">
               <MapPin size={23} />
             </span>
 
-            <h3 className="text-base font-semibold text-[#1B1D60]">
+            <h3 className="text-base font-semibold text-navy">
               No addresses saved yet
             </h3>
 

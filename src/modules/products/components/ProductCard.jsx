@@ -125,7 +125,11 @@ export default function ProductCard({
     ? { ...cardProduct, selectedVariant: displayVariant }
     : cardProduct;
 
-  const title = titleProp || getProductTitle(cardProduct);
+  const resolvedTitle = titleProp || getProductTitle(cardProduct);
+  const title =
+    resolvedTitle && resolvedTitle !== "Untitled product"
+      ? resolvedTitle
+      : "Product details coming soon";
 
   const rawBrand = brandProp || getProductBrandName(cardProduct);
 
@@ -133,6 +137,9 @@ export default function ProductCard({
     typeof rawBrand === "object"
       ? rawBrand?.name || rawBrand?.title || rawBrand?.label || ""
       : rawBrand || "";
+
+  const categoryName = getProductCategoryName(cardProduct);
+  const cardEyebrow = brand || categoryName || "";
 
   const variantImage = getProductImage(displayProduct);
 
@@ -148,8 +155,8 @@ export default function ProductCard({
     getProductBrandName(cardProduct) ||
     "";
 
-  const price = priceProp ?? getProductPrice(displayProduct) ?? 0;
-  const oldPrice = oldPriceProp ?? getProductMrp(displayProduct) ?? 0;
+  const price = priceProp ?? getProductPrice(displayProduct);
+  const oldPrice = oldPriceProp ?? getProductMrp(displayProduct);
 
   const rating =
     ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
@@ -416,18 +423,22 @@ export default function ProductCard({
             }
             className="min-w-0"
           >
-            {brand && (
+            {brand ? (
               <button
                 type="button"
                 onClick={handleBrandClick}
-                className="text-left text-[11px] font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
+                className="text-left text-caption font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
                 {capitalizeFirst(brand)}
               </button>
+            ) : (
+              <span className="text-caption font-medium uppercase tracking-wide text-muted">
+                {capitalizeFirst(cardEyebrow)}
+              </span>
             )}
 
             {isDealProduct && dealBadge && (
-              <span className="mb-1 inline-flex w-fit rounded-full bg-[#1B1D60] px-2.5 py-1 text-[11px] font-semibold leading-none text-white">
+              <span className="mb-1 inline-flex w-fit rounded-full bg-[#1B1D60] px-2.5 py-1 text-caption font-semibold leading-none text-white">
                 {dealBadge}
               </span>
             )}
@@ -450,11 +461,12 @@ export default function ProductCard({
               value={rating}
               count={ratingCount}
               showValue
+              emptyLabel="New"
               className="mt-3"
             />
 
             {codAvailable && (
-              <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+              <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-caption font-semibold text-emerald-700">
                 <Banknote size={12} />
                 COD Available
               </span>
@@ -467,6 +479,7 @@ export default function ProductCard({
               oldPrice={oldPrice}
               currency={currency || cardProduct?.currency}
               layout="stacked"
+              emptyLabel="Price unavailable"
             />
 
             {showActions && (
@@ -497,7 +510,7 @@ export default function ProductCard({
   return (
     <article
       className={cn(
-        "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out sm:rounded-lg",
+        "customer-card customer-card--interactive group relative flex min-w-0 flex-col overflow-hidden rounded-xl border-border bg-white",
         className,
       )}
     >
@@ -516,7 +529,7 @@ export default function ProductCard({
           }
           onClick={handleWishlist}
           className={cn(
-            "absolute right-2 top-2 z-30 flex h-8 w-8 min-w-8 items-center justify-center rounded-full border border-[#1B1D60] bg-white p-0 text-[#1B1D60] shadow-none",
+            "absolute right-2 top-2 z-30 flex h-8 w-8 min-w-8 items-center justify-center rounded-full border border-[#1B1D60] bg-white p-0 text-navy shadow-none",
             "min-[1000px]:hidden",
             isWishlisted && "border-[#1B1D60]",
           )}
@@ -541,10 +554,10 @@ export default function ProductCard({
               bg-[#1F2430]
               bg-[linear-gradient(#CE9F2D,#CE9F2D)]
               px-2 py-0.5
-              text-[10px]
+              text-micro
               font-semibold
               text-white
-              sm:px-3 sm:py-1 sm:text-[14px]
+              sm:px-3 sm:py-1 sm:text-sm
             "
           >
             Featured
@@ -561,14 +574,14 @@ export default function ProductCard({
               bg-[#1B1D60]
               px-[8px] py-[3px]
               font-dmSans
-              text-[10px]
+              text-micro
               font-semibold
               leading-none
               text-white
               sm:h-[28px]
               sm:px-[15px]
               sm:py-[5px]
-              sm:text-[14px]
+              sm:text-sm
             "
           >
             {dealBadge}
@@ -585,7 +598,7 @@ export default function ProductCard({
       >
         {/* IMAGE */}
         <div
-          className="relative h-[160px] w-full cursor-pointer overflow-hidden rounded-t-[14px] xs:h-[190px] sm:h-[230px] sm:rounded-t-[20px] md:h-[260px]"
+          className="relative aspect-square w-full cursor-pointer overflow-hidden border-b border-border/70 bg-[var(--customer-surface-soft)]"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -654,10 +667,23 @@ export default function ProductCard({
             </div>
           )}
 
+          {rating > 0 && (
+            <div
+              className={cn(
+                "absolute left-2 z-20 rounded-md bg-white/95 shadow-sm backdrop-blur-sm sm:left-3",
+                isDealProduct && dealEndDate
+                  ? "bottom-7 sm:bottom-9"
+                  : "bottom-2 sm:bottom-3",
+              )}
+            >
+              <StarRating rating={rating} count={ratingCount} />
+            </div>
+          )}
+
           {/* DEAL END DATE */}
           {isDealProduct && dealEndDate && (
             <div className="absolute inset-x-0 bottom-0 z-20 flex h-[19px] items-center justify-between gap-1 bg-[#FFFDF8]/95 px-1.5 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] sm:h-[29px] sm:px-3">
-              <div className="flex shrink-0 items-center gap-1 text-[9px] font-semibold text-[#1B1D60] sm:gap-1.5 sm:text-[13px]">
+              <div className="flex shrink-0 items-center gap-1 text-[9px] font-semibold text-navy sm:gap-1.5 sm:text-label">
                 <span className="relative flex h-1.5 w-1.5 shrink-0 sm:h-2 sm:w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 sm:h-2 sm:w-2" />
@@ -665,7 +691,7 @@ export default function ProductCard({
                 <span>Ends</span>
               </div>
 
-              <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[9px] font-bold text-[#1B1D60] sm:gap-1 sm:text-[13px]">
+              <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[9px] font-bold text-navy sm:gap-1 sm:text-label">
                 <Clock3
                   size={11}
                   className="shrink-0 sm:h-[13px] sm:w-[13px]"
@@ -677,42 +703,36 @@ export default function ProductCard({
         </div>
 
         {/* PRODUCT INFO */}
-        <div className="flex min-w-0 flex-col px-2.5 sm:px-4 sm:pb-2 ">
-          <StarRating rating={rating} count={ratingCount} />
-
-          {brand && (
+        <div className="flex min-h-[104px] min-w-0 flex-col px-3 pb-2.5 pt-3 sm:min-h-[126px] sm:px-4 sm:pb-3 sm:pt-3.5">
+          {cardEyebrow && (
             <div
-              className="mt-1.5 truncate text-xs font-bold tracking-tight text-[#2E2E2E] sm:mt-2 sm:text-base"
-              title={brand}
+              className="mb-1 truncate text-caption font-semibold uppercase tracking-[0.04em] text-muted sm:text-xs"
+              title={cardEyebrow}
             >
-              {capitalizeFirst(brand)}
+              {capitalizeFirst(cardEyebrow)}
             </div>
           )}
 
           <h3
-            className={cn(
-              "w-full line-clamp-1",
-              brand
-                ? "mb-1.5 mt-0.5 text-xs font-normal text-black sm:mb-2.5 sm:mt-1 sm:text-[16px]"
-                : "my-1 text-xs font-semibold text-[#2E2E2E] sm:my-[10px] sm:text-sm",
-            )}
+            className="line-clamp-2 min-h-10 w-full text-label font-semibold leading-5 text-ink sm:min-h-11 sm:text-body sm:leading-[22px]"
             title={title}
           >
             {title}
           </h3>
           {/* FLIPKART-STYLE PRICE AND DISCOUNT */}
-          <div className="my-0.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 sm:my-1 sm:gap-x-2.5 sm:gap-y-1">
+          <div className="mt-auto flex min-h-7 min-w-0 flex-wrap items-end gap-x-1.5 gap-y-1 pt-2 sm:min-h-8 sm:gap-x-2">
             <Price
               price={price}
               oldPrice={oldPrice}
               currency={currency || cardProduct?.currency}
               className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 sm:gap-x-2"
-              priceClassName="text-sm font-bold text-[#212121] sm:text-lg md:text-xl"
-              oldPriceClassName="text-[11px] font-normal text-[#7A7A7A] line-through sm:text-base md:text-lg"
+              priceClassName="text-base font-extrabold text-ink sm:text-lg"
+              oldPriceClassName="text-xs font-normal text-muted line-through sm:text-sm"
+              emptyLabel="Currently unavailable"
             />
 
             {discountLabel && (
-              <span className="whitespace-nowrap text-[10px] font-bold text-[#388E3C] sm:text-sm md:text-base">
+              <span className="whitespace-nowrap text-caption font-bold text-emerald-700 sm:text-sm">
                 {computedDiscountPercent}% off
               </span>
             )}
@@ -753,7 +773,7 @@ export default function ProductCard({
                 h-10
                 gap-2
                 px-4
-                text-[16px]
+                text-base
                 leading-none
                 font-semibold
                 whitespace-nowrap
@@ -762,7 +782,9 @@ export default function ProductCard({
               !isInStock && "cursor-not-allowed opacity-60",
             )}
           >
-            <span className="truncate">Add to Cart</span>
+            <span className="truncate">
+              {isInStock ? "Add to Cart" : "Out of stock"}
+            </span>
           </PillButton>
 
           {/* DESKTOP BOTTOM WISHLIST */}
@@ -788,7 +810,7 @@ export default function ProductCard({
                 border-[#1B1D60]
                 bg-white
                 p-0
-                text-[#1B1D60]
+                text-navy
               `,
               isWishlisted && "border-[#1B1D60]",
             )}

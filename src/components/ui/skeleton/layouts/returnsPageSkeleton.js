@@ -7,7 +7,7 @@ export const RETURNS_PAGE_SKELETON = [
         type: "col",
         count: 3,
         className:
-          "w-full overflow-hidden rounded-2xl border border-[#E7D9B8] bg-[#FFFCF6]",
+          "w-full overflow-hidden rounded-2xl border border-border bg-[#FFFCF6]",
         children: [
           {
             type: "row",

@@ -2,23 +2,23 @@ import { cn } from "../../../utils/common";
 import { SpinnerIcon } from "../icons";
 
 const sizeMap = {
-  xs: "text-[11px] leading-[16px] tracking-[0.5px] min-h-[24px] px-2.5 py-1",
-  sm: "text-[12px] leading-[18px] tracking-[0.5px] min-h-[30px] px-3 py-1.5",
-  md: "text-[13px] leading-[20px] tracking-[0.5px] min-h-[38px] px-4 py-2",
-  lg: "text-[13px] leading-[20px] tracking-[0.5px] md:text-[14px] md:leading-[20px] md:tracking-[0.5px] min-h-[44px] px-5 py-2.5",
-  xl: "text-[14px] leading-[20px] tracking-[0.5px] min-h-[50px] px-6 py-3",
+  xs: "text-caption leading-[16px] tracking-[0.5px] min-h-[24px] px-2.5 py-1",
+  sm: "text-xs leading-[18px] tracking-[0.5px] min-h-[30px] px-3 py-1.5",
+  md: "text-label leading-[20px] tracking-[0.5px] min-h-[38px] px-4 py-2",
+  lg: "text-label leading-[20px] tracking-[0.5px] md:text-sm md:leading-[20px] md:tracking-[0.5px] min-h-[44px] px-5 py-2.5",
+  xl: "text-sm leading-[20px] tracking-[0.5px] min-h-[50px] px-6 py-3",
 };
 
 const variantMap = {
   primary:
-    "border border-[var(--customer-gold)] bg-[var(--customer-gold)] text-[var(--customer-navy)] shadow-sm hover:bg-[var(--customer-gold-dark)] hover:border-[var(--customer-gold-dark)] hover:shadow-md",
+    "border border-[var(--customer-gold)] bg-[var(--customer-gold)] text-[var(--customer-navy-dark)] shadow-sm hover:-translate-y-0.5 hover:bg-[var(--customer-gold-dark)] hover:border-[var(--customer-gold-dark)] hover:text-white hover:shadow-md active:translate-y-0",
   secondary:
     "border border-[var(--customer-border)] bg-white text-[var(--customer-navy)] hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]",
   navy: "border border-[var(--customer-navy)] bg-[var(--customer-navy)] text-white shadow-sm hover:bg-[var(--customer-navy-dark)] hover:border-[var(--customer-navy-dark)]",
   gradient:
     "border border-transparent bg-gradient-to-r from-[var(--customer-gold-dark)] to-[var(--customer-gold)] text-[var(--customer-navy)] shadow-sm hover:shadow-md",
   outline:
-    "bg-white border border-[var(--customer-navy)] text-[var(--customer-navy)] ",
+    "bg-white border border-[var(--customer-navy)] text-[var(--customer-navy)] hover:bg-[var(--customer-navy)] hover:text-white",
   ghost:
     "bg-transparent text-[var(--customer-navy)] hover:bg-[var(--customer-navy-soft)] border border-transparent",
   link: "border border-transparent bg-transparent p-0 text-[var(--customer-navy)] underline-offset-4 hover:underline",
@@ -63,7 +63,7 @@ export default function Button({
       disabled={isDisabled}
       style={customStyle}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center gap-2  font-semibold tracking-normal transition-all duration-300 ease-in-out",
+        "inline-flex cursor-pointer items-center justify-center gap-2 font-semibold tracking-normal transition-all duration-200 ease-out",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/60 focus-visible:ring-offset-2",
         sizeMap[size] || sizeMap.md,
         rounded ? "rounded-full" : "rounded-[var(--customer-radius-sm)]",

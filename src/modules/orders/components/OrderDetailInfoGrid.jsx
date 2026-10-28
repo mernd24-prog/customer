@@ -11,10 +11,10 @@ function OrderDetailInfoTile({ icon, label, value, tone = "yellow" }) {
         {icon}
       </div>
       <div className="flex min-w-0 flex-col gap-1">
-        <p className="truncate text-xs font-medium text-[#2E2E2E] sm:text-sm">
+        <p className="truncate text-xs font-medium text-ink sm:text-sm">
           {label}
         </p>
-        <p className="break-words text-sm font-bold text-[#1B1D60] sm:text-base">
+        <p className="break-words text-sm font-bold text-navy sm:text-base">
           {value || "N/A"}
         </p>
       </div>

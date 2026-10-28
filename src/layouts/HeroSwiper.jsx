@@ -55,7 +55,7 @@ const HeroSwiper = memo(({ slides }) => {
   {slide.badge && (
     <Label
       variant="seasonSale"
-      className="max-w-[290px] rounded-full border border-[#CE9F2D]/50 bg-[#FFF8E7] px-3 py-1.5 text-center text-[10px] font-semibold leading-4 text-[#18156D] shadow-sm min-[375px]:max-w-[330px] min-[375px]:text-[11px] sm:max-w-fit sm:px-4 sm:text-[12px] lg:text-[14px]"
+      className="max-w-[290px] rounded-full border border-[#CE9F2D]/50 bg-[#FFF8E7] px-3 py-1.5 text-center text-micro font-semibold leading-4 text-[#18156D] shadow-sm min-[375px]:max-w-[330px] min-[375px]:text-caption sm:max-w-fit sm:px-4 sm:text-xs lg:text-sm"
       leftIcon={
         <Tag
           size={12}
@@ -70,7 +70,7 @@ const HeroSwiper = memo(({ slides }) => {
   <h2 className="banner-heading mt-4 max-w-[681px] font-bold md:mt-0 lg:max-w-[800px]">
     {slide.title} {slide.highlight && <br />}{" "}
     {slide.highlight && (
-      <span className="text-[#CE9F2D]">{slide.highlight}</span>
+      <span className="text-gold">{slide.highlight}</span>
     )}
   </h2>
 </div>
@@ -84,7 +84,7 @@ const HeroSwiper = memo(({ slides }) => {
                 {slide.primaryButton && (
                   <SolidLargeButton
                     to={slide.primaryLink || "/products"}
-                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-lg"
+                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-base xl:font-semibold shadow-none sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-lg"
                   >
                     {slide.primaryButton}
                   </SolidLargeButton>
@@ -92,7 +92,7 @@ const HeroSwiper = memo(({ slides }) => {
                 {slide.secondaryButton && (
                   <OutlineLightButton
                     to={slide.secondaryLink || "/categories"}
-                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-lg"
+                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-base xl:font-semibold sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-lg"
                   >
                     {slide.secondaryButton}
                   </OutlineLightButton>

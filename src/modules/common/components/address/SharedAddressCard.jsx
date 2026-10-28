@@ -39,7 +39,7 @@ export default function SharedAddressCard({
 
         {/* Phone */}
         {addr.phone && (
-          <p className="mt-3 flex items-center gap-2.5 text-sm font-medium text-[#2E2E2E] sm:text-base">
+          <p className="mt-3 flex items-center gap-2.5 text-sm font-medium text-ink sm:text-base">
             <Phone className="size-5 shrink-0 text-[#C89427]" />
             <span>{addr.phone}</span>
           </p>

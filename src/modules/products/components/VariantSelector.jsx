@@ -181,7 +181,7 @@ export default function VariantSelector({
                     )}
 
                     {isUnavailable && (
-                      <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
+                      <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-micro font-semibold text-white">
                         Out Of Stock
                       </span>
                     )}

@@ -94,7 +94,7 @@ export default function BrandPage() {
                   <div className="max-w-xl">
                     <Breadcrumbs
                       linkClassName="!text-white"
-                      currentClassName="!text-[#CE9F2D]"
+                      currentClassName="!text-gold"
                       separatorClassName="!text-gold"
                       items={breadcrumbItems}
                       className="mb-5"
@@ -112,7 +112,7 @@ export default function BrandPage() {
                 <Breadcrumbs
                   items={breadcrumbItems}
                   linkClassName="!text-white"
-                  currentClassName="!text-[#CE9F2D]"
+                  currentClassName="!text-gold"
                   separatorClassName="!text-white"
                   className="mb-5"
                 />

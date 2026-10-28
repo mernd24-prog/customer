@@ -12,15 +12,15 @@ function DetailSectionCard({
 }) {
   return (
     <section
-      className={`flex flex-col overflow-hidden rounded-lg border ${borderClassName} bg-white ${className}`}
+      className={`customer-card flex flex-col overflow-hidden ${borderClassName} ${className}`}
     >
       {title || headerContent ? (
         <div
-  className={`flex min-h-[60px] items-center justify-between rounded-t-lg bg-[#EAD9B6] px-[20px] ${headerClassName}`}
+  className={`flex min-h-[56px] items-center justify-between border-b border-[var(--customer-border)] bg-[var(--customer-cream)] px-4 sm:px-5 ${headerClassName}`}
 >
           {title ? (
             <TitleTag
-              className={`font-sans text-h6 font-bold text-[#2E2E2E] ${titleClassName}`}
+              className={`font-sans text-base font-bold leading-snug text-[var(--customer-navy)] sm:text-lg ${titleClassName}`}
             >
               {title}
             </TitleTag>

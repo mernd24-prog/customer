@@ -54,7 +54,7 @@ export const getTypeConfig = (notif = {}) => {
     return {
       type: "shipments",
       icon: Truck,
-      iconColor: "text-[#3E4093]",
+      iconColor: "text-navy",
       iconBg: "bg-[#3E4093]/10",
     };
   }
@@ -73,7 +73,7 @@ export const getTypeConfig = (notif = {}) => {
     return {
       type: "invoices",
       icon: FileText,
-      iconColor: "text-[#3E4093]",
+      iconColor: "text-navy",
       iconBg: "bg-[#3E4093]/10",
     };
   }
@@ -88,7 +88,7 @@ export const getTypeConfig = (notif = {}) => {
     return {
       type: "offers",
       icon: Tag,
-      iconColor: "text-[#CE9F2D]",
+      iconColor: "text-gold",
       iconBg: "bg-[#CE9F2D]/10",
     };
   }
@@ -102,14 +102,14 @@ export const getTypeConfig = (notif = {}) => {
     return {
       type: "account",
       icon: User,
-      iconColor: "text-[#3E4093]",
+      iconColor: "text-navy",
       iconBg: "bg-[#3E4093]/10",
     };
   }
   return {
     type: "orders",
     icon: Package,
-    iconColor: "text-[#3E4093]",
+    iconColor: "text-navy",
     iconBg: "bg-[#3E4093]/10",
   };
 };

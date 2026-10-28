@@ -5,9 +5,9 @@ export default function PageContainer({
   contentClassName = "",
 }) {
   return (
-    <section className={`bg-white mt-6 sm:mt-8 mb-12 ${className}`}>
+    <section className={`customer-page mt-6 sm:mt-8 ${className}`}>
       <div
-        className={`mx-auto w-full max-w-[1900px] ${contentClassName}`}
+        className={`mx-auto w-full max-w-[1533px] ${contentClassName}`}
       >
         {children}
       </div>

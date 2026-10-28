@@ -147,7 +147,7 @@ export default function DeliveryChecker({
               )}
             </div>
         <div className="group flex items-center gap-2">
-  <span className="text-base leading-normal underline decoration-gold/50 underline-offset-4 transition-all duration-300 ease-in-out group-hover:text-[#CE9F2D] group-hover:decoration-[#CE9F2D]">
+  <span className="text-base leading-normal underline decoration-gold/50 underline-offset-4 transition-all duration-300 ease-in-out group-hover:text-gold group-hover:decoration-[#CE9F2D]">
     {loading
       ? "Checking Availability..."
       : lastCheckedPincode

@@ -20,7 +20,10 @@ export default function Price({
   className = "",
   priceClassName = "",
   oldPriceClassName = "",
+  emptyLabel = "",
 }) {
+  const hasCurrentPrice =
+    price !== null && price !== undefined && String(price).trim() !== "";
   const currentPrice = normalizeMoneyValue(price || 0);
   const compareAtPrice = normalizeMoneyValue(oldPrice || 0);
   const currentPriceNumber = Number(currentPrice || 0);
@@ -31,6 +34,21 @@ export default function Price({
     hasDiscount && compareAtPriceNumber > 0
       ? Math.round((savings / compareAtPriceNumber) * 100)
       : 0;
+
+  if (!hasCurrentPrice && emptyLabel) {
+    return (
+      <div className={cn("flex min-h-5 items-center", className)}>
+        <span
+          className={cn(
+            "text-xs font-semibold leading-none text-[var(--customer-muted)] sm:text-sm",
+            priceClassName,
+          )}
+        >
+          {emptyLabel}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -47,7 +65,7 @@ export default function Price({
         className={cn(
           "font-semibold leading-none text-[var(--customer-ink)]",
           layout === "pill"
-            ? "text-[12px] sm:text-[13px] lg:text-[14px] xl:text-[15px]"
+            ? "text-xs sm:text-label lg:text-sm xl:text-body"
             : "text-sm",
           priceClassName,
         )}
@@ -60,7 +78,7 @@ export default function Price({
           className={cn(
             "leading-none text-[var(--customer-gold-dark)] line-through",
             layout === "pill"
-              ? "text-[10px] sm:text-[11px] lg:text-[12px] xl:text-[13px]"
+              ? "text-micro sm:text-caption lg:text-xs xl:text-label"
               : "text-xs",
             oldPriceClassName,
           )}
@@ -70,7 +88,7 @@ export default function Price({
       )}
 
       {showDiscount && discountPct > 0 && (
-        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-micro font-semibold text-emerald-700">
           {discountPct}% Off
         </span>
       )}

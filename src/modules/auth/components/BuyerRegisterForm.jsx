@@ -145,7 +145,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         <UserPlus size={18} /> Create Account & Send OTP
       </Button>
 
-      <p className="text-center  text-[0.8rem] text-muted">
+      <p className="text-center  text-label text-muted">
         Already Have an Account?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
@@ -154,7 +154,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           Login
         </Link>
       </p>
-      {/* <p className="text-center  text-[0.8rem] text-muted">
+      {/* <p className="text-center  text-label text-muted">
         Prefer Otp Registration?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"

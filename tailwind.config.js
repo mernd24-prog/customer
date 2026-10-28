@@ -18,6 +18,14 @@ export default {
         extrabold: 800,
         black: 900,
       },
+      fontSize: {
+        micro: ["0.625rem", { lineHeight: "0.875rem" }],
+        caption: ["0.6875rem", { lineHeight: "1rem" }],
+        label: ["0.8125rem", { lineHeight: "1.125rem" }],
+        body: ["0.9375rem", { lineHeight: "1.5rem" }],
+        "title-sm": ["1.0625rem", { lineHeight: "1.5rem" }],
+        "display-sm": ["1.75rem", { lineHeight: "2.125rem" }],
+      },
       lineHeight: {
         none: "1",
         tight: "1.25",

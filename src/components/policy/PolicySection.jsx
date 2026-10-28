@@ -119,14 +119,14 @@ const PolicySection = ({
   return (
     <section className="py-1 first:pt-0">
       {sectionTitle && (
-        <h2 className="mb-3 text-[30px] font-bold leading-tight tracking-[-0.02em] text-ink md:text-[34px]">
+        <h2 className="mb-3 text-3xl font-bold leading-tight tracking-[-0.02em] text-ink md:text-[34px]">
           {sectionTitle}
         </h2>
       )}
 
       {sectionDescription && (
         <p
-          className="mb-6 text-[15px] leading-relaxed text-muted md:text-[17px]"
+          className="mb-6 text-body leading-relaxed text-muted md:text-title-sm"
           dangerouslySetInnerHTML={{ __html: sectionDescription }}
         />
       )}
@@ -151,7 +151,7 @@ const PolicySection = ({
                   className="mt-1.5 h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
                 />
 
-                <div className="flex-1 text-[15px] leading-relaxed text-muted md:text-[17px]">
+                <div className="flex-1 text-body leading-relaxed text-muted md:text-title-sm">
                   {point.title && (
                     <span className="font-bold text-ink">
                       {point.title}

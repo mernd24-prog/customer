@@ -199,7 +199,7 @@ export default function BrandOutletPage() {
                       handleSearchChange(event.target.value)
                     }
                     placeholder="Search brands"
-                    className="h-11 w-full rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/40 pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-all focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
+                    className="h-11 w-full rounded-lg border border-border bg-cream/40 pl-11 pr-11 text-sm font-medium text-ink placeholder-[#6F7480] outline-none transition-all focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
                   />
 
                   {Boolean(search) && (
@@ -207,7 +207,7 @@ export default function BrandOutletPage() {
                       type="button"
                       onClick={() => handleSearchChange("")}
                       aria-label="Clear search"
-                      className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#6F7480] transition hover:text-[#1F2430]"
+                      className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-muted transition hover:text-ink"
                     >
                       <X size={16} />
                     </button>
@@ -284,7 +284,7 @@ export default function BrandOutletPage() {
 
                   <Link
                     to="/categories"
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-6 text-sm font-bold text-[#1B1D60] transition-all duration-200 hover:border-[#B8891F] hover:bg-[#FAF8F3]"
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-6 text-sm font-bold text-navy transition-all duration-200 hover:border-[#B8891F] hover:bg-[#FAF8F3]"
                   >
                     <span>Browse Categories</span>
                   </Link>

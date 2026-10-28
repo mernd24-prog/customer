@@ -25,11 +25,11 @@ const ProductGridPage = memo(function ProductGridPage({
       <section className="w-container py-8">
         <div className="mb-5 flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold text-ink">{title}</h1>
-            <p className="mt-1 text-[13px] leading-[20px] text-muted">{description}</p>
+            <h1 className="text-2xl leading-[32px] tracking-[-0.01em] font-semibold text-ink">{title}</h1>
+            <p className="mt-1 text-label leading-[20px] text-muted">{description}</p>
           </div>
           {sourceLink && (
-            <Link to={sourceLink} className="group inline-flex items-center gap-1.5 text-[13px] leading-[20px] tracking-[0.5px] font-medium text-gold hover:text-gold-dark transition-colors">
+            <Link to={sourceLink} className="group inline-flex items-center gap-1.5 text-label leading-[20px] tracking-[0.5px] font-medium text-gold hover:text-gold-dark transition-colors">
               <span>{sourceText || "Explore more"}</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
             </Link>

@@ -39,12 +39,12 @@ export default function ConfirmModal({
           )}
 
           <div className="min-w-0 flex-1 pt-0.5">
-            <h2 className="text-[24px] font-bold leading-[1.2] text-[#1B1D60] sm:text-[20px]">
+            <h2 className="text-2xl font-bold leading-[1.2] text-navy sm:text-xl">
               {title}
             </h2>
 
             {description && (
-              <p className="mt-4 whitespace-pre-line text-[15px] leading-[1.5] text-[#1B1D60]">
+              <p className="mt-4 whitespace-pre-line text-body leading-[1.5] text-navy">
                 {description}
               </p>
             )}
@@ -59,7 +59,7 @@ export default function ConfirmModal({
               variant="outline"
               size="sm"
               onClick={onCancel}
-              className="h-[40px] min-w-[96px] rounded-lg border-[#1B1D60] bg-white px-4 text-[15px] font-semibold text-[#1B1D60] transition-colors hover:bg-[#f4f6ff]"
+              className="h-[40px] min-w-[96px] rounded-lg border-[#1B1D60] bg-white px-4 text-body font-semibold text-navy transition-colors hover:bg-[#f4f6ff]"
             >
               {cancelLabel}
             </Button>
@@ -71,7 +71,7 @@ export default function ConfirmModal({
             onClick={onConfirm}
             disabled={confirmDisabled}
             iconPosition="left"
-            className={`h-[40px] min-w-[96px] rounded-lg bg-[#D93C3C] px-4 font-semibold  text-[15px] text-white hover:bg-[#B88200] transition-colors hover:bg-[#c52f2f]${confirmClassName}`}
+            className={`h-[40px] min-w-[96px] rounded-lg bg-[#D93C3C] px-4 font-semibold  text-body text-white hover:bg-[#B88200] transition-colors hover:bg-[#c52f2f]${confirmClassName}`}
           >
             {confirmLabel}
           </Button>

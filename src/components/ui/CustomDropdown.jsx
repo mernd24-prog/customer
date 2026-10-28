@@ -165,7 +165,7 @@ export default function CustomDropdown({
   return (
     <div ref={dropdownRef} className={cn("relative", className)}>
       {label && (
-        <span className=" mb-2 block text-sm font-semibold text-[#2E2E2E]">
+        <span className=" mb-2 block text-sm font-semibold text-ink">
           {label}
 
           {required && <span className="text-red-500"> *</span>}
@@ -181,14 +181,14 @@ export default function CustomDropdown({
           "custom-dropdown-trigger",
           "customer-dropdown-button",
           "flex h-11 w-full items-center justify-between",
-          "rounded-lg border border-[#CE9F2D]",
+          "rounded-[var(--customer-radius-sm)] border border-border",
           "bg-white px-3.5 sm:px-4 text-left",
-          "text-sm font-semibold text-[#1B1D60]",
+          "text-sm font-semibold text-navy",
           "shadow-2xs transition-all duration-200",
-          "hover:border-[#CE9F2D] hover:shadow-xs",
-          "outline-none focus:outline-none focus:ring-0 focus:border-[#CE9F2D]",
-          "focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CE9F2D]",
-          "active:outline-none active:ring-0 active:border-[#CE9F2D]",
+          "hover:border-gold hover:bg-[var(--customer-surface-soft)]",
+          "outline-none focus:outline-none focus:border-gold",
+          "focus-visible:outline-none focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/20",
+          "active:outline-none active:border-gold",
           "disabled:cursor-not-allowed",
           "disabled:bg-gray-100 disabled:opacity-50",
           buttonClassName,
@@ -209,7 +209,7 @@ export default function CustomDropdown({
         <ChevronDown
           size={18}
           className={cn(
-            "shrink-0 text-[#CE9F2D]",
+            "shrink-0 text-gold",
             "transition-transform duration-200",
             isOpen && "rotate-180",
           )}
@@ -222,9 +222,9 @@ export default function CustomDropdown({
           className={cn(
             "absolute left-0 top-[calc(100%+6px)]",
             "z-30 w-full overflow-hidden",
-            "rounded-lg",
-            "border border-[#CE9F2D]",
-            "bg-white shadow-lg",
+            "rounded-[var(--customer-radius)]",
+            "border border-border",
+            "bg-white shadow-[var(--customer-shadow)]",
             optionsClassName,
           )}
         >
@@ -258,16 +258,14 @@ export default function CustomDropdown({
                     onClick={() => handleSelect(optionValue)}
                     className={cn(
                       "block w-full",
-                      "px-3.5 pr-4 py-2.5",
-                      "text-left text-[13px]",
-                      "font-semibold",
-                      "transition-all",
+                      "px-3.5 py-2.5 pr-4",
+                      "text-left text-sm font-medium",
+                      "transition-colors",
                       "border-y border-transparent",
-                      "hover:border-[#E5DAB5] hover:bg-[#F8F1E2]",
-                      "first:hover:border-t-transparent last:hover:border-b-transparent",
+                      "hover:bg-gold-soft",
                       isSelected
-                        ? "bg-[#F8F1E2] text-[#1B1D60]"
-                        : "text-[#2E2E2E] hover:text-[#1B1D60]",
+                        ? "bg-gold-soft text-navy"
+                        : "text-ink hover:text-navy",
                       optionClassName,
                     )}
                   >

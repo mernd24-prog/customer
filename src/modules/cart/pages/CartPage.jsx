@@ -77,7 +77,7 @@ export default function CartPage() {
   } = useCart();
 
   const savedCardClass =
-    "relative cursor-pointer overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5";
+    "customer-card customer-card--interactive customer-card-padding relative cursor-pointer overflow-hidden";
   const savedCardStripClass = "absolute left-0 top-0 h-full w-1  ";
   const savedCardContentClass =
     "flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between";
@@ -214,7 +214,7 @@ export default function CartPage() {
                           </p>
 
                           {stockBlockedItems.length > 0 && (
-                            <p className="mt-1 max-w-[680px] truncate text-[11px] leading-4 text-red-600/90">
+                            <p className="mt-1 max-w-[680px] truncate text-caption leading-4 text-red-600/90">
                               {stockBlockedItems
                                 .map((item) => item.title || item.name || "Product")
                                 .join(" • ")}

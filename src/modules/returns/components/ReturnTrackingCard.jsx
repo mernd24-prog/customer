@@ -16,9 +16,9 @@ export default function ReturnTrackingCard({ steps: customSteps, title }) {
 
   return (
     <section className="border-t border-[#EAEFF5] bg-[#FAFBFD]/60 p-4 sm:p-6 rounded-b-2xl">
-      <div className="mb-4 flex items-center gap-2 text-[#1B1D60]">
-        <Truck size={18} className="text-[#3E4093]" />
-        <h3 className="text-sm sm:text-base font-bold text-[#1B1D60]">
+      <div className="mb-4 flex items-center gap-2 text-navy">
+        <Truck size={18} className="text-navy" />
+        <h3 className="text-sm sm:text-base font-bold text-navy">
           {title || "Return Tracking Timeline"}
         </h3>
       </div>
@@ -69,24 +69,24 @@ export default function ReturnTrackingCard({ steps: customSteps, title }) {
               {/* Step Meta */}
               <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-[#1B1D60]">
+                  <h4 className="text-xs sm:text-sm font-bold text-navy">
                     {step.title}
                   </h4>
 
                   {cleanDesc && (
-                    <div className="mt-0.5 text-xs font-medium text-[#6E6E6E]">
+                    <div className="mt-0.5 text-xs font-medium text-muted">
                       <ShowMoreText
                         text={cleanDesc}
                         mode="characters"
                         limit={120}
-                        buttonClassName="ml-1 text-xs font-semibold text-[#3E4093] hover:underline"
+                        buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline"
                       />
                     </div>
                   )}
                 </div>
 
                 {step.time && (
-                  <span className="shrink-0 text-[11px] sm:text-xs font-medium text-[#6F7480]">
+                  <span className="shrink-0 text-caption sm:text-xs font-medium text-muted">
                     {step.time}
                   </span>
                 )}

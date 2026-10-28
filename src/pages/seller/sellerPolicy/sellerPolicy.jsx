@@ -235,7 +235,7 @@ export default function SellerPolicy() {
               {primaryCtaLabel && (
                 <SolidLargeButton
                   to={primaryCtaUrl}
-                  className="h-[42px] min-w-[138px] px-4 text-[13px] font-bold whitespace-nowrap sm:h-[48px] sm:min-w-[158px] sm:px-6 sm:text-[15px]"
+                  className="h-[42px] min-w-[138px] px-4 text-label font-bold whitespace-nowrap sm:h-[48px] sm:min-w-[158px] sm:px-6 sm:text-body"
                 >
                   {primaryCtaLabel}
                 </SolidLargeButton>
@@ -244,7 +244,7 @@ export default function SellerPolicy() {
               {secondaryCtaLabel && (
                 <OutlineSecondaryButton
                   to={secondaryCtaUrl}
-                  className="h-[42px] min-w-[130px] px-4 text-[13px] font-semibold whitespace-nowrap text-[#18156D] sm:h-[48px] sm:min-w-[150px] sm:px-6 sm:text-[15px]"
+                  className="h-[42px] min-w-[130px] px-4 text-label font-semibold whitespace-nowrap text-[#18156D] sm:h-[48px] sm:min-w-[150px] sm:px-6 sm:text-body"
                 >
                   {secondaryCtaLabel}
                 </OutlineSecondaryButton>
@@ -266,13 +266,13 @@ export default function SellerPolicy() {
                 )}
 
                 {highlightTitle && (
-                  <h2 className="mt-4 text-[24px] font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
+                  <h2 className="mt-4 text-2xl font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-3xl md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
                     {highlightTitle}
                   </h2>
                 )}
 
                 {highlightDesc && (
-                  <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-6 text-gray-600 sm:mt-4 md:text-[17px] md:leading-7">
+                  <p className="mx-auto mt-3 max-w-2xl text-body leading-6 text-gray-600 sm:mt-4 md:text-title-sm md:leading-7">
                     {highlightDesc}
                   </p>
                 )}
@@ -294,13 +294,13 @@ export default function SellerPolicy() {
 
                         <div className="min-w-0 flex-1">
                           {item.title && (
-                            <h3 className="text-[16px] font-bold leading-6 text-[#18156D] sm:text-[17px]">
+                            <h3 className="text-base font-bold leading-6 text-[#18156D] sm:text-title-sm">
                               {item.title}
                             </h3>
                           )}
 
                           {item.desc && (
-                            <p className="mt-2 text-[14px] leading-5 text-gray-600 sm:leading-6">
+                            <p className="mt-2 text-sm leading-5 text-gray-600 sm:leading-6">
                               {item.desc}
                             </p>
                           )}
@@ -329,13 +329,13 @@ export default function SellerPolicy() {
                 )}
 
                 {respTitle && (
-                  <h2 className="mt-4 text-[24px] font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
+                  <h2 className="mt-4 text-2xl font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-3xl md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
                     {respTitle}
                   </h2>
                 )}
 
                 {respDesc && (
-                  <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-6 text-gray-600 sm:mt-4 md:text-[17px] md:leading-7">
+                  <p className="mx-auto mt-3 max-w-2xl text-body leading-6 text-gray-600 sm:mt-4 md:text-title-sm md:leading-7">
                     {respDesc}
                   </p>
                 )}
@@ -357,13 +357,13 @@ export default function SellerPolicy() {
 
                         <div className="min-w-0 flex-1">
                           {item.title && (
-                            <h3 className="text-[16px] font-bold leading-6 text-[#18156D] sm:text-[17px]">
+                            <h3 className="text-base font-bold leading-6 text-[#18156D] sm:text-title-sm">
                               {item.title}
                             </h3>
                           )}
 
                           {item.desc && (
-                            <p className="mt-2 text-[14px] leading-5 text-gray-600 sm:leading-6">
+                            <p className="mt-2 text-sm leading-5 text-gray-600 sm:leading-6">
                               {item.desc}
                             </p>
                           )}
@@ -391,13 +391,13 @@ export default function SellerPolicy() {
                 )}
 
                 {compTitle && (
-                  <h2 className="mt-4 text-[24px] font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
+                  <h2 className="mt-4 text-2xl font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-3xl md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
                     {compTitle}
                   </h2>
                 )}
 
                 {compDesc && (
-                  <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-6 text-gray-600 sm:mt-4 md:text-[17px] md:leading-7">
+                  <p className="mx-auto mt-3 max-w-2xl text-body leading-6 text-gray-600 sm:mt-4 md:text-title-sm md:leading-7">
                     {compDesc}
                   </p>
                 )}
@@ -419,13 +419,13 @@ export default function SellerPolicy() {
 
                         <div className="min-w-0 flex-1">
                           {item.title && (
-                            <h3 className="text-[16px] font-bold leading-6 text-white sm:text-[17px]">
+                            <h3 className="text-base font-bold leading-6 text-white sm:text-title-sm">
                               {item.title}
                             </h3>
                           )}
 
                           {item.desc && (
-                            <p className="mt-2 text-[14px] leading-5 text-white/70 sm:leading-6">
+                            <p className="mt-2 text-sm leading-5 text-white/70 sm:leading-6">
                               {item.desc}
                             </p>
                           )}

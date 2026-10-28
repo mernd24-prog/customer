@@ -69,10 +69,10 @@ export function FilterSection({
   };
 
   return (
-    <div className="border-b  border-[#EEDFB9] py-3 last:border-b-0 sm:py-3 ">
+    <div className="border-b border-border py-3 last:border-b-0">
       {searchOpen ? (
         <div className="flex h-9 w-full items-center gap-2 rounded-full bg-[#F4F4F6] px-3">
-          <Search size={16} className="shrink-0 text-[#6F7480]" />
+          <Search size={16} className="shrink-0 text-muted" />
           <input
             ref={searchInputRef}
             type="text"
@@ -85,7 +85,7 @@ export function FilterSection({
               const p = `Search ${title.toLowerCase()}`;
               return p.length > 13 ? p.slice(0, 12) + "…" : p;
             })()}
-            className="min-w-0 flex-1 bg-transparent border-none border focus:outline-none text-sm font-semibold text-[#2E2E2E] outline-none placeholder:text-[#8D8F98]"
+            className="min-w-0 flex-1 bg-transparent border-none border focus:outline-none text-sm font-semibold text-ink outline-none placeholder:text-[#8D8F98]"
           />
           <button
             type="button"
@@ -101,12 +101,12 @@ export function FilterSection({
           <button
             type="button"
             onClick={() => setOpen((value) => !value)}
-            className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left font-dm-sans text-xl font-semibold leading-none tracking-normal text-[#2D347D] transition-colors duration-200 sm:text-[20px]"
+            className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left font-dm-sans text-base font-bold leading-snug tracking-normal text-navy transition-colors duration-200 hover:text-navy-dark sm:text-title-sm"
           >
             <span className="truncate pb-[2px] -mb-[2px]">{title}</span>
             <ChevronDown
               size={18}
-              className={`shrink-0 text-[#3E4093] transition-transform duration-300 ease-in-out ${
+              className={`shrink-0 text-navy transition-transform duration-300 ease-in-out ${
                 open ? "rotate-180" : ""
               }`}
             />
@@ -116,7 +116,7 @@ export function FilterSection({
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F4F4F6] text-[#6F7480] transition-colors duration-200 hover:bg-[#ECECF0] "
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F4F4F6] text-muted transition-colors duration-200 hover:bg-[#ECECF0] "
               aria-label={`Search ${title}`}
             >
               <Search size={17} />
@@ -317,8 +317,8 @@ export function PriceRangeFilter({
   return (
     <form className="space-y-3 pt-0" onSubmit={handleSubmit}>
       <div>
-        <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[#2E2E2E]">
-          PRICE
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.06em] text-muted">
+          Price range
         </p>
 
         {/* Slider */}
@@ -385,7 +385,7 @@ export function PriceRangeFilter({
 
         {/* Price */}
         <div className="mt-3 text-center">
-          <span className="text-lg font-bold text-[#111111]">
+          <span className="text-base font-bold tabular-nums text-ink">
             ₹{localMin.toLocaleString("en-IN")} – ₹
             {localMax >= maxLimit
               ? `${localMax.toLocaleString("en-IN")}+`
@@ -398,7 +398,7 @@ export function PriceRangeFilter({
         <button
           type="button"
           onClick={clear}
-          className="block mx-auto text-xs font-semibold text-[#CE9F2D] hover:underline"
+          className="block mx-auto text-xs font-semibold text-gold hover:underline"
         >
           Clear Price Filter
         </button>
@@ -455,8 +455,8 @@ function FilterOptionGroup({
   const headerClass = `flex w-full min-w-0 items-center justify-between py-1.5 text-left transition-colors duration-200`;
 
   const labelClass = isRoot
-    ? "text-[14px] font-semibold text-[#111827]"
-    : "text-[13px] font-medium text-[#434343]";
+    ? "text-sm font-semibold text-ink"
+    : "text-label font-medium text-muted";
 
   return (
     <div className={`max-w-full overflow-hidden ${isRoot ? "mb-1" : "mb-0.5"}`}>
@@ -469,13 +469,13 @@ function FilterOptionGroup({
         <span className={`${labelClass} min-w-0 truncate`}>{group.label}</span>
         <div className="flex items-center gap-1.5 shrink-0">
           {selectedCount > 0 && (
-            <span className="text-[12px] text-[#999] font-medium">
+            <span className="text-xs text-[#999] font-medium">
               ({selectedCount})
             </span>
           )}
           <ChevronDown
             size={18}
-            className={`shrink-0 text-[#3E4093] transition-transform duration-300 ease-in-out ${expanded ? "rotate-180" : ""}`}
+            className={`shrink-0 text-navy transition-transform duration-300 ease-in-out ${expanded ? "rotate-180" : ""}`}
           />
         </div>
       </button>
@@ -515,7 +515,7 @@ function FilterOptionGroup({
             return (
               <label
                 key={value}
-                className=" flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[15px]"
+                className="customer-filter-option cursor-pointer"
               >
                 <input
                   type="checkbox"
@@ -548,7 +548,7 @@ function FilterOptionGroup({
                 </span>
 
                 {count != null && (
-                  <span className="shrink-0 text-[12px] text-[#888] whitespace-nowrap">
+                  <span className="customer-filter-count">
                     ({count})
                   </span>
                 )}
@@ -627,7 +627,7 @@ export function OptionFilter({
   ]);
 
   if (!options?.length) {
-    return <p className="text-sm text-[#6f7480]">{emptyText}</p>;
+    return <p className="text-sm text-muted">{emptyText}</p>;
   }
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
@@ -695,7 +695,7 @@ export function OptionFilter({
           return (
             <label
               key={value}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[15px]"
+              className="customer-filter-option cursor-pointer"
             >
               <input
                 type="checkbox"
@@ -722,15 +722,15 @@ export function OptionFilter({
               </span>
 
               {count != null && (
-                <span className="shrink-0 font-medium leading-none text-[#373737] text-[14px] whitespace-nowrap">
-                  ( {count} )
+                <span className="customer-filter-count">
+                  ({count})
                 </span>
               )}
             </label>
           );
         })}
         {!visibleOptions.length && (
-          <p className="py-2 text-sm font-medium text-[#6f7480]">
+          <p className="py-2 text-sm font-medium text-muted">
             No Matching Options
           </p>
         )}
@@ -740,7 +740,7 @@ export function OptionFilter({
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}
-          className="pt-2 text-left text-[16px] font-semibold leading-none text-[#5960B8] transition-colors duration-200 "
+          className="customer-filter-action pt-2 text-left"
         >
           {expanded ? "View Less" : "View More"}
         </button>
@@ -763,7 +763,7 @@ export function CheckboxListFilter({
       : [];
 
   if (!options.length) {
-    return <p className="text-sm text-[#6f7480]">{emptyText}</p>;
+    return <p className="text-sm text-muted">{emptyText}</p>;
   }
 
   const selectedSet = new Set(selectedValues);
@@ -780,7 +780,7 @@ export function CheckboxListFilter({
         return (
           <label
             key={value}
-            className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[15px]"
+            className="customer-filter-option cursor-pointer"
           >
             <input
               type="checkbox"
@@ -803,8 +803,8 @@ export function CheckboxListFilter({
             </span>
 
             {count != null && (
-              <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
-                ( {count} )
+              <span className="customer-filter-count">
+                ({count})
               </span>
             )}
           </label>
@@ -843,7 +843,7 @@ export function RatingFilter({
           return (
             <label
               key={stars}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 sm:text-[15px]"
+              className="customer-filter-option cursor-pointer"
             >
               <input
                 type="checkbox"
@@ -874,8 +874,8 @@ export function RatingFilter({
               </span>
 
               {counts[String(stars)] != null && (
-                <span className="shrink-0 whitespace-nowrap text-[14px] font-medium leading-none text-[#373737]">
-                  ( {counts[String(stars)]} )
+                <span className="customer-filter-count">
+                  ({counts[String(stars)]})
                 </span>
               )}
             </label>
@@ -891,7 +891,7 @@ export function FilterSkeleton() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="border-b border-[#EEDFB9] py-4 last:border-b-0 sm:py-5"
+          className="border-b border-border py-4 last:border-b-0"
         >
           <div className="mb-4 flex w-full items-center justify-between gap-3">
             <div className="h-6 w-32 animate-pulse rounded bg-black/5"></div>
@@ -934,17 +934,17 @@ export default function ProductFilterSidebar({
 
   return (
     <aside
-      className={`flex h-auto w-full flex-col rounded-lg border border-[#EEDFB9] bg-[#FFFDF8] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+      className={`flex h-auto w-full flex-col overflow-hidden rounded-[var(--customer-radius)] border border-border bg-white shadow-[var(--customer-shadow-soft)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
       <div className="w-full shrink-0 shadow-none">
-        <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">
-          <h3 className="text-h4 font-semibold text-[#373737]">Filters</h3>
+        <div className="flex min-h-14 items-center justify-between gap-4 border-b border-border bg-cream px-4 py-3 min-[375px]:px-5">
+          <h3 className="text-base font-bold text-navy sm:text-title-sm">Filters</h3>
 
           {onClearAll && (
             <button
               type="button"
               onClick={onClearAll}
-              className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[14px] text-[14px] font-semibold text-[#5960B8] sm:text-[16px]"
+              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-full px-3 text-sm font-semibold text-navy hover:bg-gold-soft hover:text-navy-dark"
             >
               Clear All
             </button>
@@ -954,7 +954,7 @@ export default function ProductFilterSidebar({
         {topContent}
       </div>
 
-      <div className="filter-panel-scrollbar max-h-[calc(100vh-var(--customer-header-height,95px)-110px)] overscroll-contain overflow-y-auto">
+      <div className="filter-panel-scrollbar max-h-[calc(100dvh-var(--customer-page-sticky-top)-56px)] overscroll-contain overflow-y-auto">
         {loading ? (
           <FilterSkeleton />
         ) : (

@@ -37,16 +37,16 @@ export default function OrderDocuments({
                 <div className="flex min-w-0 flex-1 items-center gap-1.5">
                   <FileText
                     size={15}
-                    className="shrink-0 text-[#3E4093]"
+                    className="shrink-0 text-navy"
                   />
 
-                  <span className="min-w-0 truncate text-[13px] font-semibold text-[#2E2E2E]">
+                  <span className="min-w-0 truncate text-label font-semibold text-ink">
                     {document.title}
                   </span>
                 </div>
 
                 {document.pending ? (
-                  <span className="shrink-0 rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D]">
+                  <span className="shrink-0 rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-caption font-bold text-gold">
                     Pending
                   </span>
                 ) : (
@@ -60,7 +60,7 @@ export default function OrderDocuments({
                         document.filename,
                       )
                     }
-                    className="h-7 shrink-0 gap-1.5 border-[#CE9F2D] px-3 text-xs font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
+                    className="h-7 shrink-0 gap-1.5 border-[#CE9F2D] px-3 text-xs font-semibold text-navy hover:bg-[#FFF9EA]"
                   >
                     <Download size={12} />
                     Download

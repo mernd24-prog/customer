@@ -14,7 +14,7 @@ export default function AuthCard({
   return (
     <section className={`auth-card w-full ${topSpacing ? "py-6 sm:py-8" : ""}`}>
       <div
-        className={`mx-auto w-full ${maxWidth} overflow-hidden rounded-[16px] bg-[#F7F8FC] p-4 shadow-xl sm:rounded-[18px] sm:p-5 lg:rounded-[20px] lg:p-6 md:shadow-sm`}
+        className={`customer-card customer-card-padding mx-auto w-full ${maxWidth} overflow-hidden bg-[var(--customer-surface-soft)]`}
       >
         <div className="flex flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
           {/* Left image - visible on large screens */}
@@ -53,7 +53,7 @@ export default function AuthCard({
                 </div>
 
                 {title && (
-                  <h1 className="text-h4 font-semibold leading-tight text-[#2E2E2E]">
+                  <h1 className="text-h4 font-bold leading-tight text-[var(--customer-navy)]">
                     {title}
                   </h1>
                 )}

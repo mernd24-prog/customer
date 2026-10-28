@@ -98,7 +98,7 @@ export default function FAQPage() {
           {cmsError && !cmsPage && !faqCmsData ? (
             <div className="flex min-h-[35vh] items-center justify-center text-center">
               <div>
-                <h2 className="text-xl font-bold text-[#201b78]">
+                <h2 className="text-xl font-bold text-navy">
                   FAQ Not Found
                 </h2>
 

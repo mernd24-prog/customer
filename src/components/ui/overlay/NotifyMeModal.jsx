@@ -160,15 +160,15 @@ export default function NotifyMeModal({
     >
       {submitted ? (
         <div className="flex flex-col items-center justify-center py-4 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#CE9F2D]/15 text-[#CE9F2D]">
-            <CheckCircle2 size={36} className="text-[#CE9F2D]" />
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#CE9F2D]/15 text-gold">
+            <CheckCircle2 size={36} className="text-gold" />
           </div>
 
           <h3 className="mb-2 text-2xl font-bold tracking-tight text-[#2D347D]">
             You’re on the list!
           </h3>
 
-          <p className="mb-6 max-w-xs text-sm font-medium text-[#6F7480]">
+          <p className="mb-6 max-w-xs text-sm font-medium text-muted">
             We’ll notify you at <span className="font-semibold text-[#2D347D]">{email}</span> when this product is back in stock.
           </p>
 
@@ -187,14 +187,14 @@ export default function NotifyMeModal({
         <div>
           {/* Header */}
           <div className="mb-4 flex items-start gap-3 pr-6">
-            <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#3E4093]/10 text-[#3E4093]">
+            <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#3E4093]/10 text-navy">
               <BellRing size={20} />
             </div>
             <div>
               <h2 className="text-xl font-bold text-[#2D347D]">
                 Get Notified When Available
               </h2>
-              <p className="mt-1 text-xs text-[#6F7480] sm:text-sm">
+              <p className="mt-1 text-xs text-muted sm:text-sm">
                 This product is currently out of stock. Enter your details and
                 we’ll notify you when it becomes available.
               </p>
@@ -222,7 +222,7 @@ export default function NotifyMeModal({
                 {productTitle}
               </h4>
               {variantLabel && (
-                <p className="mt-0.5 truncate text-xs font-medium text-[#6F7480]">
+                <p className="mt-0.5 truncate text-xs font-medium text-muted">
                   {variantLabel}
                 </p>
               )}
@@ -253,7 +253,7 @@ export default function NotifyMeModal({
                   setTouched((prev) => ({ ...prev, fullName: true }))
                 }
                 placeholder="Enter your full name"
-                className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
+                className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-ink outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
                   touched.fullName && !isFullNameValid
                     ? "border-red-500 focus:border-red-500"
                     : "border-[#EEDFB9] focus:outline-none"
@@ -283,7 +283,7 @@ export default function NotifyMeModal({
                   setTouched((prev) => ({ ...prev, email: true }))
                 }
                 placeholder="Enter your email address"
-                className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
+                className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-ink outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
                   touched.email && !isEmailValid
                     ? "border-red-500 focus:border-red-500"
                     : "border-[#EEDFB9] focus:outline-none"

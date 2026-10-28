@@ -231,7 +231,7 @@ export default function ContactUs() {
           {/* Contact Content */}
           <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
             <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-              <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
+              <h1 className="text-center text-[26px] font-bold text-white md:text-display-sm lg:text-3xl">
                 Contact Us
               </h1>
             </div>
@@ -273,11 +273,11 @@ export default function ContactUs() {
                           </div>
 
                           <div className="min-w-0 pt-0.5">
-                            <p className="mb-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
+                            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
                               {item.title}
                             </p>
 
-                            <p className="whitespace-pre-line break-words text-[15px] leading-6 text-[#4c4f6d]">
+                            <p className="whitespace-pre-line break-words text-body leading-6 text-[#4c4f6d]">
                               {item.value}
                             </p>
                           </div>
@@ -286,14 +286,14 @@ export default function ContactUs() {
                     })}
                   </div>
 
-                  <div className="mt-8 rounded-lg border border-[#e7d9b8] bg-white/80 p-4 shadow-[0_8px_18px_rgba(27,35,70,0.04)]">
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
+                  <div className="mt-8 rounded-lg border border-border bg-white/80 p-4 shadow-[0_8px_18px_rgba(27,35,70,0.04)]">
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
                       For Brand &amp; Business Inquiries
                     </p>
-                    <p className="mt-3 text-[15px] leading-7 text-[#4c4f6d]">
+                    <p className="mt-3 text-body leading-7 text-[#4c4f6d]">
                       Looking to partner with us or expand with Sam Global?
                     </p>
-                    <p className="mt-2 text-[15px] leading-7 text-[#4c4f6d]">
+                    <p className="mt-2 text-body leading-7 text-[#4c4f6d]">
                       Write to us at: <span className="font-semibold text-[#1d2377]">{businessEmail}</span>
                     </p>
                   </div>
@@ -367,7 +367,7 @@ export default function ContactUs() {
                           <button
                             type="button"
                             onClick={() => setSubmitted(false)}
-                            className="w-full rounded-lg border border-[#E7D9B8] bg-[#d4a12f] px-8 py-4 font-semibold text-white shadow-yellow-500/20 transition-all duration-300 hover:bg-yellow-500"
+                            className="w-full rounded-lg border border-border bg-[#d4a12f] px-8 py-4 font-semibold text-white shadow-yellow-500/20 transition-all duration-300 hover:bg-yellow-500"
                           >
                             Done
                           </button>
@@ -392,7 +392,7 @@ export default function ContactUs() {
                           value={form.name}
                           onChange={handleChange}
                           placeholder="Enter your full name"
-                          className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
+                          className="h-11 w-full rounded-lg border border-border bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
                         />
 
                         {errors.name && (
@@ -415,7 +415,7 @@ export default function ContactUs() {
                           value={form.email}
                           onChange={handleChange}
                           placeholder="Enter your email"
-                          className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
+                          className="h-11 w-full rounded-lg border border-border bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
                         />
 
                         {errors.email && (
@@ -438,7 +438,7 @@ export default function ContactUs() {
                           value={form.phone}
                           onChange={handleChange}
                           placeholder="Enter your phone number"
-                          className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
+                          className="h-11 w-full rounded-lg border border-border bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
                         />
 
                         {errors.phone && (
@@ -459,7 +459,7 @@ export default function ContactUs() {
                             setErrors((prev) => ({ ...prev, subject: "" }));
                           }}
                           placeholder="Select Subject"
-                          buttonClassName="!h-11 !rounded-lg !border !border-[#E7D9B8] !bg-[#fafafa] !text-sm !outline-none !shadow-none focus:!border-[#E7D9B8] focus:!outline-none focus:!ring-0 focus:!shadow-none focus-visible:!outline-none focus-visible:!ring-0 focus-visible:!shadow-none"
+                          buttonClassName="!h-11 !rounded-lg !border !border-border !bg-[#fafafa] !text-sm !outline-none !shadow-none focus:!border-border focus:!outline-none focus:!ring-0 focus:!shadow-none focus-visible:!outline-none focus-visible:!ring-0 focus-visible:!shadow-none"
                           error={errors.subject}
                         />
                       </div>
@@ -479,7 +479,7 @@ export default function ContactUs() {
                           value={form.message}
                           onChange={handleChange}
                           placeholder="Write your message"
-                          className="h-[100px] w-full resize-none rounded-lg border border-[#E7D9B8] bg-[#fafafa] p-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
+                          className="h-[100px] w-full resize-none rounded-lg border border-border bg-[#fafafa] p-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
                         />
 
                         {errors.message && (

@@ -5,7 +5,7 @@ export default function Drawer({
   open,
   onClose,
   side = "right",
-  width = "w-full",
+  width = "w-[min(88vw,360px)]",
   children,
 }) {
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function Drawer({
         onClick={onClose}
       />
       <div
-        className={`absolute top-0 ${sideClass} h-full ${width} overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}
+        className={`absolute top-0 ${sideClass} h-full ${width} overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border-l border-[var(--customer-border)] bg-white p-3 shadow-[var(--customer-shadow-strong)] sm:p-4`}
       >
         <div className=" flex items-center justify-end  pb-3">
           <button

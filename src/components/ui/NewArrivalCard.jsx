@@ -13,14 +13,14 @@ export default function NewArrivalCard({
   const displayProducts = Array.isArray(products) ? products : [];
 
   return (
-    <article className="flex flex-col h-full overflow-hidden rounded-[20px] border border-[#1B1D6066] bg-white shadow-sm hover:shadow-md transition-shadow duration-300 ">
-      <div className="bg-[#1B1D60] p-5 flex  flex-col justify-between">
+    <article className="customer-card flex h-full flex-col overflow-hidden">
+      <div className="flex flex-col justify-between bg-navy p-5">
         <div className="flex items-center justify-end w-full">
           
           <TextWhiteButton
             to={seeAllLink}
-            rightIcon={<IoArrowForwardOutline className="text-[12px]" />}
-            className=" text-[14px]  text-[#FFFFFF]"
+            rightIcon={<IoArrowForwardOutline className="text-xs" />}
+            className=" text-sm  text-[#FFFFFF]"
           >
             See All
           </TextWhiteButton>
@@ -29,14 +29,14 @@ export default function NewArrivalCard({
           {formatPageTitle(title)}
         </h3>
       </div>
-      <div className="flex flex-col divide-y divide-[#1B1D6066] bg-white flex-grow ">
+      <div className="flex flex-grow flex-col divide-y divide-border bg-white">
         {displayProducts.map((prod, index) => (
           <Link
             key={prod.id || index}
             to={getProductPublicPath(prod)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex gap-4  p-6 items-center hover:bg-slate-50 transition-colors duration-200 pl-4"
+            className="flex items-center gap-4 p-4 transition-colors duration-200 hover:bg-[var(--customer-surface-soft)] sm:p-5"
           >
             <div className="flex-shrink-0 h-[90px] w-[90px] rounded-[10px] border border-[var(--customer-border)] overflow-hidden transition-all duration-300  md:h-[90px] md:w-[90px] bg-white flex items-center justify-center">
               <img
@@ -48,17 +48,17 @@ export default function NewArrivalCard({
             </div>
             <div className="flex  flex-col min-w-0 flex-grow text-left">
               <h4
-                className="truncate  font-dm-sans text-[15px] font-semibold leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] transition-colors duration-200 hover:text-[var(--customer-navy)] sm:text-[16px] lg:text-[18px]"
+                className="truncate  font-dm-sans text-body font-semibold leading-[100%] tracking-[0%] align-middle text-ink transition-colors duration-200 hover:text-[var(--customer-navy)] sm:text-base lg:text-lg"
                 title={prod.title}
               >
                 {prod.title}
               </h4>
               <div className="flex items-baseline mt-4 mb-3 ">
-                <span className="font-dmSans text-[18px] font-extrabold leading-none text-[#1B1D60] sm:text-[21px]">
+                <span className="font-dmSans text-lg font-extrabold leading-none text-navy sm:text-[21px]">
                   {prod.price}
                 </span>
                 {prod.oldPrice && (
-                  <span className="ml-2 font-dmSans text-[18px] font-semibold leading-none text-[#737373] line-through sm:text-[21px]">
+                  <span className="ml-2 font-dmSans text-lg font-semibold leading-none text-[#737373] line-through sm:text-[21px]">
                     {prod.oldPrice}
                   </span>
                 )}

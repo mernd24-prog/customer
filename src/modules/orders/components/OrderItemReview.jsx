@@ -88,7 +88,7 @@ function ExistingReviewCard({ review }) {
 
   return (
     <section
-      className="mt-3 pt-3 border-t border-[#E7D9B8] w-full flex flex-col gap-3"
+      className="mt-3 pt-3 border-t border-border w-full flex flex-col gap-3"
       aria-label="Product review"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -97,7 +97,7 @@ function ExistingReviewCard({ review }) {
             <BadgeCheck size={16} />
           </span>
           <div>
-            <h3 className="text-sm font-bold text-[#1B1D60]">Product review</h3>
+            <h3 className="text-sm font-bold text-navy">Product review</h3>
             <p className="text-xs text-[#6B6B80]">
               {submittedDate
                 ? `Submitted on ${submittedDate}`
@@ -119,7 +119,7 @@ function ExistingReviewCard({ review }) {
         {rating > 0 && (
           <div className="flex items-center gap-2.5">
             <ReviewRating rating={rating} />
-            <span className="text-sm font-bold text-[#1B1D60]">
+            <span className="text-sm font-bold text-navy">
               {rating}.0 out of 5
             </span>
           </div>
@@ -132,7 +132,7 @@ function ExistingReviewCard({ review }) {
           moreLabel="more"
           lessLabel="less"
           textClassName="inline text-sm sm:text-base font-semibold text-[#22232B] break-words"
-          buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+          buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline"
         />
 
         <ShowMoreText
@@ -142,7 +142,7 @@ function ExistingReviewCard({ review }) {
           moreLabel="more"
           lessLabel="less"
           textClassName="inline max-w-full break-words text-sm leading-relaxed text-[#4E505C]"
-          buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+          buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline"
         />
         {media.length > 0 && (
           <div>
@@ -258,14 +258,14 @@ function ReviewModal({
     <BaseModal onClose={onClose} maxWidth="max-w-lg">
       <form className="grid gap-5 p-5 sm:p-6" onSubmit={handleSubmit}>
         <div className="pr-8">
-          <h2 className="text-xl font-bold text-[#1B1D60]">Write Review</h2>
+          <h2 className="text-xl font-bold text-navy">Write Review</h2>
           <p className="mt-1 line-clamp-2 text-sm text-[#5F6078]">
             {getProductTitle(item)}
           </p>
         </div>
 
         <div className="grid gap-2">
-          <span className="text-sm font-semibold text-[#2E2E2E]">Rating</span>
+          <span className="text-sm font-semibold text-ink">Rating</span>
           <StarInput
             value={form.rating}
             onChange={(rating) =>
@@ -274,7 +274,7 @@ function ReviewModal({
           />
         </div>
 
-        <label className="grid gap-2 text-sm font-semibold text-[#2E2E2E]">
+        <label className="grid gap-2 text-sm font-semibold text-ink">
           Title
           <input
             type="text"
@@ -288,7 +288,7 @@ function ReviewModal({
           />
         </label>
 
-        <label className="grid gap-2 text-sm font-semibold text-[#2E2E2E]">
+        <label className="grid gap-2 text-sm font-semibold text-ink">
           Review
           <textarea
             value={form.reviewText}
@@ -314,7 +314,7 @@ function ReviewModal({
         <div className="flex flex-wrap justify-end gap-3">
           <button
             type="button"
-            className="rounded-[8px] border border-[#D7D7E0] px-4 py-2 text-sm font-bold text-[#1B1D60]"
+            className="rounded-[8px] border border-[#D7D7E0] px-4 py-2 text-sm font-bold text-navy"
             onClick={onClose}
             disabled={submitting}
           >
@@ -353,7 +353,7 @@ function OrderItemReviewAction({
 
   if (!reviewChecked) {
     return (
-      <span className="inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm">
+      <span className="inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-navy transition-colors hover:bg-[#F8EDCF] sm:text-sm">
         Checking review...
       </span>
     );
@@ -362,7 +362,7 @@ function OrderItemReviewAction({
   return (
     <button
       type="button"
-className="inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm"      onClick={() => onReviewClick(item)}
+className="inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-navy transition-colors hover:bg-[#F8EDCF] sm:text-sm"      onClick={() => onReviewClick(item)}
       disabled={!orderId}
     >
       Write Review

@@ -169,7 +169,7 @@ export default function CartItemCard({
             {productPath ? (
               <Link
                 to={productPath}
-                className="block mb-2.5 font-bold text-sm sm:text-base text-[#2d2d2d] transition hover:text-[#1B1D60]"
+                className="block mb-2.5 font-bold text-sm sm:text-base text-[#2d2d2d] transition hover:text-navy"
               >
                 <ShowMoreText
                   text={item?.title}
@@ -178,7 +178,7 @@ export default function CartItemCard({
                   moreLabel="more"
                   lessLabel="less"
                   textClassName="inline"
-                  buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+                  buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline"
                 />
               </Link>
             ) : (
@@ -190,19 +190,19 @@ export default function CartItemCard({
             {hasVariantTags && (
               <div className="mb-3 flex flex-wrap gap-1.5">
                 {item?.condition && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-caption font-semibold text-navy">
                     {item.condition}
                   </span>
                 )}
 
                 {item?.color && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-caption font-semibold text-navy">
                     Color: {item.color}
                   </span>
                 )}
 
                 {item?.size && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-caption font-semibold text-navy">
                     Size: {item.size}
                   </span>
                 )}
@@ -212,7 +212,7 @@ export default function CartItemCard({
                   .map(([key, value]) => (
                     <span
                       key={key}
-                      className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold capitalize text-[#1B1D60]"
+                      className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-caption font-semibold capitalize text-navy"
                     >
                       {key.replace(/_/g, " ")}: {String(value)}
                     </span>
@@ -282,13 +282,13 @@ export default function CartItemCard({
                 disabled={isWishlisted}
                 className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium transition ${
                   isWishlisted
-                    ? "text-[#1B1D60] cursor-default"
-                    : "text-[#2d2d2d] hover:text-[#1B1D60]"
+                    ? "text-navy cursor-default"
+                    : "text-[#2d2d2d] hover:text-navy"
                 }`}
               >
                 <Heart
                   size={16}
-                  className="text-[#1B1D60]"
+                  className="text-navy"
                   fill={isWishlisted || isSaving ? "currentColor" : "none"}
                 />
                 {isWishlisted ? "Wishlisted" : saveForLaterLabel}
@@ -319,7 +319,7 @@ export default function CartItemCard({
               <button
                 type="button"
                 onClick={() => onBuyNow(item?.id)}
-                className="inline-flex items-center text-xs sm:text-sm font-semibold text-[#1B1D60] transition hover:text-[#CE9F2D]"
+                className="inline-flex items-center text-xs sm:text-sm font-semibold text-navy transition hover:text-gold"
               >
                 Buy Now
               </button>

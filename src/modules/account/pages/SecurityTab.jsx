@@ -98,14 +98,14 @@ export default function SecurityTab() {
         onSubmit={handleSubmit((values) => submit(values))}
         noValidate
       >
-        <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <header className="flex flex-col gap-4 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-navy">
               <UserRound size={21} />
             </span>
 
             <div className="min-w-0">
-              <h2 className="text-lg font-bold leading-6 text-[#1B1D60] sm:text-xl">
+              <h2 className="text-lg font-bold leading-6 text-navy sm:text-xl">
                 Security
               </h2>
               <p className="mt-1 text-sm leading-5 text-[#64708A]">
@@ -192,7 +192,7 @@ export default function SecurityTab() {
               type="button"
               disabled={loading}
               onClick={closeOtpModal}
-              className="text-sm font-medium text-[#64708A] underline-offset-4 hover:text-[#1B1D60] hover:underline disabled:opacity-50"
+              className="text-sm font-medium text-[#64708A] underline-offset-4 hover:text-navy hover:underline disabled:opacity-50"
             >
               Edit password details
             </button>
@@ -201,7 +201,7 @@ export default function SecurityTab() {
               type="button"
               disabled={loading}
               onClick={handleSubmit((values) => submit(values, true))}
-              className="text-sm font-semibold text-[#1B1D60] underline-offset-4 hover:underline disabled:opacity-50"
+              className="text-sm font-semibold text-navy underline-offset-4 hover:underline disabled:opacity-50"
             >
               Resend OTP
             </button>

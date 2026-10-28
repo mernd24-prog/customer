@@ -7,7 +7,7 @@ export default function StickySidebarLayout({
   containerClass = "w-full flex flex-col lg:flex-row lg:items-stretch gap-4 lg:gap-8",
   sidebarClass = "w-full lg:w-[420px]",
   mainClass = "w-full flex min-w-0 flex-1 flex-col",
-  stickyOffset = "calc(var(--customer-header-height, 95px) + 80px)",
+  stickyOffset = "var(--customer-page-sticky-top)",
   stickyMain = false,
 }) {
   const sidebar = (
@@ -21,7 +21,7 @@ export default function StickySidebarLayout({
               top: stickyOffset,
               alignSelf: "flex-start",
               height: "max-content",
-              zIndex: 10,
+              zIndex: 1,
             }
       }
     >
@@ -39,7 +39,7 @@ export default function StickySidebarLayout({
               top: stickyOffset,
               alignSelf: "flex-start",
               height: "max-content",
-              zIndex: 10,
+              zIndex: 1,
             }
           : {}
       }

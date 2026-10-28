@@ -77,7 +77,7 @@ export const StarRatingUI = ({
             e.stopPropagation();
             onReviewClick?.(item, order, hoverStar || 5);
           }}
-          className="whitespace-nowrap border-none text-xs font-bold text-[#201B78] outline-none"
+          className="whitespace-nowrap border-none text-xs font-bold text-navy outline-none"
         >
           Rate & Review
         </button>
@@ -108,12 +108,12 @@ export const StarRatingUI = ({
       </div>
 
       <span className="text-[#BBF7D0] sm:hidden">|</span>
-      <span className="text-[11px] font-bold text-[#1F2430] sm:hidden">
+      <span className="text-caption font-bold text-ink sm:hidden">
         {Number(rating).toFixed(1)}
       </span>
       <span className="text-[#BBF7D0] sm:hidden">|</span>
 
-      <span className="rounded-md text-[10px] font-bold text-[#065F46] sm:bg-[#DCFCE7] sm:px-2 sm:py-0.5 sm:text-[11px]">
+      <span className="rounded-md text-micro font-bold text-[#065F46] sm:bg-[#DCFCE7] sm:px-2 sm:py-0.5 sm:text-caption">
         Reviewed
       </span>
     </div>
@@ -275,16 +275,16 @@ export default function OrderItemSummaryCard({
           </div>
 
           <div className="min-w-0 flex-1 py-0.5">
-            <h3 className="line-clamp-2 text-[13px] font-semibold leading-[1.4] text-[#292929] sm:text-[14px]">
+            <h3 className="line-clamp-2 text-label font-semibold leading-[1.4] text-[#292929] sm:text-sm">
               {statusLabel} on {orderDate}
             </h3>
 
-            <p className="mt-1 line-clamp-2 text-[11px] leading-[1.5] text-[#707070] sm:text-[13px]">
+            <p className="mt-1 line-clamp-2 text-caption leading-[1.5] text-[#707070] sm:text-label">
               {statusDescription}
             </p>
 
             {/* Mobile: show quantity only, never show color */}
-            <div className="mt-1.5 flex items-center gap-x-2 text-[11px] text-[#777777]">
+            <div className="mt-1.5 flex items-center gap-x-2 text-caption text-[#777777]">
               {orderedQuantity > 1 && (
                 <span>Qty: {orderedQuantity}</span>
               )}
@@ -339,7 +339,7 @@ export default function OrderItemSummaryCard({
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <h3 className="line-clamp-2 text-sm font-bold leading-snug text-[#1F2430]">
+            <h3 className="line-clamp-2 text-sm font-bold leading-snug text-ink">
               <ShowMoreText
                 text={productTitle}
                 mode="characters"
@@ -347,22 +347,22 @@ export default function OrderItemSummaryCard({
                 moreLabel="more"
                 lessLabel="less"
                 textClassName="inline"
-                buttonClassName="ml-1 text-xs font-semibold text-[#201B78] hover:underline"
+                buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline"
               />
             </h3>
 
             <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs">
               {getOrderItemColor(item) !== "N/A" && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5 text-[11px] font-medium text-[#1F2430]">
-                  <span className="font-normal text-[#6F7480]">
+                <span className="inline-flex items-center gap-1 rounded-md border border-border/80 bg-cream px-2.5 py-0.5 text-caption font-medium text-ink">
+                  <span className="font-normal text-muted">
                     Color:
                   </span>
                   {getOrderItemColor(item)}
                 </span>
               )}
 
-              <span className="inline-flex items-center gap-1 rounded-md border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5 text-[11px] font-medium text-[#1F2430]">
-                <span className="font-normal text-[#6F7480]">
+              <span className="inline-flex items-center gap-1 rounded-md border border-border/80 bg-cream px-2.5 py-0.5 text-caption font-medium text-ink">
+                <span className="font-normal text-muted">
                   Qty:
                 </span>
                 {orderedQuantity}
@@ -372,7 +372,7 @@ export default function OrderItemSummaryCard({
         </div>
 
         <div className="col-span-2 flex min-w-0 flex-col items-start justify-start">
-          <span className="text-base font-extrabold tracking-tight text-[#1F2430] sm:text-lg">
+          <span className="text-base font-extrabold tracking-tight text-ink sm:text-lg">
             {formatMoney(itemTotal, currency)}
           </span>
         </div>
@@ -383,11 +383,11 @@ export default function OrderItemSummaryCard({
           />
 
           <div className="flex min-w-0 flex-col items-start">
-            <span className="whitespace-normal text-sm font-semibold text-[#1F2430] sm:whitespace-nowrap">
+            <span className="whitespace-normal text-sm font-semibold text-ink sm:whitespace-nowrap">
               {statusLabel} on {orderDate}
             </span>
 
-            <p className="mt-0.5 text-xs text-[#6F7480]">
+            <p className="mt-0.5 text-xs text-muted">
               {statusDescription}
             </p>
 

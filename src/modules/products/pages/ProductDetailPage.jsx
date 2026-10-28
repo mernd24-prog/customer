@@ -173,10 +173,10 @@ export default function ProductDetailPage() {
         >
           {product && (
             <>
-              <nav className="mt-8 flex flex-wrap items-center gap-1 text-sm text-[#2E2E2E] lg:mt-12 lg:text-lg">
+              <nav className="mt-8 flex flex-wrap items-center gap-1 text-sm text-ink lg:mt-12 lg:text-lg">
                 <Link
                   to="/"
-                  className="font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
+                  className="font-medium text-ink transition-all duration-300 ease-in-out hover:text-gold"
                 >
                   Home
                 </Link>
@@ -188,7 +188,7 @@ export default function ProductDetailPage() {
                     <>
                       <Link
                         to={CUSTOMER_ROUTES.category(product.parentCategory)}
-                        className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
+                        className="font-medium capitalize text-ink transition-all duration-300 ease-in-out hover:text-gold"
                       >
                         {(product.parentCategory || "").replace(/-/g, " ")}
                       </Link>
@@ -205,7 +205,7 @@ export default function ProductDetailPage() {
                         to={CUSTOMER_ROUTES.category(
                           product.categoryKey || product.category,
                         )}
-                        className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
+                        className="font-medium capitalize text-ink transition-all duration-300 ease-in-out hover:text-gold"
                       >
                         {getProductCategoryName(product)}
                       </Link>
@@ -221,7 +221,7 @@ export default function ProductDetailPage() {
                 </span>
               </nav>
               <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-6 lg:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
-                <div className="min-w-0 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+62px)] lg:self-start">
+                <div className="min-w-0 lg:sticky lg:top-[var(--customer-page-sticky-top)] lg:self-start">
                   <ImageGallery
                     images={images}
                     video={productVideo}
@@ -247,7 +247,7 @@ export default function ProductDetailPage() {
                     {brand && (
                       <Link
                         to={`/brands/${encodeURIComponent(brand)}`}
-                        className="w-fit text-xl sm:text-2xl font-extrabold tracking-tight text-[#1B1D60] hover:text-[#CE9F2D] transition-colors leading-tight mb-0.5"
+                        className="w-fit text-xl sm:text-2xl font-extrabold tracking-tight text-navy hover:text-gold transition-colors leading-tight mb-0.5"
                       >
                         {capitalizeFirst(brand)}
                       </Link>
@@ -257,19 +257,19 @@ export default function ProductDetailPage() {
                       className={`break-words block leading-relaxed ${
                         brand
                           ? "text-sm sm:text-base font-medium text-[#595E6B]"
-                          : "text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px]"
+                          : "text-lg font-bold text-navy md:text-xl lg:text-[22px]"
                       }`}
                     >
                       <ShowMoreText
                         text={productTitle}
                         mode="words"
                         limit={10}
-                        buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#CE9F2D] hover:underline bg-transparent border-0 p-0 outline-none shadow-none"
+                        buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-gold hover:underline bg-transparent border-0 p-0 outline-none shadow-none"
                       />
                     </h1>
                     {Number(product.rating || 0) > 0 && (
                       <div className="flex items-center pt-0.5">
-                        <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
+                        <span className="mr-3 font-dm-sans text-xs font-medium leading-[100%] tracking-[0px] align-middle text-ink sm:text-label lg:text-sm">
                           {Number(product.rating || 0).toFixed(1)}
                         </span>
                         <div className="flex gap-0.5">
@@ -293,7 +293,7 @@ export default function ProductDetailPage() {
                             );
                           })}
                         </div>
-                        <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
+                        <span className="ml-3 font-dm-sans text-xs font-medium leading-[100%] tracking-[0px] align-middle text-ink sm:text-label lg:text-sm">
                           ({product.reviewCount || product.ratingCount || "0"})
                         </span>
                       </div>

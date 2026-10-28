@@ -13,7 +13,7 @@ function MenuItem({ item }) {
         href={item.path}
         target="_blank"
         rel="noreferrer"
-        className={`flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
+        className={`flex items-center gap-3 px-4 py-3 text-label font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
       >
         {item.icon && (
           <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>
@@ -27,7 +27,7 @@ function MenuItem({ item }) {
     return (
       <button
         onClick={item.action}
-        className={`flex w-full items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
+        className={`flex w-full items-center gap-3 px-4 py-3 text-label font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
       >
         {item.icon && (
           <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>
@@ -40,7 +40,7 @@ function MenuItem({ item }) {
   return (
     <Link
       to={item.path || "#"}
-      className={`flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
+      className={`flex items-center gap-3 px-4 py-3 text-label font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
     >
       {item.icon && (
         <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>

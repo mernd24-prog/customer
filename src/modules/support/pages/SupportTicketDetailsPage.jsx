@@ -56,7 +56,7 @@ function ChatBubble({
   const bubbleClass = isRight
     ? "bg-gradient-to-br from-[#1B1D60] to-[#2B2E85] text-white rounded-[20px] rounded-tr-[4px] shadow-sm border border-[#2B2E85]/40"
     : tone === "system"
-      ? "border border-[#E7D9B8] bg-[#FFF9EA] text-[#4E4E4E] rounded-[18px]"
+      ? "border border-border bg-[#FFF9EA] text-ink rounded-[18px]"
       : "border border-[#E5DEC9] bg-white text-[#2D3142] rounded-[20px] rounded-tl-[4px] shadow-xs";
   const Icon = isRight ? UserRound : Headphones;
 
@@ -74,7 +74,7 @@ function ChatBubble({
       >
         {tone !== "system" ? (
           <div
-            className={`mb-1 flex items-center gap-2 text-[11px] font-semibold ${isRight ? "text-[#717684]" : "text-[#1B1D60]"}`}
+            className={`mb-1 flex items-center gap-2 text-caption font-semibold ${isRight ? "text-[#717684]" : "text-navy"}`}
           >
             <span>{name}</span>
             {time ? (
@@ -328,7 +328,7 @@ export default function SupportTicketDetailsPage() {
         <div className="mt-5">
           <Link
             to="/support"
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#1B1D60] hover:text-[#CE9F2D]"
+            className="inline-flex items-center gap-2 text-sm font-bold text-navy hover:text-gold"
           >
             <ArrowLeft size={17} />
             Back to Support
@@ -336,9 +336,9 @@ export default function SupportTicketDetailsPage() {
         </div>
 
         {!currentUser ? (
-          <section className="mt-6 rounded-[12px] border border-[#E7D9B8] bg-white p-6 text-center">
-            <h1 className="text-xl font-bold text-[#1B1D60]">Login required</h1>
-            <p className="mx-auto mt-2 max-w-xl text-sm text-[#666666]">
+          <section className="mt-6 rounded-[12px] border border-border bg-white p-6 text-center">
+            <h1 className="text-xl font-bold text-navy">Login required</h1>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-muted">
               Please login to view your support ticket.
             </p>
             <Button
@@ -387,12 +387,12 @@ export default function SupportTicketDetailsPage() {
                           Sam Global Support
                         </h1>
                         <span
-                          className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2.5 py-[8px] text-[10px] sm:text-[11px] font-semibold leading-none ${statusClass(ticket.status)}`}
+                          className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2.5 py-[8px] text-micro sm:text-caption font-semibold leading-none ${statusClass(ticket.status)}`}
                         >
                           {statusLabel(ticket.status)}
                         </span>
                       </div>
-                      <p className="mt-0.5 truncate text-[11px] font-medium text-white/80 sm:text-xs">
+                      <p className="mt-0.5 truncate text-caption font-medium text-white/80 sm:text-xs">
                         {ticket.subject} ·{" "}
                         {ticket.categoryLabel || ticket.category}
                       </p>
@@ -460,17 +460,17 @@ export default function SupportTicketDetailsPage() {
                   <div className="border-b border-[#E3DCCE] bg-gradient-to-r from-[#FAF6ED] to-[#F3EAD7] px-4 py-4">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <h2 className="text-base font-extrabold text-[#1B1D60]">
+                        <h2 className="text-base font-extrabold text-navy">
                           All Tickets
                         </h2>
-                        <p className="mt-0.5 text-xs font-semibold text-[#666666]">
+                        <p className="mt-0.5 text-xs font-semibold text-muted">
                           {tickets.length
                             ? `${tickets.length} tickets`
                             : "No tickets"}
                         </p>
                       </div>
                       {ticket.resolvedAt ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/80 bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 shadow-2xs">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/80 bg-emerald-50 px-2.5 py-1 text-caption font-bold text-emerald-700 shadow-2xs">
                           <CheckCircle2 size={12} />
                           Resolved
                         </span>
@@ -504,7 +504,7 @@ export default function SupportTicketDetailsPage() {
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
                                 <p
-                                  className={`truncate text-sm font-bold ${active ? "text-[#1B1D60]" : "text-[#2E3142]"}`}
+                                  className={`truncate text-sm font-bold ${active ? "text-navy" : "text-[#2E3142]"}`}
                                 >
                                   {item.subject}
                                 </p>
@@ -513,7 +513,7 @@ export default function SupportTicketDetailsPage() {
                                 </p>
                               </div>
                               <span
-                                className={`shrink-0 whitespace-nowrap rounded-full px-2 py-2 text-[10px] font-semibold leading-none ${statusClass(item.status)}`}
+                                className={`shrink-0 whitespace-nowrap rounded-full px-2 py-2 text-micro font-semibold leading-none ${statusClass(item.status)}`}
                               >
                                 {statusLabel(item.status)}
                               </span>
@@ -522,7 +522,7 @@ export default function SupportTicketDetailsPage() {
                         );
                       })
                     ) : (
-                      <p className="p-4 text-sm font-medium text-[#666666]">
+                      <p className="p-4 text-sm font-medium text-muted">
                         No support tickets found.
                       </p>
                     )}

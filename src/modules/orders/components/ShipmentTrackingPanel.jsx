@@ -24,11 +24,11 @@ export default function ShipmentTrackingPanel({
   if (!shipments.length) {
     return (
       <section className="rounded-xl border border-[#CE9F2D66] bg-white p-5">
-        <div className="flex items-center gap-3 text-[#1B1D60]">
+        <div className="flex items-center gap-3 text-navy">
           <Package size={22} />
           <h2 className="font-bold ">Shipment Tracking</h2>
         </div>
-        <p className="mt-3 text-sm text-[#6F7480]">
+        <p className="mt-3 text-sm text-muted">
           The seller is preparing your order. Courier and tracking details will
           appear here after packing.
         </p>
@@ -70,8 +70,8 @@ export default function ShipmentTrackingPanel({
   return (
     <section className="space-y-4">
       <div>
-        {/* <h2 className="text-xl font-bold text-[#1B1D60]">Shipment Tracking</h2>
-        <p className="mt-1 text-sm text-[#6F7480]">
+        {/* <h2 className="text-xl font-bold text-navy">Shipment Tracking</h2>
+        <p className="mt-1 text-sm text-muted">
           Each Seller Package May Move Separately.
         </p> */}
       </div>
@@ -160,9 +160,9 @@ export default function ShipmentTrackingPanel({
               titleClassName="text-lg font-bold"
               bodyClassName="p-5"
             >
-              <div className="space-y-5 text-sm text-[#2E2E2E]">
+              <div className="space-y-5 text-sm text-ink">
                 {shipmentProductNames && (
-                  <div className="mb-4 rounded-lg bg-[#F9F5EB] p-3 text-[#1B1D60]">
+                  <div className="mb-4 rounded-lg bg-[#F9F5EB] p-3 text-navy">
                     <p className="text-xs font-semibold uppercase tracking-wider text-[#8A5A00] mb-1">
                       Package contains
                     </p>
@@ -173,7 +173,7 @@ export default function ShipmentTrackingPanel({
                 )}
 
                 <div className="flex items-start gap-3">
-                  <Truck className="mt-0.5 shrink-0 text-[#3E4093]" size={18} />
+                  <Truck className="mt-0.5 shrink-0 text-navy" size={18} />
                   <div>
                     <p className="font-semibold">Courier</p>
                     <p>{shipment.courier_name || "Seller Delivery"}</p>
@@ -182,7 +182,7 @@ export default function ShipmentTrackingPanel({
 
                 <div className="flex items-start gap-3">
                   <Package
-                    className="mt-0.5 shrink-0 text-[#3E4093]"
+                    className="mt-0.5 shrink-0 text-navy"
                     size={18}
                   />
                   <div>
@@ -194,7 +194,7 @@ export default function ShipmentTrackingPanel({
                 {shipment.tracking_url && (
                   <div className="flex items-start gap-3">
                     <ExternalLink
-                      className="mt-0.5 shrink-0 text-[#3E4093]"
+                      className="mt-0.5 shrink-0 text-navy"
                       size={18}
                     />
                     <div>
@@ -203,7 +203,7 @@ export default function ShipmentTrackingPanel({
                         href={shipment.tracking_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[#3E4093] underline"
+                        className="text-navy underline"
                       >
                         Track Package
                       </a>
@@ -214,7 +214,7 @@ export default function ShipmentTrackingPanel({
                 {shipment.shipped_at && (
                   <div className="flex items-start gap-3">
                     <Clock3
-                      className="mt-0.5 shrink-0 text-[#3E4093]"
+                      className="mt-0.5 shrink-0 text-navy"
                       size={18}
                     />
                     <div>
@@ -227,7 +227,7 @@ export default function ShipmentTrackingPanel({
                 {shipment.expected_delivery_at && (
                   <div className="flex items-start gap-3">
                     <Clock3
-                      className="mt-0.5 shrink-0 text-[#3E4093]"
+                      className="mt-0.5 shrink-0 text-navy"
                       size={18}
                     />
                     <div>
@@ -301,11 +301,11 @@ export default function ShipmentTrackingPanel({
 
                       {/* Event content details - Always fully visible */}
                       <div>
-                        <p className={`text-sm font-semibold capitalize ${isCancelledEvent ? "text-[#E53935]" : "text-[#2E2E2E]"}`}>
+                        <p className={`text-sm font-semibold capitalize ${isCancelledEvent ? "text-[#E53935]" : "text-ink"}`}>
                           {label(event.status)}
                         </p>
 
-                        <p className="mt-1 text-xs text-[#6F7480]">
+                        <p className="mt-1 text-xs text-muted">
                           {[
                             dateTime(event.event_time || event.created_at),
                             event.location,
@@ -315,7 +315,7 @@ export default function ShipmentTrackingPanel({
                         </p>
 
                         {event.note && (
-                          <p className="mt-1 text-xs text-[#6F7480]">
+                          <p className="mt-1 text-xs text-muted">
                             {event.note.replace(/_/g, " ")}
                           </p>
                         )}

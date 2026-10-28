@@ -26,7 +26,11 @@ export function WatchlistItemCard({
   onRemove,
 }) {
   const productPath = getProductPublicPath(product);
-  const title = getProductTitle(product);
+  const resolvedTitle = getProductTitle(product);
+  const title =
+    resolvedTitle && resolvedTitle !== "Untitled product"
+      ? resolvedTitle
+      : "Product details coming soon";
   const image = getProductImage(product);
   const price = getProductPrice(product);
   const oldPrice = getProductMrp(product);
@@ -195,7 +199,7 @@ export function WatchlistItemCard({
 
         <div className="flex min-w-0 flex-1 flex-col justify-between pr-5">
           <div className="min-w-0">
-            <h4 className="truncate text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
+            <h4 className="truncate text-label font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
               <Link
                 to={productPath}
                 target="_blank"
@@ -207,7 +211,7 @@ export function WatchlistItemCard({
               </Link>
             </h4>
 
-            <p className="mt-1 text-[12px] font-bold text-ink">
+            <p className="mt-1 text-xs font-bold text-ink">
               {formatMoney(price, currency)}
             </p>
           </div>
@@ -216,7 +220,7 @@ export function WatchlistItemCard({
             to={productPath}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 text-[11px] font-medium text-gold hover:underline"
+            className="mt-1 text-caption font-medium text-gold hover:underline"
             aria-label={`View details for ${title}`}
           >
             View Item
@@ -242,7 +246,7 @@ export function WatchlistItemCard({
     <article
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex min-w-0 flex-col overflow-hidden rounded-lg sm:rounded-lg border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out hover:shadow-md"
+      className="customer-card customer-card--interactive group relative flex min-w-0 flex-col overflow-hidden"
     >
       {/* -----------------------------------------------------
           Badges (Discount % Off)
@@ -257,13 +261,13 @@ export function WatchlistItemCard({
               bg-blue
               px-[8px] py-[3px]
               font-dmSans
-              text-[10px] font-semibold
+              text-micro font-semibold
               leading-none
               tracking-[0%]
               text-white
               sm:h-[28px] sm:min-w-[84px]
               sm:px-[15px] sm:py-[5px]
-              sm:text-[14px]
+              sm:text-sm
             "
           >
             {discountLabel}
@@ -296,7 +300,7 @@ export function WatchlistItemCard({
         className="flex flex-1 flex-col min-w-0"
       >
         {/* Product Image */}
-        <div className="relative flex justify-center overflow-hidden h-[160px] xs:h-[190px] sm:h-[230px] md:h-[260px] items-center w-full rounded-t-lg sm:rounded-t-lg transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
+        <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden border-b border-border/70 bg-[var(--customer-surface-soft)]">
           {activeImage ? (
             <>
               <img
@@ -333,7 +337,7 @@ export function WatchlistItemCard({
             <div className="flex flex-col items-center justify-center gap-2 text-gray-400">
               <span className="text-xs">No Image</span>
               {isUnavailable && (
-                <span className="rounded bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600">
+                <span className="rounded bg-red-100 px-2 py-0.5 text-micro font-bold text-red-600">
                   UNAVAILABLE
                 </span>
               )}
@@ -342,11 +346,15 @@ export function WatchlistItemCard({
         </div>
 
         {/* Product Information */}
-        <div className="flex min-w-0 flex-col px-2.5 sm:px-4 pt-2 sm:pt-3 pb-1 sm:pb-2">
-          <StarRating rating={rating} count={ratingCount} />
+        <div className="flex min-h-[92px] min-w-0 flex-col px-3 pb-2.5 pt-3 sm:min-h-[110px] sm:px-4 sm:pb-3">
+          {rating > 0 && (
+            <div className="mb-1.5 flex items-center">
+              <StarRating rating={rating} count={ratingCount} />
+            </div>
+          )}
 
           <h3
-            className="my-1 sm:my-[10px] w-full text-xs sm:text-sm font-semibold text-[#2E2E2E] line-clamp-1"
+            className="line-clamp-2 min-h-10 w-full text-label font-semibold leading-5 text-ink sm:min-h-11 sm:text-body sm:leading-[22px]"
             title={title}
           >
             {title}
@@ -356,9 +364,10 @@ export function WatchlistItemCard({
             price={price}
             oldPrice={oldPrice}
             currency={currency}
-            className="my-0.5 sm:my-1 flex flex-wrap items-baseline gap-1 sm:gap-2.5"
-            priceClassName="text-sm sm:text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
-            oldPriceClassName="text-xs sm:text-base font-semibold text-[#737373] line-through md:text-lg 2xl:text-[20px]"
+            className="mt-auto flex min-h-7 flex-wrap items-end gap-1 pt-2 sm:gap-2"
+            priceClassName="text-base font-extrabold text-ink sm:text-lg"
+            oldPriceClassName="text-xs font-medium text-muted line-through sm:text-sm"
+            emptyLabel="Currently unavailable"
           />
         </div>
       </Link>
@@ -382,11 +391,17 @@ export function WatchlistItemCard({
             />
           }
           className={cn(
-            "w-full flex-1 gap-1 sm:gap-2 text-[10px] sm:text-[14px] md:text-[15px] font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-2 sm:px-4 py-1.5 sm:py-2.5 h-8 sm:h-10",
+            "w-full flex-1 gap-1 sm:gap-2 text-micro sm:text-sm md:text-body font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-2 sm:px-4 py-1.5 sm:py-2.5 h-8 sm:h-10",
             (isUnavailable || !isInStock) && "cursor-not-allowed opacity-60",
           )}
         >
-          <span className="truncate">Move to Cart</span>
+          <span className="truncate">
+            {isUnavailable
+              ? "Unavailable"
+              : isInStock
+                ? "Move to Cart"
+                : "Out of stock"}
+          </span>
         </PillButton>
       </div>
     </article>

@@ -71,10 +71,10 @@ export default function ShareProductPopover({ productTitle }) {
   return (
     <div className="absolute right-0 top-12 z-50 w-[230px] max-w-[calc(100vw-24px)] rounded-[var(--customer-radius)] border border-border bg-white p-3 shadow-2xl sm:w-[260px] sm:p-4 md:w-[280px]">
       <div className="mb-3">
-        <h3 className="text-[13px] font-bold text-ink sm:text-sm">
+        <h3 className="text-label font-bold text-ink sm:text-sm">
           Share Product
         </h3>
-        <p className="mt-1 text-[11px] text-muted sm:text-xs">
+        <p className="mt-1 text-caption text-muted sm:text-xs">
           Share This Product with Friends
         </p>
       </div>
@@ -95,7 +95,7 @@ export default function ShareProductPopover({ productTitle }) {
           await navigator.clipboard.writeText(shareUrl);
           alert("Link copied!");
         }}
-        className="mt-4 w-full rounded-full bg-gold px-3 py-2 text-[12px] font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark sm:px-4 sm:text-sm"
+        className="mt-4 w-full rounded-full bg-gold px-3 py-2 text-xs font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark sm:px-4 sm:text-sm"
       >
         Copy Link
       </button>

@@ -8,12 +8,23 @@ export default function Rating({
   max = 5,
   size = 14,
   showValue = false,
+  emptyLabel = "",
   className = "",
 }) {
   const rating = clampRating(value, max);
   const roundedRating = Math.round(rating);
-  // Do not render rating UI when rating is zero or falsy
-  if (!rating || Number(rating) <= 0) return null;
+  if (!rating || Number(rating) <= 0) {
+    return emptyLabel ? (
+      <span
+        className={cn(
+          "inline-flex min-h-5 w-fit items-center rounded-full border border-border bg-cream px-2 py-0.5 text-micro font-bold uppercase tracking-[0.06em] text-muted",
+          className,
+        )}
+      >
+        {emptyLabel}
+      </span>
+    ) : null;
+  }
 
   return (
     <div
@@ -26,12 +37,12 @@ export default function Rating({
         }`}
       >
         <Star size={size > 14 ? size : 12} className="fill-white text-white" />
-        <span className="text-xs font-bold sm:text-[13px]">
+        <span className="text-xs font-bold sm:text-label">
           {rating.toFixed(1)}
         </span>
       </div>
       {count != null && (
-        <span className="text-[13px] font-medium text-[#2E2E2E]">
+        <span className="text-label font-medium text-ink">
           ({count})
         </span>
       )}

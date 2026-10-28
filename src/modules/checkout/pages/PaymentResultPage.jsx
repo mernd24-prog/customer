@@ -227,7 +227,7 @@ export function PaymentResultPage() {
                 </div>
 
                 <div className="flex flex-col items-center">
-                  <h1 className="text-2xl font-bold leading-tight text-[#3E4093] sm:text-[32px]">
+                  <h1 className="text-2xl font-bold leading-tight text-navy sm:text-[32px]">
                     {isActuallyFailed
                       ? "Payment Failed"
                       : reason === "dismissed"
@@ -235,7 +235,7 @@ export function PaymentResultPage() {
                         : "Payment Confirmation Pending"}
                   </h1>
 
-                  <p className="mt-2 max-w-2xl text-xs leading-relaxed text-[#2E2E2E] sm:text-sm sm:leading-6">
+                  <p className="mt-2 max-w-2xl text-xs leading-relaxed text-ink sm:text-sm sm:leading-6">
                     {isActuallyFailed
                       ? "Razorpay could not complete this payment. Your order is saved; retry safely from its order page."
                       : reason === "dismissed"
@@ -376,11 +376,11 @@ export function PaymentResultPage() {
                       </div>
 
                       <div className="flex flex-col items-center">
-                        <h1 className="break-words text-xl font-bold text-[#3E4093] sm:text-2xl">
+                        <h1 className="break-words text-xl font-bold text-navy sm:text-2xl">
                           Order Placed Successfully!
                         </h1>
 
-                        <p className="my-2 max-w-xl text-xs font-medium leading-relaxed text-[#2E2E2E] sm:text-sm">
+                        <p className="my-2 max-w-xl text-xs font-medium leading-relaxed text-ink sm:text-sm">
                           Thank You for Shopping with Sam Global.
                           <br className="hidden sm:block" />
                           Your order has been received and is being prepared for
@@ -414,7 +414,7 @@ export function PaymentResultPage() {
                     </div>
                   </div>
 
-                  <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-5 py-3 text-xs font-semibold text-[#1B1D60] sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-3.5 sm:text-sm">
+                  <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-5 py-3 text-xs font-semibold text-navy sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-3.5 sm:text-sm">
                     <span className="break-words">
                       Order : #{displayOrderRef}
                     </span>

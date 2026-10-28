@@ -53,8 +53,8 @@ export function WalletPage() {
               <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-[#FFC82E]/25 blur-2xl pointer-events-none" />
 
               <div className="relative z-10 mb-2 flex items-center justify-between">
-                <div className="flex items-center gap-2.5 text-[#CE9F2D]">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#CE9F2D]/15 text-[#CE9F2D] border border-[#CE9F2D]/30">
+                <div className="flex items-center gap-2.5 text-gold">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#CE9F2D]/15 text-gold border border-[#CE9F2D]/30">
                     <Wallet size={18} />
                   </div>
 

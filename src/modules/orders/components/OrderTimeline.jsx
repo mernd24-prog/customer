@@ -134,8 +134,8 @@ export function OrderTimeline({
                     isCompleted
                       ? isCancelledStep
                         ? "text-[#E53935]"
-                        : "text-[#2E2E2E]"
-                      : "text-[#6F7480]"
+                        : "text-ink"
+                      : "text-muted"
                   }`}
                 >
                   {step.label}
@@ -151,15 +151,15 @@ export function OrderTimeline({
                     mode="lines"
                     limit={1}
                     className="mt-1 block"
-                    textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                    buttonClassName="ml-1 text-[11px] font-semibold text-[#26A541] hover:underline"
+                    textClassName="text-xs text-ink whitespace-pre-wrap"
+                    buttonClassName="ml-1 text-caption font-semibold text-[#26A541] hover:underline"
                     moreLabel="Show more"
                     lessLabel="Show less"
                   />
                 )} */}
 
                 {isCompleted && displayTime && (
-                  <p className="mt-1 text-xs font-medium text-[#6F7480] md:text-center">
+                  <p className="mt-1 text-xs font-medium text-muted md:text-center">
                     {displayTime}
                   </p>
                 )}
@@ -274,7 +274,7 @@ export function OrderTimeline({
             <div className="min-w-0 md:px-2">
               <p
                 className={`text-sm font-semibold md:text-center ${
-                  isCompleted ? "text-[#2E2E2E]" : "text-[#6F7480]"
+                  isCompleted ? "text-ink" : "text-muted"
                 }`}
               >
                 {step.label}
@@ -291,8 +291,8 @@ export function OrderTimeline({
                   mode="lines"
                   limit={1}
                   className="mt-1 block"
-                  textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+                  textClassName="text-xs text-ink whitespace-pre-wrap"
+                  buttonClassName="ml-1 text-caption font-semibold text-gold hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -302,8 +302,8 @@ export function OrderTimeline({
                   mode="lines"
                   limit={1}
                   className="mt-1 block"
-                  textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+                  textClassName="text-xs text-ink whitespace-pre-wrap"
+                  buttonClassName="ml-1 text-caption font-semibold text-gold hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -313,8 +313,8 @@ export function OrderTimeline({
                   mode="lines"
                   limit={1}
                   className="mt-1 block"
-                  textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+                  textClassName="text-xs text-ink whitespace-pre-wrap"
+                  buttonClassName="ml-1 text-caption font-semibold text-gold hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -324,19 +324,19 @@ export function OrderTimeline({
                   mode="lines"
                   limit={1}
                   className="mt-1 block"
-                  textClassName="text-xs text-[#6F7480] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+                  textClassName="text-xs text-muted whitespace-pre-wrap"
+                  buttonClassName="ml-1 text-caption font-semibold text-gold hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
               ) : null} */}
 
               {isCompleted ? (
-                <p className="mt-1 text-xs font-medium text-[#1B1D60] md:text-center">
+                <p className="mt-1 text-xs font-medium text-navy md:text-center">
                   {displayTime || dateTime(fallbackTime)}
                 </p>
               ) : showExpected ? (
-                <p className="mt-1 text-xs font-medium text-[#1B1D60] md:text-center">
+                <p className="mt-1 text-xs font-medium text-navy md:text-center">
                   Expected by {expectedDelivery}
                 </p>
               ) : null}

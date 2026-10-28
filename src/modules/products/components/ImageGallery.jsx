@@ -401,7 +401,7 @@ export default function ImageGallery({
         <IconActionButton
           title="Zoom Image"
           onClick={() => openModal(activeIndex)}
-          className="hidden text-[#1B1D60] md:flex"
+          className="hidden text-navy md:flex"
         >
           <ZoomIn size={18} />
         </IconActionButton>
@@ -409,7 +409,7 @@ export default function ImageGallery({
         <IconActionButton
           title="Add to Wishlist"
           onClick={onWishlist}
-          className="text-[#1B1D60]"
+          className="text-navy"
         >
           <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
         </IconActionButton>
@@ -418,7 +418,7 @@ export default function ImageGallery({
           <IconActionButton
             title="Share Product"
             onClick={onShareToggle}
-            className="text-[#1B1D60]"
+            className="text-navy"
           >
             <Share2 size={18} />
           </IconActionButton>

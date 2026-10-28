@@ -92,10 +92,10 @@ export const REFUND_STEPS = [
 ];
 
 export const INFO_TILE_TONES = {
-  blue: "bg-[#E3E7F4] text-[#3E4093]",
+  blue: "bg-[#E3E7F4] text-navy",
   green: "bg-[#D8F1DA] text-[#1F9D55]",
   purple: "bg-[#E9D8F8] text-[#8B5CF6]",
-  yellow: "bg-[#FFE8B5] text-[#CE9F2D]",
+  yellow: "bg-[#FFE8B5] text-gold",
 };
 
 export const ORDER_FILTERS = [

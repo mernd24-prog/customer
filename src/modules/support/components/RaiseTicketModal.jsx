@@ -90,7 +90,7 @@ export function RaiseTicketModal() {
         <div className="border-b border-slate-100 pb-4 mb-5">
           <div className="flex items-center gap-3">
             <div>
-              <h3 className="text-lg font-bold text-[#1B1D60]">
+              <h3 className="text-lg font-bold text-navy">
                 Raise a Support Ticket
               </h3>
               <p className="text-xs text-slate-500 font-medium">
@@ -103,7 +103,7 @@ export function RaiseTicketModal() {
         {/* AI Chat Pre-fill Alert */}
         {isFromAiChat && (
           <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-xs text-amber-900">
-            <Sparkles size={16} className="text-[#CE9F2D] shrink-0" />
+            <Sparkles size={16} className="text-gold shrink-0" />
             <span className="leading-relaxed">
               Details have been pre-filled from your AI chat. You can review or
               edit before submitting.

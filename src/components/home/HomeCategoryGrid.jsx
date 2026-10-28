@@ -20,7 +20,7 @@ const NAV_BUTTON_CLASS = `
   -translate-y-1/2
   appearance-none items-center justify-center
   rounded-full border border-[#E8D9B7]
-  bg-white/95 text-[#1B1D60]
+  bg-white/95 text-navy
   shadow-md backdrop-blur-sm
   transition-colors duration-200
   hover:border-[#CE9F2D] hover:bg-[#FFF8E8]

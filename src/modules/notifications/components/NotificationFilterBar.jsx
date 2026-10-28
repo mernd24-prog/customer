@@ -23,14 +23,14 @@ export function NotificationFilterBar({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search notifications"
-            className="h-11 w-full rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/40 pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-all focus:outline-none focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
+            className="h-11 w-full rounded-lg border border-border bg-cream/40 pl-11 pr-11 text-sm font-medium text-ink placeholder-[#6F7480] outline-none transition-all focus:outline-none focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
           />
           {Boolean(query) && (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear search"
-              className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#6F7480] hover:text-[#1F2430] transition"
+              className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-muted hover:text-ink transition"
             >
               <X size={16} />
             </button>

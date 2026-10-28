@@ -136,7 +136,7 @@ function CartLine({ item, onClose }) {
       <Link
         to={productPath}
         onClick={onClose}
-        className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-[#CE9F2D]/50 bg-white px-3 text-xs font-semibold text-[#1F2430] transition-colors hover:border-[#CE9F2D] hover:bg-[#FFF8E8]"
+        className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-[#CE9F2D]/50 bg-white px-3 text-xs font-semibold text-ink transition-colors hover:border-[#CE9F2D] hover:bg-[#FFF8E8]"
       >
         View
       </Link>
@@ -233,7 +233,7 @@ export default function AddedToCartModal({
             <Link
               to="/cart"
               onClick={onClose}
-              className="inline-flex h-[44px] w-full items-center justify-center rounded-lg border border-[#CE9F2D] bg-transparent px-4 text-sm font-semibold text-[#1F2430] transition-colors hover:bg-[#FFF8E8]"
+              className="inline-flex h-[44px] w-full items-center justify-center rounded-lg border border-[#CE9F2D] bg-transparent px-4 text-sm font-semibold text-ink transition-colors hover:bg-[#FFF8E8]"
             >
               View Cart
             </Link>

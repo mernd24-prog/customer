@@ -29,20 +29,20 @@ export default function SectionContainer({
     <section className={`${className || "bg-white"}`} style={style}>
       {hasHeader && (
         <header
-          className={`text-[var(--customer-ink)] ${headerbgColor || "bg-transparent"} mb-3 sm:mb-4`}
+          className={`mb-4 text-[var(--customer-ink)] sm:mb-5 ${headerbgColor || "bg-transparent"}`}
         >
           <div
-            className={`flex flex-col gap-2 mt-0 lg:mt-1 sm:gap-4 sm:flex-row sm:items-center sm:justify-between ${!disablePadding ? "px-4 sm:px-6 lg:px-8" : ""} ${headerClassName}`}
+            className={`mt-0 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between lg:mt-1 ${!disablePadding ? "px-4 sm:px-6 lg:px-8" : ""} ${headerClassName}`}
           >
             <div className="min-w-0 flex items-center justify-between w-full sm:w-auto">
               <div>
                 {title && (
-                  <h2 className="font-bold text-[20px] md:text-[24px] text-[#3E4093]">
+                  <h2 className="customer-section-title text-xl md:text-2xl">
                     {title}
                   </h2>
                 )}
                 {subtitle && (
-                  <p className="font-medium mb-4 text-p md:text-small lg:pt-1.5 align-middle text-[var(--customer-muted,#5E626D)]">
+                  <p className="mt-1.5 max-w-2xl text-sm leading-6 text-[var(--customer-muted)]">
                     {subtitle}
                   </p>
                 )}

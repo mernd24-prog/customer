@@ -304,7 +304,7 @@ export default function GuestOtpAuthModal({
                 <div>
                   <label
                     htmlFor="guest-mobile"
-                    className="mb-2 block text-sm font-medium text-[#2E2E2E]"
+                    className="mb-2 block text-sm font-medium text-ink"
                   >
                     Mobile Number (login or registration)
                     <span className="text-red-500">*</span>
@@ -352,7 +352,7 @@ export default function GuestOtpAuthModal({
                         }
                       }}
                       placeholder="Mobile Number"
-                      className="h-full min-w-0 flex-1 rounded-r-md border-0 bg-transparent px-3 text-sm font-medium text-[#2E2E2E] placeholder:font-normal placeholder:text-muted focus:border-0 focus:outline-none focus:ring-0 autofill:[-webkit-box-shadow:0_0_0_1000px_transparent_inset] autofill:[-webkit-text-fill-color:#2E2E2E]"
+                      className="h-full min-w-0 flex-1 rounded-r-md border-0 bg-transparent px-3 text-sm font-medium text-ink placeholder:font-normal placeholder:text-muted focus:border-0 focus:outline-none focus:ring-0 autofill:[-webkit-box-shadow:0_0_0_1000px_transparent_inset] autofill:[-webkit-text-fill-color:#2E2E2E]"
                       required
                     />
                   </div>
@@ -377,7 +377,7 @@ export default function GuestOtpAuthModal({
                   {isSubmitting ? "Sending mobile OTP..." : "Send Mobile OTP"}
                 </Button>
 
-                <p className="text-center text-[0.8rem] text-muted">
+                <p className="text-center text-label text-muted">
                   New numbers create a phone-verified account automatically.
                   Prefer email and password?{" "}
                   <Link
@@ -393,7 +393,7 @@ export default function GuestOtpAuthModal({
               <form onSubmit={handleVerifyOtp} className="space-y-4" noValidate>
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <label className="text-sm font-medium text-[#2E2E2E]">
+                    <label className="text-sm font-medium text-ink">
                       Mobile OTP
                     </label>
 

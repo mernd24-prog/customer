@@ -256,7 +256,7 @@ export const Navbar = ({ icons: propIcons }) => {
               {/* Cart */}
               <HeaderIconButton
                 to="/cart"
-                className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+                className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-navy min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
                 aria-label={`Cart with ${cartItemCount} ${
                   cartItemCount === 1 ? "item" : "items"
                 }`}
@@ -264,7 +264,7 @@ export const Navbar = ({ icons: propIcons }) => {
                 <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
                 {cartItemCount > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-caption font-extrabold leading-none text-white shadow-sm">
                     {cartItemCount > 99 ? "99+" : cartItemCount}
                   </span>
                 )}
@@ -274,7 +274,7 @@ export const Navbar = ({ icons: propIcons }) => {
               <HeaderIconButton
                 to="/wishlist"
                 onClick={handleWishlistClick}
-                className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+                className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-navy min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
                 aria-label={`Watchlist with ${wishlistCount} ${
                   wishlistCount === 1 ? "item" : "items"
                 }`}
@@ -282,7 +282,7 @@ export const Navbar = ({ icons: propIcons }) => {
                 <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
                 {wishlistCount > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-caption font-extrabold leading-none text-white shadow-sm">
                     {wishlistCount > 99 ? "99+" : wishlistCount}
                   </span>
                 )}
@@ -311,11 +311,11 @@ export const Navbar = ({ icons: propIcons }) => {
                     />
 
                     <span className="hidden min-w-0 flex-col text-left leading-tight lg:flex">
-                      <span className="max-w-[130px] truncate text-[16px] font-bold text-[#2E2E2E]">
+                      <span className="max-w-[130px] truncate text-base font-bold text-ink">
                         {accountLabel}
                       </span>
 
-                      <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
+                      <span className="max-w-[160px] truncate text-body font-medium text-ink">
                         {profileUser?.email || ""}
                       </span>
                     </span>
@@ -323,13 +323,13 @@ export const Navbar = ({ icons: propIcons }) => {
                 }
                 path="/account/profile"
                 className="h-8 w-8 overflow-hidden rounded-full bg-white p-0 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
-                chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
+                chevronClassName="hidden !text-navy lg:block lg:self-top"
               >
                 <MenuDropdown title="My Account" items={accountMenuItems} />
               </HeaderDropdown>
             ) : (
               <HeaderGoldButton
-                className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[18px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[16px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+                className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-lg font-semibold leading-none text-navy-dark whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-base min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-label sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-sm lg:text-base"
                 onClick={() => navigate("/login")}
               >
                 Login

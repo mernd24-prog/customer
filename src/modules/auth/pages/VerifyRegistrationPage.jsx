@@ -84,13 +84,13 @@ export default function VerifyRegistrationPage() {
           <Button
             type="submit"
             loading={verifying}
-            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-label leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!isValid || loading}
           >
             <CheckCircle size={18} /> Verify &amp; activate account
           </Button>
 
-          <p className="text-center  text-[0.8rem] text-muted">
+          <p className="text-center  text-label text-muted">
             Didn&apos;t receive the code?{" "}
             <button
               type="button"

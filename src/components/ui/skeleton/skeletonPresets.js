@@ -572,7 +572,7 @@ export const SKELETON_PRESETS = {
             {
               type: "col",
               count: 4,
-              className: "p-4 rounded-2xl border border-[#E7D9B8]/60 bg-white gap-2.5 shadow-sm",
+              className: "p-4 rounded-2xl border border-border/60 bg-white gap-2.5 shadow-sm",
               children: [
                 {
                   type: "row",
@@ -626,7 +626,7 @@ export const SKELETON_PRESETS = {
             // Right Column (1 col - Order Summary Sidebar)
             {
               type: "col",
-              className: "p-6 rounded-2xl border border-[#E7D9B8]/60 bg-white gap-4.5 shadow-sm h-fit",
+              className: "p-6 rounded-2xl border border-border/60 bg-white gap-4.5 shadow-sm h-fit",
               children: [
                 { type: "box", width: "150px", height: "20px", rounded: "rounded-md", className: "mb-2" },
                 {

@@ -223,7 +223,7 @@ export default function OrderListPage({ returnOnly = false }) {
                           ? "Search returns by order ID, product name or tracking number"
                           : "Search by order ID, product name or tracking number"
                       }
-                      className=" h-11 w-full rounded-lg border border-[#e4ca8e] bg-white pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-shadow duration-200 focus:bg-white focus:outline-none focus:shadow-[0_4px_14px_rgba(31,36,48,0.08)]"
+                      className=" h-11 w-full rounded-lg border border-[#e4ca8e] bg-white pl-11 pr-11 text-sm font-medium text-ink placeholder-[#6F7480] outline-none transition-shadow duration-200 focus:bg-white focus:outline-none focus:shadow-[0_4px_14px_rgba(31,36,48,0.08)]"
                     />
 
                     {Boolean(query) && (
@@ -231,7 +231,7 @@ export default function OrderListPage({ returnOnly = false }) {
                         type="button"
                         onClick={() => setQuery("")}
                         aria-label="Clear search"
-                        className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#6F7480] transition hover:text-[#1F2430]"
+                        className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-muted transition hover:text-ink"
                       >
                         <X size={16} />
                       </button>

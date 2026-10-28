@@ -31,7 +31,7 @@ export default function OrderReturns({
                   </div>
                   <Link
                     to="/returns-refunds"
-                    className="text-xs font-semibold text-[#3E4093] underline-offset-2 hover:underline"
+                    className="text-xs font-semibold text-navy underline-offset-2 hover:underline"
                   >
                     View all returns
                   </Link>

@@ -66,10 +66,10 @@ function AccountMenuItem({
       aria-current={active ? "page" : undefined}
       className={
         isMobile
-          ? `group flex w-full min-w-0 items-start gap-3 border-b border-[#04258626] p-3 text-[#2E2E2E] transition-colors last:border-b-0 ${
+          ? `group flex w-full min-w-0 items-start gap-3 border-b border-[#04258626] p-3 text-ink transition-colors last:border-b-0 ${
               active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"
             }`
-          : `group flex w-full min-w-0 items-center gap-3 border-b border-[#04258626] p-6 px-6 text-[#2E2E2E] transition-colors last:border-b-0 sm:gap-4 sm:px-4 ${
+          : `group flex w-full min-w-0 items-center gap-3 border-b border-[#04258626] p-6 px-6 text-ink transition-colors last:border-b-0 sm:gap-4 sm:px-4 ${
               active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"
             }`
       }
@@ -77,8 +77,8 @@ function AccountMenuItem({
       <span
         className={
           isMobile
-            ? "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60]"
-            : "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60] xl:size-11"
+            ? "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-navy"
+            : "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-navy xl:size-11"
         }
       >
         {typeof item.icon === "string" ? (
@@ -101,7 +101,7 @@ function AccountMenuItem({
             return (
               <Icon
                 className={`${isMobile ? "size-4" : "size-4 sm:size-5"} ${
-                  item.iconColor || "text-[#1B1D60]"
+                  item.iconColor || "text-navy"
                 }`}
               />
             );
@@ -114,12 +114,12 @@ function AccountMenuItem({
           className={
             isMobile
               ? `block text-sm font-semibold transition-colors ${
-                  active ? "text-[#1B1D60]" : "group-hover:text-[#1B1D60]"
+                  active ? "text-navy" : "group-hover:text-navy"
                 }`
               : `block text-sm font-semibold transition-colors sm:text-base ${
                   active
-                    ? "text-[#1B1D60]"
-                    : "text-[#2E2E2E] group-hover:text-[#1B1D60]"
+                    ? "text-navy"
+                    : "text-ink group-hover:text-navy"
                 }`
           }
         >
@@ -129,8 +129,8 @@ function AccountMenuItem({
         <span
           className={
             isMobile
-              ? "mt-0.5 block text-[11px] leading-4 text-[#4E4E4E]"
-              : "mt-0.5 block text-xs leading-5 text-[#4E4E4E] sm:text-sm"
+              ? "mt-0.5 block text-caption leading-4 text-ink"
+              : "mt-0.5 block text-xs leading-5 text-ink sm:text-sm"
           }
         >
           {item.description}
@@ -154,7 +154,7 @@ function AccountMobileMenu({
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-label="Toggle account navigation"
-        className="flex w-full min-w-0 items-center justify-between rounded-lg border border-gold bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
+        className="flex w-full min-w-0 items-center justify-between rounded-lg border border-gold bg-white px-4 py-3 text-left font-semibold text-ink"
       >
         <span className="min-w-0 truncate">
           {activeMenuItem?.label || "Account Menu"}

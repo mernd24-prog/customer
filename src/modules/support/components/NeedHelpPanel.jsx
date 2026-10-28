@@ -30,7 +30,7 @@ export default function NeedHelpPanel({
         rounded-lg
         border border-[#F0E6D2]
         bg-white
-        ${sticky ? "lg:sticky lg:top-28" : ""}
+        ${sticky ? "lg:sticky lg:top-[var(--customer-page-sticky-top)]" : ""}
         ${className} 
       `}
     >
@@ -45,7 +45,7 @@ export default function NeedHelpPanel({
         <h2
           className={
             hasColoredHeader
-              ? "text-lg font-bold text-[#2E2E2E]"
+              ? "text-lg font-bold text-ink"
               : "text-2xl font-bold text-ink"
           }
         >
@@ -90,7 +90,7 @@ export default function NeedHelpPanel({
                     text-base
                     font-semibold
                     leading-5
-                    text-[#1B1D60]
+                    text-navy
                     
                   "
                 >
@@ -105,7 +105,7 @@ export default function NeedHelpPanel({
                       text-sm
                       font-medium
                       leading-5
-                      text-[#2E2E2E]
+                      text-ink
                     "
                   >
                     {item.description}

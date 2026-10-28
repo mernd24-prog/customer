@@ -74,14 +74,14 @@ export default function ShoppingMadeEasyBanner({
 
             <div className="ml-1 flex flex-col justify-end self-stretch pb-0.5 sm:ml-1.5 sm:pb-1 md:ml-2 md:pb-1.5 lg:ml-2.5 lg:pb-2">
               <span
-                className="text-[22px] leading-none font-black tracking-[-0.01em] text-[#FFDF00] sm:text-[28px] md:text-[34px] lg:text-[50px] xl:text-[72px]"
+                className="text-[22px] leading-none font-black tracking-[-0.01em] text-[#FFDF00] sm:text-display-sm md:text-[34px] lg:text-[50px] xl:text-[72px]"
                 style={{ WebkitTextStroke: "0.8px #6B4226" }}
               >
                 %
               </span>
 
               <span
-                className="text-[13px] leading-none font-black tracking-[-0.01em] text-[#FFDF00] sm:text-[16px] md:text-[20px] lg:text-[27px] xl:text-[40px]"
+                className="text-label leading-none font-black tracking-[-0.01em] text-[#FFDF00] sm:text-base md:text-xl lg:text-[27px] xl:text-[40px]"
                 style={{ WebkitTextStroke: "0.7px #6B4226" }}
               >
                 OFF
@@ -103,13 +103,13 @@ export default function ShoppingMadeEasyBanner({
       min-[360px]:mt-1
       min-[360px]:text-[8px]
       sm:mt-2
-      sm:text-[10px]
+      sm:text-micro
 
       md:mt-2.5
-      md:text-[17px]
+      md:text-title-sm
 
       lg:mt-3
-      lg:text-[24px]
+      lg:text-2xl
 
       xl:text-[34px]
     "

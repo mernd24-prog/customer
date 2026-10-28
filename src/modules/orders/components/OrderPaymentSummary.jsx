@@ -16,7 +16,7 @@ function SummaryRow({
       className={`flex  w-full items-center justify-between gap-3 py-3 ${className}`}
     >
       <span
-        className={`flex-1 small font-semibold text-[#2E2E2E] ${labelClassName}`}
+        className={`flex-1 small font-semibold text-ink ${labelClassName}`}
       >
         {typeof label === "string" ? (
           <ShowMoreText
@@ -26,7 +26,7 @@ function SummaryRow({
             moreLabel="more"
             lessLabel="less"
             textClassName="inline"
-            buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+            buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline"
           />
         ) : (
           label
@@ -35,7 +35,7 @@ function SummaryRow({
 
       <span
         className={`shrink-0 text-right small font-bold ${
-          savings ? "text-[#008425]" : "text-[#1B1D60]"
+          savings ? "text-[#008425]" : "text-navy"
         } ${valueClassName}`}
       >
         {value}
@@ -65,10 +65,10 @@ function AddressBlock({ shippingAddress, getAddressValue }) {
 
   return (
     <div className="flex w-full max-w-[515px] flex-col items-start py-3">
-      <span className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
+      <span className="text-sm font-semibold leading-[20px] text-ink sm:text-base sm:leading-[24px] md:text-lg md:leading-[28px]">
         Shipping Address
       </span>
-      <div className="mt-2  w-full break-words text-[14px] font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
+      <div className="mt-2  w-full break-words text-sm font-medium leading-[20px] text-navy sm:text-base sm:leading-[26px] md:text-lg md:leading-[30px]">
         {fullName && <p className="font-semibold">{fullName}</p>}
         {street && <p>{street}</p>}
         {cityLine && <p>{cityLine}</p>}
@@ -87,10 +87,10 @@ function TaxBreakupBlock({
 }) {
   return (
     <div className="flex w-full max-w-[515px] flex-col items-start py-3">
-      <span className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
+      <span className="text-sm font-semibold leading-[20px] text-ink sm:text-base sm:leading-[24px] md:text-lg md:leading-[28px]">
         Gst Invoice Breakup
       </span>
-      <div className="mt-2 grid gap-1 text-[14px] font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
+      <div className="mt-2 grid gap-1 text-sm font-medium leading-[20px] text-navy sm:text-base sm:leading-[26px] md:text-lg md:leading-[30px]">
         {taxBreakup && (
           <p>
             Tax Mode:{" "}
@@ -173,7 +173,7 @@ function OrderPaymentSummary({
     >
       {variant === "checkout" && (
         <>
-          <p className="mb-2  text-[18px] font-bold leading-[28px] text-ink">
+          <p className="mb-2  text-lg font-bold leading-[28px] text-ink">
             {String(items.length).padStart(2, "0")} Item(s)
           </p>
           {items.map((item) => (
@@ -181,7 +181,7 @@ function OrderPaymentSummary({
               key={item._lineKey}
               className="flex w-full min-w-0 items-start justify-between gap-3 border-t border-[#04258626] pt-3 pb-2"
             >
-              <div className="min-w-0 flex-1 small font-semibold text-[#2E2E2E]">
+              <div className="min-w-0 flex-1 small font-semibold text-ink">
                 <ShowMoreText
                   text={`${item.quantity} x ${item._safeTitle}`}
                   mode="characters"
@@ -189,11 +189,11 @@ function OrderPaymentSummary({
                   moreLabel="more"
                   lessLabel="less"
                   textClassName="inline"
-                  buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline whitespace-nowrap"
+                  buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline whitespace-nowrap"
                 />
               </div>
 
-              <span className="shrink-0 text-right small font-bold text-[#1B1D60]">
+              <span className="shrink-0 text-right small font-bold text-navy">
                 {formatMoney(item._lineTotal, currency)}
               </span>
             </div>
@@ -368,7 +368,7 @@ function OrderPaymentSummary({
 
       {variant === "checkout" && visiblePaymentMethods.length > 0 && (
         <div className="pt-4">
-          <h3 className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px] ">
+          <h3 className="text-sm font-semibold leading-[20px] text-ink sm:text-base sm:leading-[24px] md:text-lg md:leading-[28px] ">
             Payment Method
           </h3>
 
@@ -392,7 +392,7 @@ function OrderPaymentSummary({
                 />
 
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-medium leading-[28px] text-[#2E2E2E] md:text-[18px]">
+                  <span className="block text-sm font-medium leading-[28px] text-ink md:text-lg">
                     {option.label}
                   </span>
                   {option.enabled === false && option.disabledReason ? (
@@ -463,7 +463,7 @@ function OrderPaymentSummary({
           <button
             type="submit"
             disabled={loading || disabled}
-            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
+            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-base font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
           >
             {loading && (
               <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
@@ -472,7 +472,7 @@ function OrderPaymentSummary({
           </button>
 
           {selectedLabel && (
-            <p className="mt-3 text-center text-[16px] font-medium leading-[24px] text-[#2E2E2E] sm:text-[18px] sm:leading-[28px]">
+            <p className="mt-3 text-center text-base font-medium leading-[24px] text-ink sm:text-lg sm:leading-[28px]">
               Selected Method: {selectedLabel}
             </p>
           )}

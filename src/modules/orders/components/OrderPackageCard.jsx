@@ -312,7 +312,7 @@ export function OrderPackageCard({
   ]);
 
   return (
-    <div className="flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-[#E7D9B8] bg-[#FFFDF8]">
+    <div className="flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-border bg-[#FFFDF8]">
       <div className="flex w-full min-w-0 flex-col gap-3 p-2 sm:p-3 md:p-4 lg:p-5">
         <div className="grid gap-4">
           {(group.items || []).map((item, index) => {
@@ -376,7 +376,7 @@ export function OrderPackageCard({
                   onReviewClick={setReviewTarget}
                 />
 
-                <div className="min-w-0 rounded-lg border border-[#E7D9B8] bg-[#FAF6EE] p-3 sm:p-4 md:p-5">
+                <div className="min-w-0 rounded-lg border border-border bg-cream p-3 sm:p-4 md:p-5">
                   <OrderTimeline
                     isCancelled={isCancelled}
                     isReturned={Boolean(resolvedGroupReturn)}
@@ -402,7 +402,7 @@ export function OrderPackageCard({
         </div>
       </div>
 
-    <div className="flex min-w-0 flex-col gap-3 border-t border-[#E7D9B8] p-3 sm:p-4">
+    <div className="flex min-w-0 flex-col gap-3 border-t border-border p-3 sm:p-4">
       {(itemProps.invoicesLoading || packageDocuments.length > 0) && (
         <div className="w-full min-w-0">
           <OrderDocuments

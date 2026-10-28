@@ -84,7 +84,7 @@ export default function DealsPage() {
                   <Breadcrumbs
                     items={breadcrumbItems}
                     linkClassName="!text-white"
-                    currentClassName="!text-[#CE9F2D]"
+                    currentClassName="!text-gold"
                     separatorClassName="!text-white"
                   />
 

@@ -144,8 +144,13 @@ export default function AppLayout() {
       <Header />
 
       <main
+        style={{
+          "--customer-page-sticky-top": showCategoryBar
+            ? "calc(var(--customer-header-height, 0px) + var(--customer-category-bar-height) + var(--customer-sticky-gap))"
+            : "calc(var(--customer-header-height, 0px) + var(--customer-sticky-gap))",
+        }}
         className={`main-content customer-container pt-[var(--customer-header-height,0px)] ${
-          showCategoryBar ? "mt-[30px]" : ""
+          showCategoryBar ? "mt-[var(--customer-category-bar-height)]" : ""
         }`}
       >
         {showCategoryBar && <CategoryBar compact />}

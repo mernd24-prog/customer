@@ -32,7 +32,7 @@ export default function ActiveFilterChips({
   return (
     <div className={`${className} flex flex-col gap-2`}>
       <div
-        className={`mt-8  w-full overflow-hidden transition-all duration-300 ${
+        className={`mt-4 w-full overflow-hidden transition-[max-height] duration-200 ${
           expanded ? "max-h-[1000px]" : "max-h-[50px]"
         }`}
       >
@@ -43,18 +43,7 @@ export default function ActiveFilterChips({
               type="button"
               onClick={() => onRemove?.(filter.key, filter)}
               aria-label={`Remove ${filter.label} filter`}
-              className="
-              group inline-flex shrink-0 items-center gap-1.5
-              rounded-[5px] border border-[#e3d6b6]
-              bg-white px-2 py-1.5
-              text-sm  font-medium leading-[14px]
-              text-[#172033]
-              transition-colors duration-200
-              hover:border-[#D1A128]
-              hover:bg-[#FFFBF0]
-              focus-visible:outline-none
-              focus-visible:ring-1 focus-visible:ring-[#D1A128]
-            "
+              className="group inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1 text-xs font-semibold leading-4 text-ink transition-colors duration-200 hover:border-gold hover:bg-gold-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
             >
               <span>{filter.label}</span>
 
@@ -72,7 +61,7 @@ export default function ActiveFilterChips({
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="w-fit text-[11px] font-semibold uppercase tracking-wide text-[#2874F0] hover:underline"
+          className="customer-filter-action w-fit"
         >
           {expanded ? "Show less" : "Show more"}
         </button>

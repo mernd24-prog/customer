@@ -82,7 +82,7 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
 
       <h2
         className={`mt-4 text-h2 font-bold leading-tight sm:mt-5 ${
-          light ? "text-white" : "text-[#201b78]"
+          light ? "text-white" : "text-navy"
         }`}
       >
         {title}
@@ -91,7 +91,7 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
       {text && (
         <p
           className={`mx-auto mt-3 max-w-md leading-7 sm:mt-4 ${
-            light ? "text-white/70" : "text-[#6f7480]"
+            light ? "text-white/70" : "text-muted"
           }`}
         >
           {text}
@@ -124,7 +124,7 @@ function SellerStoryCard({ story, featured = false }) {
           />
         ) : (
           <div
-            className={`flex items-center justify-center text-3xl font-bold text-[#201b78] ${featured ? "h-full min-h-[240px] md:min-h-[360px]" : "h-44 sm:h-52"}`}
+            className={`flex items-center justify-center text-3xl font-bold text-navy ${featured ? "h-full min-h-[240px] md:min-h-[360px]" : "h-44 sm:h-52"}`}
           >
             {story.initials}
           </div>
@@ -147,7 +147,7 @@ function SellerStoryCard({ story, featured = false }) {
         <div className="mt-3 h-px bg-[#eee9df] sm:mt-4" />
 
         {story.quote && (
-          <p className="mt-3 text-sm leading-6 text-[#50545e] sm:mt-4 sm:text-[15px]">
+          <p className="mt-3 text-sm leading-6 text-[#50545e] sm:mt-4 sm:text-body">
             {story.quote}
           </p>
         )}
@@ -301,7 +301,7 @@ export default function BecomeASeller() {
           ===================================================== */}
 
           {mappedExperiences.length > 0 && (
-            <section className="relative overflow-hidden bg-[#faf6ee] py-10 sm:py-14 lg:py-16">
+            <section className="relative overflow-hidden bg-cream py-10 sm:py-14 lg:py-16">
               <div className="customer-container relative">
                 <div
                   className={`flex flex-col gap-5 md:flex-row md:items-end md:justify-between ${mappedExperiences.length < 3 ? "mb-7 sm:mb-9" : ""}`}
@@ -314,13 +314,13 @@ export default function BecomeASeller() {
                       Real Seller Stories
                     </span>
 
-                    <h2 className="mt-4 text-h2 font-bold leading-tight text-[#201b78] sm:mt-5">
+                    <h2 className="mt-4 text-h2 font-bold leading-tight text-navy sm:mt-5">
                       Their Growth Is Our{" "}
                       <span className="text-[#b17d15]">Favourite Story.</span>
                     </h2>
 
                     <p
-                      className={`mt-3 leading-7 text-[#6f7480] sm:mt-4 ${mappedExperiences.length < 3 ? "mx-auto max-w-xl" : "max-w-xl"}`}
+                      className={`mt-3 leading-7 text-muted sm:mt-4 ${mappedExperiences.length < 3 ? "mx-auto max-w-xl" : "max-w-xl"}`}
                     >
                       Meet the entrepreneurs building remarkable businesses with
                       Sam Global by their side.
@@ -331,14 +331,14 @@ export default function BecomeASeller() {
                     <div className="flex justify-center gap-2.5 sm:gap-3 md:shrink-0">
                       <button
                         type="button"
-                        className="seller-story-prev grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
+                        className="seller-story-prev grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-navy shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
                         aria-label="Previous Seller Story"
                       >
                         <ArrowLeft size={19} />
                       </button>
                       <button
                         type="button"
-                        className="seller-story-next grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
+                        className="seller-story-next grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-navy shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
                         aria-label="Next Seller Story"
                       >
                         <ArrowRight size={19} />
@@ -414,11 +414,11 @@ export default function BecomeASeller() {
                     Made for sellers
                   </span>
 
-                  <h2 className="mt-4 text-[24px] font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-[30px] md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
+                  <h2 className="mt-4 text-2xl font-bold leading-[32px] text-[#18156D] sm:mt-5 md:text-3xl md:leading-[40px] lg:text-[36px] lg:leading-[46px]">
                     Why Suppliers Love Sam Global
                   </h2>
 
-                  <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-6 text-gray-600 sm:mt-4 md:text-[17px] md:leading-7">
+                  <p className="mx-auto mt-3 max-w-2xl text-body leading-6 text-gray-600 sm:mt-4 md:text-title-sm md:leading-7">
                     {benefitsSection?.description ||
                       "A marketplace should do more than host your products. It should help your business move forward."}
                   </p>
@@ -436,13 +436,13 @@ export default function BecomeASeller() {
 
                       <div className="min-w-0 flex-1">
                         {title && (
-                          <h3 className="text-[18px] font-bold leading-6 text-[#18156D]">
+                          <h3 className="text-lg font-bold leading-6 text-[#18156D]">
                             {title}
                           </h3>
                         )}
 
                         {text && (
-                          <p className="mt-2 text-[14px] leading-6 text-gray-600 md:text-[15px]">
+                          <p className="mt-2 text-sm leading-6 text-gray-600 md:text-body">
                             {text}
                           </p>
                         )}
@@ -484,16 +484,16 @@ export default function BecomeASeller() {
 
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
-                            <h3 className="min-w-0 text-[16px] font-bold leading-5 sm:text-[17px] sm:leading-6">
+                            <h3 className="min-w-0 text-base font-bold leading-5 sm:text-title-sm sm:leading-6">
                               {title}
                             </h3>
 
-                            <span className="shrink-0 text-[24px] font-extrabold leading-none tracking-tight text-[#d6a323] sm:text-[27px]">
+                            <span className="shrink-0 text-2xl font-extrabold leading-none tracking-tight text-[#d6a323] sm:text-[27px]">
                               {String(number).padStart(2, "0")}
                             </span>
                           </div>
 
-                          <p className="mt-2 text-[13px] leading-5 text-white/70 sm:text-[14px] sm:leading-[1.4rem]">
+                          <p className="mt-2 text-label leading-5 text-white/70 sm:text-sm sm:leading-[1.4rem]">
                             {text}
                           </p>
                         </div>

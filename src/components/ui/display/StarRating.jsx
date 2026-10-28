@@ -16,12 +16,17 @@ const formatRatingCount = (count) => {
   return value.toLocaleString();
 };
 
-export default function StarRating({ rating, count }) {
+export default function StarRating({ rating, count, emptyLabel = "" }) {
   const ratingValue = Number(rating || 0);
   const stars = Math.round(Math.max(0, Math.min(ratingValue, 5)));
   const formattedCount = formatRatingCount(count);
-  // Do not render rating UI when rating is zero or falsy
-  if (!ratingValue || ratingValue <= 0) return null;
+  if (!ratingValue || ratingValue <= 0) {
+    return emptyLabel ? (
+      <span className="inline-flex min-h-5 w-fit items-center rounded-full border border-border bg-cream px-2 py-0.5 text-micro font-bold uppercase tracking-[0.06em] text-muted sm:min-h-6 sm:text-caption">
+        {emptyLabel}
+      </span>
+    ) : null;
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -31,13 +36,13 @@ export default function StarRating({ rating, count }) {
         }`}
       >
         <Star size={12} className="fill-white text-white" />
-        <span className="text-xs font-bold sm:text-[13px]">
+        <span className="text-xs font-bold sm:text-label">
           {ratingValue.toFixed(1)}
         </span>
       </div>
 
       {formattedCount && (
-        <span className="text-sm font-medium text-[#2E2E2E] lg:text-base">
+        <span className="text-sm font-medium text-ink lg:text-base">
           ({formattedCount})
         </span>
       )}

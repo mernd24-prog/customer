@@ -3,8 +3,8 @@ import { cn } from "../../../utils/common";
 export default function PageWrapper({
   as: Component = "main",
   className = "",
-  containerClassName = "w-container",
-  padding = "py-6 sm:py-8",
+  containerClassName = "customer-container",
+  padding = "py-6 sm:py-8 lg:py-10",
   children,
   ...props
 }) {

@@ -157,7 +157,7 @@ export default function PoliciesPages({ slugOverride }) {
 
       <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
         <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
+          <h1 className="text-center text-[26px] font-bold text-white md:text-display-sm lg:text-3xl">
             {title}
           </h1>
         </div>
@@ -177,7 +177,7 @@ export default function PoliciesPages({ slugOverride }) {
               <div className="w-full">
                 {description && (
                   <p
-                    className="mb-8 text-[14px] leading-relaxed text-muted md:text-base"
+                    className="mb-8 text-sm leading-relaxed text-muted md:text-base"
                     dangerouslySetInnerHTML={{ __html: description }}
                   />
                 )}

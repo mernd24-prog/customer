@@ -60,10 +60,10 @@ function ProductDescription({ content }) {
   if (!content) return null;
 
   return (
-    <div className="w-full px-4 py-4 text-[#4E4E4E]">
+    <div className="w-full px-4 py-4 text-ink">
       <div
         ref={contentRef}
-        className={`rich-text-content w-full min-w-0 max-w-none text-base leading-relaxed text-[#4E4E4E] [&_*]:!max-w-none [&_p]:!w-full [&_p]:!text-base [&_p]:!leading-relaxed [&_p]:!text-[#4E4E4E] [&_li]:!text-base [&_li]:!leading-relaxed [&_li]:!text-[#4E4E4E] [&_div]:!text-base [&_div]:!leading-relaxed [&_div]:!text-[#4E4E4E] [&_h1]:!mb-3 [&_h1]:!mt-5 [&_h1]:!text-xl [&_h1]:!font-bold [&_h1]:!leading-snug [&_h1]:!text-[#1B1D60] [&_h2]:!mb-3 [&_h2]:!mt-5 [&_h2]:!text-xl [&_h2]:!font-bold [&_h2]:!leading-snug [&_h2]:!text-[#1B1D60] [&_h3]:!mb-2 [&_h3]:!mt-4 [&_h3]:!text-lg [&_h3]:!font-semibold [&_h3]:!leading-snug [&_h3]:!text-[#1B1D60] [&_ul]:!my-3 [&_ol]:!my-3 [&_li]:!my-1 transition-[max-height] duration-300 ${
+        className={`rich-text-content w-full min-w-0 max-w-none text-base leading-relaxed text-ink [&_*]:!max-w-none [&_p]:!w-full [&_p]:!text-base [&_p]:!leading-relaxed [&_p]:!text-ink [&_li]:!text-base [&_li]:!leading-relaxed [&_li]:!text-ink [&_div]:!text-base [&_div]:!leading-relaxed [&_div]:!text-ink [&_h1]:!mb-3 [&_h1]:!mt-5 [&_h1]:!text-xl [&_h1]:!font-bold [&_h1]:!leading-snug [&_h1]:!text-navy [&_h2]:!mb-3 [&_h2]:!mt-5 [&_h2]:!text-xl [&_h2]:!font-bold [&_h2]:!leading-snug [&_h2]:!text-navy [&_h3]:!mb-2 [&_h3]:!mt-4 [&_h3]:!text-lg [&_h3]:!font-semibold [&_h3]:!leading-snug [&_h3]:!text-navy [&_ul]:!my-3 [&_ol]:!my-3 [&_li]:!my-1 transition-[max-height] duration-300 ${
           !expanded && canExpand ? "max-h-[200px] overflow-hidden" : ""
         }`}
         dangerouslySetInnerHTML={{ __html: normalizeDescriptionHtml(content) }}
@@ -73,7 +73,7 @@ function ProductDescription({ content }) {
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
           aria-expanded={expanded}
-          className="mt-4 inline-flex items-center gap-1.5 bg-transparent p-0 text-sm font-semibold text-[#1B1D60] transition-colors duration-200 hover:text-[#CE9F2D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CE9F2D]"
+          className="mt-4 inline-flex items-center gap-1.5 bg-transparent p-0 text-sm font-semibold text-navy transition-colors duration-200 hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CE9F2D]"
         >
           <span>{expanded ? "Read Less" : "Read More"}</span>
           {expanded ? (
@@ -120,7 +120,7 @@ function InfoTabs({ tabs, activeTab, onChange }) {
           className={`min-w-max px-5 lg:py-4 py-2 text-lg font-medium transition-colors ${
             activeTab === tab.key
               ? "border-b-2 border-blue font-semibold text-blue"
-              : "text-[#2E2E2E]"
+              : "text-ink"
           }`}
         >
           {tab.label}
@@ -133,10 +133,10 @@ function InfoTabs({ tabs, activeTab, onChange }) {
 function InfoCard({ title, children, roundedClass = "rounded-xl" }) {
   return (
     <div
-      className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}
+      className={`mt-5 overflow-hidden ${roundedClass} border border-border bg-white`}
     >
       <div className="bg-[#EAD9B6] px-4 py-4">
-        <h2 className="text-sm md:text-lg font-bold text-[#2E2E2E]">{title}</h2>
+        <h2 className="text-sm md:text-lg font-bold text-ink">{title}</h2>
       </div>
 
       {children}
@@ -147,8 +147,8 @@ function InfoCard({ title, children, roundedClass = "rounded-xl" }) {
 function DetailRows({
   rows,
   children,
-  rowClassName = "grid grid-cols-1 gap-1 px-4 py-3 text-sm leading-relaxed text-[#4E4E4E] lg:text-base sm:grid-cols-[220px_minmax(0,1fr)]",
-  labelClassName = "font-medium text-[#1B1D60]",
+  rowClassName = "grid grid-cols-1 gap-1 px-4 py-3 text-sm leading-relaxed text-ink lg:text-base sm:grid-cols-[220px_minmax(0,1fr)]",
+  labelClassName = "font-medium text-navy",
   valueClassName = "text-left font-semibold text-navy sm:text-right",
 }) {
   return (
@@ -274,12 +274,12 @@ export default function ProductInfoSection({
                 formatPageTitle(key),
                 value,
               ])}
-              rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-sm leading-relaxed text-[#4E4E4E] lg:text-base sm:grid-cols-[220px_minmax(0,1fr)]"
-              labelClassName="font-medium text-[#1B1D60]"
+              rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-sm leading-relaxed text-ink lg:text-base sm:grid-cols-[220px_minmax(0,1fr)]"
+              labelClassName="font-medium text-navy"
               valueClassName="text-left font-semibold text-navy sm:text-right"
             ></DetailRows>
           ) : (
-            <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
+            <p className="px-4 py-4 text-sm lg:text-base text-ink whitespace-pre-line">
               No Product Details Available.
             </p>
           )}
@@ -299,7 +299,7 @@ export default function ProductInfoSection({
               )}
             />
           ) : (
-            <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
+            <p className="px-4 py-4 text-sm lg:text-base text-ink whitespace-pre-line">
               No Description Available.
             </p>
           )}
@@ -308,10 +308,10 @@ export default function ProductInfoSection({
 
         {activeInfoTab === "warranty" && (
           <InfoCard title="Warranty & Return Information" roundedClass="rounded-lg">
-            <div className="space-y-6 px-4 py-5 text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
+            <div className="space-y-6 px-4 py-5 text-sm leading-relaxed text-ink lg:text-base">
               {!hasWarranty && (
                 <div>
-                  <h3 className="text-base font-bold text-[#1B1D60]">Warranty</h3>
+                  <h3 className="text-base font-bold text-navy">Warranty</h3>
                   <p className="mt-2">No warranty is offered for this product.</p>
                 </div>
               )}
@@ -321,11 +321,11 @@ export default function ProductInfoSection({
                 effectiveWarranty.type ||
                 effectiveWarranty.provider) && (
                 <div>
-                  <h3 className="text-base font-bold text-[#1B1D60]">
+                  <h3 className="text-base font-bold text-navy">
                     Warranty Summary
                   </h3>
 
-                  <div className="mt-2 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed">
+                  <div className="mt-2 text-sm lg:text-base text-ink whitespace-pre-line leading-relaxed">
                     {effectiveWarranty.summary ||
                     effectiveWarranty.warrantySummary ? (
                       capitalizeFirst(
@@ -335,17 +335,17 @@ export default function ProductInfoSection({
                         ).replace(/_/g, " "),
                       )
                     ) : (
-                      <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
+                      <div className="space-y-1 text-sm lg:text-base text-ink">
                         {warrantyPeriod && (
                           <div>
-                            <span className="font-medium text-[#1B1D60]">Period:</span>{" "}
+                            <span className="font-medium text-navy">Period:</span>{" "}
                             {capitalizeFirst(warrantyPeriod)}
                           </div>
                         )}
 
                         {effectiveWarranty.type && (
                           <div>
-                            <span className="font-medium text-[#1B1D60]">Type:</span>{" "}
+                            <span className="font-medium text-navy">Type:</span>{" "}
                             {capitalizeFirst(
                               effectiveWarranty.type.replace(/_/g, " "),
                             )}
@@ -354,7 +354,7 @@ export default function ProductInfoSection({
 
                         {effectiveWarranty.provider && (
                           <div>
-                            <span className="font-medium text-[#1B1D60]">
+                            <span className="font-medium text-navy">
                               Provider:
                             </span>{" "}
                             {capitalizeFirst(
@@ -371,11 +371,11 @@ export default function ProductInfoSection({
               {hasWarranty && (effectiveWarranty.coveredInWarranty ||
                 effectiveWarranty.terms) && (
                 <div>
-                  <h3 className="text-base font-bold text-[#1B1D60]">
+                  <h3 className="text-base font-bold text-navy">
                     Covered in Warranty
                   </h3>
                   <div
-                    className="mt-2 rich-text-content text-[#4E4E4E]"
+                    className="mt-2 rich-text-content text-ink"
                     dangerouslySetInnerHTML={{
                       __html: decodeHtml(
                         effectiveWarranty.coveredInWarranty ||
@@ -388,11 +388,11 @@ export default function ProductInfoSection({
 
               {hasWarranty && effectiveWarranty.notCoveredInWarranty && (
                 <div>
-                  <h3 className="text-base font-bold text-[#1B1D60]">
+                  <h3 className="text-base font-bold text-navy">
                     Not Covered in Warranty
                   </h3>
                   <div
-                    className="mt-2 rich-text-content text-[#4E4E4E]"
+                    className="mt-2 rich-text-content text-ink"
                     dangerouslySetInnerHTML={{
                       __html: decodeHtml(effectiveWarranty.notCoveredInWarranty),
                     }}
@@ -402,7 +402,7 @@ export default function ProductInfoSection({
 
               {Object.keys(returnPolicy).length > 0 && (
                 <div className="border-t border-border pt-4">
-                  <h3 className="mb-3 text-base font-bold text-[#1B1D60]">
+                  <h3 className="mb-3 text-base font-bold text-navy">
                     Return Terms
                   </h3>
                   <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
@@ -480,10 +480,10 @@ export default function ProductInfoSection({
       {activeInfoTab === "seller" && (
         <InfoCard title="Seller Information" roundedClass="rounded-lg">
           {product.seller || product.sellerName ? (
-            <div className="w-full divide-y divide-border text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
+            <div className="w-full divide-y divide-border text-sm leading-relaxed text-ink lg:text-base">
               <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
-                <h3 className="font-medium text-[#2E2E2E]">Store Name</h3>
-                <p className="min-w-0 break-words font-semibold text-[#1B1D60] sm:text-right">
+                <h3 className="font-medium text-ink">Store Name</h3>
+                <p className="min-w-0 break-words font-semibold text-navy sm:text-right">
                   {product.seller?.name ||
                     product.seller?.storeName ||
                     product.sellerName ||
@@ -492,7 +492,7 @@ export default function ProductInfoSection({
               </div>
 
               <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
-                <h3 className="font-medium text-[#2E2E2E]">Seller Rating</h3>
+                <h3 className="font-medium text-ink">Seller Rating</h3>
                 <div className="min-w-0 sm:flex sm:justify-end">
                   {(() => {
                     const rawRating = Number(
@@ -515,7 +515,7 @@ export default function ProductInfoSection({
 
                     if (!hasRating) {
                       return (
-                        <p className="font-semibold text-[#1B1D60]">
+                        <p className="font-semibold text-navy">
                           No Rating
                         </p>
                       );
@@ -539,8 +539,8 @@ export default function ProductInfoSection({
               </div>
 
               <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
-                <h3 className="font-medium text-[#2E2E2E]">Joined SamGlobal</h3>
-                <p className="min-w-0 break-words font-semibold text-[#1B1D60] sm:text-right">
+                <h3 className="font-medium text-ink">Joined SamGlobal</h3>
+                <p className="min-w-0 break-words font-semibold text-navy sm:text-right">
                   {(() => {
                     const joinedDate =
                       product.seller?.joinAt ||
@@ -581,7 +581,7 @@ export default function ProductInfoSection({
               </div>
             </div>
           ) : (
-            <p className="px-4 py-5 text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
+            <p className="px-4 py-5 text-sm leading-relaxed text-ink lg:text-base">
               Seller Information Is Not Available.
             </p>
           )}

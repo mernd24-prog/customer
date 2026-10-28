@@ -83,8 +83,8 @@ export default function FormField({
           maxLength={props.maxLength ?? (isEmail ? 254 : undefined)}
         />
         {loading ? (
-          <div className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-[#CE9F2D]">
-            <Loader2 size={18} className="animate-spin text-[#CE9F2D]" />
+          <div className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-gold">
+            <Loader2 size={18} className="animate-spin text-gold" />
           </div>
         ) : isPassword ? (
           <button

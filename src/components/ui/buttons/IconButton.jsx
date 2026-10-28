@@ -36,8 +36,8 @@ export default function IconButton({
       title={title}
       aria-label={ariaLabel ?? title}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center transition-all duration-300 ease-in-out",
-        "focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-1",
+        "inline-flex shrink-0 items-center justify-center transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2",
         sizeMap[size] || sizeMap.md,
         rounded ? "rounded-full" : "rounded-[6px]",
         disabled ? "cursor-not-allowed opacity-60" : (variantMap[variant] || variantMap.default),

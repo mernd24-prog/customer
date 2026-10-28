@@ -441,7 +441,7 @@ export const Navbar = ({ icons: propIcons }) => {
 <HeaderIconButton
   to="/cart"
   aria-current={location.pathname === "/cart" ? "page" : undefined}
-  className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
+  className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-navy min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
     location.pathname === "/cart"
       ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
       : ""
@@ -453,7 +453,7 @@ export const Navbar = ({ icons: propIcons }) => {
   <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
   {cartItemCount > 0 && (
-    <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+    <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-caption font-extrabold leading-none text-white shadow-sm">
       {cartItemCount > 99 ? "99+" : cartItemCount}
     </span>
   )}
@@ -462,7 +462,7 @@ export const Navbar = ({ icons: propIcons }) => {
              <HeaderIconButton
   to="/wishlist"
   aria-current={location.pathname === "/wishlist" ? "page" : undefined}
-  className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
+  className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-navy min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
     location.pathname === "/wishlist"
       ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
       : ""
@@ -474,7 +474,7 @@ export const Navbar = ({ icons: propIcons }) => {
   <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
   {wishlistCount > 0 && (
-    <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+    <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-caption font-extrabold leading-none text-white shadow-sm">
       {wishlistCount > 99 ? "99+" : wishlistCount}
     </span>
   )}
@@ -503,11 +503,11 @@ export const Navbar = ({ icons: propIcons }) => {
                     />
 
                     <span className="hidden min-w-0 flex-col text-left leading-tight lg:flex">
-                      <span className="max-w-[130px] truncate text-[16px] font-bold text-[#2E2E2E]">
+                      <span className="max-w-[130px] truncate text-base font-bold text-ink">
                         {accountLabel}
                       </span>
 
-                      <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
+                      <span className="max-w-[160px] truncate text-body font-medium text-ink">
                         {capitalizeFirst(
                           profileUser?.email || "",
                         )}
@@ -517,7 +517,7 @@ export const Navbar = ({ icons: propIcons }) => {
                 }
                 path="/account/profile"
                 className="h-8 w-8 overflow-hidden rounded-full bg-white p-0 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
-                chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
+                chevronClassName="hidden !text-navy lg:block lg:self-top"
               >
                 <MenuDropdown
                   title="My Account"
@@ -526,7 +526,7 @@ export const Navbar = ({ icons: propIcons }) => {
               </HeaderDropdown>
             ) : (
               <HeaderGoldButton
-                className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[14px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+                className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-sm font-semibold leading-none text-navy-dark whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-body min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-label sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-sm lg:text-base"
                 onClick={() => navigate("/login")}
               >
                 Login
@@ -929,10 +929,10 @@ export const CategoryBar = ({
                     onMouseLeave={
                       handleCategoryMouseLeave
                     }
-                    className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                    className={`relative flex h-full shrink-0 items-center text-label font-semibold transition-all duration-200 ease-in-out hover:text-navy-dark sm:text-sm ${
                       isActive
-                        ? "!text-[#03014D]"
-                        : "text-[#2E2E2E]"
+                        ? "!text-navy-dark"
+                        : "text-ink"
                     }`}
                   >
                     <span className="max-w-[250px] truncate xl:max-w-none">
@@ -959,10 +959,10 @@ export const CategoryBar = ({
                   aria-current={
                     location.pathname === "/categories" ? "page" : undefined
                   }
-                  className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                  className={`relative flex h-full shrink-0 items-center text-label font-semibold transition-all duration-200 ease-in-out hover:text-navy-dark sm:text-sm ${
                     location.pathname === "/categories"
-                      ? "!text-[#03014D]"
-                      : "text-[#2E2E2E]"
+                      ? "!text-navy-dark"
+                      : "text-ink"
                   }`}
                 >
                   More
@@ -1073,7 +1073,7 @@ export const CategoryBar = ({
                     </div>
 
                     <span
-                      className={`mt-3 whitespace-normal text-center text-[11px] leading-tight transition-colors duration-200 sm:mt-2 sm:text-[13px] md:text-[14px] lg:text-[15px] 2xl:whitespace-nowrap ${
+                      className={`mt-3 whitespace-normal text-center text-caption leading-tight transition-colors duration-200 sm:mt-2 sm:text-label md:text-sm lg:text-body 2xl:whitespace-nowrap ${
                         isActive
                           ? "font-bold text-[#1E204A]"
                           : "font-semibold text-[#2D2D2D] group-hover:text-[#1E204A]"
@@ -1153,10 +1153,10 @@ export const CategoryBar = ({
                     onMouseLeave={
                       handleCategoryMouseLeave
                     }
-                    className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                    className={`relative flex h-full shrink-0 items-center text-label font-semibold transition-all duration-200 ease-in-out hover:text-navy-dark sm:text-sm ${
                       isActive
-                        ? "!text-[#03014D]"
-                        : "text-[#2E2E2E]"
+                        ? "!text-navy-dark"
+                        : "text-ink"
                     }`}
                   >
                     <span className="max-w-[250px] truncate xl:max-w-none">
@@ -1183,10 +1183,10 @@ export const CategoryBar = ({
                   aria-current={
                     location.pathname === "/categories" ? "page" : undefined
                   }
-                  className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                  className={`relative flex h-full shrink-0 items-center text-label font-semibold transition-all duration-200 ease-in-out hover:text-navy-dark sm:text-sm ${
                     location.pathname === "/categories"
-                      ? "!text-[#03014D]"
-                      : "text-[#2E2E2E]"
+                      ? "!text-navy-dark"
+                      : "text-ink"
                   }`}
                 >
                   More

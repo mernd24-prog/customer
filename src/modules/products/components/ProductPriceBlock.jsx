@@ -50,7 +50,7 @@ export default function ProductPriceBlock({
         )}
       </div>
 
-      <p className="text-base font-medium text-[#2E2E2E] lg:text-base">
+      <p className="text-base font-medium text-ink lg:text-base">
         Inclusive of all taxes
       </p>
 

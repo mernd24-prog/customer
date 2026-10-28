@@ -56,7 +56,7 @@ export default function HorizontalScrollControls({
   };
 
   const defaultButtonClass =
-    "hidden sm:flex absolute top-1/2 z-20 -translate-y-1/2 h-8 w-8 items-center justify-center rounded-full border border-[#E8D9B7] bg-white/95 text-[#1B1D60] shadow-md transition-all hover:border-[#CE9F2D] hover:bg-[#FFF8E8]";
+    "hidden sm:flex absolute top-1/2 z-20 -translate-y-1/2 h-8 w-8 items-center justify-center rounded-full border border-[#E8D9B7] bg-white/95 text-navy shadow-md transition-all hover:border-[#CE9F2D] hover:bg-[#FFF8E8]";
 
   return (
     <div className={cn("relative", className)}>

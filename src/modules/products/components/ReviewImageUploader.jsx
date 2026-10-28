@@ -150,7 +150,7 @@ export default function ReviewImageUploader({
   return (
     <div className="grid gap-2">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-semibold text-[#2E2E2E]">Product Images</span>
+        <span className="text-sm font-semibold text-ink">Product Images</span>
         <span className="text-xs font-semibold text-[#777890]">
           {value.length}/{MAX_REVIEW_IMAGES}
         </span>
@@ -174,7 +174,7 @@ export default function ReviewImageUploader({
             )}
             <button
               type="button"
-              className="absolute right-1 top-1 grid size-6 place-items-center rounded-full bg-white text-[#1B1D60] shadow-sm disabled:opacity-60"
+              className="absolute right-1 top-1 grid size-6 place-items-center rounded-full bg-white text-navy shadow-sm disabled:opacity-60"
               onClick={() => removeImage(index)}
               disabled={disabled || uploading}
               aria-label="Remove Image"
@@ -187,7 +187,7 @@ export default function ReviewImageUploader({
         {value.length < MAX_REVIEW_IMAGES && (
           <button
             type="button"
-            className="flex aspect-square flex-col items-center justify-center gap-1 rounded-[8px] border border-dashed border-[#CE9F2D] bg-[#CE9F2D0D] text-[#1B1D60] transition hover:bg-[#CE9F2D1A] disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex aspect-square flex-col items-center justify-center gap-1 rounded-[8px] border border-dashed border-[#CE9F2D] bg-[#CE9F2D0D] text-navy transition hover:bg-[#CE9F2D1A] disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => inputRef.current?.click()}
             disabled={uploadDisabled}
             aria-label="Upload Review Images"
@@ -197,7 +197,7 @@ export default function ReviewImageUploader({
             ) : (
               <ImagePlus size={22} />
             )}
-            <span className="text-[11px] font-bold">
+            <span className="text-caption font-bold">
               {uploading ? "Uploading" : "Add"}
             </span>
           </button>

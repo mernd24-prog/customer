@@ -13,7 +13,7 @@ export default function CollectionToolbar({
   onOpenFilters,
   className = "",
 }) {
-  const shellClassName = `  flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 ${className}`;
+  const shellClassName = `flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 ${className}`;
 
   const pageSizeOptions = pageSizes.map((size) => ({
     value: size,
@@ -33,7 +33,7 @@ export default function CollectionToolbar({
         {!!sortOptions.length && (
           <CustomDropdown
             className="flex-1 sm:flex-none w-full sm:w-[180px]"
-            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
+            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg text-xs sm:text-sm font-semibold text-navy-dark shadow-xs"
             options={sortOptions}
             value={sortValue}
             onChange={onSortChange}
@@ -45,7 +45,7 @@ export default function CollectionToolbar({
         {!!pageSizes.length && (
           <CustomDropdown
             className="flex-1 sm:flex-none w-full sm:w-[180px]"
-            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
+            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg text-xs sm:text-sm font-semibold text-navy-dark shadow-xs"
             options={pageSizeOptions}
             value={pageSizeValue}
             onChange={onPageSizeChange}
@@ -61,9 +61,9 @@ export default function CollectionToolbar({
           <button
             type="button"
             onClick={onOpenFilters}
-            className="flex flex-1 sm:flex-none h-10 sm:h-11 justify-start items-center gap-1.5 sm:gap-2 rounded-lg border border-[#E7D9B8] bg-white px-3 sm:px-4 text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] lg:hidden focus:outline-none"
+            className="flex h-10 flex-1 items-center justify-start gap-1.5 rounded-[var(--customer-radius-sm)] border border-border bg-white px-3 text-xs font-semibold text-navy-dark shadow-xs transition hover:border-gold hover:bg-gold-soft focus-visible:ring-2 focus-visible:ring-gold/50 sm:h-11 sm:flex-none sm:gap-2 sm:px-4 sm:text-sm lg:hidden"
           >
-            <SlidersHorizontal size={16} className="shrink-0 text-[#CE9F2D]" />
+            <SlidersHorizontal size={16} className="shrink-0 text-gold" />
             <span>Filters</span>
           </button>
         )}

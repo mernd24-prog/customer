@@ -30,10 +30,10 @@ export function PreferencesPage() {
         <div className="relative mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5 sm:gap-5">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#1B1D60] tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy tracking-tight">
                 Notification Preferences
               </h1>
-              <p className="text-xs sm:text-sm text-[#6F7480] mt-1 font-medium">
+              <p className="text-xs sm:text-sm text-muted mt-1 font-medium">
                 Choose how you&apos;d like to receive notifications and stay
                 updated with your orders, offers and more.
               </p>
@@ -45,18 +45,18 @@ export function PreferencesPage() {
         <ApiState loading={state.loading} error={state.error} empty={false}>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="rounded-2xl sm:rounded-3xl border border-[#E7D9B8] bg-white p-5 sm:p-7 lg:p-9 shadow-[0_10px_35px_rgba(17,24,39,0.06)]"
+            className="rounded-2xl sm:rounded-3xl border border-border bg-white p-5 sm:p-7 lg:p-9 shadow-[0_10px_35px_rgba(17,24,39,0.06)]"
           >
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-[#F4F6FB] border border-[#E2E8F0] flex items-center justify-center text-[#3E4093] shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#F4F6FB] border border-[#E2E8F0] flex items-center justify-center text-navy shrink-0">
                   <SlidersHorizontal size={18} strokeWidth={1.8} />
                 </div>
                 <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] leading-tight">
+                  <h2 className="text-lg sm:text-xl font-bold text-navy leading-tight">
                     Notification Channels
                   </h2>
-                  <p className="text-xs sm:text-[13px] text-[#6F7480] mt-0.5">
+                  <p className="text-xs sm:text-label text-muted mt-0.5">
                     Select the channels you want to receive notifications
                     through.
                   </p>
@@ -102,7 +102,7 @@ export function PreferencesPage() {
                 className={cn(
                   "flex items-center gap-2.5 px-6 py-3 rounded-xl",
                   "bg-gradient-to-r from-[#D6A323] via-[#CE9F2D] to-[#B8871B]",
-                  "text-white font-bold text-[14px]",
+                  "text-white font-bold text-sm",
                   "shadow-[0_4px_16px_rgba(206,159,45,0.35)]",
                   "hover:shadow-[0_6px_22px_rgba(206,159,45,0.45)] hover:scale-[1.01] active:scale-[0.99]",
                   "transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",

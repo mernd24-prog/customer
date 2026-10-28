@@ -76,18 +76,18 @@ export function NotificationCard({ notif, onClick }) {
           {/* Title and Time Row */}
           <div className="flex flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
             <h3
-              className={`text-[15px] sm:text-[16px] leading-tight pr-2 sm:pr-4 ${isRead ? "font-semibold text-[#2E2E2E]" : "font-bold text-[#1B1D60]"}`}
+              className={`text-body sm:text-base leading-tight pr-2 sm:pr-4 ${isRead ? "font-semibold text-ink" : "font-bold text-navy"}`}
             >
               {notif.title || notif.subject || "Notification"}
             </h3>
 
             <div className="flex items-center gap-2 shrink-0">
               {count ? (
-                <span className="text-[11px] font-semibold text-[#3E4093] bg-[#F3F4F9] border border-[#EAEFF5] px-2 py-0.5 rounded-lg">
+                <span className="text-caption font-semibold text-navy bg-[#F3F4F9] border border-[#EAEFF5] px-2 py-0.5 rounded-lg">
                   {count} {count === 1 ? "Product" : "Products"}
                 </span>
               ) : null}
-              <span className="text-[12px] text-[#8E8E8E] font-medium shrink-0">
+              <span className="text-xs text-[#8E8E8E] font-medium shrink-0">
                 {formatRelativeTime(notif.createdAt)}
               </span>
             </div>
@@ -95,7 +95,7 @@ export function NotificationCard({ notif, onClick }) {
 
           {/* Message */}
           <p
-            className={`mt-0.5 text-[13px] sm:text-[14px] leading-snug break-words ${isRead ? "text-[#6E6E6E]" : "text-[#4E4E4E]"}`}
+            className={`mt-0.5 text-label sm:text-sm leading-snug break-words ${isRead ? "text-muted" : "text-ink"}`}
           >
             {displayMessage}
           </p>

@@ -24,7 +24,7 @@ export default function QuantitySelector({
           −
         </button>
 
-        <span className="font-dm-sans text-sm font-bold text-[#2E2E2E]">
+        <span className="font-dm-sans text-sm font-bold text-ink">
           {String(quantity).padStart(2, "0")}
         </span>
 

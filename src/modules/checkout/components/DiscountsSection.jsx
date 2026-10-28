@@ -53,17 +53,17 @@ export default function DiscountsSection({
             >
               <div className="flex items-center gap-2.5">
                 <Wallet
-                  className={`h-[18px] w-[18px] ${isWalletApplied ? "text-[#CE9F2D]" : "text-gray-500"}`}
+                  className={`h-[18px] w-[18px] ${isWalletApplied ? "text-gold" : "text-gray-500"}`}
                 />
                 <span
-                  className={`text-[15px] font-normal ${isWalletApplied ? "text-[#CE9F2D]" : "text-gray-900"}`}
+                  className={`text-body font-normal ${isWalletApplied ? "text-gold" : "text-gray-900"}`}
                 >
                   Available: {formatMoney(walletBalance, "INR")}
                 </span>
               </div>
               <input
                 type="checkbox"
-                className="h-[18px] w-[18px] rounded border-gray-300 text-[#CE9F2D] focus:ring-[#CE9F2D] cursor-pointer"
+                className="h-[18px] w-[18px] rounded border-gray-300 text-gold focus:ring-[#CE9F2D] cursor-pointer"
                 checked={isWalletApplied}
                 onChange={handleWalletToggle}
                 disabled={!walletBalance}

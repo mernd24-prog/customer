@@ -15,10 +15,10 @@ export function PreferenceScheduleFields({
       {/* Frequency */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Clock size={16} className="text-[#1B1D60] shrink-0" />
-          <span className="text-sm font-bold text-[#1B1D60]">Frequency</span>
+          <Clock size={16} className="text-navy shrink-0" />
+          <span className="text-sm font-bold text-navy">Frequency</span>
         </div>
-        <p className="text-[11px] sm:text-xs text-[#6F7480] mb-2.5">
+        <p className="text-caption sm:text-xs text-muted mb-2.5">
           How often would you like to receive notifications?
         </p>
         <CustomDropdown
@@ -26,17 +26,17 @@ export function PreferenceScheduleFields({
           value={frequency}
           onChange={onFrequencyChange}
           className="w-full"
-          buttonClassName="h-11 rounded-lg border-[#CE9F2D] bg-white text-xs sm:text-sm font-semibold text-[#1B1D60]"
+          buttonClassName="h-11 rounded-lg border-[#CE9F2D] bg-white text-xs sm:text-sm font-semibold text-navy"
         />
       </div>
 
       {/* Timezone */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Globe size={16} className="text-[#1B1D60] shrink-0" />
-          <span className="text-sm font-bold text-[#1B1D60]">Timezone</span>
+          <Globe size={16} className="text-navy shrink-0" />
+          <span className="text-sm font-bold text-navy">Timezone</span>
         </div>
-        <p className="text-[11px] sm:text-xs text-[#6F7480] mb-2.5">
+        <p className="text-caption sm:text-xs text-muted mb-2.5">
           Select your preferred timezone.
         </p>
         <CustomDropdown
@@ -44,7 +44,7 @@ export function PreferenceScheduleFields({
           value={timezone}
           onChange={onTimezoneChange}
           className="w-full"
-          buttonClassName="h-11 rounded-lg border-[#CE9F2D] bg-white text-xs sm:text-sm font-semibold text-[#1B1D60]"
+          buttonClassName="h-11 rounded-lg border-[#CE9F2D] bg-white text-xs sm:text-sm font-semibold text-navy"
         />
       </div>
     </div>

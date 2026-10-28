@@ -365,7 +365,7 @@ export default function ProfileTab({ user }) {
   const readonlyFieldClass = "grid min-w-0 gap-1.5";
 
   const readonlyLabelClass =
-    "text-sm font-semibold text-[#1B1D60]";
+    "text-sm font-semibold text-navy";
 
   const readonlyValueClass =
     "flex min-h-11 min-w-0 items-center gap-2 rounded-lg bg-[#F7F7F9] px-3 py-2 text-sm text-[#4B5265] sm:text-base";
@@ -556,7 +556,7 @@ export default function ProfileTab({ user }) {
             type="button"
             onClick={handleCancel}
             disabled={loading || isAvatarUploading}
-            className="min-h-10 w-full rounded-lg border border-[#D9DCE5] px-6 text-sm font-semibold text-[#1B1D60] transition hover:bg-[#F7F7F9] disabled:opacity-60 sm:w-auto"
+            className="min-h-10 w-full rounded-lg border border-[#D9DCE5] px-6 text-sm font-semibold text-navy transition hover:bg-[#F7F7F9] disabled:opacity-60 sm:w-auto"
           >
             Cancel
           </button>

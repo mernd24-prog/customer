@@ -199,7 +199,7 @@ export default function CmsPage({ slugOverride = "" }) {
               <div className="w-full">
                 {(description || page?.description || page?.excerpt) && (
                   <p
-                    className="mb-8 text-[14px] leading-relaxed text-muted md:text-base"
+                    className="mb-8 text-sm leading-relaxed text-muted md:text-base"
                     dangerouslySetInnerHTML={{ __html: description || page?.description || page?.excerpt || "" }}
                   />
                 )}

@@ -314,7 +314,7 @@ export const CategoryBar = ({
                       )}
                     </div>
                     <span
-                      className={`mt-3 sm:mt-4 lg:mt-4.5 text-center text-[11px] sm:text-[13px] md:text-[14px] lg:text-[15px] whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
+                      className={`mt-3 sm:mt-4 lg:mt-4.5 text-center text-caption sm:text-label md:text-sm lg:text-body whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
                         isActive
                           ? "font-bold text-[#1E204A]"
                           : "font-semibold text-[#2D2D2D] group-hover:text-[#1E204A]"

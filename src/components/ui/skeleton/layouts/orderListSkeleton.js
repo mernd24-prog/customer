@@ -39,7 +39,7 @@ export const ORDER_LIST_SKELETON = [
         type: "col",
         count: 5,
         className:
-          "w-full overflow-hidden rounded-lg border border-[#E7D9B8] bg-white !gap-0",
+          "w-full overflow-hidden rounded-lg border border-border bg-white !gap-0",
         children: [
           /* Desktop */
           {

@@ -58,25 +58,25 @@ function ReturnRequestPage({ orderId }) {
       <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <Link
           to="/orders"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#5E6472] hover:text-[#1B1D60] transition-colors duration-200"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-navy transition-colors duration-200"
         >
-          <ArrowLeft size={16} className="text-[#CE9F2D]" /> Back to Orders
+          <ArrowLeft size={16} className="text-gold" /> Back to Orders
         </Link>
 
-        <div className="overflow-hidden rounded-2xl border border-[#E7D9B8] bg-white p-5 shadow-[0_4px_20px_rgba(27,29,96,0.05)] sm:p-7 lg:p-6">
+        <div className="overflow-hidden rounded-2xl border border-border bg-white p-5 shadow-[0_4px_20px_rgba(27,29,96,0.05)] sm:p-7 lg:p-6">
           <div className="mb-6 border-b border-[#EFE5D2] pb-5">
-            <h1 className="text-2xl font-extrabold text-[#1B1D60]">
+            <h1 className="text-2xl font-extrabold text-navy">
               Request a Return
             </h1>
-            <p className="mt-1 text-sm font-medium text-[#5E6472]">
+            <p className="mt-1 text-sm font-medium text-muted">
               Select the item you want to return from this order and specify the
               return reason.
             </p>
-            <p className="mt-2 text-xs font-medium text-[#5E6472]">
+            <p className="mt-2 text-xs font-medium text-muted">
               Before return, please read our{" "}
               <Link
                 to="/refund-policy"
-                className="font-bold text-[#CE9F2D] hover:underline"
+                className="font-bold text-gold hover:underline"
               >
                 Return & Refund Policy
               </Link>
@@ -85,12 +85,12 @@ function ReturnRequestPage({ orderId }) {
           </div>
 
           {orderLoading && !order ? (
-            <div className="flex flex-col items-center justify-center py-12 text-sm font-semibold text-[#5E6472]">
+            <div className="flex flex-col items-center justify-center py-12 text-sm font-semibold text-muted">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#CE9F2D] border-t-transparent mb-3" />
               Loading Order Details…
             </div>
           ) : !orderItems.length ? (
-            <div className="rounded-xl border border-dashed border-[#E7D9B8] bg-[#FFFCF6] p-8 text-center text-sm font-semibold text-[#5E6472]">
+            <div className="rounded-xl border border-dashed border-border bg-[#FFFCF6] p-8 text-center text-sm font-semibold text-muted">
               No items found for this order.
             </div>
           ) : (
@@ -105,7 +105,7 @@ function ReturnRequestPage({ orderId }) {
 
               {/* Item selector */}
               <div className="grid gap-2">
-                <span className="text-sm font-bold text-[#1B1D60]">
+                <span className="text-sm font-bold text-navy">
                   Select Item to Return
                 </span>
                 <div className="grid gap-3">
@@ -153,7 +153,7 @@ function ReturnRequestPage({ orderId }) {
                             ? "border-1 border-[#CE9F2D] "
                             : disabled
                               ? "cursor-not-allowed border-[#E5E5E5] bg-gray-50 opacity-60"
-                              : "border-[#E7D9B8]  hover:border-[#CE9F2D]/60 "
+                              : "border-border  hover:border-[#CE9F2D]/60 "
                         }`}
                       >
                         {img ? (
@@ -166,13 +166,13 @@ function ReturnRequestPage({ orderId }) {
                             className="h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 rounded-xl border border-[#EFE5D2] object-contain p-1.5 bg-white shadow-xs"
                           />
                         ) : (
-                          <span className="flex h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 items-center justify-center rounded-xl border border-[#EFE5D2] bg-[#FFF8E7] text-[#CE9F2D]">
+                          <span className="flex h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 items-center justify-center rounded-xl border border-[#EFE5D2] bg-[#FFF8E7] text-gold">
                             <Package size={30} />
                           </span>
                         )}
 
                         <div className="min-w-0 flex-1 overflow-hidden">
-                          <h2 className="break-words text-sm font-bold text-[#1B1D60] sm:text-base">
+                          <h2 className="break-words text-sm font-bold text-navy sm:text-base">
                             <ShowMoreText
                               text={title}
                               mode="lines"
@@ -180,16 +180,16 @@ function ReturnRequestPage({ orderId }) {
                               moreLabel="more"
                               lessLabel="less"
                               textClassName="inline"
-                              buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+                              buttonClassName="ml-1 text-xs font-semibold text-navy hover:underline"
                             />
                           </h2>
 
                           {price > 0 && (
-                            <p className="mt-1 text-xs font-semibold text-[#2E2E2E] sm:text-sm">
+                            <p className="mt-1 text-xs font-semibold text-ink sm:text-sm">
                               ₹{Number(price).toLocaleString("en-IN")}
                             </p>
                           )}
-                          <p className="mt-1 text-xs text-[#5E6472]">
+                          <p className="mt-1 text-xs text-muted">
                             Ordered: {getItemQuantity(item)}
                             {cancelledQuantity > 0
                               ? ` · Cancelled: ${cancelledQuantity}`
@@ -264,7 +264,7 @@ function ReturnRequestPage({ orderId }) {
                   <div className="grid gap-1.5">
                     <label
                       htmlFor="quantity"
-                      className="text-sm font-bold text-[#1B1D60]"
+                      className="text-sm font-bold text-navy"
                     >
                       Quantity <span className="text-red-500">*</span>
                     </label>
@@ -278,15 +278,15 @@ function ReturnRequestPage({ orderId }) {
                         99
                       }
                       {...register("quantity", { valueAsNumber: true })}
-                      className="min-h-11 rounded-lg border border-[#E7D9B8] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2E2E2E] outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none"
+                      className="min-h-11 rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm font-medium text-ink outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none"
                     />
-                    <p className="text-xs text-[#5E6472]">
+                    <p className="text-xs text-muted">
                       You can return up to {selectedReturnableQuantity} unit
                       {selectedReturnableQuantity === 1 ? "" : "s"} for this
                       exact order item/variant.
                     </p>
                     {selectedReturnedQuantity > 0 && (
-                      <div className="rounded-lg border border-[#E7D9B8] bg-[#FFF8E7] px-3.5 py-2.5 text-xs font-semibold text-[#855B14]">
+                      <div className="rounded-lg border border-border bg-[#FFF8E7] px-3.5 py-2.5 text-xs font-semibold text-[#855B14]">
                         {selectedReturnedQuantity} of {selectedOrderedQuantity}{" "}
                         unit{selectedOrderedQuantity === 1 ? "" : "s"} already
                         in return/refund queue. You can return only{" "}
@@ -324,7 +324,7 @@ function ReturnRequestPage({ orderId }) {
                   <div className="grid gap-1.5">
                     <label
                       htmlFor="description"
-                      className="text-sm font-bold text-[#1B1D60]"
+                      className="text-sm font-bold text-navy"
                     >
                       Description <span className="text-red-500">*</span>
                     </label>
@@ -333,7 +333,7 @@ function ReturnRequestPage({ orderId }) {
                       {...register("description")}
                       rows={4}
                       placeholder="Describe the issue in detail…"
-                      className="rounded-lg border border-[#E7D9B8] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2E2E2E] outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none placeholder:text-stone-400 resize-none"
+                      className="rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm font-medium text-ink outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none placeholder:text-stone-400 resize-none"
                     />
                     {errors.description && (
                       <span className="text-xs font-medium text-rose-600">
@@ -344,16 +344,16 @@ function ReturnRequestPage({ orderId }) {
 
                   {/* Re-themed Estimated Refund Card */}
                   {estimatedRefund.total > 0 && (
-                    <div className="rounded-xl border border-[#E7D9B8] bg-[#FFFBF0] p-4 sm:p-5 shadow-xs">
+                    <div className="rounded-xl border border-border bg-[#FFFBF0] p-4 sm:p-5 shadow-xs">
                       <div className="flex items-center justify-between">
                         <p className="text-xs font-bold uppercase tracking-wider text-[#9A7A27]">
                           Estimated Refund
                         </p>
-                        <span className="inline-flex items-center rounded-full bg-[#FFF8E7] border border-[#E7D9B8] px-2.5 py-0.5 text-[11px] font-bold text-[#855B14]">
+                        <span className="inline-flex items-center rounded-full bg-[#FFF8E7] border border-border px-2.5 py-0.5 text-caption font-bold text-[#855B14]">
                           Summary
                         </span>
                       </div>
-                      <p className="mt-1.5 text-2xl font-extrabold text-[#1B1D60]">
+                      <p className="mt-1.5 text-2xl font-extrabold text-navy">
                         ₹
                         {estimatedRefund.total.toLocaleString("en-IN", {
                           minimumFractionDigits: 2,
@@ -370,7 +370,7 @@ function ReturnRequestPage({ orderId }) {
                               className={
                                 row.tone === "muted"
                                   ? "text-stone-500 font-medium"
-                                  : "text-[#2E2E2E] font-semibold"
+                                  : "text-ink font-semibold"
                               }
                             >
                               {row.label}
@@ -379,7 +379,7 @@ function ReturnRequestPage({ orderId }) {
                               className={
                                 row.tone === "muted"
                                   ? "font-semibold text-stone-400"
-                                  : "font-extrabold text-[#1B1D60]"
+                                  : "font-extrabold text-navy"
                               }
                             >
                               {row.displayValue || (
@@ -400,17 +400,17 @@ function ReturnRequestPage({ orderId }) {
                           </div>
                         ))}
                       </div>
-                      <p className="mt-3 text-xs leading-relaxed text-[#5E6472]">
+                      <p className="mt-3 text-xs leading-relaxed text-muted">
                         {estimatedRefund.note}
                       </p>
                       {estimatedRefund.cod && (
-                        <p className="mt-2 rounded-lg border border-[#E7D9B8] bg-[#F8F1E2] p-2.5 text-xs font-medium text-[#855B14]">
+                        <p className="mt-2 rounded-lg border border-border bg-[#F8F1E2] p-2.5 text-xs font-medium text-[#855B14]">
                           COD order: no Razorpay gateway refund is created.
                           Admin/seller will complete the approved refund through
                           the configured COD refund process.
                         </p>
                       )}
-                      <p className="mt-1.5 text-[11px] font-medium text-[#9A7A27]">
+                      <p className="mt-1.5 text-caption font-medium text-[#9A7A27]">
                         Final refund is subject to review and Quality Check
                         (QC).
                       </p>

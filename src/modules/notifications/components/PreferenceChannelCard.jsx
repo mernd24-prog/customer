@@ -11,8 +11,8 @@ export function PreferenceChannelCard({ channel, isChecked, onToggle }) {
       className={cn(
         "group relative flex items-center justify-between gap-3.5 p-4 rounded-xl border transition-all duration-200 cursor-pointer select-none",
         isChecked
-          ? "border-[#E2D2B2] bg-[#FAF6EE]/80 shadow-xs"
-          : "border-[#ECE2D0] bg-white hover:border-[#CE9F2D]/60 hover:bg-[#FAF6EE]/40",
+          ? "border-[#E2D2B2] bg-cream/80 shadow-xs"
+          : "border-[#ECE2D0] bg-white hover:border-[#CE9F2D]/60 hover:bg-cream/40",
       )}
     >
       <div className="flex items-center gap-3.5 min-w-0">
@@ -21,17 +21,17 @@ export function PreferenceChannelCard({ channel, isChecked, onToggle }) {
             "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200",
             isChecked
               ? "bg-[#FAF4E6] text-[#9A751E] border border-[#EADBBD]"
-              : "bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0] group-hover:bg-[#F1F5F9] group-hover:text-[#1B1D60]",
+              : "bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0] group-hover:bg-[#F1F5F9] group-hover:text-navy",
           )}
         >
           <Icon size={18} strokeWidth={1.8} />
         </div>
 
         <div className="min-w-0">
-          <h4 className="text-[14px] font-bold text-[#1B1D60] leading-tight">
+          <h4 className="text-sm font-bold text-navy leading-tight">
             {channel.title}
           </h4>
-          <p className="text-[11px] sm:text-[12px] text-[#6F7480] mt-1 leading-snug line-clamp-2">
+          <p className="text-caption sm:text-xs text-muted mt-1 leading-snug line-clamp-2">
             {channel.description}
           </p>
         </div>

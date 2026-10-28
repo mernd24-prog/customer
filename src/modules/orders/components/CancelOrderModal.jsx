@@ -53,7 +53,7 @@ export default function CancelOrderModal({
               to="/refund-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-bold text-[#CE9F2D] transition-colors hover:text-[#A96F14] hover:underline"
+              className="font-bold text-gold transition-colors hover:text-[#A96F14] hover:underline"
             >
               Cancellation Policy
             </Link>
@@ -73,7 +73,7 @@ export default function CancelOrderModal({
       <div className="grid min-h-0 gap-4">
         {/* Scrollable content keeps the modal actions accessible. */}
         <div className="grid min-h-0 max-h-[45dvh] gap-3 overflow-y-auto overscroll-contain pr-1 sm:max-h-[42dvh]">
-          <div className="grid gap-2 rounded-xl border border-[#E7D9B8] bg-[#FFFDF9] p-2.5 sm:p-3">
+          <div className="grid gap-2 rounded-xl border border-border bg-[#FFFDF9] p-2.5 sm:p-3">
             {selectedItems.map((item) => {
               const itemId = String(getOrderItemId(item));
 
@@ -151,7 +151,7 @@ export default function CancelOrderModal({
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="line-clamp-2 break-words text-xs font-bold leading-5 text-[#1B1D60] sm:text-sm">
+                    <p className="line-clamp-2 break-words text-xs font-bold leading-5 text-navy sm:text-sm">
                       {getProductTitle(item)}
                     </p>
 
@@ -162,7 +162,7 @@ export default function CancelOrderModal({
                     )}
 
                     {price > 0 && (
-                      <p className="mt-1 text-sm font-bold text-[#1B1D60]">
+                      <p className="mt-1 text-sm font-bold text-navy">
                         {formatMoney(price, currency)}
                       </p>
                     )}
@@ -188,7 +188,7 @@ export default function CancelOrderModal({
         <div className="grid min-w-0 gap-1.5">
           <label
             htmlFor="cancel-reason"
-            className="text-sm font-bold text-[#1B1D60]"
+            className="text-sm font-bold text-navy"
           >
             Reason for cancellation
           </label>
@@ -208,21 +208,21 @@ export default function CancelOrderModal({
               if (cancelReasonError) setCancelReasonError(false);
             }}
             placeholder="Select reason"
-            buttonClassName="h-11 rounded-lg border-[#DCDDE5] text-sm font-medium text-[#1B1D60]"
+            buttonClassName="h-11 rounded-lg border-[#DCDDE5] text-sm font-medium text-navy"
           />
         </div>
 
         <div className="grid min-w-0 gap-1.5">
           <label
             htmlFor="cancel-additional-details"
-            className="text-sm font-bold text-[#1B1D60]"
+            className="text-sm font-bold text-navy"
           >
             Additional details
           </label>
 
           <textarea
             id="cancel-additional-details"
-            className={`min-h-20 w-full resize-y rounded-lg border p-3 text-sm font-medium text-[#1B1D60] transition placeholder:text-[#8C8E9E] focus:outline-none ${
+            className={`min-h-20 w-full resize-y rounded-lg border p-3 text-sm font-medium text-navy transition placeholder:text-[#8C8E9E] focus:outline-none ${
               cancelReasonError
                 ? "border-red-600"
                 : "border-[#DCDDE5]"
