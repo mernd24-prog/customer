@@ -86,7 +86,10 @@ function ProductReviewSidebar({ product, productId }) {
         onClick={handleBack}
         className="mb-3.5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#CE9F2D] hover:text-[#1B1D60] transition-colors group cursor-pointer"
       >
-        <ChevronLeft size={16} className="transition-transform group-hover:-translate-x-1" />
+        <ChevronLeft
+          size={16}
+          className="transition-transform group-hover:-translate-x-1"
+        />
         Back to Product
       </Link>
 

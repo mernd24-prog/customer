@@ -10,7 +10,6 @@ import {
   Pencil,
 } from "lucide-react";
 
-import FormField from "../../../components/ui/FormField";
 import Button from "../../../components/ui/buttons/Button";
 import OtpInput from "../../../components/ui/OtpInput";
 import { useToastThunk } from "../../../hooks/useToastThunk";
@@ -362,30 +361,27 @@ export default function ProfileTab({ user }) {
     user?.name ||
     "Your account";
 
-  const readonlyFieldClass = "grid min-w-0 gap-1.5";
-
-  const readonlyLabelClass =
-    "text-sm font-semibold text-[#1B1D60]";
-
-  const readonlyValueClass =
-    "flex min-h-11 min-w-0 items-center gap-2 rounded-lg bg-[#F7F7F9] px-3 py-2 text-sm text-[#4B5265] sm:text-base";
+  const fieldLabelClass = "text-xs sm:text-sm font-semibold text-[#171A3A]";
+  const readonlyBoxClass =
+    "flex h-11 min-h-[44px] min-w-0 items-center gap-2.5 rounded-lg border border-[#E7D9B8]/70 bg-[#FAFAFC] px-3.5 text-sm sm:text-base font-normal text-[#171A3A]";
+  const inputClass =
+    "h-11 min-h-[44px] w-full rounded-lg border border-[#04258633] bg-white px-3.5 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold";
 
   return (
     <form
       onSubmit={handleSubmit(submit)}
       noValidate
-      className="grid w-full min-w-0 gap-3"
+      className="grid w-full min-w-0 gap-5"
     >
-
-      <section className="flex min-w-0 items-center justify-between gap-4 rounded-xl bg-[#FAFAFC]">
-        {/* Avatar + Name */}
-        <div className="flex min-w-0 items-center gap-4">
+      {/* Avatar + User Header Card */}
+      <section className="flex min-w-0 w-full flex-col gap-3 rounded-lg border border-[#E7D9B8]/70 bg-[#FFFDF8] p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4">
+        <div className="flex min-w-0 items-center gap-3.5 sm:gap-4">
           <div className="relative shrink-0">
             {isAvatarLoading ? (
               <div
                 role="status"
                 aria-label="Loading profile photo"
-                className="flex size-[68px] items-center justify-center rounded-full border border-[#E6E8F0] bg-[#F2F4F8] sm:size-20"
+                className="flex size-16 items-center justify-center rounded-full border border-[#E6E8F0] bg-[#F2F4F8] sm:size-20"
               >
                 <span className="size-5 animate-spin rounded-full border-2 border-gold border-t-transparent sm:size-6" />
               </div>
@@ -399,7 +395,7 @@ export default function ProfileTab({ user }) {
                   event.currentTarget.onerror = null;
                   event.currentTarget.src = FALLBACK_AVATAR;
                 }}
-                className="size-[68px] rounded-full border border-[#E6E8F0] bg-white object-cover sm:size-20"
+                className="size-16 rounded-full border-2 border-white bg-white object-cover shadow-xs sm:size-20"
               />
             )}
             {isEditing && (
@@ -426,79 +422,122 @@ export default function ProfileTab({ user }) {
             )}
           </div>
 
-          <div className="min-w-0">
-            <h2 className="truncate text-base font-bold text-[#171A3A] sm:text-lg">
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate text-base font-bold text-[#171A3A] sm:text-lg lg:text-xl">
               {fullName}
             </h2>
 
-            <p className="mt-1 text-xs text-[#697084] sm:text-sm">
+            <p className="mt-0.5 truncate text-xs sm:text-sm font-normal text-[#64708A]">
               {user?.email || "No email available"}
             </p>
 
             {avatarError && (
-              <p role="alert" className="mt-1 text-xs text-red-600">
+              <p role="alert" className="mt-1 text-xs font-normal text-red-600">
                 {avatarError}
               </p>
             )}
           </div>
         </div>
 
-        {/* Edit Profile button — right side */}
+        {/* Edit Profile button */}
         {!isEditing && (
-          <Button
+          <button
             type="button"
             onClick={handleEdit}
-            variant="primary"
-            size="md"
-            icon={<Pencil size={15} />}
-            className="shrink-0 px-4"
+            className="inline-flex min-h-10 w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none"
           >
-            Edit Profile
-          </Button>
+            <Pencil size={15} />
+            <span>Edit Profile</span>
+          </button>
         )}
       </section>
 
-      <section className="grid min-w-0 gap-2 sm:grid-cols-2 sm:gap-3">
-        <div className="min-w-0">
-          <FormField
-            id="firstName"
-            label="First Name"
-            registration={register("firstName")}
-            error={isEditing ? errors.firstName : undefined}
-            autoComplete="given-name"
-            placeholder="Enter first name"
-            disabled={loading || !isEditing}
-          />
-        </div>
-
-        <div className="min-w-0">
-          <FormField
-            id="lastName"
-            label="Last Name"
-            registration={register("lastName")}
-            error={isEditing ? errors.lastName : undefined}
-            autoComplete="family-name"
-            placeholder="Enter last name"
-            disabled={loading || !isEditing}
-          />
-        </div>
-      </section>
-      <section className="grid min-w-0 gap-3 sm:grid-cols-2 sm:gap-4">
-        <div className={readonlyFieldClass}>
-          <label htmlFor="profile-email" className={readonlyLabelClass}>
-            Email {user?.emailVerified && <span className="text-xs text-green-700">(Verified)</span>}
+      {/* Row 1: First Name & Last Name */}
+      <section className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
+        <div className="grid min-w-0 gap-1.5">
+          <label htmlFor="firstName" className={fieldLabelClass}>
+            First Name
           </label>
 
-          {user?.emailVerified ? (
-            <div className={readonlyValueClass}>
-              <Mail size={17} className="shrink-0 text-[#697084]" />
-              <span className="min-w-0 break-all">{user.email}</span>
+          {isEditing ? (
+            <div>
+              <input
+                id="firstName"
+                type="text"
+                autoComplete="given-name"
+                placeholder="Enter first name"
+                disabled={loading}
+                className={inputClass}
+                {...register("firstName")}
+              />
+              {errors.firstName?.message && (
+                <p className="mt-1 text-xs font-normal text-red-600">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className={readonlyBoxClass}>
+              <UserRound size={17} className="shrink-0 text-[#8D92A3]" />
+              <span className="min-w-0 truncate">
+                {user?.profile?.firstName || "—"}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="grid min-w-0 gap-1.5">
+          <label htmlFor="lastName" className={fieldLabelClass}>
+            Last Name
+          </label>
+
+          {isEditing ? (
+            <div>
+              <input
+                id="lastName"
+                type="text"
+                autoComplete="family-name"
+                placeholder="Enter last name"
+                disabled={loading}
+                className={inputClass}
+                {...register("lastName")}
+              />
+              {errors.lastName?.message && (
+                <p className="mt-1 text-xs font-normal text-red-600">
+                  {errors.lastName.message}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className={readonlyBoxClass}>
+              <UserRound size={17} className="shrink-0 text-[#8D92A3]" />
+              <span className="min-w-0 truncate">
+                {user?.profile?.lastName || "—"}
+              </span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Row 2: Email & Phone */}
+      <section className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
+        <div className="grid min-w-0 gap-1.5">
+          <label htmlFor="profile-email" className={fieldLabelClass}>
+            Email {user?.emailVerified && <span className="text-xs font-semibold text-emerald-700">(Verified)</span>}
+          </label>
+
+          {user?.emailVerified || !isEditing ? (
+            <div className={readonlyBoxClass}>
+              <Mail size={17} className="shrink-0 text-[#8D92A3]" />
+              <span className="min-w-0 break-all">
+                {user?.email || "—"}
+              </span>
             </div>
           ) : (
             <div className="grid gap-2">
               <div className="flex gap-2">
                 <div className="relative min-w-0 flex-1">
-                  <Mail size={17} className="absolute left-3 top-3 text-[#697084]" />
+                  <Mail size={17} className="absolute left-3 top-3 text-[#8D92A3]" />
                   <input
                     id="profile-email"
                     type="email"
@@ -509,54 +548,74 @@ export default function ProfileTab({ user }) {
                       setEmailOtp("");
                       setEmailError("");
                     }}
-                    disabled={!isEditing || emailBusy}
+                    disabled={emailBusy}
                     placeholder="Add your email address"
-                    className="min-h-11 w-full rounded-lg border border-[#D9DCE5] bg-white py-2 pl-10 pr-3 text-sm disabled:bg-[#F7F7F9]"
+                    className="h-11 min-h-[44px] w-full rounded-lg border border-[#04258633] bg-white py-2 pl-10 pr-3 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold"
                   />
                 </div>
-                {isEditing && (
-                  <button type="button" onClick={handleSendEmailOtp} disabled={emailBusy || !email.trim()} className="rounded-lg bg-[#1B1D60] px-3 text-xs font-semibold text-white disabled:opacity-50">
-                    {emailOtpSent ? "Resend OTP" : "Verify email"}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={handleSendEmailOtp}
+                  disabled={emailBusy || !email.trim()}
+                  className="min-h-11 shrink-0 rounded-lg bg-[#1B1D60] px-3.5 text-xs font-semibold text-white transition hover:bg-[#2C3080] disabled:opacity-50"
+                >
+                  {emailOtpSent ? "Resend OTP" : "Verify email"}
+                </button>
               </div>
+
               {emailOtpSent && (
-                <div className="grid gap-2 rounded-lg border border-gold/30 bg-gold/5 p-3">
-                  <p className="text-xs text-[#4B5265]">Enter the OTP sent to email <strong>{email}</strong>.</p>
-                  <OtpInput value={emailOtp} length={6} onChange={(value) => setEmailOtp(String(value || "").replace(/\D/g, "").slice(0, 6))} error="" />
-                  <button type="button" onClick={handleVerifyEmailOtp} disabled={emailBusy || emailOtp.length !== 6} className="min-h-10 rounded-lg bg-gold px-4 text-sm font-semibold text-white disabled:opacity-50">
+                <div className="grid gap-2 rounded-lg border border-gold/40 bg-[#FFFDF8] p-3">
+                  <p className="text-xs font-normal text-[#64708A]">
+                    Enter the OTP sent to email <strong>{email}</strong>.
+                  </p>
+                  <OtpInput
+                    value={emailOtp}
+                    length={6}
+                    onChange={(value) =>
+                      setEmailOtp(String(value || "").replace(/\D/g, "").slice(0, 6))
+                    }
+                    error=""
+                  />
+                  <button
+                    type="button"
+                    onClick={handleVerifyEmailOtp}
+                    disabled={emailBusy || emailOtp.length !== 6}
+                    className="min-h-10 rounded-lg bg-gold px-4 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-gold-dark disabled:opacity-50"
+                  >
                     {emailBusy ? "Verifying..." : "Verify email OTP"}
                   </button>
                 </div>
               )}
-              {!user?.email && !isEditing && <p className="text-xs text-amber-700">Add and verify an email by selecting Edit Profile.</p>}
-              {emailError && <p role="alert" className="text-xs font-semibold text-red-600">{emailError}</p>}
+
+              {emailError && (
+                <p role="alert" className="text-xs font-normal text-red-600">
+                  {emailError}
+                </p>
+              )}
             </div>
           )}
         </div>
 
-        <div className={readonlyFieldClass}>
-          <label className={readonlyLabelClass}>Phone</label>
+        <div className="grid min-w-0 gap-1.5">
+          <label className={fieldLabelClass}>Phone</label>
 
-          <div className={readonlyValueClass}>
-            <Phone
-              size={17}
-              className="shrink-0 text-[#697084]"
-            />
-
-            <span className="min-w-0 break-words">
+          <div className={readonlyBoxClass}>
+            <Phone size={17} className="shrink-0 text-[#8D92A3]" />
+            <span className="min-w-0 truncate">
               {user?.phone || "—"}
             </span>
           </div>
         </div>
       </section>
+
+      {/* Editing Action Buttons */}
       {isEditing && (
-        <div className="flex flex-col-reverse justify-start gap-3 border-t border-[#E8EAF1] pt-3 sm:flex-row">
+        <div className="flex flex-col-reverse justify-end gap-3 border-t border-[#E7D9B8]/60 pt-4 sm:flex-row">
           <button
             type="button"
             onClick={handleCancel}
             disabled={loading || isAvatarUploading}
-            className="min-h-10 w-full rounded-lg border border-[#D9DCE5] px-6 text-sm font-semibold text-[#1B1D60] transition hover:bg-[#F7F7F9] disabled:opacity-60 sm:w-auto"
+            className="min-h-10 w-full sm:w-auto rounded-lg border border-[#D9DCE5] px-5 text-xs sm:text-sm font-semibold text-[#171A3A] transition hover:bg-[#F7F7F9] disabled:opacity-60"
           >
             Cancel
           </button>
@@ -564,13 +623,9 @@ export default function ProfileTab({ user }) {
           <Button
             type="submit"
             loading={loading}
-            disabled={
-              !isValid ||
-              loading ||
-              isAvatarUploading
-            }
-            className="w-full px-6 text-sm font-semibold text-white sm:w-auto sm:min-w-[150px]"
-            size="lg"
+            disabled={!isValid || loading || isAvatarUploading}
+            className="w-full sm:w-auto px-6 text-xs sm:text-sm font-semibold text-white min-w-0 sm:min-w-[130px]"
+            size="md"
           >
             Save Profile
           </Button>

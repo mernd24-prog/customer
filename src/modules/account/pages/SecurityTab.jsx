@@ -98,17 +98,17 @@ export default function SecurityTab() {
         onSubmit={handleSubmit((values) => submit(values))}
         noValidate
       >
-        <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
+            <span className="flex size-10 sm:size-11 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
               <UserRound size={21} />
             </span>
 
             <div className="min-w-0">
-              <h2 className="text-lg font-bold leading-6 text-[#1B1D60] sm:text-xl">
+              <h2 className="text-base sm:text-lg lg:text-xl font-bold leading-6 text-[#171A3A]">
                 Security
               </h2>
-              <p className="mt-1 text-sm leading-5 text-[#64708A]">
+              <p className="mt-0.5 text-xs sm:text-sm font-normal leading-snug text-[#64708A]">
                 Manage your password and security settings.
               </p>
             </div>
@@ -151,11 +151,11 @@ export default function SecurityTab() {
           disabled={loading}
         />
 
-        <div className="flex justify-end pt-2">
+        <div className="flex w-full justify-end pt-2">
           <Button
             type="submit"
             loading={loading}
-            className="inline-flex w-auto items-center justify-center gap-2 px-5 font-semibold text-white"
+            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-gold hover:bg-gold-dark rounded-lg shadow-2xs"
             size="md"
             disabled={loading || otpRequired}
           >

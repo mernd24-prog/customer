@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { MapPin, Plus } from "lucide-react";
+import { MapPin, Plus, X ,SquarePlus} from "lucide-react";
 import useCheckout from "../controllers/useCheckout";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { getPaymentProviderLabel } from "../utils/checkoutUtils";
@@ -9,11 +9,10 @@ import Breadcrumbs from "../../common/components/Breadcrumbs";
 import OrderDetailLayout, {
   OrderDetailAside,
 } from "../../orders/components/OrderDetailLayout";
-import ShippingAddressForm from "../components/ShippingAddressForm";
 import AddressSelection from "../components/AddressSelection";
 import DiscountsSection from "../components/DiscountsSection";
 import CheckoutSummary from "../components/CheckoutSummary";
-import BaseModal from "../../../components/ui/overlay/BaseModal";
+import AddressEditModal from "../../common/components/address/AddressEditModal";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import Loader from "../../../components/ui/Loader";
 import { CHECKOUT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
@@ -115,18 +114,7 @@ export default function CheckoutPage() {
       />
       <Seo title="Checkout | Sam Global" />
 
-      <div className="mx-auto max-w-[850px] lg:max-w-none py-6 sm:py-8">
-        <div className="mb-6 lg:mb-2">
-          <Breadcrumbs
-            items={[
-              { label: "Home", href: "/" },
-              { label: "Cart", href: "/cart" },
-              { label: "Checkout" },
-            ]}
-            heading="Checkout"
-            rightContent={null}
-          />
-        </div>
+      <div className="w-full min-w-0 py-4 sm:py-6 lg:py-8">
         <ApiState
           loading={cartState.loading}
           error={cartState.error}
@@ -195,8 +183,18 @@ export default function CheckoutPage() {
               {...register("selectedAddressId")}
             />
             <OrderDetailLayout>
-              {/* Left column: shipping + payment */}
-              <div className="flex flex-col gap-6">
+              {/* Left column: breadcrumbs + shipping + discounts */}
+              <div className="flex flex-col gap-4 sm:gap-5 lg:gap-6">
+                {/* Breadcrumbs — sits above address card, scrolls with left column */}
+                <Breadcrumbs
+                  items={[
+                    { label: "Home", href: "/" },
+                    { label: "Cart", href: "/cart" },
+                    { label: "Checkout" },
+                  ]}
+                  heading="Checkout"
+                  rightContent={null}
+                />
                 {/* Saved addresses */}
                 {addresses.length > 0 && (
                   <AddressSelection
@@ -212,12 +210,12 @@ export default function CheckoutPage() {
                 )}
 
                 {addresses.length === 0 && !useNewAddress && (
-                  <div className="rounded-[20px] border-[1.5px] border-dashed border-[#D9B86D] bg-[#FFFDF8] px-5 py-8 text-center shadow-[0_0_0_1px_rgba(201,163,88,0.12)] sm:px-6">
-                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60] shadow-inner shadow-[#E2CF9E]">
-                      <MapPin size={24} />
+                  <div className="rounded-xl border border-dashed border-[#D9B86D] bg-[#FFFDF8] px-4 py-8 text-center sm:px-6">
+                    <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60] sm:size-14">
+                      <MapPin size={22} />
                     </div>
 
-                    <h3 className="text-[1.05rem] font-bold leading-6 text-[#1B1D60]">
+                    <h3 className="text-base font-bold leading-6 text-[#1B1D60] sm:text-[1.05rem]">
                       No addresses saved yet
                     </h3>
 
@@ -230,9 +228,9 @@ export default function CheckoutPage() {
                       onClick={() =>
                         setValue("useNewAddress", true, { shouldValidate: true })
                       }
-                      className="mt-5 inline-flex min-h-11 w-full max-w-[190px] items-center justify-center gap-2 rounded-lg border border-[#C69D2A] bg-[#C69D2A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#b98a1f]"
+                      className="mt-5 inline-flex h-11 w-full max-w-[200px] items-center justify-center gap-2 rounded-lg border border-[#C69D2A] bg-[#C69D2A] px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#b98a1f]"
                     >
-                      <Plus size={17} />
+                      <SquarePlus size={24} className="text-gold" />
                       Add Address
                     </button>
                   </div>
@@ -240,29 +238,31 @@ export default function CheckoutPage() {
 
                 {/* New address form */}
                 {useNewAddress && (
-                  <BaseModal onClose={handleCloseNewAddress}>
-                    <div className="w-full bg-surface p-4 sm:p-5 rounded-[10px] max-h-[75vh] overflow-y-auto [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
-                      <ShippingAddressForm
-                        register={register}
-                        errors={errors}
-                        checkoutDialCodes={checkoutDialCodes}
-                        countries={countries}
-                        selectedCountry={selectedCountry}
-                        states={states}
-                        selectedState={selectedState}
-                        cities={cities}
-                        selectedCity={selectedCity}
-                        watchedPostalCode={watchedPostalCode}
-                        setValue={setValue}
-                        postalCodes={postalCodes}
-                        showSavedAddressFields={true}
-                        addressLabels={addressLabels}
-                        loading={checkoutActionLoading}
-                        onCancel={handleCloseNewAddress}
-                        onSave={handleSaveShippingAddressOnly}
-                      />
-                    </div>
-                  </BaseModal>
+                  <AddressEditModal
+                    isOpen={true}
+                    onClose={handleCloseNewAddress}
+                    onSave={handleSaveShippingAddressOnly}
+                    form={{
+                      register,
+                      setValue,
+                      formState: { errors },
+                    }}
+                    idPrefix="shipping"
+                    loading={checkoutActionLoading}
+                    countries={countries}
+                    states={states}
+                    cities={cities}
+                    postalCodes={postalCodes}
+                    dialCodes={checkoutDialCodes}
+                    selectedCountry={selectedCountry}
+                    selectedState={selectedState}
+                    selectedCity={selectedCity}
+                    selectedPostalCode={watchedPostalCode}
+                    addressLabels={addressLabels}
+                    title="Shipping Address"
+                    submitLabel="Save Address"
+                    icon={MapPin}
+                  />
                 )}
 
                 {/* Coupons & wallet */}

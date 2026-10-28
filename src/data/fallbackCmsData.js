@@ -324,41 +324,41 @@ export const FALLBACK_FAQ_PAGE = {
       "The Bear House",
       "Recently achieved 3.2x growth",
     ],
-    [
-      "Nisha Kapoor",
-      "The seller tools help us make better decisions every week.",
-      "SellerStory1.webp",
-      "Owner, Nivara Studio",
-      "18,000+ orders delivered",
-    ],
-    [
-      "Kabir Shah",
-      "Reliable payouts gave us the confidence to scale.",
-      "SellerStory2.webp",
-      "Director, K&S Essentials",
-      "200+ products listed",
-    ],
-    [
-      "Riya Malhotra",
-      "The marketplace helped our family-run brand find customers beyond our city.",
-      "SellerStory3.webp",
-      "Co-founder, Terra Crafts",
-      "42 cities reached",
-    ],
-    [
-      "Dev Arora",
-      "Sam Global made online selling feel approachable from day one.",
-      "SellerStory4.webp",
-      "Owner, Volt Avenue",
-      "4.8 average rating",
-    ],
-    [
-      "Meera Iyer",
-      "Simple tools and dependable support let us focus on our customers.",
-      "SellerStory5.webp",
-      "Founder, Studio Meera",
-      "2.5x monthly growth",
-    ],
+    // [
+    //   "Nisha Kapoor",
+    //   "The seller tools help us make better decisions every week.",
+    //   "SellerStory1.webp",
+    //   "Owner, Nivara Studio",
+    //   "18,000+ orders delivered",
+    // ],
+    // [
+    //   "Kabir Shah",
+    //   "Reliable payouts gave us the confidence to scale.",
+    //   "SellerStory2.webp",
+    //   "Director, K&S Essentials",
+    //   "200+ products listed",
+    // ],
+    // [
+    //   "Riya Malhotra",
+    //   "The marketplace helped our family-run brand find customers beyond our city.",
+    //   "SellerStory3.webp",
+    //   "Co-founder, Terra Crafts",
+    //   "42 cities reached",
+    // ],
+    // [
+    //   "Dev Arora",
+    //   "Sam Global made online selling feel approachable from day one.",
+    //   "SellerStory4.webp",
+    //   "Owner, Volt Avenue",
+    //   "4.8 average rating",
+    // ],
+    // [
+    //   "Meera Iyer",
+    //   "Simple tools and dependable support let us focus on our customers.",
+    //   "SellerStory5.webp",
+    //   "Founder, Studio Meera",
+    //   "2.5x monthly growth",
+    // ],
   ].map(([title, description, file, role, result]) => ({
     title,
     description,
@@ -536,7 +536,7 @@ export const FALLBACK_ABOUT = {
   story: {
     title: "Our Story",
     description:
-      "Our journey is rooted in over 18 years of deep market experience—understanding how India shops, what drives decisions, and what creates lasting value. From building strong distribution networks to now creating a multi-category premium retail ecosystem, our evolution has been guided by one belief: Great retail is built on execution, but remembered for experience.",
+      "Our journey is rooted in over 18 years of deep market experience—understanding how India shops, what drives decisions, and what creates lasting value. From building strong distribution networks to now creating a multi-category premium retail ecosystem, our evolution has been guided by one belief: \nGreat retail is built on execution, but remembered for experience.",
     image: image("/image/png/fallback/become-a-seller/outStory.png", "Sam Global story"),
   },
 
@@ -565,12 +565,12 @@ export const FALLBACK_ABOUT = {
     points: [
       {
         title: "To our customers, we promise:",
-        description: "Quality and curated selection \n• Seamless shopping experience \n• Trust and consistency",
+        description: "• Quality and curated selection \n• Seamless shopping experience \n• Trust and consistency",
         image: image("/image/png/fallback/icons/dummy.png"),
       },
       {
         title: "To our partners, we offer:",
-        description: "Scalable growth opportunities \n• Strong execution and performance \n• Structured and reliable retail expansion",
+        description: "• Scalable growth opportunities \n• Strong execution and performance \n• Structured and reliable retail expansion",
         image: image("/image/png/fallback/icons/dummy1.png"),
       },
     ],

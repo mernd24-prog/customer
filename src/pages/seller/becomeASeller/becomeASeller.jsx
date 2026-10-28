@@ -251,31 +251,27 @@ export default function BecomeASeller() {
             title={
               <>
                 {titleLine1}
-                {titleLine2 && <span className="block text-[#efc75f]">{titleLine2}</span>}
+                {titleLine2 && (
+                  <span className="block text-[#efc75f]">{titleLine2}</span>
+                )}
               </>
             }
             description={heroDesc}
             theme="navy"
             actions={
-              <>
-                <Button
-                  type="button"
-                  onClick={() =>
-                    window.open(
-                      SELLER_LOGIN_URL,
-                      "_blank",
-                      "noopener,noreferrer",
-                    )
-                  }
-                  variant="primary"
-                  size="lg"
-                  icon={<ArrowRight size={18} />}
-                  iconPosition="right"
-                  className="min-h-12 rounded-lg px-6 font-bold sm:px-7"
-                >
-                  Seller Login
-                </Button>
-              </>
+              <SolidLargeButton
+                type="button"
+                onClick={() =>
+                  window.open(SELLER_LOGIN_URL, "_blank", "noopener,noreferrer")
+                }
+                className="group min-h-12 rounded-lg px-6 font-bold sm:px-7"
+              >
+                Seller Login
+                <ArrowRight
+                  size={18}
+                  className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-0.5"
+                />
+              </SolidLargeButton>
             }
             bottomContent={
               <div className="flex flex-wrap gap-x-5 gap-y-2.5 text-sm text-white/75 sm:gap-x-6 sm:gap-y-3">
@@ -503,18 +499,19 @@ export default function BecomeASeller() {
                 </div>
 
                 <div className="mt-8 text-center sm:mt-12">
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
+                  <SolidLargeButton
+                    as="a"
                     href={SELLER_LOGIN_URL}
-                    className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-7 font-bold text-[#17145f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-px hover:bg-[#e5b738] hover:shadow-[0_3px_8px_rgba(214,163,35,0.14)] active:translate-y-0 sm:px-8"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex min-h-12 items-center justify-center gap-2  px-7 "
                   >
                     Get Started
                     <ChevronRight
                       size={18}
                       className="transition-transform duration-300 ease-in-out group-hover:translate-x-0.5"
                     />
-                  </a>
+                  </SolidLargeButton>
                 </div>
               </div>
             </section>

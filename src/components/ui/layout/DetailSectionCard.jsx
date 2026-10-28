@@ -16,11 +16,11 @@ function DetailSectionCard({
     >
       {title || headerContent ? (
         <div
-  className={`flex min-h-[60px] items-center justify-between rounded-t-lg bg-[#EAD9B6] px-[20px] ${headerClassName}`}
->
+          className={`flex min-h-[52px] flex-wrap items-center justify-between gap-2 rounded-t-lg bg-[#EAD9B6] px-4 py-2.5 sm:min-h-[60px] sm:px-5 sm:py-3 ${headerClassName}`}
+        >
           {title ? (
             <TitleTag
-              className={`font-sans text-h6 font-bold text-[#2E2E2E] ${titleClassName}`}
+              className={`font-sans text-sm font-bold text-[#2E2E2E] sm:text-base md:text-h6 ${titleClassName}`}
             >
               {title}
             </TitleTag>

@@ -64,23 +64,13 @@ function AccountMenuItem({
       to={item.path}
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={
+      className={`group flex w-full min-w-0 items-start gap-3.5 border-b border-[#04258626] transition-colors last:border-b-0 ${
         isMobile
-          ? `group flex w-full min-w-0 items-start gap-3 border-b border-[#04258626] p-3 text-[#2E2E2E] transition-colors last:border-b-0 ${
-              active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"
-            }`
-          : `group flex w-full min-w-0 items-center gap-3 border-b border-[#04258626] p-6 px-6 text-[#2E2E2E] transition-colors last:border-b-0 sm:gap-4 sm:px-4 ${
-              active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"
-            }`
-      }
+          ? `p-3.5 ${active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"}`
+          : `p-5 sm:p-6 ${active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"}`
+      }`}
     >
-      <span
-        className={
-          isMobile
-            ? "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60]"
-            : "flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60] xl:size-11"
-        }
-      >
+      <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#FFC82E] text-[#1B1D60] sm:size-11">
         {typeof item.icon === "string" ? (
           <img
             loading="lazy"
@@ -88,11 +78,7 @@ function AccountMenuItem({
             height="20"
             src={item.icon}
             alt=""
-            className={
-              isMobile
-                ? "size-4 object-contain"
-                : "size-4 object-contain sm:size-5"
-            }
+            className="size-4.5 object-contain sm:size-5"
           />
         ) : (
           (() => {
@@ -100,7 +86,7 @@ function AccountMenuItem({
 
             return (
               <Icon
-                className={`${isMobile ? "size-4" : "size-4 sm:size-5"} ${
+                className={`size-4.5 sm:size-5 ${
                   item.iconColor || "text-[#1B1D60]"
                 }`}
               />
@@ -111,27 +97,18 @@ function AccountMenuItem({
 
       <span className="min-w-0 flex-1">
         <span
-          className={
-            isMobile
-              ? `block text-sm font-semibold transition-colors ${
-                  active ? "text-[#1B1D60]" : "group-hover:text-[#1B1D60]"
-                }`
-              : `block text-sm font-semibold transition-colors sm:text-base ${
-                  active
-                    ? "text-[#1B1D60]"
-                    : "text-[#2E2E2E] group-hover:text-[#1B1D60]"
-                }`
-          }
+          className={`block text-sm sm:text-base font-semibold transition-colors ${
+            active
+              ? "text-[#1B1D60]"
+              : "text-[#2E2E2E] group-hover:text-[#1B1D60]"
+          }`}
         >
           {item.label}
         </span>
 
         <span
-          className={
-            isMobile
-              ? "mt-0.5 block text-[11px] leading-4 text-[#4E4E4E]"
-              : "mt-0.5 block text-xs leading-5 text-[#4E4E4E] sm:text-sm"
-          }
+          style={{ fontWeight: 400 }}
+          className="mt-0.5 block text-xs leading-5 !font-normal text-[#4E4E4E] sm:text-sm"
         >
           {item.description}
         </span>
@@ -148,20 +125,20 @@ function AccountMobileMenu({
   onClose,
 }) {
   return (
-    <div className="relative z-40 min-w-0 xl:hidden">
+    <div className="relative z-40 min-w-0 lg:hidden">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-label="Toggle account navigation"
-        className="flex w-full min-w-0 items-center justify-between rounded-lg border border-gold bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
+        className="flex w-full min-w-0 items-center justify-between rounded-lg border border-gold bg-white px-4 py-3 text-left font-semibold text-[#171A3A] shadow-2xs"
       >
-        <span className="min-w-0 truncate">
+        <span className="min-w-0 truncate text-sm sm:text-base font-semibold">
           {activeMenuItem?.label || "Account Menu"}
         </span>
 
         <ChevronDown
-          className={`size-5 shrink-0 transition-transform ${
+          className={`size-5 shrink-0 text-[#1B1D60] transition-transform ${
             isOpen ? "rotate-180" : ""
           }`}
         />
@@ -191,7 +168,7 @@ function AccountDesktopMenu({ items, activeMenuItem }) {
   return (
     <nav
       aria-label="Account navigation"
-      className="hidden w-full min-w-0 flex-col items-start gap-0 space-y-0 overflow-hidden rounded-lg border border-gold bg-white xl:flex"
+      className="hidden w-full min-w-0 flex-col items-start gap-0 space-y-0 overflow-hidden rounded-lg border border-gold bg-white shadow-2xs lg:flex"
     >
       {items.map((item) => (
         <AccountMenuItem
@@ -211,7 +188,7 @@ function AccountSidebar({
   setIsMobileMenuOpen,
 }) {
   return (
-    <aside className="relative z-30 w-full min-w-0 xl:max-w-[330px]">
+    <aside className="relative z-30 w-full min-w-0 lg:w-[320px] xl:w-[330px] lg:shrink-0">
       <div className="min-w-0">
         <AccountMobileMenu
           items={MENU_ITEMS}
@@ -274,7 +251,7 @@ export default function AccountPage({ tab = "profile" }) {
 
       <PageContainer
         className="mt-0 mb-0 bg-white"
-        contentClassName="mx-auto grid w-full min-w-0 grid-cols-1 items-start gap-3 px-3 sm:gap-4 sm:px-5 lg:px-8 xl:grid-cols-[330px_minmax(0,1fr)] xl:gap-5"
+        contentClassName="mx-auto grid w-full min-w-0 grid-cols-1 items-start gap-4 px-3 sm:gap-5 sm:px-5 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[330px_minmax(0,1fr)] lg:gap-6 lg:px-8"
       >
         <AccountSidebar
           activeMenuItem={activeMenuItem}
@@ -282,7 +259,7 @@ export default function AccountPage({ tab = "profile" }) {
           setIsMobileMenuOpen={setIsMobileMenuOpen}
         />
 
-        <main className="relative z-0 w-full min-w-0 rounded-lg border border-gold bg-white p-3 sm:p-4 lg:p-5">
+        <main className="relative z-0 w-full min-w-0 rounded-lg border border-gold/70 bg-white p-4 sm:p-5 lg:p-6 shadow-2xs">
           <ApiState
             loading={userState.loading && !user}
             error={userState.error}

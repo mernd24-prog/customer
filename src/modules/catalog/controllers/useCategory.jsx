@@ -602,6 +602,10 @@ export default function useCategory() {
     loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
   }, [isLoadingMore, productState.loading, currentPage, totalPages, loadProducts]);
 
+  const sidebarCategoryKey = sidebarCategory
+    ? getCategoryKey(sidebarCategory)
+    : null;
+
   return {
     categoryKey,
     searchParams,
@@ -620,6 +624,7 @@ export default function useCategory() {
     sentinelRef,
     categoryTitle,
     sidebarCategoryTitle,
+    sidebarCategoryKey,
     categoryDesc,
     visibleSubCategories,
     isInitialLoading,

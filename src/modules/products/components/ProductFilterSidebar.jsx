@@ -867,7 +867,10 @@ export function RatingFilter({
               <FilterTick checked={isSelected} />
 
               <span className="flex min-w-0 flex-1 items-center gap-1.5 leading-normal">
-                <Star size={16} className="shrink-0 fill-[#D4A025] text-[#D4A025]" />
+                <Star
+                  size={16}
+                  className="shrink-0 fill-[#D4A025] text-[#D4A025]"
+                />
                 <span className="truncate">
                   {stars === 5 ? "(5)" : `(${stars} & Above)`}
                 </span>
@@ -934,7 +937,7 @@ export default function ProductFilterSidebar({
 
   return (
     <aside
-      className={`flex h-auto w-full flex-col rounded-lg border border-[#EEDFB9] bg-[#FFFDF8] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+      className={`flex h-auto w-full flex-col rounded-lg border border-[#EEDFB9] bg-[#FFFDF8] lg:max-h-[calc(100vh-var(--customer-header-height,95px)-80px)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
       <div className="w-full shrink-0 shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">
@@ -950,11 +953,11 @@ export default function ProductFilterSidebar({
             </button>
           )}
         </div>
-
-        {topContent}
       </div>
 
-      <div className="filter-panel-scrollbar max-h-[calc(100vh-var(--customer-header-height,95px)-110px)] overscroll-contain overflow-y-auto">
+      <div className="filter-panel-scrollbar min-h-0 flex-1 overscroll-contain overflow-y-auto">
+        {topContent}
+
         {loading ? (
           <FilterSkeleton />
         ) : (

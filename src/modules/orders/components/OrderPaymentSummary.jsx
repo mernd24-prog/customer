@@ -169,11 +169,11 @@ function OrderPaymentSummary({
       title={title}
       className="h-full w-full"
       borderClassName="border-[#CE9F2D66]"
-      bodyClassName="flex flex-col px-5 py-5 text-sm"
+      bodyClassName="flex flex-col px-3 py-4 text-sm sm:px-5 sm:py-5"
     >
       {variant === "checkout" && (
         <>
-          <p className="mb-2  text-[18px] font-bold leading-[28px] text-ink">
+          <p className="mb-2 text-sm font-bold text-ink sm:text-base md:text-[18px] md:leading-[28px]">
             {String(items.length).padStart(2, "0")} Item(s)
           </p>
           {items.map((item) => (
@@ -368,7 +368,7 @@ function OrderPaymentSummary({
 
       {variant === "checkout" && visiblePaymentMethods.length > 0 && (
         <div className="pt-4">
-          <h3 className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px] ">
+          <h3 className="text-sm font-semibold leading-5 text-[#2E2E2E] sm:text-[15px] sm:leading-6 md:text-[16px] md:leading-[24px]">
             Payment Method
           </h3>
 
@@ -392,7 +392,7 @@ function OrderPaymentSummary({
                 />
 
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-medium leading-[28px] text-[#2E2E2E] md:text-[18px]">
+                  <span className="block text-sm font-medium leading-6 text-[#2E2E2E] sm:text-[15px] md:text-[16px]">
                     {option.label}
                   </span>
                   {option.enabled === false && option.disabledReason ? (
@@ -463,7 +463,7 @@ function OrderPaymentSummary({
           <button
             type="submit"
             disabled={loading || disabled}
-            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
+            className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50 sm:h-[54px] sm:text-[16px]"
           >
             {loading && (
               <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
@@ -472,7 +472,7 @@ function OrderPaymentSummary({
           </button>
 
           {selectedLabel && (
-            <p className="mt-3 text-center text-[16px] font-medium leading-[24px] text-[#2E2E2E] sm:text-[18px] sm:leading-[28px]">
+            <p className="mt-2 text-center text-sm font-medium text-[#2E2E2E] sm:mt-3 sm:text-[15px] md:text-[16px]">
               Selected Method: {selectedLabel}
             </p>
           )}

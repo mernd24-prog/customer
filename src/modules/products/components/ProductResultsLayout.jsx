@@ -95,19 +95,18 @@ export default function ProductResultsLayout({
     .map((section) => section.key || section.title)
     .join("|");
   const hasFilterContent =
-    Boolean(sidebarTopContent) ||
-    visibleFilterSections.length > 0;
+    Boolean(sidebarTopContent) || visibleFilterSections.length > 0;
   const shouldShowFilters = !shouldShowEmpty && (loading || hasFilterContent);
 
   return (
     <>
       {" "}
       <ActiveFilterChips filters={filters} onRemove={onRemoveFilter} />{" "}
-      <div className="flex items-start gap-8 w-full mt-8">
+      <div className="flex items-start gap-8 w-full my-8 ">
         {" "}
         {/* Hide desktop filter completely on empty state */}{" "}
         {shouldShowFilters && (
-          <div className="hidden lg:block lg:sticky lg:top-[calc(var(--customer-header-height,95px)+16px)] lg:self-start">
+          <div className="hidden lg:block lg:sticky lg:top-[calc(var(--customer-header-height,95px)+62px)] lg:self-start">
             <ProductFilterSidebar
               key={`desktop-filters-${filterStructureKey}`}
               sections={visibleFilterSections}

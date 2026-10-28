@@ -80,10 +80,7 @@ function getHeaderHeight() {
 function getCategoryKey(item = {}) {
   return keyOr(
     item?.categoryKey,
-    keyOr(
-      item?.key,
-      buildCategorySlug(textOr(item?.title, item?.name)),
-    ),
+    keyOr(item?.key, buildCategorySlug(textOr(item?.title, item?.name))),
   );
 }
 
@@ -98,18 +95,8 @@ function normalizeCategoryNode(item = {}, parentKey = null) {
     title,
     name: textOr(item?.name, title),
     parentKey: item?.parentKey ?? parentKey,
-    imageUrl:
-      item?.imageUrl ||
-      item?.img ||
-      item?.image ||
-      item?.iconUrl ||
-      "",
-    image:
-      item?.image ||
-      item?.imageUrl ||
-      item?.img ||
-      item?.iconUrl ||
-      "",
+    imageUrl: item?.imageUrl || item?.img || item?.image || item?.iconUrl || "",
+    image: item?.image || item?.imageUrl || item?.img || item?.iconUrl || "",
     slug: keyOr(item?.slug, categoryKey),
     children: [],
   };
@@ -125,10 +112,7 @@ function buildCategoryTree(list = []) {
   const visit = (item, parentKey = null) => {
     if (!item || typeof item !== "object") return;
 
-    const node = normalizeCategoryNode(
-      item,
-      item?.parentKey ?? parentKey,
-    );
+    const node = normalizeCategoryNode(item, item?.parentKey ?? parentKey);
 
     if (!node.categoryKey) return;
 
@@ -138,9 +122,7 @@ function buildCategoryTree(list = []) {
       children: [],
     });
 
-    asArray(item?.children).forEach((child) =>
-      visit(child, node.categoryKey),
-    );
+    asArray(item?.children).forEach((child) => visit(child, node.categoryKey));
   };
 
   items.forEach((item) => visit(item, item?.parentKey ?? null));
@@ -216,14 +198,13 @@ export const Navbar = ({ icons: propIcons }) => {
     ? `${profileUser.profile.firstName} ${
         profileUser.profile.lastName || ""
       }`.trim()
-    : profileUser?.firstName ||
-      profileUser?.email?.split("@")[0] ||
-      "My Sam";
+    : profileUser?.firstName || profileUser?.email?.split("@")[0] || "My Sam";
 
   const profileAvatar = useProfileImage(
     profileUser?.profile?.avatarUrl ||
-    profileUser?.profile?.avatar ||
-    "/image/png/person.png", profileUser?.updatedAt
+      profileUser?.profile?.avatar ||
+      "/image/png/person.png",
+    profileUser?.updatedAt,
   );
 
   const handleLogout = () => {
@@ -253,10 +234,7 @@ export const Navbar = ({ icons: propIcons }) => {
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
 
-  const cartItemsLength = useMemo(
-    () => cart.items?.length || 0,
-    [cart.items],
-  );
+  const cartItemsLength = useMemo(() => cart.items?.length || 0, [cart.items]);
 
   const wishlistCount = useMemo(
     () => (Array.isArray(cart.wishlist) ? cart.wishlist.length : 0),
@@ -295,15 +273,11 @@ export const Navbar = ({ icons: propIcons }) => {
       ? category.categoryKey ||
         category.key ||
         category.slug ||
-        buildCategorySlug(
-          textOr(category?.title, category?.name),
-        )
+        buildCategorySlug(textOr(category?.title, category?.name))
       : "";
 
     if (!trimmedQuery && categoryKey) {
-      navigate(
-        `/categories/${encodeURIComponent(categoryKey)}`,
-      );
+      navigate(`/categories/${encodeURIComponent(categoryKey)}`);
       return;
     }
 
@@ -318,8 +292,7 @@ export const Navbar = ({ icons: propIcons }) => {
         category.id ||
         category._id;
 
-      const catName =
-        category.title || category.name || category.label;
+      const catName = category.title || category.name || category.label;
 
       if (catKey) {
         url += `&category=${encodeURIComponent(catKey)}`;
@@ -388,15 +361,10 @@ export const Navbar = ({ icons: propIcons }) => {
           />
 
           {/* Actions */}
-          <div className="order-2 flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+          <div className="order-2 flex items-center gap-2 min-[375px]:gap-2.5 sm:gap-3 lg:order-3 lg:gap-4">
             <div className="flex items-center gap-2 sm:gap-5">
               {utilityIcons.map((item, iconIndex) => (
-                <Fragment
-                  key={keyOr(
-                    item?.name,
-                    `icon-${iconIndex}`,
-                  )}
-                >
+                <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                   <HeaderIconButton
                     to={getNavbarIconPath(item)}
                     aria-current={
@@ -438,47 +406,51 @@ export const Navbar = ({ icons: propIcons }) => {
               {utilityIcons.length > 0 && (
                 <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
               )}
-<HeaderIconButton
-  to="/cart"
-  aria-current={location.pathname === "/cart" ? "page" : undefined}
-  className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
-    location.pathname === "/cart"
-      ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
-      : ""
-  }`}
-  aria-label={`Cart with ${cartItemCount} ${
-    cartItemCount === 1 ? "item" : "items"
-  }`}
->
-  <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+              <HeaderIconButton
+                to="/cart"
+                aria-current={
+                  location.pathname === "/cart" ? "page" : undefined
+                }
+                className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
+                  location.pathname === "/cart"
+                    ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
+                    : ""
+                }`}
+                aria-label={`Cart with ${cartItemCount} ${
+                  cartItemCount === 1 ? "item" : "items"
+                }`}
+              >
+                <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
-  {cartItemCount > 0 && (
-    <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
-      {cartItemCount > 99 ? "99+" : cartItemCount}
-    </span>
-  )}
-</HeaderIconButton>
+                {cartItemCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                    {cartItemCount > 99 ? "99+" : cartItemCount}
+                  </span>
+                )}
+              </HeaderIconButton>
 
-             <HeaderIconButton
-  to="/wishlist"
-  aria-current={location.pathname === "/wishlist" ? "page" : undefined}
-  className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
-    location.pathname === "/wishlist"
-      ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
-      : ""
-  }`}
-  aria-label={`Watchlist with ${wishlistCount} ${
-    wishlistCount === 1 ? "item" : "items"
-  }`}
->
-  <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+              <HeaderIconButton
+                to="/wishlist"
+                aria-current={
+                  location.pathname === "/wishlist" ? "page" : undefined
+                }
+                className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
+                  location.pathname === "/wishlist"
+                    ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
+                    : ""
+                }`}
+                aria-label={`Watchlist with ${wishlistCount} ${
+                  wishlistCount === 1 ? "item" : "items"
+                }`}
+              >
+                <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
-  {wishlistCount > 0 && (
-    <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
-      {wishlistCount > 99 ? "99+" : wishlistCount}
-    </span>
-  )}
-</HeaderIconButton>
+                {wishlistCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                    {wishlistCount > 99 ? "99+" : wishlistCount}
+                  </span>
+                )}
+              </HeaderIconButton>
             </div>
 
             {currentUser ? (
@@ -497,8 +469,7 @@ export const Navbar = ({ icons: propIcons }) => {
                       alt=""
                       className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
                       onError={(event) => {
-                        event.currentTarget.src =
-                          "/image/png/person.png";
+                        event.currentTarget.src = "/image/png/person.png";
                       }}
                     />
 
@@ -508,25 +479,20 @@ export const Navbar = ({ icons: propIcons }) => {
                       </span>
 
                       <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
-                        {capitalizeFirst(
-                          profileUser?.email || "",
-                        )}
+                        {capitalizeFirst(profileUser?.email || "")}
                       </span>
                     </span>
                   </div>
                 }
                 path="/account/profile"
-                className="h-8 w-8 overflow-hidden rounded-full bg-white p-0 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
+                className="ml-1 h-8 w-8 overflow-hidden rounded-full bg-white p-0 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
                 chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
               >
-                <MenuDropdown
-                  title="My Account"
-                  items={accountMenuItems}
-                />
+                <MenuDropdown title="My Account" items={accountMenuItems} />
               </HeaderDropdown>
             ) : (
               <HeaderGoldButton
-                className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[14px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+                className="ml-1 flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[14px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
                 onClick={() => navigate("/login")}
               >
                 Login
@@ -572,21 +538,16 @@ export const CategoryBar = ({
   const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
-    const list =
-      getCategoryListFromResponse(globalCategories);
+    const list = getCategoryListFromResponse(globalCategories);
 
     const actualCategories = list.filter(
-      (item) =>
-        item && (item.categoryKey || item.parentKey),
+      (item) => item && (item.categoryKey || item.parentKey),
     );
 
     setCategoriesList(actualCategories);
   }, [globalCategories]);
 
-  const catalogCategories = useMemo(
-    () => categoriesList,
-    [categoriesList],
-  );
+  const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
 
   const [activeMenu, setActiveMenu] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
@@ -645,26 +606,14 @@ export const CategoryBar = ({
       }
     };
 
-    document.addEventListener(
-      "pointerdown",
-      handleDocumentPointerDown,
-    );
+    document.addEventListener("pointerdown", handleDocumentPointerDown);
 
-    document.addEventListener(
-      "keydown",
-      handleDocumentKeyDown,
-    );
+    document.addEventListener("keydown", handleDocumentKeyDown);
 
     return () => {
-      document.removeEventListener(
-        "pointerdown",
-        handleDocumentPointerDown,
-      );
+      document.removeEventListener("pointerdown", handleDocumentPointerDown);
 
-      document.removeEventListener(
-        "keydown",
-        handleDocumentKeyDown,
-      );
+      document.removeEventListener("keydown", handleDocumentKeyDown);
     };
   }, [activeMenu]);
 
@@ -689,8 +638,7 @@ export const CategoryBar = ({
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const headerOffset = getHeaderHeight();
-          const { bottom } =
-            categoryBarRef.current.getBoundingClientRect();
+          const { bottom } = categoryBarRef.current.getBoundingClientRect();
 
           const nextPinned = isPinnedRef.current
             ? bottom <= headerOffset + 16
@@ -710,27 +658,14 @@ export const CategoryBar = ({
 
     handleScroll();
 
-    window.addEventListener(
-      "scroll",
-      handleScroll,
-      { passive: true },
-    );
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-    window.addEventListener(
-      "resize",
-      handleScroll,
-    );
+    window.addEventListener("resize", handleScroll);
 
     return () => {
-      window.removeEventListener(
-        "scroll",
-        handleScroll,
-      );
+      window.removeEventListener("scroll", handleScroll);
 
-      window.removeEventListener(
-        "resize",
-        handleScroll,
-      );
+      window.removeEventListener("resize", handleScroll);
     };
   }, []);
 
@@ -742,14 +677,12 @@ export const CategoryBar = ({
   const categories = useMemo(() => {
     let result = [];
 
-    const headerCategories =
-      getCategoryListFromResponse(headerData);
+    const headerCategories = getCategoryListFromResponse(headerData);
 
     if (headerCategories.length) {
       result = buildCategoryTree(headerCategories);
     } else if (catalogTree.length) {
-      const fullTree =
-        buildCategoryTree(globalCategories) || [];
+      const fullTree = buildCategoryTree(globalCategories) || [];
 
       const findInTree = (nodes, key) => {
         if (!Array.isArray(nodes)) return null;
@@ -757,14 +690,8 @@ export const CategoryBar = ({
         for (const n of nodes) {
           if (n.categoryKey === key) return n;
 
-          if (
-            n.children &&
-            n.children.length > 0
-          ) {
-            const found = findInTree(
-              n.children,
-              key,
-            );
+          if (n.children && n.children.length > 0) {
+            const found = findInTree(n.children, key);
 
             if (found) return found;
           }
@@ -774,31 +701,18 @@ export const CategoryBar = ({
       };
 
       result = catalogTree.map((cat) => {
-        const globalNode = findInTree(
-          fullTree,
-          cat.categoryKey,
-        );
+        const globalNode = findInTree(fullTree, cat.categoryKey);
 
         const catChildren =
-          Array.isArray(globalNode?.children) &&
-          globalNode.children.length > 0
+          Array.isArray(globalNode?.children) && globalNode.children.length > 0
             ? globalNode.children
             : asArray(cat?.children);
 
         return {
           ...cat,
-          name: textOr(
-            cat?.name,
-            textOr(cat?.title, "Category"),
-          ),
-          img:
-            cat?.imageUrl ||
-            cat?.image ||
-            cat?.img,
-          slug: keyOr(
-            cat?.slug,
-            getCategoryKey(cat),
-          ),
+          name: textOr(cat?.name, textOr(cat?.title, "Category")),
+          img: cat?.imageUrl || cat?.image || cat?.img,
+          slug: keyOr(cat?.slug, getCategoryKey(cat)),
           categoryKey: getCategoryKey(cat),
           children: catChildren,
         };
@@ -806,11 +720,7 @@ export const CategoryBar = ({
     }
 
     return result;
-  }, [
-    catalogTree,
-    headerData,
-    globalCategories,
-  ]);
+  }, [catalogTree, headerData, globalCategories]);
 
   const visibleCategories = useMemo(
     () => asArray(categories).slice(0, 10),
@@ -832,15 +742,13 @@ export const CategoryBar = ({
           <div className="customer-container relative mx-auto w-full">
             <div className="hide-scrollbar w-full overflow-x-auto">
               <div className="mx-auto flex h-[44px] w-max animate-pulse items-center gap-5 whitespace-nowrap px-4 sm:gap-7 sm:px-6 lg:h-[46px]">
-                {[64, 52, 58, 80, 48, 70, 46, 88, 68, 56].map(
-                  (w, i) => (
-                    <div
-                      key={`compact-cat-skel-${i}`}
-                      className="h-3.5 rounded-full bg-slate-200/80 sm:h-4"
-                      style={{ width: `${w}px` }}
-                    />
-                  ),
-                )}
+                {[64, 52, 58, 80, 48, 70, 46, 88, 68, 56].map((w, i) => (
+                  <div
+                    key={`compact-cat-skel-${i}`}
+                    className="h-3.5 rounded-full bg-slate-200/80 sm:h-4"
+                    style={{ width: `${w}px` }}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -853,24 +761,22 @@ export const CategoryBar = ({
         <div className="customer-container relative z-20 mx-auto flex w-full items-stretch px-2 sm:px-4">
           <div className="hide-scrollbar flex w-full items-stretch overflow-x-auto">
             <div className="mx-auto flex w-full min-w-max items-stretch justify-between gap-1 py-3 sm:gap-1.5 sm:pb-2.5 sm:pt-4 lg:gap-2.5 lg:pb-3 lg:pt-4.5">
-              {[54, 46, 50, 68, 42, 58, 38, 72, 62, 58].map(
-                (w, index) => (
-                  <div
-                    key={`category-skeleton-${index}`}
-                    className="flex min-w-[62px] flex-1 flex-col items-center justify-center px-1 sm:min-w-[88px] sm:px-2 lg:min-w-[105px] lg:px-3"
-                  >
-                    <div className="flex h-[44px] w-[48px] items-center justify-center rounded-lg bg-[#EAD8B5]/60 sm:h-[56px] sm:w-[60px] lg:h-[64px] lg:w-[68px]" />
+              {[54, 46, 50, 68, 42, 58, 38, 72, 62, 58].map((w, index) => (
+                <div
+                  key={`category-skeleton-${index}`}
+                  className="flex min-w-[62px] flex-1 flex-col items-center justify-center px-1 sm:min-w-[88px] sm:px-2 lg:min-w-[105px] lg:px-3"
+                >
+                  <div className="flex h-[44px] w-[48px] items-center justify-center rounded-lg bg-[#EAD8B5]/60 sm:h-[56px] sm:w-[60px] lg:h-[64px] lg:w-[68px]" />
 
-                    <div
-                      className="mt-3 h-2.5 rounded-full bg-[#EAD8B5]/75 sm:mt-4 sm:h-3 lg:mt-4.5 lg:h-3.5"
-                      style={{
-                        width: `${w}px`,
-                        maxWidth: "85%",
-                      }}
-                    />
-                  </div>
-                ),
-              )}
+                  <div
+                    className="mt-3 h-2.5 rounded-full bg-[#EAD8B5]/75 sm:mt-4 sm:h-3 lg:mt-4.5 lg:h-3.5"
+                    style={{
+                      width: `${w}px`,
+                      maxWidth: "85%",
+                    }}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -898,55 +804,33 @@ export const CategoryBar = ({
                   item?.categoryKey ||
                   keyOr(
                     item?.slug,
-                    buildCategorySlug(
-                      textOr(
-                        item?.name,
-                        "category",
-                      ),
-                    ),
+                    buildCategorySlug(textOr(item?.name, "category")),
                   )
                 }`;
 
                 const isActive =
-                  activeMenu?.categoryKey ===
-                    item?.categoryKey ||
+                  activeMenu?.categoryKey === item?.categoryKey ||
                   location.pathname === categoryHref ||
-                  location.pathname.startsWith(
-                    categoryHref + "/",
-                  );
+                  location.pathname.startsWith(categoryHref + "/");
 
                 return (
                   <Link
-                    key={keyOr(
-                      item?.name,
-                      `compact-category-${index}`,
-                    )}
+                    key={keyOr(item?.name, `compact-category-${index}`)}
                     to={categoryHref}
                     aria-current={isActive ? "page" : undefined}
-                    onMouseEnter={() =>
-                      handleCategoryMouseEnter(item)
-                    }
-                    onMouseLeave={
-                      handleCategoryMouseLeave
-                    }
+                    onMouseEnter={() => handleCategoryMouseEnter(item)}
+                    onMouseLeave={handleCategoryMouseLeave}
                     className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-                      isActive
-                        ? "!text-[#03014D]"
-                        : "text-[#2E2E2E]"
+                      isActive ? "!text-[#03014D]" : "text-[#2E2E2E]"
                     }`}
                   >
                     <span className="max-w-[250px] truncate xl:max-w-none">
-                      {textOr(
-                        item?.name,
-                        "Category",
-                      )}
+                      {textOr(item?.name, "Category")}
                     </span>
 
                     <span
                       className={`absolute bottom-0 left-0 h-[3px] rounded-md bg-[#CE9F2D] transition-all duration-300 ${
-                        isActive
-                          ? "w-full opacity-100"
-                          : "w-0 opacity-0"
+                        isActive ? "w-full opacity-100" : "w-0 opacity-0"
                       }`}
                     />
                   </Link>
@@ -966,11 +850,9 @@ export const CategoryBar = ({
                   }`}
                 >
                   More
-
                   <span
                     className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                      location.pathname ===
-                      "/categories"
+                      location.pathname === "/categories"
                         ? "w-full opacity-100"
                         : "w-0 opacity-0"
                     }`}
@@ -997,31 +879,18 @@ export const CategoryBar = ({
                 item?.categoryKey ||
                 keyOr(
                   item?.slug,
-                  buildCategorySlug(
-                    textOr(
-                      item?.name,
-                      "category",
-                    ),
-                  ),
+                  buildCategorySlug(textOr(item?.name, "category")),
                 )
               }`;
 
               const isActive =
-                activeMenu?.categoryKey ===
-                  item?.categoryKey ||
+                activeMenu?.categoryKey === item?.categoryKey ||
                 location.pathname === categoryHref ||
-                location.pathname.startsWith(
-                  categoryHref + "/",
-                );
+                location.pathname.startsWith(categoryHref + "/");
 
-              const rawName = textOr(
-                item?.name,
-                "Category",
-              );
+              const rawName = textOr(item?.name, "Category");
 
-              const categoryTitle = /^beauty/i.test(
-                rawName,
-              )
+              const categoryTitle = /^beauty/i.test(rawName)
                 ? "Beauty"
                 : /^food/i.test(rawName)
                   ? "Food"
@@ -1029,17 +898,10 @@ export const CategoryBar = ({
 
               return (
                 <div
-                  key={keyOr(
-                    item?.name,
-                    `category-${index}`,
-                  )}
+                  key={keyOr(item?.name, `category-${index}`)}
                   className="relative flex h-full min-w-[62px] flex-1 items-stretch sm:min-w-[88px] lg:min-w-[105px]"
-                  onMouseEnter={() =>
-                    handleCategoryMouseEnter(item)
-                  }
-                  onMouseLeave={
-                    handleCategoryMouseLeave
-                  }
+                  onMouseEnter={() => handleCategoryMouseEnter(item)}
+                  onMouseLeave={handleCategoryMouseLeave}
                 >
                   <Link
                     to={categoryHref}
@@ -1093,9 +955,7 @@ export const CategoryBar = ({
             {categories.length > 10 && (
               <CategoryMoreButton
                 to="/categories"
-                active={
-                  location.pathname === "/categories"
-                }
+                active={location.pathname === "/categories"}
                 icon={moreImage}
               />
             )}
@@ -1122,55 +982,33 @@ export const CategoryBar = ({
                   item?.categoryKey ||
                   keyOr(
                     item?.slug,
-                    buildCategorySlug(
-                      textOr(
-                        item?.name,
-                        "category",
-                      ),
-                    ),
+                    buildCategorySlug(textOr(item?.name, "category")),
                   )
                 }`;
 
                 const isActive =
-                  activeMenu?.categoryKey ===
-                    item?.categoryKey ||
+                  activeMenu?.categoryKey === item?.categoryKey ||
                   location.pathname === categoryHref ||
-                  location.pathname.startsWith(
-                    categoryHref + "/",
-                  );
+                  location.pathname.startsWith(categoryHref + "/");
 
                 return (
                   <Link
-                    key={keyOr(
-                      item?.name,
-                      `sticky-category-${index}`,
-                    )}
+                    key={keyOr(item?.name, `sticky-category-${index}`)}
                     to={categoryHref}
                     aria-current={isActive ? "page" : undefined}
-                    onMouseEnter={() =>
-                      handleCategoryMouseEnter(item)
-                    }
-                    onMouseLeave={
-                      handleCategoryMouseLeave
-                    }
+                    onMouseEnter={() => handleCategoryMouseEnter(item)}
+                    onMouseLeave={handleCategoryMouseLeave}
                     className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-                      isActive
-                        ? "!text-[#03014D]"
-                        : "text-[#2E2E2E]"
+                      isActive ? "!text-[#03014D]" : "text-[#2E2E2E]"
                     }`}
                   >
                     <span className="max-w-[250px] truncate xl:max-w-none">
-                      {textOr(
-                        item?.name,
-                        "Category",
-                      )}
+                      {textOr(item?.name, "Category")}
                     </span>
 
                     <span
                       className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                        isActive
-                          ? "w-full opacity-100"
-                          : "w-0 opacity-0"
+                        isActive ? "w-full opacity-100" : "w-0 opacity-0"
                       }`}
                     />
                   </Link>
@@ -1190,11 +1028,9 @@ export const CategoryBar = ({
                   }`}
                 >
                   More
-
                   <span
                     className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                      location.pathname ===
-                      "/categories"
+                      location.pathname === "/categories"
                         ? "w-full opacity-100"
                         : "w-0 opacity-0"
                     }`}
@@ -1214,13 +1050,10 @@ export const Header = () => {
 
   useEffect(() => {
     const updateHeaderHeight = () => {
-      const height =
-        headerRef.current?.offsetHeight || 0;
+      const height = headerRef.current?.offsetHeight || 0;
 
       const currentHeight = Number.parseFloat(
-        document.documentElement.style.getPropertyValue(
-          HEADER_HEIGHT_VAR,
-        ),
+        document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR),
       );
 
       if (height !== currentHeight) {
@@ -1237,28 +1070,18 @@ export const Header = () => {
       return undefined;
     }
 
-    const observer = new ResizeObserver(
-      updateHeaderHeight,
-    );
+    const observer = new ResizeObserver(updateHeaderHeight);
 
     observer.observe(headerRef.current);
 
-    window.addEventListener(
-      "resize",
-      updateHeaderHeight,
-    );
+    window.addEventListener("resize", updateHeaderHeight);
 
     return () => {
       observer.disconnect();
 
-      window.removeEventListener(
-        "resize",
-        updateHeaderHeight,
-      );
+      window.removeEventListener("resize", updateHeaderHeight);
 
-      document.documentElement.style.removeProperty(
-        HEADER_HEIGHT_VAR,
-      );
+      document.documentElement.style.removeProperty(HEADER_HEIGHT_VAR);
     };
   }, []);
 

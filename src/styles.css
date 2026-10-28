@@ -38,61 +38,65 @@
 }
 
 @layer components {
+  /* ── Page / hero headings ── */
   .banner-heading {
-    @apply text-2xl  md:text-[48px] 2xl:text-[62px]  leading-[1.1];
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight;
   }
 
+  /* ── Semantic heading utilities ── */
   .text-h1 {
-    @apply text-2xl  md:text-[42px] 2xl:text-[48px];
+    @apply text-3xl sm:text-4xl md:text-5xl;
   }
 
   .text-h2 {
-    @apply text-xl  md:text-[30px]   2xl:text-[34px];
+    @apply text-2xl sm:text-3xl md:text-4xl;
   }
 
   .text-h3 {
-    @apply text-lg  md:text-[20px]   2xl:text-[26px];
+    @apply text-xl sm:text-2xl;
   }
 
   .text-h4 {
-    @apply text-base  md:text-[18px]   2xl:text-[22px];
+    @apply text-lg sm:text-xl;
   }
 
   .text-h5 {
-    @apply text-lg  md:text-[20px]   2xl:text-[24px];
+    @apply text-lg;
   }
 
   .text-h6 {
-    @apply text-base  md:text-[18px]   2xl:text-[20px];
+    @apply text-base;
   }
 
+  /* ── Body / paragraph utilities ── */
   .text-p {
-    @apply text-[12px] md:text-[14px] 2xl:text-[16px];
+    @apply text-base;   /* 14px */
   }
 
   .text-small {
-    @apply text-[14px] md:text-[16px] 2xl:text-[18px];
+    @apply text-base;   /* 14px */
   }
 
   .text-extaSmall {
-    @apply text-[14px] 2xl:text-[16px];
+    @apply text-sm;     /* 12px */
   }
 
   .small {
-    @apply text-sm sm:text-base;
-  }
-  .rich-text-content h1 {
-    @apply text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1F2430] mt-4 mb-3 leading-tight block;
-  }
-  .rich-text-content h2 {
-    @apply text-xl sm:text-2xl font-bold text-[#1F2430] mt-4 mb-2 leading-tight block;
-  }
-  .rich-text-content h3 {
-    @apply text-lg sm:text-xl font-bold text-[#1F2430] mt-3 mb-2 block;
+    @apply text-base;   /* 14px – matches body */
   }
 
+  /* ── Rich-text (CMS / product description) ── */
+  .rich-text-content h1 {
+    @apply text-3xl sm:text-4xl font-extrabold text-[#1F2430] mt-4 mb-3 leading-tight block;
+  }
+  .rich-text-content h2 {
+    @apply text-2xl sm:text-3xl font-bold text-[#1F2430] mt-4 mb-2 leading-tight block;
+  }
+  .rich-text-content h3 {
+    @apply text-xl sm:text-2xl font-bold text-[#1F2430] mt-3 mb-2 block;
+  }
   .rich-text-content p {
-    @apply text-sm sm:text-base leading-relaxed text-[#4E4E4E] mb-3;
+    @apply text-base leading-relaxed text-[#4E4E4E] mb-3;
   }
 }
 
@@ -100,6 +104,7 @@
 @layer base {
   html {
     font-family: var(--font-sans);
+    /* NOTE: keep at browser default (16px) so all Tailwind rem spacing is correct */
   }
 
   body {
@@ -241,6 +246,27 @@
 :root {
   color-scheme: light;
   color: var(--customer-ink);
+
+  /* ── Type scale tokens ── */
+  --text-2xs:   10px;
+  --text-xs:    11px;
+  --text-sm:    12px;
+  --text-base:  14px;   /* body / most UI */
+  --text-md:    15px;
+  --text-lg:    16px;   /* subheadings */
+  --text-xl:    18px;
+  --text-2xl:   20px;   /* section headings */
+  --text-3xl:   24px;
+  --text-4xl:   28px;   /* page headings */
+  --text-5xl:   32px;
+  --text-6xl:   36px;   /* hero */
+
+  /* ── Line-height tokens ── */
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-base:   1.571; /* 22px at 14px */
+  --leading-relaxed: 1.625;
+
   --font-sans:
     "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
@@ -320,9 +346,11 @@ body::-webkit-scrollbar {
 }
 
 html,
-body {
+body,
+#root {
   margin: 0;
   min-width: 320px;
+  min-height: 100vh;
   background: var(--customer-surface);
   color: var(--customer-ink);
   font-family: var(--font-sans);
@@ -371,9 +399,19 @@ textarea {
   box-shadow: none !important;
 }
 .customer-shell {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: var(--customer-surface);
   color: var(--customer-ink);
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1 0 auto;
 }
 
 .customer-container,
@@ -843,7 +881,7 @@ select:not([multiple]):disabled {
 
 .filter-panel-scrollbar::-webkit-scrollbar-thumb {
   border-radius: 9999px;
-  background: var(--customer-gold);
+  background: #ce9f2d;
 }
 
 .filter-panel-scrollbar::-webkit-scrollbar-thumb:hover {

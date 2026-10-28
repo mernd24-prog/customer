@@ -7,6 +7,23 @@ export default {
         sans: ["DM Sans", "DM Sans Fallback", "sans-serif"],
         "dm-sans": ["DM Sans", "DM Sans Fallback", "sans-serif"],
       },
+      fontSize: {
+        /* ── Design-system type scale ── */
+        "2xs":   ["10px", { lineHeight: "14px" }],
+        xs:      ["11px", { lineHeight: "16px" }],
+        sm:      ["12px", { lineHeight: "18px" }],
+        base:    ["14px", { lineHeight: "22px" }],
+        md:      ["15px", { lineHeight: "23px" }],
+        lg:      ["16px", { lineHeight: "24px" }],
+        xl:      ["18px", { lineHeight: "28px" }],
+        "2xl":   ["20px", { lineHeight: "28px" }],
+        "3xl":   ["24px", { lineHeight: "32px" }],
+        "4xl":   ["28px", { lineHeight: "36px" }],
+        "5xl":   ["32px", { lineHeight: "40px" }],
+        "6xl":   ["36px", { lineHeight: "44px" }],
+        "7xl":   ["42px", { lineHeight: "50px" }],
+        "8xl":   ["48px", { lineHeight: "56px" }],
+      },
       fontWeight: {
         thin: 100,
         extralight: 200,

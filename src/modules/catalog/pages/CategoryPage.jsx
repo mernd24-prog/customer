@@ -30,6 +30,7 @@ export default function CategoryPage() {
     sentinelRef,
     categoryTitle,
     sidebarCategoryTitle,
+    sidebarCategoryKey,
     categoryDesc,
     visibleSubCategories,
     isInitialLoading,
@@ -107,6 +108,7 @@ export default function CategoryPage() {
             showCategorySidebar ? (
               <CategorySidebarNav
                 categoryTitle={sidebarCategoryTitle}
+                categoryKey={sidebarCategoryKey}
                 categories={visibleSubCategories}
                 activeKey={categoryKey}
               />

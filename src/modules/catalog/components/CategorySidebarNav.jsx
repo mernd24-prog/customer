@@ -21,6 +21,7 @@ function CategoryCheckbox({ checked }) {
 
 export function CategorySidebarNav({
   categoryTitle,
+  categoryKey: parentCategoryKey = null,
   categories = [],
   activeKey = "",
 }) {
@@ -40,10 +41,20 @@ export function CategorySidebarNav({
       </h3>
 
       <div className="space-y-3">
-        <p className="flex items-center gap-1.5 text-sm font-bold text-[#111827]">
-          <ChevronRight size={15} className="rotate-90 text-[#111827]" />
-          <span className="line-clamp-2">{categoryTitle}</span>
-        </p>
+        {parentCategoryKey && activeKey !== parentCategoryKey ? (
+          <Link
+            to={CUSTOMER_ROUTES.category(parentCategoryKey)}
+            className="flex items-center gap-1.5 text-base font-bold text-[#111827] transition-colors hover:text-[var(--customer-gold)]"
+          >
+            <ChevronRight size={15} className="rotate-90 text-[#111827]" />
+            <span className="line-clamp-2">{categoryTitle}</span>
+          </Link>
+        ) : (
+          <p className="flex items-center gap-1.5 text-base font-bold text-[#111827]">
+            <ChevronRight size={15} className="rotate-90 text-[#111827]" />
+            <span className="line-clamp-2">{categoryTitle}</span>
+          </p>
+        )}
 
         <div className="space-y-3 pl-6">
           {visibleCategories.map((category) => {
@@ -60,7 +71,7 @@ export function CategorySidebarNav({
                     : "text-[#111827]"
                 }`}
               >
-                <CategoryCheckbox checked={isActive} />
+                {/* <CategoryCheckbox checked={isActive} /> */}
 
                 <span className="min-w-0">{category.name}</span>
               </Link>

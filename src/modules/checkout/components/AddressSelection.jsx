@@ -6,8 +6,8 @@ import {
   ChevronDown,
   ChevronUp,
   MapPin,
-  Pencil,
   Phone,
+  SquarePen
 } from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
 import AddressFormFields, {
@@ -282,20 +282,20 @@ export default function AddressSelection({
   };
 
   const infoClass =
-    "flex items-start gap-2  font-medium leading-[18px] text-[#1B1D60] text-[14px] sm:leading-[22px] md:text-[16px] md:leading-[26px] lg:text-[18px] lg:leading-[30px]";
+    "flex items-start gap-2 font-medium leading-[18px] text-[#1B1D60] text-xs sm:text-[14px] sm:leading-[22px] md:text-[15px] md:leading-[24px]";
 
   return (
     <DetailSectionCard
       title="Delivery Address"
       className="w-full"
-      bodyClassName="flex mt-4 sm:mt-0 flex-col w-full max-w-full gap-5 px-4 pb-0 sm:px-5 sm:pt-5 sm:pb-0 md:px-[25px] lg:pb-0"
+      bodyClassName="flex flex-col w-full max-w-full gap-4 px-3 pb-0 pt-4 sm:px-5 sm:pt-5 sm:pb-0"
       headerContent={
         <button
           type="button"
           onClick={onAddNewAddress}
-          className="inline-flex w-max sm:w-[150px] h-10 sm:h-auto items-center justify-center text-[#3E4093] text-center text-sm sm:text-base font-semibold leading-6 transition hover:opacity-90"
+          className="inline-flex shrink-0 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-[#3E4093] text-xs font-semibold leading-5 transition hover:bg-[#3E4093]/10 sm:text-sm sm:px-3 sm:py-2"
         >
-          + Add New Address
+          + Add Address
         </button>
       }
     >
@@ -308,14 +308,11 @@ export default function AddressSelection({
           const isEditing = editingId === addrId;
           const postalCode = addr.postalCode || addr.postal_code || "";
           const label = String(addr.label || "Home");
+          const isSingle = displayAddresses.length === 1;
           return (
             <div
               key={addrId}
-              className={`border-b  border-border  transition-all duration-300 ease-in-out last:border-b-0 ${
-                selectedAddressId === addrId && !useNewAddress
-                  ? "bg-white"
-                  : "bg-white"
-              }`}
+              className={`border-b border-border transition-all duration-300 ease-in-out last:border-b-0 bg-white`}
             >
               <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D]">
                 <div className="min-w-0 flex-1">
@@ -330,64 +327,94 @@ export default function AddressSelection({
                       {label}
                     </span>
                   </div>
-                  <label className="my-4 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
-                    <input
-                      type="radio"
-                      name="addressSelect"
-                      value={addrId}
-                      checked={selectedAddressId === addrId && !useNewAddress}
-                      onChange={() => {
-                        setValue("selectedAddressId", addrId, {
-                          shouldValidate: true,
-                        });
-                        setValue("useNewAddress", false, {
-                          shouldValidate: true,
-                        });
-                      }}
-                      className="mt-1 h-fit w-[18px] shrink-0 accent-[#3E4093] sm:h-5 sm:w-5"
-                    />
-                    <span className="min-w-0">
-                      <span className="block  font-bold leading-[24px] text-[#2E2E2E] text-[18px] sm:leading-[28px] md:text-[20px] md:leading-[30px] lg:text-[24px] lg:leading-[36px]">
-                        {addr.fullName || "Address"}
-                      </span>
-                      <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
-                        {addr.phone && (
-                          <span className={infoClass}>
-                            <Phone
-                              size={18}
-                              className="text-gold-dark mt-1 shrink-0"
-                            />
-                            {addr.phone}
-                          </span>
-                        )}
-                        <span className={infoClass}>
-                          <MapPin
-                            size={18}
-                            className="text-gold-dark mt-1 shrink-0 items-center"
-                          />
-                          <span>
-                            {[
-                              addr.line1,
-                              addr.line2,
-                              addr.city,
-                              addr.state,
-                              postalCode,
-                              addr.country || "India",
-                            ]
-                              .filter(Boolean)
-                              .join(", ")}
-                          </span>
+
+                  {isSingle ? (
+                    /* Single address: plain display, no radio */
+                    <div className="my-4 flex w-full items-start gap-2 sm:gap-3">
+                      <span className="min-w-0">
+                        <span className="block font-bold text-base leading-6 text-[#2E2E2E] sm:text-lg sm:leading-7">
+                          {addr.fullName || "Address"}
                         </span>
-                      </div>
-                    </span>
-                  </label>
+                        <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
+                          {addr.phone && (
+                            <span className={infoClass}>
+                              <Phone size={18} className="text-gold-dark mt-1 shrink-0" />
+                              {addr.phone}
+                            </span>
+                          )}
+                          <span className={infoClass}>
+                            <MapPin size={18} className="text-gold-dark mt-1 shrink-0" />
+                            <span>
+                              {[
+                                addr.line1,
+                                addr.line2,
+                                addr.city,
+                                addr.state,
+                                postalCode,
+                                addr.country || "India",
+                              ]
+                                .filter(Boolean)
+                                .join(", ")}
+                            </span>
+                          </span>
+                        </div>
+                      </span>
+                    </div>
+                  ) : (
+                    /* Multiple addresses: radio selection */
+                    <label className="my-4 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
+                      <input
+                        type="radio"
+                        name="addressSelect"
+                        value={addrId}
+                        checked={selectedAddressId === addrId && !useNewAddress}
+                        onChange={() => {
+                          setValue("selectedAddressId", addrId, {
+                            shouldValidate: true,
+                          });
+                          setValue("useNewAddress", false, {
+                            shouldValidate: true,
+                          });
+                        }}
+                        className="mt-1 h-fit w-[18px] shrink-0 accent-[#3E4093] sm:h-5 sm:w-5"
+                      />
+                      <span className="min-w-0">
+                        <span className="block font-bold text-base leading-6 text-[#2E2E2E] sm:text-lg sm:leading-7">
+                          {addr.fullName || "Address"}
+                        </span>
+                        <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
+                          {addr.phone && (
+                            <span className={infoClass}>
+                              <Phone size={18} className="text-gold-dark mt-1 shrink-0" />
+                              {addr.phone}
+                            </span>
+                          )}
+                          <span className={infoClass}>
+                            <MapPin size={18} className="text-gold-dark mt-1 shrink-0 items-center" />
+                            <span>
+                              {[
+                                addr.line1,
+                                addr.line2,
+                                addr.city,
+                                addr.state,
+                                postalCode,
+                                addr.country || "India",
+                              ]
+                                .filter(Boolean)
+                                .join(", ")}
+                            </span>
+                          </span>
+                        </div>
+                      </span>
+                    </label>
+                  )}
                 </div>
                 <button
                   type="button"
                   onClick={() => startEdit(addr)}
                   className="inline-flex lg:h-10 lg:w-10 h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-[#1B1D60] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
                 >
-                  <Pencil size={14} />
+                  <SquarePen size={14} />
                 </button>
               </div>
 

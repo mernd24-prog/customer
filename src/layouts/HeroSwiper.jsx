@@ -7,7 +7,6 @@ import {
   OutlineLightButton,
   SolidLargeButton,
 } from "../components/ui/button/static";
-
 // Swiper styles
 import "swiper/css";
 
@@ -84,7 +83,7 @@ const HeroSwiper = memo(({ slides }) => {
                 {slide.primaryButton && (
                   <SolidLargeButton
                     to={slide.primaryLink || "/products"}
-                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-lg"
+                    className="h-[42px] min-w-[160px] px-4 text-sm md:text-[16px] shadow-none sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 "
                   >
                     {slide.primaryButton}
                   </SolidLargeButton>
@@ -92,7 +91,7 @@ const HeroSwiper = memo(({ slides }) => {
                 {slide.secondaryButton && (
                   <OutlineLightButton
                     to={slide.secondaryLink || "/categories"}
-                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-lg"
+                    className="h-[42px] min-w-[160px] px-4 text-sm md:text-[16px] xl:font-bold sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-lg"
                   >
                     {slide.secondaryButton}
                   </OutlineLightButton>

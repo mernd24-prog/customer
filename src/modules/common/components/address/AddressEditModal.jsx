@@ -1,4 +1,4 @@
-import { Pencil } from "lucide-react";
+import { MapPin, SquarePen } from "lucide-react";
 import BaseModal from "../../../../components/ui/overlay/BaseModal";
 import Button from "../../../../components/ui/buttons/Button";
 import AddressFormFields from "./AddressFormFields";
@@ -20,18 +20,22 @@ export default function AddressEditModal({
   selectedCity,
   selectedPostalCode,
   addressLabels,
+  title = "Edit Address",
+  submitLabel = "Save Changes",
+  icon: Icon = SquarePen,
+  iconClassName = "text-gold",
 }) {
   if (!isOpen) return null;
 
   return (
     <BaseModal onClose={onClose} maxWidth="max-w-3xl">
-      <div className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6">
-        <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
-          <Pencil size={24} className="text-gold" />
-          Edit Address
+      <div className="flex max-h-[85vh] flex-col rounded-[10px] bg-white p-4 sm:p-6">
+        <div className="mb-4 flex items-center gap-2 text-lg font-bold text-[#171A3A]">
+          <Icon size={20} className={iconClassName} />
+          <span>{title}</span>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        <div className="custom-scrollbar flex-1 overflow-y-auto pr-2">
           <div className="grid gap-4 pb-2">
             <AddressFormFields
               form={form}
@@ -65,7 +69,7 @@ export default function AddressEditModal({
             loading={loading}
             className="w-full sm:w-auto"
           >
-            Save Changes
+            {submitLabel}
           </Button>
         </div>
       </div>

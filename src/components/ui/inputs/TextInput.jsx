@@ -35,9 +35,9 @@ export default function TextInput({
           error ? `${id}-error` : hint ? `${id}-hint` : undefined
         }
         className={cn(
-          "customer-input ",
+          "customer-input focus:outline-none focus:ring-0",
           disabled && "cursor-not-allowed bg-gray-50 opacity-70",
-          error && "border-red-400 focus:border-red-400 focus:ring-red-200",
+          error && "border-red-400 focus:border-red-400",
           inputClassName,
         )}
         {...registration}
