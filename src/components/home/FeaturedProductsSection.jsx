@@ -47,19 +47,19 @@ export default function FeaturedProductsSection({
     pb-0
     md:px-0
     md:pb-0
-    lg:px-3
-    lg:pb-2
+    lg:px-1
+    lg:pb-1
   `;
 
   const headerClassName = `
     px-0
     md:px-0
-    lg:px-3
+    lg:px-1
   `;
 
   const sectionStyle = {
     "--featured-gradient":
-      "linear-gradient(to bottom, #e1d5b4, #e2d1f0)",
+      "linear-gradient(180deg, #FAF8F5 0%, #F5EEE2 100%)",
   };
 
   if (loading) {
@@ -79,7 +79,7 @@ export default function FeaturedProductsSection({
         <SkeletonLoader
           preset="PRODUCT_CARD"
           count={5}
-          containerClass="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          containerClass="grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-5"
           wrapperClass="min-w-0"
         />
       </SectionContainer>
@@ -103,7 +103,7 @@ export default function FeaturedProductsSection({
       contentClassName={contentClassName}
       headerClassName={headerClassName}
     >
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-5">
         {displayProducts.map((product, index) => (
           <ProductCard
             key={getProductId(product) || `featured-product-${index}`}

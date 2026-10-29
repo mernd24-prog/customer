@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
+import { Banknote, Clock3, Heart, ShoppingCart, Star } from "lucide-react";
 
 import AddToCartButton from "./AddToCartButton";
 import Label from "../../../components/ui/label/Label";
@@ -66,6 +66,18 @@ const formatDealEndDate = (value) => {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+};
+
+const formatRatingCount = (count) => {
+  const value = Number(count);
+  if (!Number.isFinite(value) || value <= 0) return "";
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(value % 1000000 === 0 ? 0 : 1)}m`;
+  }
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}k`;
+  }
+  return value.toLocaleString();
 };
 
 export default function ProductCard({
@@ -492,22 +504,20 @@ export default function ProductCard({
   }
 
   /*
-   * GRID VARIANT
+   * GRID VARIANT (The Bear House Inspired: Minimal, Elegant & Perfectly Proportioned)
    */
   return (
     <article
       className={cn(
-        "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out sm:rounded-lg",
+        "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border border-[#EAE2D3] bg-white transition-all duration-300 hover:border-[#CE9F2D] hover:shadow-[0_4px_16px_rgba(27,29,96,0.08)]",
+        isFeatured && "border-[#CE9F2D]/60 shadow-[0_2px_8px_rgba(206,159,45,0.08)]",
         className,
       )}
     >
-      {/* 
-        MOBILE / TABLET WISHLIST
-        Visible below 1000px.
-        Same heart style as your screenshot.
-      */}
+      {/* WISHLIST BUTTON (Top-Right: Minimal, elegant, The Bear House style) */}
       {showActions && (
-        <IconCircleButton
+        <button
+          type="button"
           title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           aria-label={
             isWishlisted
@@ -516,63 +526,34 @@ export default function ProductCard({
           }
           onClick={handleWishlist}
           className={cn(
-            "absolute right-2 top-2 z-30 flex h-8 w-8 min-w-8 items-center justify-center rounded-full border border-[#1B1D60] bg-white p-0 text-[#1B1D60] shadow-none",
-            "min-[1000px]:hidden",
-            isWishlisted && "border-[#1B1D60]",
+            "absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-xs border border-black/5 transition-all duration-200 hover:scale-110 active:scale-95 hover:bg-white",
+            isWishlisted
+              ? "text-rose-500 bg-rose-50/90 border-rose-200"
+              : "text-[#1B1D60] hover:text-rose-500",
           )}
         >
           <Heart
-            size={16}
+            size={15}
             strokeWidth={1.8}
-            fill={isWishlisted ? "#1B1D60" : "none"}
-            stroke="#1B1D60"
+            fill={isWishlisted ? "#e11d48" : "none"}
+            stroke={isWishlisted ? "#e11d48" : "currentColor"}
+            className="transition-colors duration-200"
           />
-        </IconCircleButton>
+        </button>
       )}
 
-      {/* BADGES */}
-      <div className="absolute left-2 top-2 z-20 flex max-w-[calc(100%-3.5rem)] flex-wrap items-center gap-1 sm:left-4 sm:top-4 sm:max-w-[calc(100%-5rem)] sm:gap-2">
+      {/* BADGES (Top-Left: Subtle geometric tag) */}
+      <div className="absolute left-2 top-2 z-20 flex max-w-[calc(100%-3rem)] flex-wrap items-center gap-1">
         {isFeatured && (
-          <Label
-            variant="featured"
-            className="
-              flex items-center justify-center
-              rounded-xl
-              bg-[#1F2430]
-              bg-[linear-gradient(#CE9F2D,#CE9F2D)]
-              px-2 py-0.5
-              text-[10px]
-              font-semibold
-              text-white
-              sm:px-3 sm:py-1 sm:text-[14px]
-            "
-          >
+          <span className="rounded bg-[#CE9F2D] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-xs sm:text-[10px]">
             Featured
-          </Label>
+          </span>
         )}
 
         {isDealProduct && dealBadge && (
-          <Label
-            variant="success"
-            className="
-              flex h-[20px]
-              items-center justify-center
-              rounded-[50px]
-              bg-[#1B1D60]
-              px-[8px] py-[3px]
-              font-dmSans
-              text-[10px]
-              font-semibold
-              leading-none
-              text-white
-              sm:h-[28px]
-              sm:px-[15px]
-              sm:py-[5px]
-              sm:text-[14px]
-            "
-          >
+          <span className="rounded bg-[#1B1D60] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-xs sm:text-[10px]">
             {dealBadge}
-          </Label>
+          </span>
         )}
       </div>
 
@@ -583,9 +564,9 @@ export default function ProductCard({
         rel={resolvedTarget === "_blank" ? "noopener noreferrer" : undefined}
         className="flex min-w-0 flex-1 flex-col"
       >
-        {/* IMAGE */}
+        {/* IMAGE CONTAINER (The Bear House Portrait Aspect Ratio, clean, fixed & elegant) */}
         <div
-          className="relative h-[160px] w-full cursor-pointer overflow-hidden rounded-t-[14px] xs:h-[190px] sm:h-[230px] sm:rounded-t-[20px] md:h-[260px]"
+          className="relative aspect-[4/5] max-h-[290px] sm:max-h-[310px] w-full cursor-pointer overflow-hidden rounded-t-lg bg-[#FAF8F5]"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -593,7 +574,7 @@ export default function ProductCard({
             <Swiper
               slidesPerView={1}
               spaceBetween={0}
-              speed={500}
+              speed={400}
               loop={allImages.length > 1}
               allowTouchMove={allImages.length > 1}
               simulateTouch
@@ -609,15 +590,15 @@ export default function ProductCard({
             >
               {allImages.map((image, idx) => (
                 <SwiperSlide key={`${image}-${idx}`}>
-                  <div className="flex h-full w-full items-center justify-center">
+                  <div className="h-full w-full overflow-hidden">
                     <img
-                      src={getOptimizedCloudinaryUrl(image, 400)}
-                      srcSet={generateCloudinarySrcSet(image, [300, 400, 800])}
-                      sizes="(max-width: 640px) 250px, (max-width: 1024px) 400px, 800px"
+                      src={getOptimizedCloudinaryUrl(image, 500)}
+                      srcSet={generateCloudinarySrcSet(image, [300, 500, 700])}
+                      sizes="(max-width: 640px) 200px, (max-width: 1024px) 300px, 600px"
                       alt=""
-                      width="400"
-                      height="400"
-                      className="h-full w-full object-contain object-center p-2"
+                      width="350"
+                      height="350"
+                      className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105 will-change-transform"
                       loading={idx === 0 ? "eager" : "lazy"}
                       decoding="async"
                       onError={handleImageError}
@@ -628,26 +609,44 @@ export default function ProductCard({
             </Swiper>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[var(--customer-border-strong)]">
-              <ShoppingCart size={48} strokeWidth={1.4} />
+              <ShoppingCart size={40} strokeWidth={1.4} />
             </div>
           )}
 
-          {/* IMAGE INDICATORS */}
+          {/* FLOATING RATING BADGE (Minimal clean pill on bottom-left) */}
+          {rating > 0 && (
+            <div
+              className={cn(
+                "absolute left-2 z-20 flex items-center gap-0.5 rounded bg-white/90 backdrop-blur-sm px-1.5 py-0.5 text-[10px] font-bold text-slate-800 shadow-xs border border-black/5",
+                isDealProduct && dealEndDate ? "bottom-7" : "bottom-2",
+              )}
+            >
+              <Star size={10} className="fill-[#CE9F2D] text-[#CE9F2D]" />
+              <span>{Number(rating).toFixed(1)}</span>
+              {ratingCount > 0 && (
+                <span className="text-[9px] font-normal text-slate-500">
+                  ({formatRatingCount(ratingCount)})
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* IMAGE INDICATORS (Dots on hover for multi-image items) */}
           {isHovered && allImages.length > 1 && (
             <div
               className={cn(
-                "pointer-events-none absolute inset-x-0 z-20 flex items-center justify-center gap-1.5 px-2",
-                isDealProduct && dealEndDate ? "bottom-8" : "bottom-3",
+                "pointer-events-none absolute inset-x-0 z-20 flex items-center justify-center gap-1 px-2",
+                isDealProduct && dealEndDate ? "bottom-7" : "bottom-2",
               )}
             >
-              {allImages.slice(0, 6).map((_, idx) => (
+              {allImages.slice(0, 5).map((_, idx) => (
                 <div
                   key={idx}
                   className={cn(
-                    "h-1 rounded-full shadow-sm transition-all duration-300",
-                    activeImageIndex % Math.min(allImages.length, 6) === idx
-                      ? "w-4 bg-[#1B1D60]"
-                      : "w-1.5 bg-black/30",
+                    "h-1 rounded-full shadow-xs transition-all duration-300",
+                    activeImageIndex % Math.min(allImages.length, 5) === idx
+                      ? "w-3 bg-[#1B1D60]"
+                      : "w-1 bg-black/25",
                   )}
                 />
               ))}
@@ -656,152 +655,66 @@ export default function ProductCard({
 
           {/* DEAL END DATE */}
           {isDealProduct && dealEndDate && (
-            <div className="absolute inset-x-0 bottom-0 z-20 flex h-[19px] items-center justify-between gap-1 bg-[#FFFDF8]/95 px-1.5 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] sm:h-[29px] sm:px-3">
-              <div className="flex shrink-0 items-center gap-1 text-[9px] font-semibold text-[#1B1D60] sm:gap-1.5 sm:text-[13px]">
-                <span className="relative flex h-1.5 w-1.5 shrink-0 sm:h-2 sm:w-2">
+            <div className="absolute inset-x-0 bottom-0 z-20 flex h-[20px] items-center justify-between gap-1 bg-[#FFFDF8]/95 px-2 shadow-xs sm:h-[22px]">
+              <div className="flex shrink-0 items-center gap-1 text-[9px] font-semibold text-[#1B1D60]">
+                <span className="relative flex h-1.5 w-1.5 shrink-0">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 sm:h-2 sm:w-2" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 </span>
                 <span>Ends</span>
               </div>
 
-              <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[9px] font-bold text-[#1B1D60] sm:gap-1 sm:text-[13px]">
-                <Clock3
-                  size={11}
-                  className="shrink-0 sm:h-[13px] sm:w-[13px]"
-                />
+              <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[9px] font-bold text-[#1B1D60]">
+                <Clock3 size={10} className="shrink-0" />
                 <span className="truncate">{dealEndDate}</span>
               </span>
             </div>
           )}
         </div>
 
-        {/* PRODUCT INFO */}
-        <div className="flex min-w-0 flex-col px-2.5 sm:px-4 sm:pb-2 ">
-          <StarRating rating={rating} count={ratingCount} />
-
-          {brand && (
-            <div
-              className="mt-1.5 truncate text-xs font-bold tracking-tight text-[#2E2E2E] sm:mt-2 sm:text-base"
+        {/* PRODUCT INFO (The Bear House style: Clean, tight, perfectly aligned) */}
+        <div className="flex min-w-0 flex-1 flex-col p-2.5 sm:p-3 ">
+          {/* BRAND */}
+          {brand ? (
+            <button
+              type="button"
+              onClick={handleBrandClick}
+              className="w-fit text-left truncate text-sm sm:text-sm font-bold uppercase tracking-wider text-[#CE9F2D] hover:text-[#B8860B] transition-colors"
               title={brand}
             >
               {capitalizeFirst(brand)}
-            </div>
+            </button>
+          ) : (
+            <div className="h-[15px]" />
           )}
 
+          {/* TITLE */}
           <h3
-            className={cn(
-              "w-full line-clamp-1",
-              brand
-                ? "mb-1.5 mt-0.5 text-xs font-normal text-black sm:mb-2.5 sm:mt-1 sm:text-[16px]"
-                : "my-1 text-xs font-semibold text-[#2E2E2E] sm:my-[10px] sm:text-sm",
-            )}
+            className="mt-0.5 truncate text-xs sm:text-[12px] font-medium text-[#171A3A] transition-colors"
             title={title}
           >
             {title}
           </h3>
-          {/* FLIPKART-STYLE PRICE AND DISCOUNT */}
-          <div className="my-0.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 sm:my-1 sm:gap-x-2.5 sm:gap-y-1">
+
+          {/* PRICE & DISCOUNT */}
+          <div className="mt-1.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
             <Price
               price={price}
               oldPrice={oldPrice}
               currency={currency || cardProduct?.currency}
-              className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 sm:gap-x-2"
-              priceClassName="text-sm font-bold text-[#212121] sm:text-lg md:text-xl"
-              oldPriceClassName="text-[11px] font-normal text-[#7A7A7A] line-through sm:text-base md:text-lg"
+              className="flex min-w-0 flex-wrap items-baseline gap-x-1.5"
+              priceClassName="text-sm sm:text-base font-bold text-[#1B1D60]"
+              oldPriceClassName="text-[12px] sm:text-[13px] font-normal text-slate-400 line-through"
             />
 
             {discountLabel && (
-              <span className="whitespace-nowrap text-[10px] font-bold text-[#388E3C] sm:text-sm md:text-base">
-                {computedDiscountPercent}% off
+              <span className="whitespace-nowrap text-[12px] sm:text-[13px] font-semibold text-emerald-600">
+                ({computedDiscountPercent}% off)
               </span>
             )}
           </div>
         </div>
       </Link>
-
-      {/* 
-        DESKTOP ACTIONS
-        Hidden below 1000px.
-        Visible at 1000px and above.
-      */}
-      {showActions && (
-        <div
-          className="
-            mt-auto
-            hidden
-            w-full
-            min-w-0
-            items-center
-            gap-3
-            px-4
-            pb-3
-            pt-1
-            min-[1000px]:flex
-          "
-        >
-          <PillButton
-            disabled={!isInStock}
-            onClick={handleAddToCart}
-            rightIcon={
-              <ShoppingCart size={15} strokeWidth={2.4} className="shrink-0" />
-            }
-            className={cn(
-              `
-                min-w-0
-                flex-1
-                h-10
-                gap-2
-                px-4
-                text-[16px]
-                leading-none
-                font-semibold
-                whitespace-nowrap
-                rounded-lg
-              `,
-              !isInStock && "cursor-not-allowed opacity-60",
-            )}
-          >
-            <span className="truncate">Add to Cart</span>
-          </PillButton>
-
-          {/* DESKTOP BOTTOM WISHLIST */}
-          <IconCircleButton
-            title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-            aria-label={
-              isWishlisted
-                ? `Remove ${title} from wishlist`
-                : `Add ${title} to wishlist`
-            }
-            onClick={handleWishlist}
-            className={cn(
-              `
-                flex
-                h-8
-                w-8
-                min-w-8
-                shrink-0
-                items-center
-                justify-center
-                rounded-full
-                border
-                border-[#1B1D60]
-                bg-white
-                p-0
-                text-[#1B1D60]
-              `,
-              isWishlisted && "border-[#1B1D60]",
-            )}
-          >
-            <Heart
-              size={19}
-              fill={isWishlisted ? "#1B1D60" : "none"}
-              stroke="#1B1D60"
-              strokeWidth={1.8}
-            />
-          </IconCircleButton>
-        </div>
-      )}
     </article>
   );
 }

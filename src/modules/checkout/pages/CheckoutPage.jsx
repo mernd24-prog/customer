@@ -228,9 +228,9 @@ export default function CheckoutPage() {
                       onClick={() =>
                         setValue("useNewAddress", true, { shouldValidate: true })
                       }
-                      className="mt-5 inline-flex h-11 w-full max-w-[200px] items-center justify-center gap-2 rounded-lg border border-[#C69D2A] bg-[#C69D2A] px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#b98a1f]"
+                      className="mt-5 inline-flex h-11 w-full max-w-[200px] items-center justify-center gap-2 rounded-lg border border-[#C69D2A] bg-[#C69D2A] px-4 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#b98a1f]"
                     >
-                      <SquarePlus size={24} className="text-gold" />
+                      <Plus size={24}  />
                       Add Address
                     </button>
                   </div>

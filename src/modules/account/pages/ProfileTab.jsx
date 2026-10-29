@@ -2,13 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Camera,
-  Mail,
-  Phone,
-  UserRound,
-  Pencil,
-} from "lucide-react";
+import { Camera, Mail, Phone, UserRound, Pencil } from "lucide-react";
 
 import Button from "../../../components/ui/buttons/Button";
 import OtpInput from "../../../components/ui/OtpInput";
@@ -17,9 +11,15 @@ import { fetchMe, updateMe } from "../../../features/user/userSlice";
 import { apiRequest } from "../../../api/client";
 import { endpoints, FILE_UPLOAD_MODULES } from "../../../api/endpoints";
 import { profileSchema } from "../../../validations/validationSchemas";
-import { sendProfileEmailOtp, verifyProfileEmailOtp } from "../../auth/slices/authSlice";
+import {
+  sendProfileEmailOtp,
+  verifyProfileEmailOtp,
+} from "../../auth/slices/authSlice";
 import { notify } from "../../../utils/notify";
-import { useProfileImageState, invalidateProfileImageCache } from "../../../hooks/useProfileImage";
+import {
+  useProfileImageState,
+  invalidateProfileImageCache,
+} from "../../../hooks/useProfileImage";
 
 const FALLBACK_AVATAR = "/image/png/person.png";
 
@@ -63,9 +63,7 @@ const ensureAbsoluteUrl = (url) => {
 };
 
 const getAvatar = (user) =>
-  user?.profile?.avatarUrl ||
-  user?.profile?.avatar ||
-  FALLBACK_AVATAR;
+  user?.profile?.avatarUrl || user?.profile?.avatar || FALLBACK_AVATAR;
 
 export default function ProfileTab({ user }) {
   const dispatch = useDispatch();
@@ -76,10 +74,8 @@ export default function ProfileTab({ user }) {
   const previewUrlRef = useRef("");
 
   const [isEditing, setIsEditing] = useState(false);
-  const { src: profileAvatar, isLoading: isAvatarFetching } = useProfileImageState(
-    getAvatar(user),
-    user?.updatedAt
-  );
+  const { src: profileAvatar, isLoading: isAvatarFetching } =
+    useProfileImageState(getAvatar(user), user?.updatedAt);
   const [localPreview, setLocalPreview] = useState("");
   const [avatarError, setAvatarError] = useState("");
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
@@ -136,7 +132,11 @@ export default function ProfileTab({ user }) {
     if (/already (in use|exists)/i.test(message)) {
       return "This email belongs to another account. Please use a different email address.";
     }
-    if (/verified email.*cannot be changed|cannot change.*verified email/i.test(message)) {
+    if (
+      /verified email.*cannot be changed|cannot change.*verified email/i.test(
+        message,
+      )
+    ) {
       return "Your email is already verified and cannot be changed.";
     }
     if (/invalid or expired otp|otp is invalid or has expired/i.test(message)) {
@@ -186,7 +186,9 @@ export default function ProfileTab({ user }) {
       setEmailOtpSent(false);
       notify.success("Email verified. It is now secured and cannot be edited.");
     } catch (error) {
-      setEmailError(getRequestError(error, "The email OTP is invalid or expired."));
+      setEmailError(
+        getRequestError(error, "The email OTP is invalid or expired."),
+      );
     } finally {
       setEmailBusy(false);
     }
@@ -274,14 +276,13 @@ export default function ProfileTab({ user }) {
       const uploadedUrl = getUploadedFileUrl(result);
 
       if (!uploadedUrl) {
-        throw new Error(
-          "The server did not return the uploaded image URL.",
-        );
+        throw new Error("The server did not return the uploaded image URL.");
       }
 
       const absoluteUploadedUrl = ensureAbsoluteUrl(uploadedUrl);
 
-      const { avatarUrl: _oldAvatar, ...restProfileOnUpload } = user?.profile || {};
+      const { avatarUrl: _oldAvatar, ...restProfileOnUpload } =
+        user?.profile || {};
       const profilePayload = {
         ...restProfileOnUpload,
         firstName: (user?.profile?.firstName || "").trim(),
@@ -309,9 +310,7 @@ export default function ProfileTab({ user }) {
     } catch (error) {
       console.error("Profile image upload failed:", error);
 
-      setAvatarError(
-        error?.message || "Failed to upload profile image.",
-      );
+      setAvatarError(error?.message || "Failed to upload profile image.");
 
       if (previewUrlRef.current) {
         URL.revokeObjectURL(previewUrlRef.current);
@@ -337,11 +336,7 @@ export default function ProfileTab({ user }) {
     }
 
     try {
-      await run(
-        dispatch,
-        updateMe({ profile }),
-        "Profile updated",
-      );
+      await run(dispatch, updateMe({ profile }), "Profile updated");
 
       await dispatch(fetchMe()).unwrap();
 
@@ -352,10 +347,7 @@ export default function ProfileTab({ user }) {
   };
 
   const fullName =
-    [
-      user?.profile?.firstName,
-      user?.profile?.lastName,
-    ]
+    [user?.profile?.firstName, user?.profile?.lastName]
       .filter(Boolean)
       .join(" ") ||
     user?.name ||
@@ -523,21 +515,27 @@ export default function ProfileTab({ user }) {
       <section className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
         <div className="grid min-w-0 gap-1.5">
           <label htmlFor="profile-email" className={fieldLabelClass}>
-            Email {user?.emailVerified && <span className="text-xs font-semibold text-emerald-700">(Verified)</span>}
+            Email{" "}
+            {user?.emailVerified && (
+              <span className="text-xs font-semibold text-emerald-700">
+                (Verified)
+              </span>
+            )}
           </label>
 
           {user?.emailVerified || !isEditing ? (
             <div className={readonlyBoxClass}>
               <Mail size={17} className="shrink-0 text-[#8D92A3]" />
-              <span className="min-w-0 break-all">
-                {user?.email || "—"}
-              </span>
+              <span className="min-w-0 break-all">{user?.email || "—"}</span>
             </div>
           ) : (
             <div className="grid gap-2">
               <div className="flex gap-2">
                 <div className="relative min-w-0 flex-1">
-                  <Mail size={17} className="absolute left-3 top-3 text-[#8D92A3]" />
+                  <Mail
+                    size={17}
+                    className="absolute left-3 top-3 text-[#8D92A3]"
+                  />
                   <input
                     id="profile-email"
                     type="email"
@@ -572,7 +570,11 @@ export default function ProfileTab({ user }) {
                     value={emailOtp}
                     length={6}
                     onChange={(value) =>
-                      setEmailOtp(String(value || "").replace(/\D/g, "").slice(0, 6))
+                      setEmailOtp(
+                        String(value || "")
+                          .replace(/\D/g, "")
+                          .slice(0, 6),
+                      )
                     }
                     error=""
                   />
@@ -601,9 +603,7 @@ export default function ProfileTab({ user }) {
 
           <div className={readonlyBoxClass}>
             <Phone size={17} className="shrink-0 text-[#8D92A3]" />
-            <span className="min-w-0 truncate">
-              {user?.phone || "—"}
-            </span>
+            <span className="min-w-0 truncate">{user?.phone || "—"}</span>
           </div>
         </div>
       </section>

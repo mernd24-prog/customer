@@ -7,6 +7,8 @@ import ReviewMediaLightbox from "../../modules/products/components/ReviewMediaLi
 import Seo from "../../components/ui/Seo";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { useAuthModal } from "../../modules/auth/context/AuthModalContext";
+import ShowMoreText from "../../utils/showMore";
+
 import {
   fetchProductReviews,
   fetchMyProductReview,
@@ -287,12 +289,24 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
 
         {review.title && (
           <span className="text-base sm:text-lg font-bold text-ink">
-            {review.title}
+            
+            <ShowMoreText
+                  text={review.title}
+                  mode="lines"
+                  limit={1}
+                  buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
+                />
           </span>
         )}
       </div>
 
-      {text && <p className="text-sm leading-relaxed text-ink">{text}</p>}
+      {text && <p className="text-sm leading-relaxed text-ink">  
+         <ShowMoreText
+                  text={text}
+                  mode="lines"
+                  limit={3}
+                  buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
+                /></p>}
 
       {media.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">

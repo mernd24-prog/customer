@@ -1,6 +1,5 @@
-import { useEffect, useMemo, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { useProductDetailController } from "../controllers";
 import { useCartActions, useWishlistActions } from "../controllers/actions";
 import ProductServiceBadges from "../components/ProductServiceBadges";
@@ -10,6 +9,7 @@ import {
   getProductPublicPath,
   decodeProductRouteToken,
   getProductCategoryName,
+  getProductReviewCount,
 } from "../../../utils/ecommerce";
 
 import CUSTOMER_ROUTES from "../../../constants/routes";
@@ -22,7 +22,16 @@ import ProductPriceBlock from "../components/ProductPriceBlock";
 import ProductStockStatus from "../components/ProductStockStatus";
 import ShowMoreText from "../../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../../components/ui/skeleton/layouts";
-import { Star } from "lucide-react";
+import {
+  Star,
+  ChevronRight,
+  Clock,
+  RefreshCw,
+  ShieldCheck,
+  Banknote,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import QuantitySelector from "../../cart/components/QuantitySelector";
 import ImageGallery from "../components/ImageGallery";
 import DeliveryChecker from "../components/DeliveryChecker";
@@ -46,7 +55,8 @@ import { capitalizeFirst } from "../../../utils/stringUtils";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
-
+import Breadcrumbs from "../../common/components/Breadcrumbs";
+import { PageContainer } from "../../../components/ui/layout";
 export default function ProductDetailPage() {
   const { productId: rawParamId, publicCode, productToken } = useParams();
   const tokenPayload = decodeProductRouteToken(productToken);
@@ -118,6 +128,16 @@ export default function ProductDetailPage() {
     detailRows,
     loadedProductId,
   } = useProductDetailController(productId, rawParamId, decodedProductId);
+  const productRatingValue = Number(
+    product?.rating ??
+      product?.averageRating ??
+      product?.avgRating ??
+      product?.reviewsAverage ??
+      0,
+  );
+  const productReviewCount = getProductReviewCount(product);
+  const shouldShowProductRating =
+    productRatingValue > 0 || productReviewCount > 0;
   const resolvedProductId =
     loadedProductId || getProductId(product) || productId;
 
@@ -140,6 +160,7 @@ export default function ProductDetailPage() {
 
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
+  const [peaceOfMindOpen, setPeaceOfMindOpen] = useState(true);
   const infoTabs = [
     ...(product?.commonImages?.length
       ? [{ key: "common-images", label: " Catalogue Images" }]
@@ -161,67 +182,56 @@ export default function ProductDetailPage() {
         image={product?.seo?.ogImage}
       />
 
-      <div className=" ">
+      <PageContainer>
         <ApiState
           loading={productState.loading && !product}
           error={productState.error}
           empty={!product && !productState.loading}
           skeletonLayout={PRODUCT_DETAIL_SKELETON}
-          skeletonContainerClass="bg-transparent px-4 sm:px-6 lg:px-8 py-8"
+          skeletonContainerClass="bg-transparent px-4 sm:px-6 lg:px-8 py-6"
           emptyTitle="Product coming soon"
           emptyText="This product page is being prepared or is temporarily unavailable."
         >
           {product && (
             <>
-              <nav className="mt-8 flex flex-wrap items-center gap-1 text-sm text-[#2E2E2E] lg:mt-12 lg:text-lg">
-                <Link
-                  to="/"
-                  className="font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
-                >
-                  Home
-                </Link>
+              <div className="mt-2 grid min-w-0 items-start gap-6 lg:mt-4 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-8 xl:gap-10">
+                {/* Left: Sticky Breadcrumbs + Image Gallery */}
+                <div className="min-w-0 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+64px)] lg:self-start">
+                  <div className="mb-3 min-w-0">
+                    <Breadcrumbs
+                      items={[
+                        { label: "Home", href: "/" },
+                        ...(product?.parentCategory &&
+                        !/^[a-f\d]{24}$/i.test(String(product.parentCategory))
+                          ? [
+                              {
+                                label: String(product.parentCategory).replace(
+                                  /-/g,
+                                  " ",
+                                ),
+                                href: CUSTOMER_ROUTES.category(
+                                  product.parentCategory,
+                                ),
+                              },
+                            ]
+                          : []),
+                        ...(getProductCategoryName(product) &&
+                        (product.categoryKey || product.category) !==
+                          product.parentCategory
+                          ? [
+                              {
+                                label: getProductCategoryName(product),
+                                href: CUSTOMER_ROUTES.category(
+                                  product.categoryKey || product.category,
+                                ),
+                              },
+                            ]
+                          : []),
+                        { label: productTitle },
+                      ]}
+                    />
+                  </div>
 
-                <span>{">"}</span>
-
-                {product?.parentCategory &&
-                  !/^[a-f\d]{24}$/i.test(String(product.parentCategory)) && (
-                    <>
-                      <Link
-                        to={CUSTOMER_ROUTES.category(product.parentCategory)}
-                        className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
-                      >
-                        {(product.parentCategory || "").replace(/-/g, " ")}
-                      </Link>
-
-                      <span>{">"}</span>
-                    </>
-                  )}
-
-                {getProductCategoryName(product) &&
-                  (product.categoryKey || product.category) !==
-                    product.parentCategory && (
-                    <>
-                      <Link
-                        to={CUSTOMER_ROUTES.category(
-                          product.categoryKey || product.category,
-                        )}
-                        className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
-                      >
-                        {getProductCategoryName(product)}
-                      </Link>
-
-                      <span>{">"}</span>
-                    </>
-                  )}
-
-                <span title={productTitle} className="font-medium text-gold ">
-                  {isProductTitleTruncated
-                    ? `${productTitlePreview}...`
-                    : productTitle}
-                </span>
-              </nav>
-              <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-6 lg:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
-                <div className="min-w-0 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+62px)] lg:self-start">
                   <ImageGallery
                     images={images}
                     video={productVideo}
@@ -242,78 +252,68 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
-                  <div className="flex min-w-0 flex-col gap-3 sm:gap-3.5">
+                <div className="relative mt-10 flex min-w-0 flex-col gap-5 sm:mt-5 lg:mt-12">
+                  <div className="flex flex-col gap-2">
                     {brand && (
                       <Link
                         to={`/brands/${encodeURIComponent(brand)}`}
-                        className="w-fit text-xl sm:text-2xl font-extrabold tracking-tight text-[#1B1D60] hover:text-[#CE9F2D] transition-colors leading-tight mb-0.5"
+                        className="w-fit text-[13px] font-bold uppercase font-boldtracking-widest text-[#6F7480] transition-colors hover:text-[#CE9F2D]"
                       >
                         {capitalizeFirst(brand)}
                       </Link>
                     )}
 
                     <h1
-                      className={`break-words block leading-relaxed ${
+                      className={`break-words leading-snug ${
                         brand
-                          ? "text-sm sm:text-base font-medium text-[#595E6B]"
-                          : "text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px]"
+                          ? "text-base font-semibold text-[#1B1D60] sm:text-lg"
+                          : "text-lg font-bold text-[#1B1D60] sm:text-xl"
                       }`}
                     >
                       <ShowMoreText
                         text={productTitle}
-                        mode="words"
-                        limit={10}
-                        buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#CE9F2D] hover:underline bg-transparent border-0 p-0 outline-none shadow-none"
+                        mode="lines"
+                        limit={1}
+                        buttonClassName="ml-1 border-0 bg-transparent p-0 text-xs font-semibold text-[#CE9F2D] shadow-none outline-none hover:underline"
                       />
                     </h1>
-                    {Number(product.rating || 0) > 0 && (
-                      <div className="flex items-center pt-0.5">
-                        <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
-                          {Number(product.rating || 0).toFixed(1)}
-                        </span>
-                        <div className="flex gap-0.5">
-                          {Array.from({ length: 5 }).map((_, i) => {
-                            const stars = Math.round(
-                              Math.max(
-                                0,
-                                Math.min(Number(product.rating || 0), 5),
-                              ),
-                            );
-                            return (
-                              <Star
-                                key={i}
-                                size={16}
-                                className={
-                                  i < stars
-                                    ? "fill-[#F58220] text-[#F58220]"
-                                    : "fill-border text-border"
-                                }
-                              />
-                            );
-                          })}
-                        </div>
-                        <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
-                          ({product.reviewCount || product.ratingCount || "0"})
-                        </span>
+
+                    {/* Rating */}
+                    {shouldShowProductRating && (
+                      <div className="flex items-center gap-2">
+                        {productRatingValue > 0 && (
+                          <div className="inline-flex items-center gap-1 rounded bg-[#388E3C] px-1.5 py-0.5 text-xs font-bold text-white shadow-xs">
+                            <span>{productRatingValue.toFixed(1)}</span>
+                            <Star size={10} className="fill-white" />
+                          </div>
+                        )}
+
+                        {productReviewCount > 0 && (
+                          <span className="text-xs font-medium text-[#878787]">
+                            {productReviewCount} reviews
+                          </span>
+                        )}
+
+                        <ProductStockStatus
+                          inStock={inStock}
+                          selectedVariant={selectedVariant}
+                          product={product}
+                          availableStock={availableStock}
+                        />
                       </div>
                     )}
-                    <div className="pt-0.5">
-                      <ProductStockStatus
-                        inStock={inStock}
-                        selectedVariant={selectedVariant}
-                        product={product}
-                        availableStock={availableStock}
-                      />
-                    </div>
                   </div>
 
+                  {/* Divider */}
+                  <div className="border-t border-[#F0E6D2]" />
+
+                  {/* Price */}
                   <ProductPriceBlock
                     price={price}
                     mrp={mrp}
-                    priceClassName="text-h3"
-                    mrpClassName="text-h3"
-                    discountClassName="text-xs"
+                    priceClassName="text-2xl font-extrabold text-[#1B1D60] sm:text-3xl"
+                    mrpClassName="text-sm font-medium text-[#9CA3AF] line-through"
+                    discountClassName="text-xs font-bold"
                     currency={currency}
                     discount={discount}
                     safeDynamicPrice={safeDynamicPrice}
@@ -321,49 +321,7 @@ export default function ProductDetailPage() {
                     dealBadge={activeDealBadge}
                   />
 
-                  <div className="w-full md:w-fit">
-                    <QuantitySelector
-                      quantity={quantity}
-                      onIncrease={() =>
-                        setQuantity((currentQuantity) => {
-                          if (!inStock || quantityAtStockLimit) {
-                            return currentQuantity;
-                          }
-                          return currentQuantity + 1;
-                        })
-                      }
-                      onDecrease={() =>
-                        setQuantity((currentQuantity) =>
-                          Math.max(1, currentQuantity - 1),
-                        )
-                      }
-                      max={effectiveMaxStock}
-                      increaseDisabled={!inStock || quantityAtStockLimit}
-                      increaseDisabledLabel={quantityStockMessage || undefined}
-                    />
-                    {quantityStockMessage ? (
-                      <p className="mt-1 text-xs font-semibold text-amber-600">
-                        {quantityStockMessage}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <DeliveryChecker
-                    productId={resolvedProductId}
-                    product={product}
-                    onResultChange={setDeliveryResult}
-                  />
-
-                  {!deliveryResult && (
-                    <ProductServiceBadges
-                      shippingEtaText={shippingEtaText}
-                      staticIsFree={staticIsFree}
-                      staticCharge={staticCharge}
-                      productCodAvailable={productCodAvailable}
-                      productCodDisabled={productCodDisabled}
-                    />
-                  )}
-
+                  {/* Variants */}
                   {variants.length > 0 && variantOptions.length > 0 && (
                     <VariantSelector
                       variantOptions={variantOptions}
@@ -377,7 +335,6 @@ export default function ProductDetailPage() {
                     />
                   )}
 
-                  {/* Image-based picker when variants exist but have no attributes */}
                   {variants.length > 1 && variantOptions.length === 0 && (
                     <ImageVariantPicker
                       variants={variants}
@@ -387,6 +344,44 @@ export default function ProductDetailPage() {
                     />
                   )}
 
+                  {/* Quantity */}
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[11px]  uppercase tracking-wider text-[#6F7480] font-bold">
+                      Quantity
+                    </span>
+
+                    <div className="w-fit">
+                      <QuantitySelector
+                        quantity={quantity}
+                        onIncrease={() =>
+                          setQuantity((currentQuantity) => {
+                            if (!inStock || quantityAtStockLimit) {
+                              return currentQuantity;
+                            }
+                            return currentQuantity + 1;
+                          })
+                        }
+                        onDecrease={() =>
+                          setQuantity((currentQuantity) =>
+                            Math.max(1, currentQuantity - 1),
+                          )
+                        }
+                        max={effectiveMaxStock}
+                        increaseDisabled={!inStock || quantityAtStockLimit}
+                        increaseDisabledLabel={
+                          quantityStockMessage || undefined
+                        }
+                      />
+                    </div>
+
+                    {quantityStockMessage && (
+                      <p className="text-xs font-semibold text-amber-600">
+                        {quantityStockMessage}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
                   <ProductActionButtons
                     inStock={inStock}
                     product={product}
@@ -398,9 +393,11 @@ export default function ProductDetailPage() {
                         BUY_NOW_STORAGE_KEY,
                         JSON.stringify([buyNowItem]),
                       );
+
                       window.sessionStorage.removeItem(
                         SELECTED_CHECKOUT_STORAGE_KEY,
                       );
+
                       if (!isLoggedIn) {
                         setShowGuestOtpModal(true);
                       } else {
@@ -408,54 +405,140 @@ export default function ProductDetailPage() {
                       }
                     }}
                   />
-                    <Suspense
-                fallback={
-                  <div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />
-                }
-              >
-                <ProductInfoSection
-                  infoTabs={infoTabs}
-                  activeInfoTab={activeInfoTab}
-                  setActiveInfoTab={setActiveInfoTab}
-                  detailRows={detailRows}
-                  warranty={warranty}
-                  product={product}
-                  selectedVariant={selectedVariant}
-                  effectiveDescription={productDescription}
-                />
-              </Suspense>
 
+                  {/* Delivery Checker */}
+                  <DeliveryChecker
+                    productId={resolvedProductId}
+                    product={product}
+                    onResultChange={setDeliveryResult}
+                  />
+
+                  {/* Service Badges */}
+                  {!deliveryResult && (
+                    <ProductServiceBadges
+                      shippingEtaText={shippingEtaText}
+                      staticIsFree={staticIsFree}
+                      staticCharge={staticCharge}
+                      productCodAvailable={productCodAvailable}
+                      productCodDisabled={productCodDisabled}
+                    />
+                  )}
+
+                  {/* Shop with Peace of Mind */}
+                  <div className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
+                    <button
+                      type="button"
+                      onClick={() => setPeaceOfMindOpen((prev) => !prev)}
+                      className="flex w-full items-center justify-between bg-white px-5 py-4 text-left transition-colors hover:bg-[#FAF9F6]"
+                      aria-expanded={peaceOfMindOpen}
+                    >
+                      <div>
+                        <h3 className="text-base font-bold text-[#111827] sm:text-lg">
+                          Shop with peace of mind
+                        </h3>
+                        <p className="mt-0.5 text-xs text-[#6B7280] sm:text-sm">
+                          Complete care and guarantee for your purchase
+                        </p>
+                      </div>
+
+                      <div className="ml-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F3F4F6] text-[#374151] transition-colors hover:bg-[#E5E7EB]">
+                        {peaceOfMindOpen ? (
+                          <ChevronUp size={18} />
+                        ) : (
+                          <ChevronDown size={18} />
+                        )}
+                      </div>
+                    </button>
+
+                    {peaceOfMindOpen && (
+                      <div className="grid grid-cols-2 gap-3 border-t border-[#E5E7EB] p-4 text-center sm:grid-cols-4 sm:p-5">
+                        <div className="flex flex-col items-center rounded-lg border border-[#EBE5D8]/70 bg-[#FAF9F6] p-3">
+                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                            <Clock size={22} className="stroke-[2.2]" />
+                          </div>
+                          <span className="text-xs font-bold text-[#111827] sm:text-sm">
+                            Fast Dispatch
+                          </span>
+                          <span className="mt-0.5 text-xs text-[#6B7280]">
+                            Within 24-48 hrs
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col items-center rounded-lg border border-[#EBE5D8]/70 bg-[#FAF9F6] p-3">
+                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                            <RefreshCw size={22} className="stroke-[2.2]" />
+                          </div>
+                          <span className="text-xs font-bold text-[#111827] sm:text-sm">
+                            Easy Returns
+                          </span>
+                          <span className="mt-0.5 text-xs text-[#6B7280]">
+                            7-day policy
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col items-center rounded-lg border border-[#EBE5D8]/70 bg-[#FAF9F6] p-3">
+                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                            <Banknote size={22} className="stroke-[2.2]" />
+                          </div>
+                          <span className="text-xs font-bold text-[#111827] sm:text-sm">
+                            Cash on Delivery
+                          </span>
+                          <span className="mt-0.5 text-xs text-[#6B7280]">
+                            Pay on delivery
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col items-center rounded-lg border border-[#EBE5D8]/70 bg-[#FAF9F6] p-3">
+                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                            <ShieldCheck size={22} className="stroke-[2.2]" />
+                          </div>
+                          <span className="text-xs font-bold text-[#111827] sm:text-sm">
+                            100% Genuine
+                          </span>
+                          <span className="mt-0.5 text-xs text-[#6B7280]">
+                            Quality verified
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Product Information */}
+                  <Suspense
+                    fallback={
+                      <div className="mt-4 h-32 animate-pulse rounded-xl bg-gray-100" />
+                    }
+                  >
+                    <ProductInfoSection
+                      detailRows={detailRows}
+                      warranty={warranty}
+                      product={product}
+                      selectedVariant={selectedVariant}
+                      effectiveDescription={productDescription}
+                    />
+                  </Suspense>
                 </div>
               </div>
 
-              {/* <ProductFeatureGrid /> */}
+              {/* Reviews */}
+              <div className="mx-auto mt-10 w-full max-w-5xl">
+                <Suspense
+                  fallback={
+                    <div className="h-40 animate-pulse rounded-xl bg-gray-100" />
+                  }
+                >
+                  <ProductReviewsSection
+                    productId={productId || resolvedProductId}
+                    product={product}
+                    realProductId={resolvedProductId}
+                  />
+                </Suspense>
+              </div>
 
-            
+              {/* Recommendations */}
               <Suspense
                 fallback={
-                  <div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />
-                }
-              >
-                <ProductReviewsSection
-                  productId={productId || resolvedProductId}
-                  product={product}
-                  realProductId={resolvedProductId}
-                />
-              </Suspense>
-
-              {/* <ProductRecommendationSection
-                title="Related Products"
-                linkText="View all →"
-                products={relatedProducts}
-                addToCart={addToCart}
-                toggleWishlist={toggleWishlist}
-                isWishlisted={isWishlisted}
-                className="mt-12"
-              /> */}
-
-              <Suspense
-                fallback={
-                  <div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />
+                  <div className="mt-8 h-40 animate-pulse rounded-xl bg-gray-100" />
                 }
               >
                 <ProductRecommendationSection
@@ -467,6 +550,7 @@ export default function ProductDetailPage() {
                   isWishlisted={isWishlisted}
                   className="mt-10"
                 />
+
                 {recommendedProducts.length > 0 && (
                   <ProductRecommendationSection
                     title="Related Products"
@@ -475,25 +559,14 @@ export default function ProductDetailPage() {
                     addToCart={addToCart}
                     toggleWishlist={toggleWishlist}
                     isWishlisted={isWishlisted}
-                    className="mt-12"
+                    className="mt-10"
                   />
                 )}
               </Suspense>
-              {/* {isLoggedIn && (
-                <ProductRecommendationSection
-                  title="Recently Viewed"
-                  linkText="View history →"
-                  products={recentlyViewedList}
-                  addToCart={addToCart}
-                  toggleWishlist={toggleWishlist}
-                  isWishlisted={isWishlisted}
-                  className="mt-10"
-                />
-              )} */}
             </>
           )}
         </ApiState>
-      </div>
+      </PageContainer>
 
       <Suspense fallback={null}>
         {showGuestOtpModal && (

@@ -130,7 +130,7 @@ function ProductGallery({
   return (
     <div
       className={`flex min-w-0 flex-col gap-4  overflow-hidden ${
-        isModal ? "h-full w-full" : "h-auto w-full xl:h-[480px] 2xl:h-[560px]"
+        isModal ? "h-full w-full" : "h-auto w-full xl:h-[570px] 2xl:h-[650px]"
       }`}
     >
       <div
@@ -240,7 +240,7 @@ function ProductGallery({
           className={`group relative order-1 box-border min-w-0 w-full overflow-hidden rounded-lg border-2 border-[#CE9F2D] bg-transparent transition-colors duration-200 hover:border-[#B88716] xl:order-2 ${
             isModal
               ? "h-full"
-              : "h-[324px] md:h-[440px] xl:h-full"
+              : "h-[420px] md:h-[520px] xl:h-full"
           }`}
           style={{ isolation: "isolate" }}
         >

@@ -1,4 +1,4 @@
-import { Clock, Truck, Banknote } from "lucide-react";
+import { Clock, Truck, Banknote, ShieldCheck } from "lucide-react";
 
 export default function ProductServiceBadges({
   shippingEtaText,
@@ -18,49 +18,87 @@ export default function ProductServiceBadges({
       : "";
 
   return (
-    <div className={`flex flex-wrap items-center gap-2.5 ${className}`}>
-      {/* 1. Dispatch / Shipping ETA */}
+    <div className={`grid grid-cols-2 sm:grid-cols-3 gap-3 ${className}`}>
+      {/* 1. Dispatch / Shipping ETA with Flipkart-style icon */}
       {shippingEtaText && (
-        <div className="group inline-flex items-center gap-2 rounded-lg border border-slate-200/90 bg-slate-50/90 px-3 py-1 text-sm font-semibold text-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-200 hover:border-slate-300 hover:bg-slate-100/80 hover:shadow-sm">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-200/70 text-slate-700 transition-transform group-hover:scale-110">
-            <Clock size={12} className="stroke-[2.2]" />
-          </span>
-          <span>Ships in {shippingEtaText} Days</span>
+        <div className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-white p-3 shadow-xs hover:border-[#CE9F2D] transition-colors">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+            <Clock size={20} className="stroke-[2.2]" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-xs font-medium text-[#6B7280]">Dispatch</span>
+            <span className="block text-sm font-bold text-[#111827] truncate">
+              Ships in {shippingEtaText} {shippingEtaText === "1" ? "Day" : "Days"}
+            </span>
+          </div>
         </div>
       )}
 
-      {/* 2. Shipping Fee / Free Shipping */}
-      {staticIsFree ? (
-        <div className="group inline-flex items-center gap-2 rounded-lg border border-emerald-200/90 bg-emerald-50/80 px-3  py-1 text-sm font-semibold text-emerald-900 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-200 hover:border-emerald-300 hover:bg-emerald-100/60 hover:shadow-sm">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-200/70 text-emerald-800 transition-transform group-hover:scale-110">
-            <Truck size={12} className="stroke-[2.2]" />
-          </span>
-          <span>Free Shipping</span>
-        </div>
-      ) : staticCharge > 0 ? (
-        <div className="group inline-flex items-center gap-2 rounded-lg border border-amber-200/90 bg-amber-50/80 px-3 py-1 text-sm font-semibold text-amber-900 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-200 hover:border-amber-300 hover:bg-amber-100/60 hover:shadow-sm">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-200/70 text-amber-800 transition-transform group-hover:scale-110">
-            <Truck size={12} className="stroke-[2.2]" />
-          </span>
-          <span>{formattedCharge} Delivery</span>
-        </div>
-      ) : null}
-
+      {/* 2. COD Status with Flipkart-style icon */}
       {productCodAvailable && (
-        <div className="group inline-flex items-center gap-2 rounded-lg border border-teal-200/90 bg-teal-50/80 px-3 py-1 text-sm font-semibold text-teal-900 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-200 hover:border-teal-300 hover:bg-teal-100/60 hover:shadow-sm">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-200/70 text-teal-800 transition-transform group-hover:scale-110">
-            <Banknote size={12} className="stroke-[2.2]" />
-          </span>
-          <span>COD Available</span>
+        <div className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-white p-3 shadow-xs hover:border-[#CE9F2D] transition-colors">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+            <Banknote size={20} className="stroke-[2.2]" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-xs font-medium text-[#6B7280]">Payment</span>
+            <span className="block text-sm font-bold text-[#111827] truncate">
+              Cash on Delivery
+            </span>
+          </div>
         </div>
       )}
 
       {productCodDisabled && (
-        <div className="group inline-flex items-center gap-2 rounded-full border border-rose-200/90 bg-rose-50/80 px-3 py-1 text-sm font-semibold text-rose-900 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-200 hover:border-rose-300 hover:bg-rose-100/60 hover:shadow-sm">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-200/70 text-rose-700 transition-transform group-hover:scale-110">
-            <Banknote size={12} className="stroke-[2.2]" />
-          </span>
-          <span>COD Not Available</span>
+        <div className="flex items-center gap-3 rounded-lg border border-[#FEE2E2] bg-white p-3 shadow-xs">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FEE2E2] text-[#DC2626]">
+            <Banknote size={20} className="stroke-[2.2]" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-xs font-medium text-[#6B7280]">Payment</span>
+            <span className="block text-sm font-bold text-[#DC2626] truncate">
+              Prepaid Only
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Shipping Fee / Free Shipping */}
+      {staticIsFree ? (
+        <div className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-white p-3 shadow-xs hover:border-[#CE9F2D] transition-colors">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+            <Truck size={20} className="stroke-[2.2]" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-xs font-medium text-[#6B7280]">Delivery</span>
+            <span className="block text-sm font-bold text-[#16A34A] truncate">
+              Free Delivery
+            </span>
+          </div>
+        </div>
+      ) : staticCharge > 0 ? (
+        <div className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-white p-3 shadow-xs hover:border-[#CE9F2D] transition-colors">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+            <Truck size={20} className="stroke-[2.2]" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-xs font-medium text-[#6B7280]">Delivery</span>
+            <span className="block text-sm font-bold text-[#111827] truncate">
+              {formattedCharge}
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-white p-3 shadow-xs hover:border-[#CE9F2D] transition-colors">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+            <ShieldCheck size={20} className="stroke-[2.2]" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-xs font-medium text-[#6B7280]">Quality</span>
+            <span className="block text-sm font-bold text-[#111827] truncate">
+              100% Genuine
+            </span>
+          </div>
         </div>
       )}
     </div>

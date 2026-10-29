@@ -131,35 +131,31 @@ export default function DeliveryChecker({
             type="button"
             onClick={() => setIsModalOpen(true)}
             disabled={loading}
-            className="inline-flex w-fit items-center gap-2 text-xs sm:text-sm font-semibold text-ink focus:outline-none disabled:opacity-75"
+            className="w-full flex items-center justify-between p-3.5 rounded-lg border border-[#E5E7EB] bg-[#FAF9F6] hover:bg-[#F3EFE6] transition-all text-left shadow-xs"
           >
-            <div
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gold"
-              style={{
-                background:
-                  "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
-              }}
-            >
-              {loading ? (
-                <Loader2 size={15} className="animate-spin text-gold" />
-              ) : (
-                <MapPin size={15} />
-              )}
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                {loading ? (
+                  <Loader2 size={18} className="animate-spin text-[#1A73E8]" />
+                ) : (
+                  <MapPin size={18} />
+                )}
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-medium text-[#6B7280] block">
+                  Delivery details
+                </span>
+                <span className="text-sm font-bold text-[#111827] truncate block">
+                  {lastCheckedPincode
+                    ? `Delivering to ${lastCheckedPincode}`
+                    : "Check delivery & pincode availability"}
+                </span>
+              </div>
             </div>
-        <div className="group flex items-center gap-2">
-  <span className="text-base leading-normal underline decoration-gold/50 underline-offset-4 transition-all duration-300 ease-in-out group-hover:text-[#CE9F2D] group-hover:decoration-[#CE9F2D]">
-    {loading
-      ? "Checking Availability..."
-      : lastCheckedPincode
-        ? `Delivering to ${lastCheckedPincode} (Change)`
-        : "Check Delivery & Pincode Availability"}
-  </span>
 
-  <ArrowRight
-    size={20}
-    className="shrink-0 text-gold transition-transform duration-300 ease-in-out group-hover:translate-x-1"
-  />
-</div>
+            <span className="text-xs font-bold text-[#1B1D60] hover:text-[#CE9F2D] shrink-0 ml-2">
+              {lastCheckedPincode ? "Change" : "Enter Pincode >"}
+            </span>
           </button>
 
           {/* Quick inline status if already checked */}

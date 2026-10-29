@@ -562,10 +562,10 @@ export default function ProductReviewsSection({ productId, product }) {
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
         {/* Left Sidebar */}
         <aside className="w-full lg:w-[280px] xl:w-[300px] shrink-0">
-          <div className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-xs">
-            <div className="px-4 py-3 bg-[#FAF6EE] border-b border-[#E7D9B8]">
-              <h2 className="text-sm font-bold text-[#1B1D60]">
-                Product Ratings &amp; Reviews
+          <div className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
+            <div className="px-5 py-3.5 bg-white border-b border-[#E5E7EB]">
+              <h2 className="text-base font-bold text-[#111827]">
+                Ratings &amp; Reviews
               </h2>
             </div>
 

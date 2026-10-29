@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -45,7 +46,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
 
             return (
               <div key={group?.title || `group-${groupIndex}`}>
-                <h2 className="mb-4 border-l-2 border-[var(--customer-gold)] pl-2 text-lg font-semibold text-white md:text-2xl">
+                <h2 className="mb-4 border-l-2 border-[var(--customer-gold)] pl-2 text-[1.05rem] font-semibold text-white md:text-[1.35rem]">
                   {group?.title}
                 </h2>
 
@@ -71,7 +72,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
                               href={toPath}
                               target={link?.target || "_blank"}
                               rel="noopener noreferrer"
-                              className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-base"
+                              className="text-[0.95rem] font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-[1.05rem]"
                             >
                             {capitalizeFirst(link?.label)}
                             </a>
@@ -88,7 +89,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
                                   window.scrollTo({ top: 0, behavior: "smooth" });
                                 }
                               }}
-                              className="text-sm font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D] md:text-base"
+                              className="text-[0.95rem] font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D] md:text-[1.05rem]"
                             >
                               {capitalizeFirst(link?.label)}
                             </Link>
@@ -133,44 +134,85 @@ function Footer({ data }) {
   const appDownload = footer?.appDownload || {};
   const appDownloadLinks = asArray(appDownload?.links);
   const extraPages = asArray(footer?.extrapages || footer?.extraPages);
+  const [openBenefit, setOpenBenefit] = useState(0);
 
   return (
     <footer className="h-auto w-full bg-[#1C1C1C] text-white">
       {/* Benefits */}
 
       {benefits.length > 0 && (
-        <div className="border-t-2 border-[#1B1D6033] bg-[#F5F8FB]">
-          <div className="customer-container flex flex-col justify-between lg:flex-row">
-            {benefits.map((item, index) => (
-              <div
-                key={item?.title || `benefit-${index}`}
-                className="my-1 flex items-center gap-3.5 py-3.5"
-              >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2.5 shadow-sm sm:h-14 sm:w-14">
-                  {item?.icon ? (
-                    <img
-                      loading="lazy"
-                      width="400"
-                      height="400"
-                      className="h-6 w-6 shrink-0 object-contain"
-                      src={item.icon}
-                      alt={item?.alt || item?.title || "Benefit"}
-                    />
-                  ) : (
-                    <span className="h-6 w-6" aria-hidden="true" />
-                  )}
-                </div>
+        <div className="border-t border-[#1B1D6033] bg-[#F5F8FB]">
+          <div className="customer-container flex flex-col justify-between md:flex-row md:gap-5 lg:gap-6">
+            {benefits.map((item, index) => {
+              const isOpen = openBenefit === index;
 
-                <div>
-                  <h2 className="mb-0 text-base font-bold text-[#1B1D60] xl:text-lg">
-                    {item?.title}
-                  </h2>
-                  <p className="text-xs font-light text-[#2E2E2E] sm:text-sm xl:text-base">
-                    {item?.description}
-                  </p>
+              return (
+                <div
+                  key={item?.title || `benefit-${index}`}
+                  className="border-b border-[#D2E2F4] last:border-b-0 md:border-0 md:!border-none"
+                >
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpenBenefit(isOpen ? -1 : index)}
+                    className="flex w-full items-center gap-3 py-2.5 text-left md:cursor-default md:gap-3.5 md:py-3.5"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2 shadow-sm sm:h-12 sm:w-12 md:h-14 md:w-14">
+                      {item?.icon ? (
+                        <img
+                          loading="lazy"
+                          width="400"
+                          height="400"
+                          className="h-5 w-5 shrink-0 object-contain sm:h-6 sm:w-6"
+                          src={item.icon}
+                          alt={item?.alt || item?.title || "Benefit"}
+                        />
+                      ) : (
+                        <span className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
+                      )}
+                    </div>
+
+                    <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <h2 className="mb-0 text-base font-bold text-[#1B1D60] xl:text-lg">
+                          {item?.title}
+                        </h2>
+                        <p className="hidden text-xs font-light text-[#2E2E2E] sm:text-sm xl:text-base md:block">
+                          {item?.description}
+                        </p>
+                      </div>
+
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D2E2F4] bg-white text-[#1B1D60] md:hidden">
+                        <svg
+                          viewBox="0 0 24 24"
+                          className={`h-4 w-4 transition-transform duration-200 ${
+                            isOpen ? "rotate-180" : "rotate-0"
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </span>
+                    </div>
+                  </button>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-300 md:block ${
+                      isOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0 md:max-h-none md:opacity-100"
+                    }`}
+                  >
+                    <p className="pb-2 pl-[3.15rem] text-xs font-light text-[#2E2E2E] sm:text-sm md:hidden md:pb-0 md:pl-0 xl:text-base">
+                      {item?.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -194,7 +236,7 @@ function Footer({ data }) {
         {(appDownload.title || appDownloadLinks.length > 0) && (
           <div className="md:py-4">
             {appDownload.title && (
-              <h2 className="max-w-sm text-sm font-medium text-white/85 lg:!w-full">
+              <h2 className="max-w-sm text-[0.95rem] font-medium text-white/85 lg:!w-full">
                 {appDownload.title}
               </h2>
             )}
@@ -267,7 +309,7 @@ function Footer({ data }) {
       {/* Extra Pages */}
 
       {extraPages.length > 0 && (
-        <div className="customer-container flex flex-wrap justify-center gap-4 pb-4 text-sm text-white/70">
+        <div className="customer-container flex flex-wrap justify-center gap-4 pb-4 text-[0.95rem] text-white/70 md:text-[1rem]">
           {extraPages.map((page, index) => {
             const label = page?.label || page?.title || "";
             const href = page?.href || page?.url || "";
@@ -307,7 +349,7 @@ function Footer({ data }) {
         </div>
       )}
      <section className="bg-black py-2">
-  <div className="customer-container flex flex-col justify-center gap-2 text-xs text-white md:text-base lg:flex-row lg:gap-10">
+  <div className="customer-container flex flex-col justify-center gap-2 text-[0.85rem] text-white md:text-[0.95rem] lg:flex-row lg:gap-10">
     <p className="text-center">
       © 2026{" "}
       <Link

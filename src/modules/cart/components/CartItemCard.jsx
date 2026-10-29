@@ -71,12 +71,12 @@ export default function CartItemCard({
 
   return (
     <article
-      className={`relative w-full p-4 ${
+      className={`relative w-full p-2 ${
         fullWidth ? "xl:max-w-none" : "xl:max-w-[1161px]"
       }`}
     >
       <div
-        className={`grid grid-cols-1 sm:grid-cols-[170px_1fr] lg:grid-cols-[190px_1fr] gap-5 sm:gap-6 pb-6 sm:pb-7 ${
+        className={`grid grid-cols-1 sm:grid-cols-[170px_1fr] lg:grid-cols-[190px_1fr] gap-5 sm:gap-6 pb-2 sm:pb-3 ${
           !isLastItem ? " border-b border-[#CE9F2D4D]" : ""
         }`}
       >

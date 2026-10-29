@@ -33,7 +33,7 @@ export default function ActiveFilterChips({
     <div className={`${className} flex flex-col gap-2`}>
       <div
         className={`mt-8  w-full overflow-hidden transition-all duration-300 ${
-          expanded ? "max-h-[1000px]" : "max-h-[50px]"
+          expanded ? "max-h-[1000px]" : "max-h-[32px]"
         }`}
       >
         <div ref={contentRef} className="flex flex-wrap items-center gap-2">
