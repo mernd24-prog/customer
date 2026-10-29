@@ -193,13 +193,15 @@ export const addressLineField = (field, options = {}) =>
     ...options,
     pattern: REGEX.addressLine,
     patternMessage: `Enter a valid ${field.toLowerCase()}`,
+  }).refine((value) => /\p{L}/u.test(value), {
+    message: `${field} must include at least one letter`,
   });
 
 export const optionalAddressLineField = (max = 120) =>
   optionalString(max).refine(
-    (value) => !value || REGEX.addressLine.test(value),
+    (value) => !value || (REGEX.addressLine.test(value) && /\p{L}/u.test(value)),
     {
-      message: "Enter a valid address line",
+      message: "Address Line 2 must include at least one letter",
     },
   );
 

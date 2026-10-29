@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Mail, Phone, UserRound, Pencil } from "lucide-react";
+import { Camera, Mail, Phone, UserRound, Pencil, X } from "lucide-react";
 
 import Button from "../../../components/ui/buttons/Button";
 import OtpInput from "../../../components/ui/OtpInput";
@@ -22,6 +22,10 @@ import {
 } from "../../../hooks/useProfileImage";
 
 const FALLBACK_AVATAR = "/image/png/person.png";
+const isSyntheticMobileEmail = (value = "") =>
+  String(value).toLowerCase().endsWith("@mobile.samglobal.local");
+const getContactEmail = (value = "") =>
+  isSyntheticMobileEmail(value) ? "" : value;
 
 const getUploadedFileUrl = (result) => {
   const data = result?.data || result || {};
@@ -79,7 +83,7 @@ export default function ProfileTab({ user }) {
   const [localPreview, setLocalPreview] = useState("");
   const [avatarError, setAvatarError] = useState("");
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
-  const [email, setEmail] = useState(user?.email || "");
+  const [email, setEmail] = useState(getContactEmail(user?.email));
   const [emailOtp, setEmailOtp] = useState("");
   const [emailOtpSent, setEmailOtpSent] = useState(false);
   const [emailBusy, setEmailBusy] = useState(false);
@@ -87,6 +91,9 @@ export default function ProfileTab({ user }) {
 
   const displayAvatar = localPreview || profileAvatar;
   const isAvatarLoading = isAvatarFetching || isAvatarUploading;
+  const isEmailFormatValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    String(email || "").trim(),
+  );
 
   const {
     register,
@@ -111,7 +118,7 @@ export default function ProfileTab({ user }) {
     });
 
     setAvatarError("");
-    setEmail(user?.email || "");
+    setEmail(getContactEmail(user?.email));
     setEmailOtp("");
     setEmailOtpSent(false);
     setEmailError("");
@@ -362,6 +369,15 @@ export default function ProfileTab({ user }) {
   return (
     <form
       onSubmit={handleSubmit(submit)}
+      onKeyDown={(event) => {
+        if (emailOtpSent && event.key === "Enter") {
+          event.preventDefault();
+          event.stopPropagation();
+          if (emailOtp.length === 6 && !emailBusy) {
+            void handleVerifyEmailOtp();
+          }
+        }
+      }}
       noValidate
       className="grid w-full min-w-0 gap-5"
     >
@@ -420,7 +436,7 @@ export default function ProfileTab({ user }) {
             </h2>
 
             <p className="mt-0.5 truncate text-xs sm:text-sm font-normal text-[#64708A]">
-              {user?.email || "No email available"}
+              {getContactEmail(user?.email) || "Add an email address"}
             </p>
 
             {avatarError && (
@@ -445,8 +461,8 @@ export default function ProfileTab({ user }) {
       </section>
 
       {/* Row 1: First Name & Last Name */}
-      <section className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
-        <div className="grid min-w-0 gap-1.5">
+      <section className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-5">
+        <div className="grid min-w-0 content-start gap-1.5">
           <label htmlFor="firstName" className={fieldLabelClass}>
             First Name
           </label>
@@ -478,7 +494,7 @@ export default function ProfileTab({ user }) {
           )}
         </div>
 
-        <div className="grid min-w-0 gap-1.5">
+        <div className="grid min-w-0 content-start gap-1.5">
           <label htmlFor="lastName" className={fieldLabelClass}>
             Last Name
           </label>
@@ -512,8 +528,8 @@ export default function ProfileTab({ user }) {
       </section>
 
       {/* Row 2: Email & Phone */}
-      <section className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
-        <div className="grid min-w-0 gap-1.5">
+      <section className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-5">
+        <div className="grid min-w-0 content-start gap-1.5">
           <label htmlFor="profile-email" className={fieldLabelClass}>
             Email{" "}
             {user?.emailVerified && (
@@ -526,7 +542,9 @@ export default function ProfileTab({ user }) {
           {user?.emailVerified || !isEditing ? (
             <div className={readonlyBoxClass}>
               <Mail size={17} className="shrink-0 text-[#8D92A3]" />
-              <span className="min-w-0 break-all">{user?.email || "—"}</span>
+              <span className="min-w-0 break-all">
+                {getContactEmail(user?.email) || "Add an email address"}
+              </span>
             </div>
           ) : (
             <div className="grid gap-2">
@@ -554,40 +572,19 @@ export default function ProfileTab({ user }) {
                 <button
                   type="button"
                   onClick={handleSendEmailOtp}
-                  disabled={emailBusy || !email.trim()}
+                  disabled={emailBusy || !isEmailFormatValid}
                   className="min-h-11 shrink-0 rounded-lg bg-[#1B1D60] px-3.5 text-xs font-semibold text-white transition hover:bg-[#2C3080] disabled:opacity-50"
                 >
                   {emailOtpSent ? "Resend OTP" : "Verify email"}
                 </button>
               </div>
 
-              {emailOtpSent && (
-                <div className="grid gap-2 rounded-lg border border-gold/40 bg-[#FFFDF8] p-3">
-                  <p className="text-xs font-normal text-[#64708A]">
-                    Enter the OTP sent to email <strong>{email}</strong>.
-                  </p>
-                  <OtpInput
-                    value={emailOtp}
-                    length={6}
-                    onChange={(value) =>
-                      setEmailOtp(
-                        String(value || "")
-                          .replace(/\D/g, "")
-                          .slice(0, 6),
-                      )
-                    }
-                    error=""
-                  />
-                  <button
-                    type="button"
-                    onClick={handleVerifyEmailOtp}
-                    disabled={emailBusy || emailOtp.length !== 6}
-                    className="min-h-10 rounded-lg bg-gold px-4 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-gold-dark disabled:opacity-50"
-                  >
-                    {emailBusy ? "Verifying..." : "Verify email OTP"}
-                  </button>
-                </div>
-              )}
+              <p
+                role={email.trim() && !isEmailFormatValid && !emailError ? "alert" : undefined}
+                className={`min-h-4 text-xs font-normal ${email.trim() && !isEmailFormatValid && !emailError ? "text-red-600" : "invisible"}`}
+              >
+                Enter a valid email address, for example name@example.com.
+              </p>
 
               {emailError && (
                 <p role="alert" className="text-xs font-normal text-red-600">
@@ -598,13 +595,14 @@ export default function ProfileTab({ user }) {
           )}
         </div>
 
-        <div className="grid min-w-0 gap-1.5">
+        <div className="grid min-w-0 content-start gap-1.5">
           <label className={fieldLabelClass}>Phone</label>
 
           <div className={readonlyBoxClass}>
             <Phone size={17} className="shrink-0 text-[#8D92A3]" />
             <span className="min-w-0 truncate">{user?.phone || "—"}</span>
           </div>
+          <span aria-hidden="true" className="min-h-4" />
         </div>
       </section>
 
@@ -629,6 +627,71 @@ export default function ProfileTab({ user }) {
           >
             Save Profile
           </Button>
+        </div>
+      )}
+
+      {emailOtpSent && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#171A3A]/55 p-4 backdrop-blur-[2px]">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-email-otp-title"
+            className="w-full max-w-md rounded-md border border-[#E7D9B8] bg-white p-5 shadow-2xl sm:p-6"
+          >
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <h2 id="profile-email-otp-title" className="text-lg font-bold text-[#171A3A]">
+                  Verify your email
+                </h2>
+                <p className="mt-1 text-sm text-[#64708A]">
+                  Enter the 6-digit code sent to <strong className="break-all">{email}</strong>.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmailOtpSent(false);
+                  setEmailOtp("");
+                }}
+                aria-label="Close email verification"
+                className="rounded-full p-2 text-[#64708A] transition hover:bg-[#F2F4F8]"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <OtpInput
+              value={emailOtp}
+              length={6}
+              onChange={(value) =>
+                setEmailOtp(String(value || "").replace(/\D/g, "").slice(0, 6))
+              }
+              error=""
+            />
+            {emailError && (
+              <p role="alert" className="mt-2 text-sm text-red-600">{emailError}</p>
+            )}
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button
+                onClick={handleSendEmailOtp}
+                disabled={emailBusy}
+                variant="secondary"
+                size="md"
+                className="min-h-11 rounded-lg px-4 text-sm"
+              >
+                Resend code
+              </Button>
+              <Button
+                onClick={handleVerifyEmailOtp}
+                disabled={emailBusy || emailOtp.length !== 6}
+                loading={emailBusy}
+                variant="primary"
+                size="md"
+                className="min-h-11 rounded-lg px-5 text-sm"
+              >
+                Verify email
+              </Button>
+            </div>
+          </section>
         </div>
       )}
     </form>

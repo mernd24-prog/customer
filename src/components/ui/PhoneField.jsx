@@ -10,6 +10,7 @@ export default function PhoneField({
   error,
   placeholder = "Enter your phone",
   required = false,
+  reserveErrorSpace = true,
   ...props
 }) {
   return (
@@ -63,13 +64,14 @@ export default function PhoneField({
         />
       </div>
 
-      {/* Reserved error space keeps the form aligned */}
-      <span
-        className="mt-0.5 min-h-[18px] text-xs font-normal leading-[18px] text-red-600"
-        aria-live="polite"
-      >
-        {error?.message || "\u00A0"}
-      </span>
+      {(reserveErrorSpace || error?.message) && (
+        <span
+          className={`mt-0.5 text-xs font-normal leading-[18px] text-red-600 ${reserveErrorSpace ? "min-h-[18px]" : ""}`}
+          aria-live="polite"
+        >
+          {error?.message}
+        </span>
+      )}
     </label>
   );
 }
