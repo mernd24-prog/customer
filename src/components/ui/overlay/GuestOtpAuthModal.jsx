@@ -16,7 +16,7 @@ import { notify } from "../../../utils/notify";
 
 const FIXED_INDIAN_DIAL_CODE = "+91";
 const GENERIC_OTP_AUTH_ERROR =
-  "We couldn’t continue with this mobile number. Check the number or use another sign-in method.";
+  "We couldn’t continue with this mobile number. Check the number or try another mobile number.";
 
 export default function GuestOtpAuthModal({
   open,
