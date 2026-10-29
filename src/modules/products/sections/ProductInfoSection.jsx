@@ -8,6 +8,7 @@ import {
 } from "../../../utils/ecommerce";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import { ProductGallery } from "../components/ImageGallery";
+import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
 
 const decodeHtml = (html) => {
   if (!html || typeof html !== "string") return html || "";
@@ -57,10 +58,10 @@ function ProductDescription({ content }) {
   if (!content) return null;
 
   return (
-    <div className="w-full text-[#374151]">
+    <div className="w-full text-ink">
       <div
         ref={contentRef}
-        className={`rich-text-content w-full min-w-0 max-w-none text-sm sm:text-base leading-relaxed text-[#374151] transition-[max-height] duration-300 ${
+        className={`rich-text-content w-full min-w-0 max-w-none text-sm sm:text-base leading-relaxed text-ink transition-[max-height] duration-300 ${
           !expanded && canExpand ? "max-h-[220px] overflow-hidden" : ""
         }`}
         dangerouslySetInnerHTML={{ __html: normalizeDescriptionHtml(content) }}
@@ -69,7 +70,7 @@ function ProductDescription({ content }) {
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-[#1B1D60] hover:text-[#CE9F2D] transition-colors"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-navy hover:text-[#CE9F2D] transition-colors"
         >
           <span>{expanded ? "Read Less" : "Read More"}</span>
           {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
@@ -146,31 +147,35 @@ export default function ProductInfoSection({
   const hasMoreSpecs = detailRows.length > 10;
 
   return (
-    <div className="border border-[#E5E7EB] rounded-lg overflow-hidden bg-white shadow-xs">
+    <div className="min-w-0 border border-border rounded-lg overflow-hidden bg-white shadow-xs">
       {/* ── Flipkart-style Header: Title + Subtitle + Square Chevron Button ── */}
       <button
         type="button"
         onClick={() => setCardOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-[#FAF9F6] transition-colors text-left"
+        className="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-surface-soft transition-colors text-left"
         aria-expanded={cardOpen}
       >
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-[#111827]">
+          <h3 className="text-base sm:text-lg font-bold text-ink">
             All details
           </h3>
-          <p className="text-xs sm:text-sm text-[#6B7280] mt-0.5">
+          <p className="text-xs sm:text-sm text-muted mt-0.5">
             Features, specifications, description and more
           </p>
         </div>
-        <div className="w-8 h-8 rounded-lg bg-[#F3F4F6] hover:bg-[#E5E7EB] flex items-center justify-center text-[#374151] transition-colors shrink-0 ml-3">
+        <div className="w-8 h-8 rounded-lg bg-cream hover:bg-cream-strong flex items-center justify-center text-ink transition-colors shrink-0 ml-3">
           {cardOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </div>
       </button>
 
       {cardOpen && (
-        <div className="p-5 border-t border-[#E5E7EB]">
-          {/* ── Flipkart-style Pill Tabs with rounded-lg ── */}
-          <div className="flex flex-wrap items-center gap-2.5 pb-4 border-b border-[#F0F0F0]">
+        <div className="min-w-0 p-4 sm:p-5 border-t border-border">
+          {/* Keep tabs on one row; use the shared scroll controls on overflow. */}
+          <HorizontalScrollControls
+            className="min-w-0 border-b border-border pb-4"
+            viewportClassName="gap-2.5 py-1"
+            buttonClassName="top-[calc(50%-8px)]"
+          >
             {tabs.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
@@ -178,40 +183,40 @@ export default function ProductInfoSection({
                   key={tab.key}
                   type="button"
                   onClick={() => setActiveTab(tab.key)}
-                  className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                  className={`shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                     isActive
-                      ? "bg-[#1B1D60] text-white shadow-xs"
-                      : "bg-[#F3F4F6] text-[#374151] hover:bg-[#E5E7EB] hover:text-[#111827]"
+                      ? "bg-navy text-white shadow-xs"
+                      : "bg-cream text-ink hover:bg-cream-strong hover:text-ink"
                   }`}
                 >
                   {tab.label}
                 </button>
               );
             })}
-          </div>
+          </HorizontalScrollControls>
 
           {/* ── Tab 1: Specifications (Highlighted Cards Grid) ── */}
           {activeTab === "specs" && (
             <div className="pt-4">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-bold text-[#1B1D60] uppercase tracking-wider">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <h4 className="text-sm font-bold text-navy uppercase tracking-wider">
                   Product Specifications
                 </h4>
-                <span className="text-xs font-medium text-[#6B7280]">
+                <span className="text-xs font-medium text-muted">
                   {detailRows.length} {detailRows.length === 1 ? "detail" : "details"} listed
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
                 {visibleSpecs.map(([key, value]) => (
                   <div
                     key={key}
-                    className="flex flex-col rounded-lg bg-[#FAF9F6] p-3.5 border border-[#EBE5D8] transition-colors hover:border-[#CE9F2D]"
+                    className="flex flex-col rounded-lg bg-surface-soft p-3.5 border border-border transition-colors hover:border-gold"
                   >
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted">
                       {formatPageTitle(key)}
                     </span>
-                    <span className="text-sm sm:text-base font-bold text-[#1B1D60] mt-1 break-words">
+                    <span className="text-sm sm:text-base font-bold text-navy mt-1 break-words">
                       {Array.isArray(value) ? value.join(", ") : String(value)}
                     </span>
                   </div>
@@ -222,7 +227,7 @@ export default function ProductInfoSection({
                 <button
                   type="button"
                   onClick={() => setShowAllSpecs((prev) => !prev)}
-                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white text-sm font-bold text-[#1B1D60] hover:bg-[#FAF9F6] hover:border-[#CE9F2D] transition-all shadow-xs"
+                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-border bg-white text-sm font-bold text-navy hover:bg-surface-soft hover:border-gold transition-all shadow-xs"
                 >
                   <span>{showAllSpecs ? "Show less specifications" : `View all ${detailRows.length} specifications`}</span>
                   {showAllSpecs ? (
@@ -238,10 +243,10 @@ export default function ProductInfoSection({
           {/* ── Tab 2: Description ── */}
           {activeTab === "desc" && (
             <div className="pt-4">
-              <h4 className="text-sm font-bold text-[#1B1D60] mb-3 uppercase tracking-wider">
+              <h4 className="text-sm font-bold text-navy mb-3 uppercase tracking-wider">
                 Product Description
               </h4>
-              <div className="rounded-lg bg-[#FAF9F6] p-4 sm:p-5 border border-[#EBE5D8]">
+              <div className="rounded-lg bg-surface-soft p-4 sm:p-5 border border-border">
                 <ProductDescription
                   content={decodeHtml(
                     effectiveDescription ||
@@ -256,37 +261,37 @@ export default function ProductInfoSection({
           {/* ── Tab 3: Warranty & Returns ── */}
           {activeTab === "warranty" && (
             <div className="pt-4 space-y-4">
-              <h4 className="text-sm font-bold text-[#1B1D60] uppercase tracking-wider">
+              <h4 className="text-sm font-bold text-navy uppercase tracking-wider">
                 Warranty &amp; Return Information
               </h4>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="flex flex-col rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
+                <div className="flex flex-col rounded-lg bg-surface-soft p-4 border border-border">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted">
                     Warranty Period
                   </span>
-                  <span className="text-base font-bold text-[#1B1D60] mt-1">
+                  <span className="text-base font-bold text-navy mt-1 break-words">
                     {hasWarranty
                       ? capitalizeFirst(warrantyPeriod || "Standard Warranty")
                       : "No Warranty"}
                   </span>
                   {effectiveWarranty.type && (
-                    <span className="text-xs text-[#6B7280] mt-1">
+                    <span className="text-xs text-muted mt-1">
                       Type: {capitalizeFirst(effectiveWarranty.type.replace(/_/g, " "))}
                     </span>
                   )}
                 </div>
 
-                <div className="flex flex-col rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                <div className="flex flex-col rounded-lg bg-surface-soft p-4 border border-border">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted">
                     Return Window
                   </span>
-                  <span className="text-base font-bold text-[#1B1D60] mt-1">
+                  <span className="text-base font-bold text-navy mt-1 break-words">
                     {returnPolicy.returnable === false
                       ? "Non-Returnable"
                       : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7} Days Return Policy`}
                   </span>
-                  <span className="text-xs text-[#6B7280] mt-1">
+                  <span className="text-xs text-muted mt-1">
                     {returnPolicy.inspectionRequired !== false
                       ? "Physical inspection required upon return"
                       : "Direct easy return"}
@@ -295,8 +300,8 @@ export default function ProductInfoSection({
               </div>
 
               {effectiveWarranty.coveredInWarranty && (
-                <div className="rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#1B1D60] block mb-1">
+                <div className="rounded-lg bg-surface-soft p-4 border border-border">
+                  <span className="text-xs font-bold uppercase tracking-wider text-navy block mb-1">
                     Covered in Warranty
                   </span>
                   <div
@@ -313,16 +318,16 @@ export default function ProductInfoSection({
           {/* ── Tab 4: Manufacturer / Seller Info ── */}
           {activeTab === "seller" && (
             <div className="pt-4 space-y-3">
-              <h4 className="text-sm font-bold text-[#1B1D60] uppercase tracking-wider">
+              <h4 className="text-sm font-bold text-navy uppercase tracking-wider">
                 Seller &amp; Origin Details
               </h4>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
+                <div className="rounded-lg bg-surface-soft p-4 border border-border">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted">
                     Store / Seller Name
                   </span>
-                  <span className="text-base font-bold text-[#1B1D60] mt-1 block">
+                  <span className="text-base font-bold text-navy mt-1 block">
                     {product.seller?.name ||
                       product.seller?.storeName ||
                       product.sellerName ||
@@ -330,8 +335,8 @@ export default function ProductInfoSection({
                   </span>
                 </div>
 
-                <div className="rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                <div className="rounded-lg bg-surface-soft p-4 border border-border">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted">
                     Seller Rating
                   </span>
                   <div className="flex items-center gap-2 mt-1">
@@ -345,7 +350,7 @@ export default function ProductInfoSection({
                       </span>
                       <Star size={11} className="fill-white" />
                     </div>
-                    <span className="text-xs text-[#6B7280]">
+                    <span className="text-xs text-muted">
                       1+ Year on SamGlobal
                     </span>
                   </div>
@@ -369,7 +374,7 @@ export default function ProductInfoSection({
           {/* ── Tab 5: Catalogue ── */}
           {activeTab === "catalogue" && hasCatalogueImages && (
             <div className="pt-4">
-              <h4 className="text-sm font-bold text-[#1B1D60] mb-3 uppercase tracking-wider">
+              <h4 className="text-sm font-bold text-navy mb-3 uppercase tracking-wider">
                 Catalogue Images ({product.commonImages.length})
               </h4>
               <div className="flex flex-wrap gap-3">
@@ -377,7 +382,7 @@ export default function ProductInfoSection({
                   <div
                     key={i}
                     onClick={() => setIsModalOpen(true)}
-                    className="relative aspect-square w-20 sm:w-24 rounded-lg border border-[#E5E7EB] bg-white p-1.5 cursor-pointer hover:border-[#CE9F2D] hover:shadow-sm transition-all"
+                    className="relative aspect-square w-20 sm:w-24 rounded-lg border border-border bg-white p-1.5 cursor-pointer hover:border-gold hover:shadow-sm transition-all"
                   >
                     <img
                       src={getImageUrlFromValue(img)}

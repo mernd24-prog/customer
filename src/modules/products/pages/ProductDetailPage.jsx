@@ -194,7 +194,7 @@ export default function ProductDetailPage() {
         >
           {product && (
             <>
-              <div className="mt-2 grid min-w-0 items-start gap-6 lg:mt-4 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-8 xl:gap-10">
+              <div className="mt-2 grid min-w-0 items-start gap-6 lg:mt-4 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-6 xl:gap-10">
                 {/* Left: Sticky Breadcrumbs + Image Gallery */}
                 <div className="min-w-0 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+64px)] lg:self-start">
                   <div className="mb-3 min-w-0">
@@ -252,12 +252,12 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="relative mt-10 flex min-w-0 flex-col gap-5 sm:mt-5 lg:mt-12">
+                <div className="relative flex min-w-0 flex-col gap-5 lg:mt-10">
                   <div className="flex flex-col gap-2">
                     {brand && (
                       <Link
                         to={`/brands/${encodeURIComponent(brand)}`}
-                        className="w-fit text-[13px] font-bold uppercase font-boldtracking-widest text-[#6F7480] transition-colors hover:text-[#CE9F2D]"
+                        className="max-w-full w-fit break-words text-[13px] font-bold uppercase tracking-widest text-navy transition-colors hover:text-[#CE9F2D]"
                       >
                         {capitalizeFirst(brand)}
                       </Link>
@@ -280,7 +280,7 @@ export default function ProductDetailPage() {
 
                     {/* Rating */}
                     {shouldShowProductRating && (
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         {productRatingValue > 0 && (
                           <div className="inline-flex items-center gap-1 rounded bg-[#388E3C] px-1.5 py-0.5 text-xs font-bold text-white shadow-xs">
                             <span>{productRatingValue.toFixed(1)}</span>
@@ -425,23 +425,23 @@ export default function ProductDetailPage() {
                   )}
 
                   {/* Shop with Peace of Mind */}
-                  <div className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
+                  <div className="overflow-hidden rounded-lg border border-border bg-white shadow-xs">
                     <button
                       type="button"
                       onClick={() => setPeaceOfMindOpen((prev) => !prev)}
-                      className="flex w-full items-center justify-between bg-white px-5 py-4 text-left transition-colors hover:bg-[#FAF9F6]"
+                      className="flex w-full items-center justify-between bg-white px-5 py-4 text-left transition-colors hover:bg-surface-soft"
                       aria-expanded={peaceOfMindOpen}
                     >
                       <div>
-                        <h3 className="text-base font-bold text-[#111827] sm:text-lg">
+                        <h3 className="text-base font-bold text-ink sm:text-lg">
                           Shop with peace of mind
                         </h3>
-                        <p className="mt-0.5 text-xs text-[#6B7280] sm:text-sm">
+                        <p className="mt-0.5 text-xs text-muted sm:text-sm">
                           Complete care and guarantee for your purchase
                         </p>
                       </div>
 
-                      <div className="ml-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F3F4F6] text-[#374151] transition-colors hover:bg-[#E5E7EB]">
+                      <div className="ml-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cream text-ink transition-colors hover:bg-cream-strong">
                         {peaceOfMindOpen ? (
                           <ChevronUp size={18} />
                         ) : (
@@ -451,51 +451,51 @@ export default function ProductDetailPage() {
                     </button>
 
                     {peaceOfMindOpen && (
-                      <div className="grid grid-cols-2 gap-3 border-t border-[#E5E7EB] p-4 text-center sm:grid-cols-4 sm:p-5">
-                        <div className="flex flex-col items-center rounded-lg border border-[#EBE5D8]/70 bg-[#FAF9F6] p-3">
-                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                      <div className="grid grid-cols-2 gap-3 border-t border-border p-4 text-center sm:p-5 2xl:grid-cols-4">
+                        <div className="flex flex-col items-center rounded-lg border border-border/70 bg-surface-soft p-3">
+                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
                             <Clock size={22} className="stroke-[2.2]" />
                           </div>
-                          <span className="text-xs font-bold text-[#111827] sm:text-sm">
+                          <span className="text-xs font-bold text-ink sm:text-sm">
                             Fast Dispatch
                           </span>
-                          <span className="mt-0.5 text-xs text-[#6B7280]">
+                          <span className="mt-0.5 text-xs text-muted">
                             Within 24-48 hrs
                           </span>
                         </div>
 
-                        <div className="flex flex-col items-center rounded-lg border border-[#EBE5D8]/70 bg-[#FAF9F6] p-3">
-                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                        <div className="flex flex-col items-center rounded-lg border border-border/70 bg-surface-soft p-3">
+                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
                             <RefreshCw size={22} className="stroke-[2.2]" />
                           </div>
-                          <span className="text-xs font-bold text-[#111827] sm:text-sm">
+                          <span className="text-xs font-bold text-ink sm:text-sm">
                             Easy Returns
                           </span>
-                          <span className="mt-0.5 text-xs text-[#6B7280]">
+                          <span className="mt-0.5 text-xs text-muted">
                             7-day policy
                           </span>
                         </div>
 
-                        <div className="flex flex-col items-center rounded-lg border border-[#EBE5D8]/70 bg-[#FAF9F6] p-3">
-                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                        <div className="flex flex-col items-center rounded-lg border border-border/70 bg-surface-soft p-3">
+                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
                             <Banknote size={22} className="stroke-[2.2]" />
                           </div>
-                          <span className="text-xs font-bold text-[#111827] sm:text-sm">
+                          <span className="text-xs font-bold text-ink sm:text-sm">
                             Cash on Delivery
                           </span>
-                          <span className="mt-0.5 text-xs text-[#6B7280]">
+                          <span className="mt-0.5 text-xs text-muted">
                             Pay on delivery
                           </span>
                         </div>
 
-                        <div className="flex flex-col items-center rounded-lg border border-[#EBE5D8]/70 bg-[#FAF9F6] p-3">
-                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+                        <div className="flex flex-col items-center rounded-lg border border-border/70 bg-surface-soft p-3">
+                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
                             <ShieldCheck size={22} className="stroke-[2.2]" />
                           </div>
-                          <span className="text-xs font-bold text-[#111827] sm:text-sm">
+                          <span className="text-xs font-bold text-ink sm:text-sm">
                             100% Genuine
                           </span>
-                          <span className="mt-0.5 text-xs text-[#6B7280]">
+                          <span className="mt-0.5 text-xs text-muted">
                             Quality verified
                           </span>
                         </div>

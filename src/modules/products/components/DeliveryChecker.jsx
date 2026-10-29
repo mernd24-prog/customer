@@ -126,35 +126,36 @@ export default function DeliveryChecker({
     <div className={standalone ? "" : "w-full"}>
       {/* Trigger Link directly below Quantity Selector */}
       {!standalone && (
-        <div className=" flex flex-col gap-1 ">
+        <div className="flex min-w-0 flex-col gap-2">
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
             disabled={loading}
-            className="w-full flex items-center justify-between p-3.5 rounded-lg border border-[#E5E7EB] bg-[#FAF9F6] hover:bg-[#F3EFE6] transition-all text-left shadow-xs"
+            className="flex w-full min-w-0 flex-col items-start gap-3 rounded-lg border border-border bg-surface-soft p-4 text-left transition-colors hover:border-gold hover:bg-cream disabled:cursor-wait sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EBF3FF] text-[#1A73E8]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
                 {loading ? (
-                  <Loader2 size={18} className="animate-spin text-[#1A73E8]" />
+                  <Loader2 size={18} className="animate-spin text-gold-dark" />
                 ) : (
                   <MapPin size={18} />
                 )}
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-medium text-[#6B7280] block">
+                <span className="block text-base font-semibold text-navy">
                   Delivery details
                 </span>
-                <span className="text-sm font-bold text-[#111827] truncate block">
+                <span className="mt-1 block break-words text-sm leading-relaxed text-muted">
                   {lastCheckedPincode
                     ? `Delivering to ${lastCheckedPincode}`
-                    : "Check delivery & pincode availability"}
+                    : "Check delivery availability in your area"}
                 </span>
               </div>
             </div>
 
-            <span className="text-xs font-bold text-[#1B1D60] hover:text-[#CE9F2D] shrink-0 ml-2">
-              {lastCheckedPincode ? "Change" : "Enter Pincode >"}
+            <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 self-stretch rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold text-navy sm:self-center">
+              {lastCheckedPincode ? "Change pincode" : "Enter pincode"}
+              <ArrowRight size={14} aria-hidden="true" />
             </span>
           </button>
 
@@ -196,7 +197,7 @@ export default function DeliveryChecker({
           >
             <div
               className={cn(
-                "relative w-full bg-white overflow-hidden",
+                "relative w-full max-h-[90dvh] overflow-y-auto bg-white",
                 "rounded-t-[20px] sm:rounded-[var(--customer-radius-lg)]",
                 "sm:max-w-[420px]",
                 "shadow-2xl",

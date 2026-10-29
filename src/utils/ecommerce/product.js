@@ -503,23 +503,25 @@ export function getProductImage(product) {
 }
 
 export function getProductBrandName(product) {
-  const value =
-    product?.brandName ||
-    product?.brandRef?.name ||
-    product?.brandRef?.title ||
-    product?.brandRef?.label ||
-    product?.brand?.name ||
-    product?.brand?.title ||
-    product?.brand?.label ||
-    product?.brand?.brandName ||
-    product?.metadata?.brandName ||
-    product?.attributes?.brand ||
-    product?.manufacturer ||
-    product?.vendor ||
-    product?.brand ||
-    "";
-  const label = typeof value === "string" ? value.trim() : "";
-  return /^[a-f\d]{24}$/i.test(label) ? "" : label;
+  const candidates = [
+    product?.brandName,
+    product?.brandRef?.name,
+    product?.brandRef?.title,
+    product?.brandRef?.label,
+    product?.brand?.name,
+    product?.brand?.title,
+    product?.brand?.label,
+    product?.brand?.brandName,
+    product?.metadata?.brandName,
+    product?.attributes?.brand,
+    product?.manufacturer,
+    product?.vendor,
+    product?.brand,
+  ];
+  return candidates
+    .filter((value) => typeof value === "string")
+    .map((value) => value.trim())
+    .find((label) => label && !/^[a-f\d]{24}$/i.test(label)) || "";
 }
 
 export function getProductCategoryName(product) {
