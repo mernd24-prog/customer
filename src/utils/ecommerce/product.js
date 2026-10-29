@@ -544,6 +544,22 @@ export function getProductRatingValue(product) {
   );
 }
 
+export function getProductReviewCount(product) {
+  const value = Number(
+    product?.reviewCount ??
+      product?.reviewsCount ??
+      product?.ratingCount ??
+      product?.totalReviews ??
+      product?.totalReviewCount ??
+      product?.numReviews ??
+      product?.reviews ??
+      product?.review?.count ??
+      0,
+  );
+
+  return Number.isFinite(value) ? value : 0;
+}
+
 export function buildFacetCountMap(products, resolver) {
   return (products || []).reduce((counts, product) => {
     const rawValue = resolver?.(product);

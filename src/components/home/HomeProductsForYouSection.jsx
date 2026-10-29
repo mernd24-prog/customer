@@ -146,7 +146,7 @@ export default function HomeProductsForYouSection({
       disablePadding={true}
     >
       <div>
-        <div className="grid grid-cols-2 gap-3 my-4 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3.5 my-4 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
           {products.map((product) => (
             <ProductCard
               key={getProductId(product)}
@@ -163,11 +163,11 @@ export default function HomeProductsForYouSection({
               type="button"
               onClick={loadNextPage}
               disabled={isLoadingMore}
-              className="inline-flex h-[42px] px-6 items-center justify-center gap-2 rounded-[10px] border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="inline-flex h-[42px] px-6 items-center justify-center gap-2 rounded-lg border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoadingMore ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
+                  <div className="animate-spin rounded-lg h-4 w-4 border-2 border-current border-t-transparent"></div>
                   <span>Loading...</span>
                 </>
               ) : (

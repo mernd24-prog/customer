@@ -41,6 +41,7 @@ export default function LoginPage() {
           onSubmit={handleSubmit(submit)}
           noValidate
         >
+            <div className="grid gap-1">
           <FormField
             id="email"
             label="Email Address"
@@ -53,7 +54,7 @@ export default function LoginPage() {
             required
           />
 
-          <div className="grid gap-1">
+        
             <FormField
               id="password"
               label="Password"

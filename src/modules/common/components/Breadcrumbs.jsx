@@ -17,7 +17,7 @@ export default function Breadcrumbs({
   separatorClassName = "",
   heading,
   truncateMode = "characters",
-  truncateLimit = 40,
+  truncateLimit = 80,
   rightContent,
   homeIconSize,
   homeIconClassName = "",

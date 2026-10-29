@@ -14,20 +14,28 @@ export default function PhoneField({
 }) {
   return (
     <label
-      className="grid gap-1.5 text-sm font-medium text-ink lg:text-base"
+      className="grid gap-1.5 text-sm font-medium text-[var(--customer-ink)] lg:text-base"
       htmlFor={id}
     >
       <span>
         {label}
-        {(required || phoneRegistration?.required || dialCodeRegistration?.required) && (
+        {(required ||
+          phoneRegistration?.required ||
+          dialCodeRegistration?.required) && (
           <span className="ml-0.5 text-red-500">*</span>
         )}
       </span>
 
-      <div className="relative flex h-11 w-full min-w-0 overflow-hidden rounded-[8px] border border-[var(--customer-border)] bg-transparent shadow-sm transition-colors duration-200 ease-out focus-within:border-[var(--customer-gold)]/70">
-        <div className="flex h-full w-[60px] shrink-0 items-center justify-center rounded-l-[8px] bg-transparent px-1 text-[13px] font-semibold text-[var(--customer-ink)] sm:text-sm">
-          <span>{FIXED_INDIAN_DIAL_CODE}</span>
-        </div>
+      <div
+        className={`relative flex h-11 w-full min-w-0 overflow-hidden rounded-lg border bg-transparent shadow-sm transition-colors duration-200 ease-out focus-within:border-[var(--customer-gold)]/70 ${
+          error
+            ? "border-red-500"
+            : "border-[var(--customer-border)]"
+        }`}
+      >
+       <div className=" flex h-full w-[45px] shrink-0 items-center justify-center px-2 text-lg  font-normal leading-5 text-[var(--customer-ink)]">
+  <span>{FIXED_INDIAN_DIAL_CODE}</span>
+</div>
 
         <input
           type="hidden"
@@ -38,22 +46,29 @@ export default function PhoneField({
 
         <div className="my-auto h-5 w-px shrink-0 bg-[var(--customer-border)]" />
 
+        {/* Phone number */}
         <input
           id={id}
           type="tel"
           placeholder={placeholder}
           maxLength={10}
-          className="h-full min-w-0 flex-1 rounded-r-[8px] border-0 bg-transparent px-3 text-[13px] font-semibold text-[var(--customer-ink)] outline-none placeholder:font-normal placeholder:text-[var(--customer-muted)] focus:bg-transparent focus:outline-none focus:ring-0 sm:text-sm autofill:[-webkit-box-shadow:0_0_0_1000px_transparent_inset] autofill:[-webkit-text-fill-color:var(--customer-ink)]"
+          inputMode="numeric"
+          aria-invalid={Boolean(error)}
+          className="customer-input h-full min-w-0 flex-1 !rounded-none !border-0 !bg-transparent !px-3 !py-0 text-base font-normal leading-5 text-[var(--customer-ink)] outline-none placeholder:font-normal placeholder:text-[var(--customer-muted)] focus:!border-0 focus:!ring-0"
           onInput={(e) => {
-            e.target.value = e.target.value.replace(/\D/g, "");
+            e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
           }}
           {...phoneRegistration}
           {...props}
         />
       </div>
 
-      <span className="min-h-4 text-xs font-normal text-red-600">
-        {error?.message}
+      {/* Reserved error space keeps the form aligned */}
+      <span
+        className="mt-0.5 min-h-[18px] text-xs font-normal leading-[18px] text-red-600"
+        aria-live="polite"
+      >
+        {error?.message || "\u00A0"}
       </span>
     </label>
   );

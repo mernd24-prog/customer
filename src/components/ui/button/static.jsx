@@ -18,7 +18,8 @@ const buttonStyles = {
   solidLarge:
   "h-[48px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[22px] py-[10px] text-[15px] leading-[20px] tracking-[0.5px] font-bold !text-[#18156D] hover:bg-[linear-gradient(#B88419,#B88419)] hover:!text-[#18156D] transition-colors duration-200",headerGold:
     "h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-[11px] leading-[16px] tracking-[0.5px] font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-w-[153px] sm:px-4 sm:text-[13px] sm:leading-[20px] sm:tracking-[0.5px]",
-  headerIcon:
+  
+    headerIcon:
     "group relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-transparent p-0 shadow-none",
 
   pill: "inline-flex min-w-[110px]  sm:min-w-[130px] h-[40px] sm:h-[38px] items-center justify-center  gap-1 sm:gap-[15px] md:gap-2 rounded-lg bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 sm:px-[34px]    font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[linear-gradient(#bd9025,#bd9025)]",

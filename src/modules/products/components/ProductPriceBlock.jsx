@@ -15,44 +15,34 @@ export default function ProductPriceBlock({
   discountClassName = "",
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       {dealBadge ? (
         <span className="inline-flex w-fit rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-bold uppercase text-white">
           {dealBadge}
         </span>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <span className={cn("font-bold text-navy", priceClassName)}>
+      <div className="flex flex-wrap items-center gap-2.5">
+        <span className="text-2xl sm:text-3xl font-extrabold text-[#212121]">
           {formatMoney(price, currency)}
         </span>
 
         {mrp && mrp > price && (
-          <span
-            className={cn(
-              "font-semibold text-[#595959] line-through",
-              mrpClassName,
-            )}
-          >
+          <span className="text-sm sm:text-base font-normal text-[#878787] line-through">
             {formatMoney(mrp, currency)}
           </span>
         )}
 
         {discount > 0 && (
-          <span
-            className={cn(
-              "rounded-full bg-[#D93025] px-3 py-1 text-[8px] font-bold uppercase text-white",
-              discountClassName,
-            )}
-          >
-            {discount}% Off
+          <span className="inline-flex items-center rounded-full bg-[#FDECEC] px-2.5 py-1 text-xs font-bold text-[#D32F2F]">
+            {discount}% OFF
           </span>
         )}
-      </div>
 
-      <p className="text-base font-medium text-[#2E2E2E] lg:text-base">
-        Inclusive of all taxes
-      </p>
+        <span className="text-xs font-medium text-[#878787]">
+          (Inclusive of all taxes)
+        </span>
+      </div>
 
       {safeDynamicPrice && dynamicState.current?.loyalty && (
         <p className="inline-block w-fit rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold text-gold-dark">

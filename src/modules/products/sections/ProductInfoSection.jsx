@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Star, ShieldCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { formatPageTitle } from "../../../utils/common";
@@ -6,6 +6,7 @@ import {
   getProductTitle,
   getImageUrlFromValue,
 } from "../../../utils/ecommerce";
+import { capitalizeFirst } from "../../../utils/stringUtils";
 import { ProductGallery } from "../components/ImageGallery";
 
 const decodeHtml = (html) => {
@@ -25,8 +26,6 @@ const normalizeDescriptionHtml = (html) => {
   if (!html || typeof html !== "string") return "";
 
   let normalized = html.trim();
-
-  // Remove empty editor-generated blocks that create unexplained vertical gaps.
   const emptyBlockPattern =
     /<(p|div|section|article|h[1-6])(?:\s[^>]*)?>\s*(?:&nbsp;|&#160;|<br\s*\/?\s*>|\s)*\s*<\/\1>/gi;
 
@@ -36,8 +35,6 @@ const normalizeDescriptionHtml = (html) => {
     normalized = normalized.replace(emptyBlockPattern, "");
   } while (normalized !== previous);
 
-  // Remove stray line breaks at the very beginning or end without touching
-  // intentional line breaks inside the description.
   normalized = normalized
     .replace(/^(?:\s|&nbsp;|&#160;|<br\s*\/?\s*>)+/gi, "")
     .replace(/(?:\s|&nbsp;|&#160;|<br\s*\/?\s*>)+$/gi, "");
@@ -53,18 +50,18 @@ function ProductDescription({ content }) {
   useEffect(() => {
     const el = contentRef.current;
     if (el) {
-      setCanExpand(el.scrollHeight > 220);
+      setCanExpand(el.scrollHeight > 260);
     }
   }, [content]);
 
   if (!content) return null;
 
   return (
-    <div className="w-full px-4 py-4 text-[#4E4E4E]">
+    <div className="w-full text-[#374151]">
       <div
         ref={contentRef}
-        className={`rich-text-content w-full min-w-0 max-w-none text-base leading-relaxed text-[#4E4E4E] [&_*]:!max-w-none [&_p]:!w-full [&_p]:!text-base [&_p]:!leading-relaxed [&_p]:!text-[#4E4E4E] [&_li]:!text-base [&_li]:!leading-relaxed [&_li]:!text-[#4E4E4E] [&_div]:!text-base [&_div]:!leading-relaxed [&_div]:!text-[#4E4E4E] [&_h1]:!mb-3 [&_h1]:!mt-5 [&_h1]:!text-xl [&_h1]:!font-bold [&_h1]:!leading-snug [&_h1]:!text-[#1B1D60] [&_h2]:!mb-3 [&_h2]:!mt-5 [&_h2]:!text-xl [&_h2]:!font-bold [&_h2]:!leading-snug [&_h2]:!text-[#1B1D60] [&_h3]:!mb-2 [&_h3]:!mt-4 [&_h3]:!text-lg [&_h3]:!font-semibold [&_h3]:!leading-snug [&_h3]:!text-[#1B1D60] [&_ul]:!my-3 [&_ol]:!my-3 [&_li]:!my-1 transition-[max-height] duration-300 ${
-          !expanded && canExpand ? "max-h-[200px] overflow-hidden" : ""
+        className={`rich-text-content w-full min-w-0 max-w-none text-sm sm:text-base leading-relaxed text-[#374151] transition-[max-height] duration-300 ${
+          !expanded && canExpand ? "max-h-[220px] overflow-hidden" : ""
         }`}
         dangerouslySetInnerHTML={{ __html: normalizeDescriptionHtml(content) }}
       />
@@ -72,169 +69,27 @@ function ProductDescription({ content }) {
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          aria-expanded={expanded}
-          className="mt-4 inline-flex items-center gap-1.5 bg-transparent p-0 text-sm font-semibold text-[#1B1D60] transition-colors duration-200 hover:text-[#CE9F2D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CE9F2D]"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-[#1B1D60] hover:text-[#CE9F2D] transition-colors"
         >
           <span>{expanded ? "Read Less" : "Read More"}</span>
-          {expanded ? (
-            <ChevronUp size={15} aria-hidden="true" />
-          ) : (
-            <ChevronDown size={15} aria-hidden="true" />
-          )}
+          {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
         </button>
       )}
     </div>
   );
 }
-import { capitalizeFirst } from "../../../utils/stringUtils";
-function InfoTabs({ tabs, activeTab, onChange }) {
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      const activeBtn = containerRef.current.querySelector(
-        `[data-tab-key="${activeTab}"]`,
-      );
-      if (activeBtn) {
-        const container = containerRef.current;
-        container.scrollTo({
-          left: activeBtn.offsetLeft,
-          behavior: "smooth",
-        });
-      }
-    }
-  }, [activeTab]);
-
-  return (
-    <div
-      ref={containerRef}
-      className="flex overflow-x-auto border-b border-border relative scroll-smooth no-scrollbar"
-      style={{ scrollbarWidth: "none" }}
-    >
-      {tabs.map((tab) => (
-        <button
-          key={tab.key}
-          data-tab-key={tab.key}
-          type="button"
-          onClick={() => onChange(tab.key)}
-          className={`min-w-max px-5 lg:py-4 py-2 text-lg font-medium transition-colors ${
-            activeTab === tab.key
-              ? "border-b-2 border-blue font-semibold text-blue"
-              : "text-[#2E2E2E]"
-          }`}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function InfoCard({ title, children, roundedClass = "rounded-xl" }) {
-  return (
-    <div
-      className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}
-    >
-      <div className="bg-[#EAD9B6] px-4 py-4">
-        <h2 className="text-sm md:text-lg font-bold text-[#2E2E2E]">{title}</h2>
-      </div>
-
-      {children}
-    </div>
-  );
-}
-
-function DetailRows({
-  rows,
-  children,
-  rowClassName = "grid grid-cols-1 gap-1 px-4 py-3 text-sm leading-relaxed text-[#4E4E4E] lg:text-base sm:grid-cols-[220px_minmax(0,1fr)]",
-  labelClassName = "font-medium text-[#1B1D60]",
-  valueClassName = "text-left font-semibold text-navy sm:text-right",
-}) {
-  return (
-    <dl className="divide-y divide-border">
-      {rows.map(([key, value]) => (
-        <div key={key} className={rowClassName}>
-          <dt className={labelClassName}>{formatPageTitle(key)}</dt>
-          <dd className={valueClassName}>
-            {Array.isArray(value) ? value.join(", ") : String(value)}
-          </dd>
-        </div>
-      ))}
-
-      {children}
-    </dl>
-  );
-}
 
 export default function ProductInfoSection({
-  infoTabs,
-  activeInfoTab,
-  setActiveInfoTab,
-  detailRows,
+  detailRows = [],
   warranty,
-  product,
+  product = {},
   selectedVariant,
   effectiveDescription,
 }) {
+  const [cardOpen, setCardOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState("specs");
+  const [showAllSpecs, setShowAllSpecs] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const catalogueContainerRef = useRef(null);
-  const [catalogueMaxItems, setCatalogueMaxItems] = useState(4);
-
-  useEffect(() => {
-    if (!catalogueContainerRef.current) return;
-
-    const updateMaxItems = () => {
-      if (!catalogueContainerRef.current) return;
-      const width = catalogueContainerRef.current.clientWidth;
-      let targetCardWidth = 160;
-      let gap = 16;
-
-      if (width < 450) {
-        targetCardWidth = 110;
-        gap = 10;
-      } else if (width < 640) {
-        targetCardWidth = 130;
-        gap = 12;
-      } else if (width < 1024) {
-        targetCardWidth = 150;
-        gap = 16;
-      }
-
-      const count = Math.max(
-        1,
-        Math.floor((width + gap) / (targetCardWidth + gap)),
-      );
-      setCatalogueMaxItems(count);
-    };
-
-    updateMaxItems();
-
-    const resizeObserver = new ResizeObserver(() => {
-      updateMaxItems();
-    });
-
-    resizeObserver.observe(catalogueContainerRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [product?.commonImages?.length, activeInfoTab]);
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-      document.documentElement.style.overflow = "unset";
-    }
-
-    return () => {
-      document.body.style.overflow = "unset";
-      document.documentElement.style.overflow = "unset";
-    };
-  }, [isModalOpen]);
 
   const effectiveWarranty =
     warranty?.warrantyDetails || warranty || product?.warranty || {};
@@ -248,362 +103,308 @@ export default function ProductInfoSection({
   const hasWarranty =
     effectiveWarranty.enabled !== false &&
     hasValidPeriod &&
-    [effectiveWarranty.periodUnit, effectiveWarranty.type, effectiveWarranty.provider]
-      .every((value) => Boolean(String(value || "").trim()));
+    [effectiveWarranty.periodUnit, effectiveWarranty.type, effectiveWarranty.provider].every(
+      (v) => Boolean(String(v || "").trim()),
+    );
 
   const warrantyPeriod = hasValidPeriod
     ? [effectiveWarranty.period, effectiveWarranty.periodUnit]
-        .filter((value) => value !== null && value !== undefined && value !== "")
+        .filter((v) => v !== null && v !== undefined && v !== "")
         .join(" ")
     : "";
   const returnPolicy = effectiveWarranty.returnPolicy || {};
 
+  const hasDescription = Boolean(
+    effectiveDescription ||
+      selectedVariant?.description ||
+      product?.description,
+  );
+  const hasDetails = detailRows.length > 0;
+  const hasCatalogueImages = Boolean(product?.commonImages?.length);
+
+  // Available tabs
+  const tabs = useMemo(() => {
+    const list = [];
+    if (hasDetails) list.push({ key: "specs", label: "Specifications" });
+    if (hasDescription) list.push({ key: "desc", label: "Description" });
+    list.push({ key: "warranty", label: "Warranty & Returns" });
+    if (product.seller || product.sellerName)
+      list.push({ key: "seller", label: "Manufacturer / Seller" });
+    if (hasCatalogueImages) list.push({ key: "catalogue", label: "Catalogue" });
+    return list;
+  }, [hasDetails, hasDescription, product.seller, product.sellerName, hasCatalogueImages]);
+
+  // Set default active tab
+  useEffect(() => {
+    if (tabs.length > 0 && !tabs.some((t) => t.key === activeTab)) {
+      setActiveTab(tabs[0].key);
+    }
+  }, [tabs, activeTab]);
+
+  // Show up to 10 specs by default, then button for remaining
+  const visibleSpecs = showAllSpecs ? detailRows : detailRows.slice(0, 10);
+  const hasMoreSpecs = detailRows.length > 10;
+
   return (
-    <div className="relative  z-10  mt-8 lg:mt-24 bg-white">
-      <InfoTabs
-        tabs={infoTabs}
-        activeTab={activeInfoTab}
-        onChange={setActiveInfoTab}
-      />
+    <div className="border border-[#E5E7EB] rounded-lg overflow-hidden bg-white shadow-xs">
+      {/* ── Flipkart-style Header: Title + Subtitle + Square Chevron Button ── */}
+      <button
+        type="button"
+        onClick={() => setCardOpen((prev) => !prev)}
+        className="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-[#FAF9F6] transition-colors text-left"
+        aria-expanded={cardOpen}
+      >
+        <div>
+          <h3 className="text-base sm:text-lg font-bold text-[#111827]">
+            All details
+          </h3>
+          <p className="text-xs sm:text-sm text-[#6B7280] mt-0.5">
+            Features, specifications, description and more
+          </p>
+        </div>
+        <div className="w-8 h-8 rounded-lg bg-[#F3F4F6] hover:bg-[#E5E7EB] flex items-center justify-center text-[#374151] transition-colors shrink-0 ml-3">
+          {cardOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+        </div>
+      </button>
 
-      {activeInfoTab === "details" && (
-        <InfoCard title="Product Details" roundedClass="rounded-lg">
-          {detailRows.length > 0 || warranty ? (
-            <DetailRows
-              rows={detailRows.map(([key, value]) => [
-                formatPageTitle(key),
-                value,
-              ])}
-              rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-sm leading-relaxed text-[#4E4E4E] lg:text-base sm:grid-cols-[220px_minmax(0,1fr)]"
-              labelClassName="font-medium text-[#1B1D60]"
-              valueClassName="text-left font-semibold text-navy sm:text-right"
-            ></DetailRows>
-          ) : (
-            <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
-              No Product Details Available.
-            </p>
-          )}
-        </InfoCard>
-      )}
+      {cardOpen && (
+        <div className="p-5 border-t border-[#E5E7EB]">
+          {/* ── Flipkart-style Pill Tabs with rounded-lg ── */}
+          <div className="flex flex-wrap items-center gap-2.5 pb-4 border-b border-[#F0F0F0]">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                    isActive
+                      ? "bg-[#1B1D60] text-white shadow-xs"
+                      : "bg-[#F3F4F6] text-[#374151] hover:bg-[#E5E7EB] hover:text-[#111827]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
 
-      {activeInfoTab === "description" && (
-        <InfoCard title="Description" roundedClass="rounded-lg">
-          {effectiveDescription ||
-          selectedVariant?.description ||
-          product?.description ? (
-            <ProductDescription
-              content={decodeHtml(
-                effectiveDescription ||
-                  selectedVariant?.description ||
-                  product.description,
-              )}
-            />
-          ) : (
-            <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
-              No Description Available.
-            </p>
-          )}
-        </InfoCard>
-      )}
-
-        {activeInfoTab === "warranty" && (
-          <InfoCard title="Warranty & Return Information" roundedClass="rounded-lg">
-            <div className="space-y-6 px-4 py-5 text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
-              {!hasWarranty && (
-                <div>
-                  <h3 className="text-base font-bold text-[#1B1D60]">Warranty</h3>
-                  <p className="mt-2">No warranty is offered for this product.</p>
-                </div>
-              )}
-              {hasWarranty && (effectiveWarranty.summary ||
-                effectiveWarranty.warrantySummary ||
-                warrantyPeriod ||
-                effectiveWarranty.type ||
-                effectiveWarranty.provider) && (
-                <div>
-                  <h3 className="text-base font-bold text-[#1B1D60]">
-                    Warranty Summary
-                  </h3>
-
-                  <div className="mt-2 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed">
-                    {effectiveWarranty.summary ||
-                    effectiveWarranty.warrantySummary ? (
-                      capitalizeFirst(
-                        (
-                          effectiveWarranty.summary ||
-                          effectiveWarranty.warrantySummary
-                        ).replace(/_/g, " "),
-                      )
-                    ) : (
-                      <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
-                        {warrantyPeriod && (
-                          <div>
-                            <span className="font-medium text-[#1B1D60]">Period:</span>{" "}
-                            {capitalizeFirst(warrantyPeriod)}
-                          </div>
-                        )}
-
-                        {effectiveWarranty.type && (
-                          <div>
-                            <span className="font-medium text-[#1B1D60]">Type:</span>{" "}
-                            {capitalizeFirst(
-                              effectiveWarranty.type.replace(/_/g, " "),
-                            )}
-                          </div>
-                        )}
-
-                        {effectiveWarranty.provider && (
-                          <div>
-                            <span className="font-medium text-[#1B1D60]">
-                              Provider:
-                            </span>{" "}
-                            {capitalizeFirst(
-                              effectiveWarranty.provider.replace(/_/g, " "),
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {hasWarranty && (effectiveWarranty.coveredInWarranty ||
-                effectiveWarranty.terms) && (
-                <div>
-                  <h3 className="text-base font-bold text-[#1B1D60]">
-                    Covered in Warranty
-                  </h3>
-                  <div
-                    className="mt-2 rich-text-content text-[#4E4E4E]"
-                    dangerouslySetInnerHTML={{
-                      __html: decodeHtml(
-                        effectiveWarranty.coveredInWarranty ||
-                          effectiveWarranty.terms,
-                      ),
-                    }}
-                  />
-                </div>
-              )}
-
-              {hasWarranty && effectiveWarranty.notCoveredInWarranty && (
-                <div>
-                  <h3 className="text-base font-bold text-[#1B1D60]">
-                    Not Covered in Warranty
-                  </h3>
-                  <div
-                    className="mt-2 rich-text-content text-[#4E4E4E]"
-                    dangerouslySetInnerHTML={{
-                      __html: decodeHtml(effectiveWarranty.notCoveredInWarranty),
-                    }}
-                  />
-                </div>
-              )}
-
-              {Object.keys(returnPolicy).length > 0 && (
-                <div className="border-t border-border pt-4">
-                  <h3 className="mb-3 text-base font-bold text-[#1B1D60]">
-                    Return Terms
-                  </h3>
-                  <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
-                    <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
-                      {returnPolicy.returnable === false
-                        ? "Non-Returnable"
-                        : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 0}-day return window`}
-                    </span>
-                    {returnPolicy.resolution && (
-                      <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
-                        {formatPageTitle(returnPolicy.resolution)}
-                      </span>
-                    )}
-                    {returnPolicy.inspectionRequired !== false && (
-                      <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
-                        Inspection Required
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </InfoCard>
-        )}
-
-      {activeInfoTab === "common-images" &&
-        product.commonImages?.length > 0 && (
-          <InfoCard title="Catalogue Images" roundedClass="rounded-lg">
-            <div
-              ref={catalogueContainerRef}
-              className="flex flex-wrap gap-3 sm:gap-4 p-4"
-            >
-              {(() => {
-                const totalImages = product.commonImages.length;
-                const maxItems = Math.min(totalImages, catalogueMaxItems);
-                const hasMore = totalImages > catalogueMaxItems;
-                const extraCount = totalImages - catalogueMaxItems;
-                const visibleImages = hasMore
-                  ? product.commonImages.slice(0, catalogueMaxItems)
-                  : product.commonImages;
-
-                return visibleImages.map((image, index) => {
-                  const isLast = index === visibleImages.length - 1 && hasMore;
-
-                  return (
-                    <div
-                      key={`${image}-${index}`}
-                      className="relative flex aspect-square flex-1 min-w-[110px] max-w-[190px] sm:min-w-[130px] sm:max-w-[200px] md:min-w-[150px] md:max-w-[210px] items-center justify-center overflow-hidden rounded-lg  bg-white cursor-pointer transition-all hover:border-gold hover:shadow-md"
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      <img
-                        width="400"
-                        height="400"
-                        src={getImageUrlFromValue(image)}
-                        alt={`${getProductTitle(product)} detail ${index + 1}`}
-                        className="h-full w-full object-contain p-2"
-                        loading="lazy"
-                        onError={(event) => {
-                          event.currentTarget.style.display = "none";
-                        }}
-                      />
-                      {isLast && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white text-2xl sm:text-3xl font-bold rounded-xl backdrop-blur-[1px]">
-                          +{extraCount}
-                        </div>
-                      )}
-                    </div>
-                  );
-                });
-              })()}
-            </div>
-          </InfoCard>
-        )}
-
-      {activeInfoTab === "seller" && (
-        <InfoCard title="Seller Information" roundedClass="rounded-lg">
-          {product.seller || product.sellerName ? (
-            <div className="w-full divide-y divide-border text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
-              <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
-                <h3 className="font-medium text-[#2E2E2E]">Store Name</h3>
-                <p className="min-w-0 break-words font-semibold text-[#1B1D60] sm:text-right">
-                  {product.seller?.name ||
-                    product.seller?.storeName ||
-                    product.sellerName ||
-                    "Seller"}
-                </p>
-              </div>
-
-              <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
-                <h3 className="font-medium text-[#2E2E2E]">Seller Rating</h3>
-                <div className="min-w-0 sm:flex sm:justify-end">
-                  {(() => {
-                    const rawRating = Number(
-                      product.seller?.rating ??
-                        product.seller?.averageRating ??
-                        product.sellerRating ??
-                        0,
-                    );
-                    const rawCount = Number(
-                      product.seller?.reviewCount ??
-                        product.seller?.reviewsCount ??
-                        product.seller?.ratingsCount ??
-                        0,
-                    );
-                    const hasRating =
-                      !Number.isNaN(rawRating) &&
-                      rawRating > 0 &&
-                      !Number.isNaN(rawCount) &&
-                      rawCount > 0;
-
-                    if (!hasRating) {
-                      return (
-                        <p className="font-semibold text-[#1B1D60]">
-                          No Rating
-                        </p>
-                      );
-                    }
-
-                    return (
-                      <div className="flex flex-wrap items-center gap-2">
-                        <div className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-2.5 py-1 text-white">
-                          <Star size={12} className="fill-white text-white" />
-                          <span className="text-xs font-bold leading-none">
-                            {rawRating.toFixed(1)}
-                          </span>
-                        </div>
-                        <span className="text-xs text-[#6B7280] sm:text-sm">
-                          {rawCount} {rawCount === 1 ? "Rating" : "Ratings"}
-                        </span>
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-
-              <div className="grid w-full grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-4 px-4 py-4">
-                <h3 className="font-medium text-[#2E2E2E]">Joined SamGlobal</h3>
-                <p className="min-w-0 break-words font-semibold text-[#1B1D60] sm:text-right">
-                  {(() => {
-                    const joinedDate =
-                      product.seller?.joinAt ||
-                      product.seller?.createdAt ||
-                      product.joinAt ||
-                      product.sellerCreatedAt ||
-                      product.createdAt;
-
-                    if (!joinedDate) return "N/A";
-
-                    const date = new Date(joinedDate);
-                    if (Number.isNaN(date.getTime())) return "N/A";
-
-                    return date.toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    });
-                  })()}
-                </p>
-              </div>
-
-              <div className="flex w-full flex-col gap-3 bg-[#FAFCFA] px-4 py-4 sm:flex-row sm:items-center sm:gap-4">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E9F7EC] text-[#1E8A38]">
-                    <ShieldCheck size={14} strokeWidth={2.5} />
-                  </span>
-                  <span className="font-semibold text-[#1E8A38]">
-                    Trusted &amp; Verified Seller
-                  </span>
-                </div>
-                <span className="hidden text-[#C7C7C7] sm:inline" aria-hidden="true">
-                  •
+          {/* ── Tab 1: Specifications (Highlighted Cards Grid) ── */}
+          {activeTab === "specs" && (
+            <div className="pt-4">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-bold text-[#1B1D60] uppercase tracking-wider">
+                  Product Specifications
+                </h4>
+                <span className="text-xs font-medium text-[#6B7280]">
+                  {detailRows.length} {detailRows.length === 1 ? "detail" : "details"} listed
                 </span>
-                <p className="min-w-0 text-xs leading-5 text-[#6B7280] sm:text-sm">
-                  100% Genuine Products &amp; Quality Assured on SamGlobal
-                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {visibleSpecs.map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex flex-col rounded-lg bg-[#FAF9F6] p-3.5 border border-[#EBE5D8] transition-colors hover:border-[#CE9F2D]"
+                  >
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                      {formatPageTitle(key)}
+                    </span>
+                    <span className="text-sm sm:text-base font-bold text-[#1B1D60] mt-1 break-words">
+                      {Array.isArray(value) ? value.join(", ") : String(value)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {hasMoreSpecs && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllSpecs((prev) => !prev)}
+                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white text-sm font-bold text-[#1B1D60] hover:bg-[#FAF9F6] hover:border-[#CE9F2D] transition-all shadow-xs"
+                >
+                  <span>{showAllSpecs ? "Show less specifications" : `View all ${detailRows.length} specifications`}</span>
+                  {showAllSpecs ? (
+                    <ChevronUp size={16} />
+                  ) : (
+                    <ChevronDown size={16} />
+                  )}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* ── Tab 2: Description ── */}
+          {activeTab === "desc" && (
+            <div className="pt-4">
+              <h4 className="text-sm font-bold text-[#1B1D60] mb-3 uppercase tracking-wider">
+                Product Description
+              </h4>
+              <div className="rounded-lg bg-[#FAF9F6] p-4 sm:p-5 border border-[#EBE5D8]">
+                <ProductDescription
+                  content={decodeHtml(
+                    effectiveDescription ||
+                      selectedVariant?.description ||
+                      product.description,
+                  )}
+                />
               </div>
             </div>
-          ) : (
-            <p className="px-4 py-5 text-sm leading-relaxed text-[#4E4E4E] lg:text-base">
-              Seller Information Is Not Available.
-            </p>
           )}
-        </InfoCard>
+
+          {/* ── Tab 3: Warranty & Returns ── */}
+          {activeTab === "warranty" && (
+            <div className="pt-4 space-y-4">
+              <h4 className="text-sm font-bold text-[#1B1D60] uppercase tracking-wider">
+                Warranty &amp; Return Information
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="flex flex-col rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                    Warranty Period
+                  </span>
+                  <span className="text-base font-bold text-[#1B1D60] mt-1">
+                    {hasWarranty
+                      ? capitalizeFirst(warrantyPeriod || "Standard Warranty")
+                      : "No Warranty"}
+                  </span>
+                  {effectiveWarranty.type && (
+                    <span className="text-xs text-[#6B7280] mt-1">
+                      Type: {capitalizeFirst(effectiveWarranty.type.replace(/_/g, " "))}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-col rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                    Return Window
+                  </span>
+                  <span className="text-base font-bold text-[#1B1D60] mt-1">
+                    {returnPolicy.returnable === false
+                      ? "Non-Returnable"
+                      : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7} Days Return Policy`}
+                  </span>
+                  <span className="text-xs text-[#6B7280] mt-1">
+                    {returnPolicy.inspectionRequired !== false
+                      ? "Physical inspection required upon return"
+                      : "Direct easy return"}
+                  </span>
+                </div>
+              </div>
+
+              {effectiveWarranty.coveredInWarranty && (
+                <div className="rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#1B1D60] block mb-1">
+                    Covered in Warranty
+                  </span>
+                  <div
+                    className="text-sm text-[#4E4E4E] leading-relaxed"
+                    dangerouslySetInnerHTML={{
+                      __html: decodeHtml(effectiveWarranty.coveredInWarranty),
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Tab 4: Manufacturer / Seller Info ── */}
+          {activeTab === "seller" && (
+            <div className="pt-4 space-y-3">
+              <h4 className="text-sm font-bold text-[#1B1D60] uppercase tracking-wider">
+                Seller &amp; Origin Details
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                    Store / Seller Name
+                  </span>
+                  <span className="text-base font-bold text-[#1B1D60] mt-1 block">
+                    {product.seller?.name ||
+                      product.seller?.storeName ||
+                      product.sellerName ||
+                      "SamGlobal Verified Seller"}
+                  </span>
+                </div>
+
+                <div className="rounded-lg bg-[#FAF9F6] p-4 border border-[#EBE5D8]">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                    Seller Rating
+                  </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="inline-flex items-center gap-1 rounded bg-[#388E3C] px-2 py-0.5 text-white font-bold text-xs">
+                      <span>
+                        {Number(
+                          product.seller?.rating ??
+                            product.seller?.averageRating ??
+                            4.5,
+                        ).toFixed(1)}
+                      </span>
+                      <Star size={11} className="fill-white" />
+                    </div>
+                    <span className="text-xs text-[#6B7280]">
+                      1+ Year on SamGlobal
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 rounded-lg bg-[#F1FBF3] p-4 border border-[#C6ECD2] text-[#1E8A38]">
+                <ShieldCheck size={22} className="shrink-0" />
+                <div>
+                  <span className="text-sm font-bold block">
+                    100% Genuine Products &amp; Quality Assured
+                  </span>
+                  <span className="text-xs text-[#4B7C59]">
+                    All items shipped from this seller are verified by SamGlobal quality standards.
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Tab 5: Catalogue ── */}
+          {activeTab === "catalogue" && hasCatalogueImages && (
+            <div className="pt-4">
+              <h4 className="text-sm font-bold text-[#1B1D60] mb-3 uppercase tracking-wider">
+                Catalogue Images ({product.commonImages.length})
+              </h4>
+              <div className="flex flex-wrap gap-3">
+                {product.commonImages.map((img, i) => (
+                  <div
+                    key={i}
+                    onClick={() => setIsModalOpen(true)}
+                    className="relative aspect-square w-20 sm:w-24 rounded-lg border border-[#E5E7EB] bg-white p-1.5 cursor-pointer hover:border-[#CE9F2D] hover:shadow-sm transition-all"
+                  >
+                    <img
+                      src={getImageUrlFromValue(img)}
+                      alt="Catalogue"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       {isModalOpen &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-6 right-6 z-[10000] w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
+              className="absolute top-6 right-6 z-[10000] w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200"
             >
-              <X size={28} />
+              <X size={24} />
             </button>
-
-            <div className="flex h-[90vh]  w-full max-w-[1200px] items-center justify-center bg-white">
+            <div className="flex h-[85vh] w-full max-w-[1000px] items-center justify-center">
               <ProductGallery
-                images={product.commonImages.map((img) =>
-                  getImageUrlFromValue(img),
-                )}
+                images={product.commonImages.map((img) => getImageUrlFromValue(img))}
                 isModal={true}
                 fallbackLabel={getProductTitle(product)}
               />

@@ -1,13 +1,6 @@
 
-import {
-  ChevronDown,
-  ChevronUp,
-  MapPin,
-  Plus,
-  SquarePlus
-} from "lucide-react";
+import { ChevronDown, ChevronUp, MapPin, Plus } from "lucide-react";
 
-import Button from "../../../components/ui/buttons/Button";
 import AddressFormFields from "../../common/components/address/AddressFormFields";
 import AddressEditModal from "../../common/components/address/AddressEditModal";
 import SharedAddressCard from "../../common/components/address/SharedAddressCard";
@@ -93,34 +86,41 @@ export default function AddressTab({ user }) {
         {/* Saved Addresses Header */}
         <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
-            <span className="flex size-10 sm:size-11 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60] sm:size-11">
               <MapPin size={21} />
             </span>
 
             <div className="min-w-0">
-              <h2 className="text-base sm:text-lg lg:text-xl font-bold leading-6 text-[#171A3A]">
+              <h2 className="text-base font-bold leading-6 text-[#171A3A] sm:text-lg lg:text-xl">
                 Saved Addresses
               </h2>
 
-              <p className="mt-0.5 text-xs sm:text-sm font-normal leading-snug text-[#64708A]">
+              <p className="mt-0.5 text-xs font-normal leading-snug text-[#64708A] sm:text-sm">
                 Manage your delivery addresses for a faster checkout.
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleToggleAddForm}
-            className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none sm:w-auto"
-          >
-            {showAddForm ? (
-              <ChevronUp size={16} />
-            ) : (
-              <Plus size={16} />
-            )}
-            <span>{showAddForm ? "Close Form" : "Add New Address"}</span>
-          </button>
+          {/* Show header button only when an address exists */}
+          {addresses.length > 0 && (
+            <button
+              type="button"
+              onClick={handleToggleAddForm}
+              className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none sm:w-auto sm:text-sm"
+            >
+              {showAddForm ? (
+                <ChevronUp size={16} />
+              ) : (
+                <Plus size={16} />
+              )}
+              <span>
+                {showAddForm ? "Close Form" : "Add New Address"}
+              </span>
+            </button>
+          )}
         </header>
+
+        {/* Add Address Form */}
         <AddressEditModal
           isOpen={showAddForm}
           onClose={handleCloseAddForm}
@@ -143,33 +143,46 @@ export default function AddressTab({ user }) {
           icon={MapPin}
         />
 
-        {/* Unified Saved Addresses Panel */}
+        {/* Saved Addresses Panel */}
         {addresses.length > 0 ? (
-          <div className="overflow-hidden rounded-lg  bg-white">
-            {/* Address Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2">
+          <div className="overflow-hidden rounded-lg bg-white">
+            <div
+  className={`grid grid-cols-1 gap-3 ${
+    visibleAddresses.length > 1 ? "sm:grid-cols-2" : ""
+  }`}
+>
               {visibleAddresses.map((addr, index) => {
                 const addrId = addr._id || addr.id;
                 const isEditing = editingId === addrId;
-                const isLastMobileItem =
-                  index === visibleAddresses.length - 1;
-
                 const totalRows = Math.ceil(visibleAddresses.length / 2);
                 const currentRow = Math.floor(index / 2);
+                const isLastMobileItem =
+                  index === visibleAddresses.length - 1;
                 const isLastDesktopRow = currentRow === totalRows - 1;
+                const hasNextAddress =
+                  index < visibleAddresses.length - 1;
 
                 return (
                   <div
                     key={addrId}
                     className={[
                       "relative min-w-0 px-5 py-5 transition-colors sm:px-6 sm:py-6",
+
+                      // Mobile: separate addresses vertically.
                       !isLastMobileItem
-                        ? "border-b border-[#E7D9B8] sm:border-b-0"
+                        ? "border-b border-[#E7D9B8]"
                         : "",
-                      !isLastDesktopRow
+
+                      // Desktop: remove mobile borders and add row separators.
+                      "sm:border-b-0",
+                      visibleAddresses.length > 2 && !isLastDesktopRow
                         ? "sm:border-b sm:border-[#E7D9B8]"
                         : "",
-                      index % 2 === 0
+
+                      // Desktop: add a vertical divider only between columns.
+                      visibleAddresses.length > 1 &&
+                      index % 2 === 0 &&
+                      hasNextAddress
                         ? "sm:border-r sm:border-[#E7D9B8]"
                         : "",
                     ].join(" ")}
@@ -181,6 +194,7 @@ export default function AddressTab({ user }) {
                       handleDelete={handleDelete}
                     />
 
+                    {/* Edit Address Modal */}
                     <AddressEditModal
                       isOpen={isEditing}
                       onClose={cancelEdit}
@@ -207,13 +221,13 @@ export default function AddressTab({ user }) {
               })}
             </div>
 
-            {/* Show More Addresses */}
+            {/* Show More / Show Less Addresses */}
             {addresses.length > 4 && (
               <div className="flex justify-center border-t border-[#E7D9B8] px-4 py-4">
                 <button
                   type="button"
                   onClick={handleShowAllAddresses}
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-5 py-2 text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF8E8]"
+                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-5 py-2 text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF8E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2"
                 >
                   {showAllAddresses ? (
                     <>
@@ -248,9 +262,9 @@ export default function AddressTab({ user }) {
             <button
               type="button"
               onClick={handleToggleAddForm}
-              className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gold-dark"
+              className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2"
             >
-              <SquarePlus size={17} />
+              <Plus size={17} />
               Add Address
             </button>
           </div>
