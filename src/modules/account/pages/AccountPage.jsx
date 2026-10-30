@@ -194,7 +194,7 @@ function AccountSidebar({
           items={MENU_ITEMS}
           activeMenuItem={activeMenuItem}
           isOpen={isMobileMenuOpen}
-          onToggle={() => setIsMobileMenuOpen((open) => !open)}
+          onToggle={() => setIsMobileMenuOpen((open) => !open)}   
           onClose={() => setIsMobileMenuOpen(false)}
         />
 
