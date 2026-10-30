@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from "react";
-import { MapPin, Plus, X ,SquarePlus} from "lucide-react";
+
+import { useCallback } from "react";
+import { MapPin, Plus } from "lucide-react";
 import useCheckout from "../controllers/useCheckout";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { getPaymentProviderLabel } from "../utils/checkoutUtils";
@@ -16,6 +17,7 @@ import AddressEditModal from "../../common/components/address/AddressEditModal";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import Loader from "../../../components/ui/Loader";
 import { CHECKOUT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
+import { PageContainer } from "../../../components/ui/layout";
 
 export default function CheckoutPage() {
   const {
@@ -25,8 +27,6 @@ export default function CheckoutPage() {
     setShowGuestOtpModal,
     cartState,
     quoteError,
-    isQuoteErrorDismissed,
-    setIsQuoteErrorDismissed,
     isPostPaymentProcessing,
     items,
     subtotal,
@@ -42,7 +42,6 @@ export default function CheckoutPage() {
     states,
     cities,
     postalCodes,
-    newAddressFormRef,
     register,
     handleSubmit,
     setValue,
@@ -62,7 +61,6 @@ export default function CheckoutPage() {
     selectedCity,
     watchedPostalCode,
     deliverabilityBlockers,
-    deliveryCheckLoading,
     excludeBlockedItem,
     isBuyNowCheckout,
     isCouponDebouncing,
@@ -73,9 +71,7 @@ export default function CheckoutPage() {
 
   const handleCloseGuestOtp = useCallback(() => {
     setShowGuestOtpModal(false);
-    if (!currentUser) {
-      navigate("/cart");
-    }
+    if (!currentUser) navigate("/cart");
   }, [setShowGuestOtpModal, currentUser, navigate]);
 
   const handleSuccessGuestOtp = useCallback(() => {
@@ -86,18 +82,11 @@ export default function CheckoutPage() {
     setValue("useNewAddress", false);
   }, [setValue]);
 
-  const handleExcludeBlockedItem = useCallback(
-    (blocker) => {
-      excludeBlockedItem(blocker);
-    },
-    [excludeBlockedItem],
-  );
-
   const isAddressAvailable = Boolean(
     !useNewAddress &&
       addresses.length > 0 &&
       selectedAddressId &&
-      quoteShippingAddress,
+      quoteShippingAddress
   );
 
   return (
@@ -107,38 +96,42 @@ export default function CheckoutPage() {
           <Loader size="xl" />
         </div>
       )}
+
       <GuestOtpAuthModal
         open={showGuestOtpModal}
         onClose={handleCloseGuestOtp}
         onSuccess={handleSuccessGuestOtp}
       />
+
       <Seo title="Checkout | Sam Global" />
 
-      <div className="w-full min-w-0 py-4 sm:py-6 lg:py-8">
-        <ApiState
-          loading={cartState.loading}
-          error={cartState.error}
-          empty={items.length === 0}
-          skeletonLayout={CHECKOUT_PAGE_SKELETON}
-          skeletonContainerClass="bg-transparent"
-          emptyTitle="Your Cart is Empty"
-          emptyText="Add products to your cart before checking out."
-        >
+      <ApiState
+        loading={cartState.loading}
+        error={cartState.error}
+        empty={items.length === 0}
+        skeletonLayout={CHECKOUT_PAGE_SKELETON}
+        skeletonContainerClass="bg-transparent"
+        emptyTitle="Your Cart is Empty"
+        emptyText="Add products to your cart before checking out."
+      >
+        <PageContainer className="mt-0 mb-0" contentClassName="min-w-0">
           <form
             onSubmit={handleSubmit(submit, handleInvalidCheckout)}
             noValidate
           >
-            {errors.root?.message ? (
-              <div className="mb-4 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errors.root?.message && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {errors.root.message}
               </div>
-            ) : null}
+            )}
+
             {deliverabilityBlockers.length > 0 && (
               <div className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
                 <p className="font-semibold text-amber-900">
                   This product is no longer available. Please remove it from
                   your cart and try again later.
                 </p>
+
                 <div className="mt-3 space-y-2">
                   {deliverabilityBlockers.map((blocker) => (
                     <div
@@ -153,10 +146,11 @@ export default function CheckoutPage() {
                           {blocker.reason}
                         </p>
                       </div>
+
                       {!isBuyNowCheckout && (
                         <button
                           type="button"
-                          onClick={() => handleExcludeBlockedItem(blocker)}
+                          onClick={() => excludeBlockedItem(blocker)}
                           className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
                         >
                           Exclude item
@@ -167,26 +161,23 @@ export default function CheckoutPage() {
                 </div>
               </div>
             )}
-            {/* {deliveryCheckLoading && (
-              <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-sm text-blue-700">
-                Checking every item for this delivery address…
-              </div>
-            )} */}
+
             <input
               type="hidden"
               value={String(useNewAddress)}
               {...register("useNewAddress")}
             />
+
             <input
               type="hidden"
               value={selectedAddressId || ""}
               {...register("selectedAddressId")}
             />
+
             <OrderDetailLayout>
-              {/* Left column: breadcrumbs + shipping + discounts */}
-              <div className="flex flex-col gap-4 sm:gap-5 lg:gap-6">
-                {/* Breadcrumbs — sits above address card, scrolls with left column */}
+              <div className="flex min-w-0 flex-col">
                 <Breadcrumbs
+                
                   items={[
                     { label: "Home", href: "/" },
                     { label: "Cart", href: "/cart" },
@@ -195,115 +186,119 @@ export default function CheckoutPage() {
                   heading="Checkout"
                   rightContent={null}
                 />
-                {/* Saved addresses */}
-                {addresses.length > 0 && (
-                  <AddressSelection
-                    addresses={addresses}
-                    selectedAddressId={selectedAddressId}
-                    useNewAddress={useNewAddress}
-                    setValue={setValue}
-                    errors={errors}
-                    countries={countries}
-                    onAddNewAddress={handleAddNewAddress}
-                    quoteError={quoteError}
-                  />
-                )}
 
-                {addresses.length === 0 && !useNewAddress && (
-                  <div className="rounded-xl border border-dashed border-[#D9B86D] bg-[#FFFDF8] px-4 py-8 text-center sm:px-6">
-                    <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60] sm:size-14">
-                      <MapPin size={22} />
+                <div className=" flex flex-col gap-4 sm:gap-5 lg:gap-6">
+                  {addresses.length > 0 && (
+                    <AddressSelection
+                      addresses={addresses}
+                      selectedAddressId={selectedAddressId}
+                      useNewAddress={useNewAddress}
+                      setValue={setValue}
+                      errors={errors}
+                      countries={countries}
+                      onAddNewAddress={handleAddNewAddress}
+                      quoteError={quoteError}
+                    />
+                  )}
+
+                  {addresses.length === 0 && !useNewAddress && (
+                    <div className="rounded-xl border border-dashed border-[#D9B86D] bg-[#FFFDF8] px-4 py-8 text-center sm:px-6">
+                      <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60] sm:size-14">
+                        <MapPin size={22} />
+                      </div>
+
+                      <h3 className="text-base font-bold leading-6 text-[#1B1D60] sm:text-[1.05rem]">
+                        No addresses saved yet
+                      </h3>
+
+                      <p className="mt-2 text-sm leading-5 text-[#64708A]">
+                        Please add address to continue.
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setValue("useNewAddress", true, {
+                            shouldValidate: true,
+                          })
+                        }
+                        className="mt-5 inline-flex h-11 w-full max-w-[200px] items-center justify-center gap-2 rounded-lg border border-[#C69D2A] bg-[#C69D2A] px-4 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#b98a1f]"
+                      >
+                        <Plus size={24} />
+                        Add Address
+                      </button>
                     </div>
+                  )}
 
-                    <h3 className="text-base font-bold leading-6 text-[#1B1D60] sm:text-[1.05rem]">
-                      No addresses saved yet
-                    </h3>
+                  {useNewAddress && (
+                    <AddressEditModal
+                      isOpen={true}
+                      onClose={handleCloseNewAddress}
+                      onSave={handleSaveShippingAddressOnly}
+                      form={{
+                        register,
+                        setValue,
+                        
+                        formState: { errors },
+                      }}
+                      idPrefix="shipping"
+                      loading={checkoutActionLoading}
+                      countries={countries}
+                      states={states}
+                      cities={cities}
+                      postalCodes={postalCodes}
+                      dialCodes={checkoutDialCodes}
+                      selectedCountry={selectedCountry}
+                      selectedState={selectedState}
+                      selectedCity={selectedCity}
+                      selectedPostalCode={watchedPostalCode}
+                      addressLabels={addressLabels}
+                      title="Shipping Address"
+                      submitLabel="Save Address"
+                      icon={MapPin}
+                    />
+                  )}
 
-                    <p className="mt-2 text-sm leading-5 text-[#64708A]">
-                      Please add address to continue.
-                    </p>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setValue("useNewAddress", true, { shouldValidate: true })
-                      }
-                      className="mt-5 inline-flex h-11 w-full max-w-[200px] items-center justify-center gap-2 rounded-lg border border-[#C69D2A] bg-[#C69D2A] px-4 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#b98a1f]"
-                    >
-                      <Plus size={24}  />
-                      Add Address
-                    </button>
-                  </div>
-                )}
-
-                {/* New address form */}
-                {useNewAddress && (
-                  <AddressEditModal
-                    isOpen={true}
-                    onClose={handleCloseNewAddress}
-                    onSave={handleSaveShippingAddressOnly}
-                    form={{
-                      register,
-                      setValue,
-                      formState: { errors },
-                    }}
-                    idPrefix="shipping"
-                    loading={checkoutActionLoading}
-                    countries={countries}
-                    states={states}
-                    cities={cities}
-                    postalCodes={postalCodes}
-                    dialCodes={checkoutDialCodes}
-                    selectedCountry={selectedCountry}
-                    selectedState={selectedState}
-                    selectedCity={selectedCity}
-                    selectedPostalCode={watchedPostalCode}
-                    addressLabels={addressLabels}
-                    title="Shipping Address"
-                    submitLabel="Save Address"
-                    icon={MapPin}
+                  <DiscountsSection
+                    register={register}
+                    errors={errors}
+                    walletBalance={walletBalance}
+                    setValue={setValue}
+                    watchedWalletAmount={watchedWalletAmount}
+                    watchedCouponCode={watchedCouponCode}
+                    quoteLoading={quoteLoading}
+                    isCouponDebouncing={isCouponDebouncing}
                   />
-                )}
-
-                {/* Coupons & wallet */}
-                <DiscountsSection
-                  register={register}
-                  errors={errors}
-                  walletBalance={walletBalance}
-                  setValue={setValue}
-                  watchedWalletAmount={watchedWalletAmount}
-                  watchedCouponCode={watchedCouponCode}
-                  quoteLoading={quoteLoading}
-                  isCouponDebouncing={isCouponDebouncing}
-                />
+                </div>
               </div>
 
-              {/* Right column: order summary */}
               <OrderDetailAside>
-                <CheckoutSummary
-                  items={items}
-                  subtotal={subtotal}
-                  shipping={shipping}
-                  total={total}
-                  quote={quoteData}
-                  quoteLoading={quoteLoading}
-                  quoteError={quoteError}
-                  loading={checkoutActionLoading}
-                  paymentOptions={paymentOptions}
-                  selectedPaymentProvider={paymentProvider}
-                  onPaymentProviderChange={setPaymentProvider}
-                  getPaymentProviderLabel={getPaymentProviderLabel}
-                  disabled={
-                    Boolean(quoteError) ||
-                    deliverabilityBlockers.length > 0 ||
-                    !isAddressAvailable
-                  }
-                />
+                <div className="lg:mt-12">
+                  <CheckoutSummary
+                    items={items}
+                    subtotal={subtotal}
+                    shipping={shipping}
+                    total={total}
+                    quote={quoteData}
+                    quoteLoading={quoteLoading}
+                    quoteError={quoteError}
+                    loading={checkoutActionLoading}
+                    paymentOptions={paymentOptions}
+                    selectedPaymentProvider={paymentProvider}
+                    onPaymentProviderChange={setPaymentProvider}
+                    getPaymentProviderLabel={getPaymentProviderLabel}
+                    disabled={
+                      Boolean(quoteError) ||
+                      deliverabilityBlockers.length > 0 ||
+                      !isAddressAvailable
+                    }
+                  />
+                </div>
               </OrderDetailAside>
             </OrderDetailLayout>
           </form>
-        </ApiState>
-      </div>
+        </PageContainer>
+      </ApiState>
     </AppErrorBoundary>
   );
 }
