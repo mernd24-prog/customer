@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { ArrowRight, ThumbsUp } from "lucide-react";
-import CustomDropdown from "../../../components/ui/CustomDropdown";
 import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
@@ -14,6 +13,7 @@ import {
   resetSubmitState,
 } from "../../../features/review/reviewSlice";
 import { fetchMyOrders } from "../../orders/slices/orderSlice";
+import { getReviewProductId } from "../../orders/utils/orderItems";
 import ReviewImageUploader from "./ReviewImageUploader";
 import ReviewMediaLightbox from "./ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
@@ -144,7 +144,8 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               type="button"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
-              className="block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white hover:opacity-90 transition-opacity"
+              aria-label={`Open review photo ${index + 1}${index === 4 && media.length > 5 ? `, and ${media.length - 5} more` : ""}`}
+              className="relative block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-opacity hover:opacity-90"
             >
               <img
                 loading="lazy"
@@ -154,6 +155,11 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
                 alt={`Review media ${index + 1}`}
                 className="h-full w-full object-cover"
               />
+              {index === 4 && media.length > 5 && (
+                <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-xs font-bold text-white">
+                  +{media.length - 5}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -167,15 +173,16 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       )}
 
       <div className="mt-3 flex items-center justify-between gap-4">
-        <p className="text-sm font-medium text-[#1F2430]/80">
-          {name}
-          {(dateStr || review.date) && (
-            <span className="font-normal text-[#737373]">
-              {" "}
-              | {dateStr || review.date}
-            </span>
-          )}
-        </p>
+        <div className="min-w-0">
+          <p className="break-words text-sm font-medium text-[#1F2430]/80">
+            {name}
+            {(dateStr || review.date) && (
+              <span className="font-normal text-[#737373]">
+                {" "}| {dateStr || review.date}
+              </span>
+            )}
+          </p>
+        </div>
 
         <button
           type="button"
@@ -367,13 +374,6 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
 
 // ── Main section ──────────────────────────────────────────────────────────────
 
-const SORT_OPTIONS = [
-  { value: "newest", label: "Most Recent" },
-  { value: "helpful", label: "Most Helpful" },
-  { value: "highest", label: "Highest Rated" },
-  { value: "lowest", label: "Lowest Rated" },
-];
-
 const EMPTY_REVIEWS = [];
 
 function getRatingBreakdown(stats) {
@@ -448,17 +448,59 @@ export default function ProductReviewsSection({ productId, product }) {
 
   const orderState = useSelector((s) => s.order);
   const allOrders = orderState.list || [];
-  const deliveredOrders = allOrders.filter(
-    (o) =>
-      (["delivered", "fulfilled", "completed"].includes(o.status) && o.items) ||
-      [].some(
-        (item) =>
-          String(item.productId || item.product_id) === String(productId),
-      ),
+  const deliveredStatuses = new Set([
+    "delivered",
+    "fulfilled",
+    "completed",
+    "delivered_verified",
+  ]);
+  const productIds = new Set(
+    [
+      productId,
+      product?.id,
+      product?._id,
+      product?.productId,
+      product?.product_id,
+    ]
+      .filter(Boolean)
+      .map(String),
   );
+  const deliveredOrders = allOrders.filter((order) => {
+    const orderItems = [
+      ...(Array.isArray(order.items) ? order.items : []),
+      ...(Array.isArray(order.orderItems) ? order.orderItems : []),
+      ...(Array.isArray(order.order_items) ? order.order_items : []),
+    ];
+    const productItems = orderItems.filter((item) =>
+      productIds.has(String(getReviewProductId(item))),
+    );
+    if (!productItems.length) return false;
+
+    const orderIsDelivered = [
+      order.status,
+      order.deliveryStatus,
+      order.delivery_status,
+    ].some((status) => deliveredStatuses.has(String(status || "").toLowerCase()));
+    const itemIsDelivered = productItems.some(
+      (item) =>
+        item.deliveredAt ||
+        item.delivered_at ||
+        deliveredStatuses.has(
+          String(
+            item.deliveryStatus ||
+              item.delivery_status ||
+              item.status ||
+              item.effective_status ||
+              "",
+          ).toLowerCase(),
+        ),
+    );
+
+    return orderIsDelivered || itemIsDelivered;
+  });
 
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState("newest");
+  const sort = "newest";
   const [ratingFilter, setRatingFilter] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const LIMIT = 5;
@@ -478,7 +520,7 @@ export default function ProductReviewsSection({ productId, product }) {
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(fetchMyProductReview({ productId }));
-      dispatch(fetchMyOrders({ params: { limit: 4, page: 1 } }));
+      dispatch(fetchMyOrders({ params: { limit: 20, page: 1 } }));
     }
   }, [dispatch, productId, isLoggedIn]);
 
@@ -543,25 +585,15 @@ export default function ProductReviewsSection({ productId, product }) {
     ];
   }, [bucket.loading, hasApiReviews, items, myReview, ratingFilter, sort]);
   const hasOwnPublishedReview = myReview?.status === "published";
-  const previewReviews = displayReviews.slice(
-    0,
-    hasOwnPublishedReview && sort === "newest" ? 3 : 2,
-  );
+  const previewReviews = displayReviews.slice(0, 1);
 
   const displayRatingBreakdown = getRatingBreakdown(stats);
-  const hasPublishedReviews =
-    displayTotal > 0 ||
-    Number(stats?.count || 0) > 0 ||
-    displayReviews.length > 0 ||
-    hasOwnPublishedReview;
-
-  if (!hasPublishedReviews) return null;
-
+  const hasReviewSummary = displayReviewCount > 0 || displayTotal > 0;
   return (
     <section id="reviews" className="w-full mt-8 lg:mt-12">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+      <div className={`flex flex-col gap-6 ${hasReviewSummary ? "lg:flex-row lg:items-start lg:gap-8" : ""}`}>
         {/* Left Sidebar */}
-        <aside className="w-full lg:w-[280px] xl:w-[300px] shrink-0">
+        {hasReviewSummary && <aside className="w-full shrink-0 lg:w-[280px] xl:w-[300px]">
           <div className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
             <div className="px-5 py-3.5 bg-white border-b border-[#E5E7EB]">
               <h2 className="text-base font-bold text-[#111827]">
@@ -569,26 +601,38 @@ export default function ProductReviewsSection({ productId, product }) {
               </h2>
             </div>
 
-            <div className="p-4 sm:p-5">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1">
-                  <IoIosStar className="text-2xl text-[#CE9F2D]" />
-                  <span className="text-3xl font-extrabold text-[#1B1D60]">
-                    {Number(displayAvgRating).toFixed(1)}
+            <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 p-4 sm:p-5 lg:block">
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    {displayReviewCount > 0 && (
+                      <IoIosStar className="text-2xl text-[#CE9F2D]" />
+                    )}
+                    <span className="text-3xl font-extrabold text-[#1B1D60]">
+                      {displayReviewCount > 0
+                        ? Number(displayAvgRating).toFixed(1)
+                        : "—"}
+                    </span>
+                  </div>
+                  <span className="mb-1 self-end text-xs font-semibold text-[#6F7480]">
+                    / 5.0
                   </span>
                 </div>
-                <span className="text-xs font-semibold text-[#6F7480] self-end mb-1">
-                  / 5.0
-                </span>
+                <p className="mt-1 text-xs font-semibold text-[#6F7480]">
+                  {displayReviewCount > 0 || displayTotal > 0 ? (
+                    <>
+                      {displayReviewCount}{" "}
+                      {displayReviewCount === 1 ? "Rating" : "Ratings"} &amp;{" "}
+                      {displayTotal} {displayTotal === 1 ? "Review" : "Reviews"}
+                    </>
+                  ) : (
+                    "No ratings yet"
+                  )}
+                </p>
               </div>
-              <p className="mt-1 text-xs font-semibold text-[#6F7480]">
-                {displayReviewCount}{" "}
-                {displayReviewCount === 1 ? "Rating" : "Ratings"} &amp;{" "}
-                {displayTotal} {displayTotal === 1 ? "Review" : "Reviews"}
-              </p>
 
               {/* Rating Bars */}
-              <div className="mt-4 space-y-2">
+              <div className="space-y-2 lg:mt-4">
                 {displayRatingBreakdown.map((item, index) => {
                   const rating = item.rating || 5 - index;
                   return (
@@ -635,14 +679,14 @@ export default function ProductReviewsSection({ productId, product }) {
               )}
             </div>
           </div>
-        </aside>
+        </aside>}
 
         {/* Right Section */}
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Top Bar: Heading + Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-2 border-b border-[#E7D9B8]">
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-[#1B1D60]">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E7D9B8] pb-3 pt-3.5 mb-2">
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+              <h3 className="whitespace-nowrap text-sm font-bold text-[#1B1D60] sm:text-base">
                 Customer Reviews
               </h3>
               {displayTotal > 0 && (
@@ -657,30 +701,25 @@ export default function ProductReviewsSection({ productId, product }) {
               )}
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* {canWriteReview && (
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              {canWriteReview ? (
                 <button
                   type="button"
                   onClick={() => setShowForm((prev) => !prev)}
-                  className="rounded-lg bg-[#1B1D60] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#15115d] transition-colors shadow-xs"
+                  className="min-h-9 rounded-lg bg-[#1B1D60] px-3 py-1.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-[#15115d]"
                 >
                   {showForm ? "Cancel Review" : "Write a Review"}
                 </button>
-              )} */}
+              ) : !isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={openAuthModal}
+                  className="min-h-9 rounded-lg border border-[#1B1D60] px-3 py-1.5 text-xs font-bold text-[#1B1D60] transition-colors hover:bg-[#F4F4FA]"
+                >
+                  Sign in to review
+                </button>
+              ) : null}
 
-              {displayTotal > 0 && (
-                <CustomDropdown
-                  className="w-[150px]"
-                  buttonClassName="h-8 text-xs rounded-lg border-[#E7D9B8] font-semibold text-[#1B1D60] bg-white hover:bg-[#FAF6EE]"
-                  options={SORT_OPTIONS}
-                  value={sort}
-                  onChange={(val) => {
-                    setSort(val);
-                    setPage(1);
-                  }}
-                  placeholder="Most Recent"
-                />
-              )}
             </div>
           </div>
 
@@ -730,7 +769,7 @@ export default function ProductReviewsSection({ productId, product }) {
 
           {/* Empty State */}
           {!bucket.loading && displayReviews.length === 0 && (
-            <div className="flex flex-1 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center">
+            <div className="flex min-h-[240px] w-full flex-1 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center sm:min-h-[280px]">
               <div className="mx-auto flex w-full max-w-[320px] flex-col items-center">
                 <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D]/15">
                   <img
@@ -742,12 +781,13 @@ export default function ProductReviewsSection({ productId, product }) {
                     loading="lazy"
                   />
                 </div>
-                <p className="mt-3 text-base font-bold text-[#1B1D60]">
-                  No Reviews Yet
+                <p className="mt-3 text-base font-bold text-[#1B1D60] sm:text-lg">
+                  Be the First to Review
                 </p>
-                <p className="mt-1 text-xs text-[#6F7480]">
-                  Customer reviews will appear here once verified buyers share
-                  their feedback.
+                <p className="mt-1 text-sm text-[#6F7480]">
+                  {canWriteReview
+                    ? "Your feedback can help other shoppers choose with confidence."
+                    : "Verified customer reviews will appear here. Check back after shoppers share their experience."}
                 </p>
               </div>
             </div>

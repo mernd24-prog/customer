@@ -102,8 +102,11 @@ export function useWishlistActions() {
 
   const moveWishlistToCart = useCallback(
     (product, quantity = 1) => {
-      const move = async (currentCart) => {
+      const move = async () => {
         if (!(await checkSavedAddressServiceability(product))) return null;
+        // Read the latest Redux value at click time so a stale hook closure
+        // cannot overwrite cart lines or wishlist changes from a recent update.
+        const currentCart = store.getState().cart.current || cart || {};
         const withCartItem = addProductToCartPayload(currentCart, product, quantity);
         const result = await run(
           dispatch,
@@ -119,10 +122,10 @@ export function useWishlistActions() {
       };
 
       if (!user) {
-        openGuestOtpModal(() => move(store.getState().cart.current || {}));
+        openGuestOtpModal(move);
         return null;
       }
-      return move(cart);
+      return move();
     },
     [cart, checkSavedAddressServiceability, dispatch, openGuestOtpModal, run, user],
   );

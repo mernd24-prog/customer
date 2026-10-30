@@ -235,7 +235,7 @@ export default function CartItemCard({
                 discount={discountPct}
                 priceClassName="text-base sm:text-lg font-extrabold text-[#001F3F]"
                 mrpClassName="text-xs sm:text-sm font-semibold text-[#737373]"
-                discountClassName="text-xs font-semibold"
+                discountClassName="bg-emerald-50 text-emerald-700 text-xs font-semibold"
               />
 
               {atMaxQty && !isOutOfStock && (

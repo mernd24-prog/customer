@@ -22,19 +22,34 @@ export default function ProductPriceBlock({
         </span>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-2.5">
-        <span className="text-2xl sm:text-3xl font-extrabold text-[#212121]">
+      <div className={cn("flex flex-wrap items-center gap-2.5", priceClassName)}>
+        <span
+          className={cn(
+            "text-2xl font-extrabold text-[#212121] sm:text-3xl",
+            priceClassName,
+          )}
+        >
           {formatMoney(price, currency)}
         </span>
 
         {mrp && mrp > price && (
-          <span className="text-sm sm:text-base font-normal text-[#878787] line-through">
+          <span
+            className={cn(
+              "text-[75%] font-normal text-[#878787] line-through",
+              mrpClassName,
+            )}
+          >
             {formatMoney(mrp, currency)}
           </span>
         )}
 
         {discount > 0 && (
-          <span className="inline-flex items-center rounded-full bg-[#FDECEC] px-2.5 py-1 text-xs font-bold text-[#D32F2F]">
+          <span
+            className={cn(
+              "inline-flex items-center rounded-full bg-[#FDECEC] px-2.5 py-1 text-xs font-bold text-[#D32F2F]",
+              discountClassName,
+            )}
+          >
             {discount}% OFF
           </span>
         )}

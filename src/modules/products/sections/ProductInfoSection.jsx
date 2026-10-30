@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { X, Star, ShieldCheck, ChevronDown, ChevronUp } from "lucide-react";
+import { X, ShieldCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { formatPageTitle } from "../../../utils/common";
 import {
   getProductTitle,
@@ -129,9 +129,9 @@ export default function ProductInfoSection({
     if (hasDetails) list.push({ key: "specs", label: "Specifications" });
     if (hasDescription) list.push({ key: "desc", label: "Description" });
     list.push({ key: "warranty", label: "Warranty & Returns" });
-    if (product.seller || product.sellerName)
-      list.push({ key: "seller", label: "Manufacturer / Seller" });
     if (hasCatalogueImages) list.push({ key: "catalogue", label: "Catalogue" });
+    if (product.seller || product.sellerName)
+      list.push({ key: "seller", label: "Seller Information" });
     return list;
   }, [hasDetails, hasDescription, product.seller, product.sellerName, hasCatalogueImages]);
 
@@ -159,7 +159,7 @@ export default function ProductInfoSection({
           <h3 className="text-base sm:text-lg font-bold text-ink">
             All details
           </h3>
-          <p className="text-xs sm:text-sm text-muted mt-0.5">
+          <p className={`overflow-hidden text-xs sm:text-sm text-muted transition-all duration-300 ease-in-out ${cardOpen ? "mt-0 max-h-0 opacity-0" : "mt-0.5 max-h-8 opacity-100"}`}>
             Features, specifications, description and more
           </p>
         </div>
@@ -168,13 +168,20 @@ export default function ProductInfoSection({
         </div>
       </button>
 
-      {cardOpen && (
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${cardOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+        aria-hidden={!cardOpen}
+        inert={!cardOpen}
+      >
+        <div className="min-h-0 min-w-0 overflow-hidden">
         <div className="min-w-0 p-4 sm:p-5 border-t border-border">
           {/* Keep tabs on one row; use the shared scroll controls on overflow. */}
           <HorizontalScrollControls
             className="min-w-0 border-b border-border pb-4"
             viewportClassName="gap-2.5 py-1"
-            buttonClassName="top-[calc(50%-8px)]"
+            showButtons={false}
+            wheelToScroll
+            dragToScroll
           >
             {tabs.map((tab) => {
               const isActive = activeTab === tab.key;
@@ -182,7 +189,14 @@ export default function ProductInfoSection({
                 <button
                   key={tab.key}
                   type="button"
-                  onClick={() => setActiveTab(tab.key)}
+                  onClick={(event) => {
+                    setActiveTab(tab.key);
+                    event.currentTarget.scrollIntoView({
+                      behavior: "smooth",
+                      block: "nearest",
+                      inline: "start",
+                    });
+                  }}
                   className={`shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                     isActive
                       ? "bg-navy text-white shadow-xs"
@@ -207,16 +221,16 @@ export default function ProductInfoSection({
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1">
                 {visibleSpecs.map(([key, value]) => (
                   <div
                     key={key}
-                    className="flex flex-col rounded-lg bg-surface-soft p-3.5 border border-border transition-colors hover:border-gold"
+                    className="flex min-w-0 items-baseline justify-between gap-4 border-b border-border/70 py-3 last:border-b-0"
                   >
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+                    <span className="shrink-0 text-xs font-medium text-muted sm:text-sm">
                       {formatPageTitle(key)}
                     </span>
-                    <span className="text-sm sm:text-base font-bold text-navy mt-1 break-words">
+                    <span className="min-w-0 break-words text-right text-sm font-semibold text-navy sm:text-base">
                       {Array.isArray(value) ? value.join(", ") : String(value)}
                     </span>
                   </div>
@@ -246,7 +260,7 @@ export default function ProductInfoSection({
               <h4 className="text-sm font-bold text-navy mb-3 uppercase tracking-wider">
                 Product Description
               </h4>
-              <div className="rounded-lg bg-surface-soft p-4 sm:p-5 border border-border">
+              <div className="border-0 bg-transparent p-0">
                 <ProductDescription
                   content={decodeHtml(
                     effectiveDescription ||
@@ -265,33 +279,33 @@ export default function ProductInfoSection({
                 Warranty &amp; Return Information
               </h4>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
-                <div className="flex flex-col rounded-lg bg-surface-soft p-4 border border-border">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+              <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+                <div className="flex min-w-0 flex-col gap-1 border-b border-border/70 py-3">
+                  <span className="text-xs font-medium text-muted">
                     Warranty Period
                   </span>
-                  <span className="text-base font-bold text-navy mt-1 break-words">
+                  <span className="text-sm font-semibold text-navy break-words sm:text-base">
                     {hasWarranty
                       ? capitalizeFirst(warrantyPeriod || "Standard Warranty")
                       : "No Warranty"}
                   </span>
                   {effectiveWarranty.type && (
-                    <span className="text-xs text-muted mt-1">
+                    <span className="text-xs text-muted">
                       Type: {capitalizeFirst(effectiveWarranty.type.replace(/_/g, " "))}
                     </span>
                   )}
                 </div>
 
-                <div className="flex flex-col rounded-lg bg-surface-soft p-4 border border-border">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+                <div className="flex min-w-0 flex-col gap-1 border-b border-border/70 py-3">
+                  <span className="text-xs font-medium text-muted">
                     Return Window
                   </span>
-                  <span className="text-base font-bold text-navy mt-1 break-words">
+                  <span className="text-sm font-semibold text-navy break-words sm:text-base">
                     {returnPolicy.returnable === false
                       ? "Non-Returnable"
                       : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7} Days Return Policy`}
                   </span>
-                  <span className="text-xs text-muted mt-1">
+                  <span className="text-xs text-muted">
                     {returnPolicy.inspectionRequired !== false
                       ? "Physical inspection required upon return"
                       : "Direct easy return"}
@@ -300,12 +314,12 @@ export default function ProductInfoSection({
               </div>
 
               {effectiveWarranty.coveredInWarranty && (
-                <div className="rounded-lg bg-surface-soft p-4 border border-border">
-                  <span className="text-xs font-bold uppercase tracking-wider text-navy block mb-1">
+                <div className="border-t border-border/70 pt-3">
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">
                     Covered in Warranty
                   </span>
                   <div
-                    className="text-sm text-[#4E4E4E] leading-relaxed"
+                    className="text-sm leading-relaxed text-ink"
                     dangerouslySetInnerHTML={{
                       __html: decodeHtml(effectiveWarranty.coveredInWarranty),
                     }}
@@ -317,57 +331,54 @@ export default function ProductInfoSection({
 
           {/* ── Tab 4: Manufacturer / Seller Info ── */}
           {activeTab === "seller" && (
-            <div className="pt-4 space-y-3">
-              <h4 className="text-sm font-bold text-navy uppercase tracking-wider">
-                Seller &amp; Origin Details
-              </h4>
+            <div className="pt-4">
+              <section className="overflow-hidden rounded-lg border border-[#E7D9B8] bg-white">
+                <h4 className="bg-[#EAD8B3] px-4 py-3 text-base font-bold text-ink sm:px-5">
+                  Seller Information
+                </h4>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
-                <div className="rounded-lg bg-surface-soft p-4 border border-border">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted">
-                    Store / Seller Name
-                  </span>
-                  <span className="text-base font-bold text-navy mt-1 block">
-                    {product.seller?.name ||
-                      product.seller?.storeName ||
-                      product.sellerName ||
-                      "SamGlobal Verified Seller"}
-                  </span>
-                </div>
+                <div className="grid grid-cols-1 divide-y divide-[#E9E1D3] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                  <div className="px-4 py-4 sm:px-5 sm:py-5">
+                    <span className="block text-xs font-medium text-muted">Store Name</span>
+                    <span className="mt-1.5 block break-words text-sm font-bold text-ink sm:text-base">
+                      {product.seller?.storeName ||
+                        product.seller?.name ||
+                        product.sellerName ||
+                        "SamGlobal Seller"}
+                    </span>
+                  </div>
 
-                <div className="rounded-lg bg-surface-soft p-4 border border-border">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted">
-                    Seller Rating
-                  </span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="inline-flex items-center gap-1 rounded bg-[#388E3C] px-2 py-0.5 text-white font-bold text-xs">
-                      <span>
-                        {Number(
-                          product.seller?.rating ??
-                            product.seller?.averageRating ??
-                            4.5,
-                        ).toFixed(1)}
-                      </span>
-                      <Star size={11} className="fill-white" />
-                    </div>
-                    <span className="text-xs text-muted">
-                      1+ Year on SamGlobal
+                  <div className="px-4 py-4 sm:px-5 sm:py-5">
+                    <span className="block text-xs font-medium text-muted">Seller Rating</span>
+                    <span className="mt-1.5 block text-sm font-bold text-ink sm:text-base">
+                      {Number.isFinite(Number(product.seller?.rating ?? product.seller?.averageRating)) &&
+                      Number(product.seller?.rating ?? product.seller?.averageRating) > 0
+                        ? `${Number(product.seller?.rating ?? product.seller?.averageRating).toFixed(1)} ★`
+                        : "No Rating"}
+                    </span>
+                  </div>
+
+                  <div className="px-4 py-4 sm:px-5 sm:py-5">
+                    <span className="block text-xs font-medium text-muted">Joined SamGlobal</span>
+                    <span className="mt-1.5 block text-sm font-bold text-ink sm:text-base">
+                      {product.seller?.joinAt && !Number.isNaN(Date.parse(product.seller.joinAt))
+                        ? new Date(product.seller.joinAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : "Seller on SamGlobal"}
                     </span>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-3 rounded-lg bg-[#F1FBF3] p-4 border border-[#C6ECD2] text-[#1E8A38]">
-                <ShieldCheck size={22} className="shrink-0" />
-                <div>
-                  <span className="text-sm font-bold block">
-                    100% Genuine Products &amp; Quality Assured
-                  </span>
-                  <span className="text-xs text-[#4B7C59]">
-                    All items shipped from this seller are verified by SamGlobal quality standards.
-                  </span>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[#E9E1D3] bg-[#FAFCFA] px-4 py-3 text-sm sm:px-5">
+                  <ShieldCheck size={19} className="shrink-0 text-[#16833B]" />
+                  <span className="font-bold text-[#16833B]">Trusted &amp; Verified Seller</span>
+                  <span className="hidden text-[#C8C8C8] sm:inline" aria-hidden="true">•</span>
+                  <span className="text-muted">100% Genuine Products &amp; Quality Assured on SamGlobal</span>
                 </div>
-              </div>
+              </section>
             </div>
           )}
 
@@ -395,7 +406,8 @@ export default function ProductInfoSection({
             </div>
           )}
         </div>
-      )}
+        </div>
+      </div>
 
       {isModalOpen &&
         createPortal(

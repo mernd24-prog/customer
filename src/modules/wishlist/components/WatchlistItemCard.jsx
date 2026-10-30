@@ -56,8 +56,15 @@ export function WatchlistItemCard({
     : "";
 
   const availableStock = getProductAvailableStock(product);
+  const selectedVariant = product?.selectedVariant;
+  const selectedVariantIsInactive =
+    selectedVariant?.status && selectedVariant.status !== "active";
   const isInStock =
-    typeof product?.inStock === "boolean"
+    selectedVariantIsInactive
+      ? false
+      : selectedVariant && availableStock !== null
+        ? availableStock > 0
+        : typeof product?.inStock === "boolean"
       ? product.inStock
       : typeof product?.isInStock === "boolean"
         ? product.isInStock

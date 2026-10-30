@@ -8,8 +8,8 @@ import {
   fetchRecommendations,
 } from "../../../features/recommendation/recommendationSlice";
 import {
-  fetchRelatedProducts,
   fetchCrossSellProducts,
+  fetchRelatedProducts,
 } from "../slices/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../../features/analytics/analyticsSlice";
 import {
@@ -77,7 +77,6 @@ export function useProductDetailController(
   const warrantyState = useSelector((s) => s.warranty);
   const dynamicState = useSelector((s) => s.dynamicPricing);
   const relatedState = useSelector((s) => s.relatedProducts);
-  const crossSellState = useSelector((s) => s.relatedProducts); // Usually these share the same slice state
   const user = useSelector((s) => s.auth.current);
 
   const userId = user?.id || user?._id || user?.userId || user?.email;
@@ -233,11 +232,13 @@ export function useProductDetailController(
     dispatch(
       fetchRelatedProducts({
         productId: productRequestIdentifier || loadedProductId,
+        params: { limit: 100 },
       }),
     ).catch(() => {});
     dispatch(
       fetchCrossSellProducts({
         productId: productRequestIdentifier || loadedProductId,
+        params: { limit: 12 },
       }),
     ).catch(() => {});
   }, [dispatch, loadedProductId, productRequestIdentifier]);
@@ -400,12 +401,28 @@ export function useProductDetailController(
     ...flattenSpecifications(variantSpecifications),
   };
 
+  const getExplicitAvailability = (item) =>
+    [item?.inStock, item?.isInStock, item?.isAvailable].find(
+      (value) => typeof value === "boolean",
+    );
+  const isOutOfStockStatus = (item) =>
+    [item?.stockStatus, item?.availability, item?.inventoryStatus]
+      .filter((value) => typeof value === "string")
+      .some((value) =>
+        ["out_of_stock", "outofstock", "sold_out", "unavailable"].includes(
+          value.trim().toLowerCase().replace(/[\s-]+/g, "_"),
+        ),
+      );
+  const variantAvailability = getExplicitAvailability(selectedVariant);
+  const productAvailability = getExplicitAvailability(product);
   const inStock =
     availableStock != null
       ? availableStock > 0
-      : typeof product?.inStock === "boolean"
-        ? product.inStock
-        : true;
+      : typeof variantAvailability === "boolean"
+        ? variantAvailability
+        : typeof productAvailability === "boolean"
+          ? productAvailability
+          : !isOutOfStockStatus(selectedVariant) && !isOutOfStockStatus(product);
 
   const quantityAtStockLimit =
     availableStock != null ? quantity >= effectiveMaxStock : false;
@@ -480,42 +497,27 @@ export function useProductDetailController(
     relatedState.relatedByProduct[relatedLookupKey]?.items ||
     relatedState.relatedByProduct[loadedProductId]?.items ||
     [];
-
   const rawCrossSell =
-    crossSellState.crossSellByProduct[relatedLookupKey]?.items ||
-    crossSellState.crossSellByProduct[loadedProductId]?.items ||
+    relatedState.crossSellByProduct[relatedLookupKey]?.items ||
+    relatedState.crossSellByProduct[loadedProductId]?.items ||
     [];
 
-  const catalogList = Array.isArray(productState.list) ? productState.list : [];
+  const categoryRelatedProducts = useMemo(
+    () => {
+      const products = [];
+      const seenIds = new Set([String(loadedProductId)]);
 
-  const crossSellProducts = useMemo(() => {
-    const list = [...rawCrossSell];
-    if (list.length < 5) {
-      rawRelated.forEach((item) => {
-        if (
-          String(getProductId(item)) !== String(loadedProductId) &&
-          !list.some(
-            (p) => String(getProductId(p)) === String(getProductId(item)),
-          )
-        ) {
-          list.push(item);
-        }
+      [...rawRelated, ...rawCrossSell].forEach((item) => {
+        const id = String(getProductId(item) || "");
+        if (!id || seenIds.has(id)) return;
+        seenIds.add(id);
+        products.push(item);
       });
-    }
-    if (list.length < 5) {
-      catalogList.forEach((item) => {
-        if (
-          String(getProductId(item)) !== String(loadedProductId) &&
-          !list.some(
-            (p) => String(getProductId(p)) === String(getProductId(item)),
-          )
-        ) {
-          list.push(item);
-        }
-      });
-    }
-    return list.slice(0, 5);
-  }, [rawCrossSell, rawRelated, catalogList, loadedProductId]);
+
+      return products;
+    },
+    [rawRelated, rawCrossSell, loadedProductId],
+  );
 
   return {
     variants,
@@ -572,7 +574,7 @@ export function useProductDetailController(
     warranty: warrantyState.current,
     dynamicState,
     relatedProducts: rawRelated,
-    crossSellProducts,
+    categoryRelatedProducts,
     recommendedProducts: rawRelated.filter(
       (p) => String(getProductId(p) || "") !== String(loadedProductId || ""),
     ),

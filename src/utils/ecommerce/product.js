@@ -503,8 +503,22 @@ export function getProductImage(product) {
 }
 
 export function getProductBrandName(product) {
+  const attributeBrandValues = [
+    product?.attributes,
+    product?.specifications,
+    product?.selectedVariant?.attributes,
+    product?.selectedVariant?.specifications,
+  ].flatMap((attributes) =>
+    attributes && typeof attributes === "object"
+      ? Object.entries(attributes)
+          .filter(([key]) => /^brand(?:\s*name)?$/i.test(key.trim()))
+          .map(([, value]) => value)
+      : [],
+  );
   const candidates = [
     product?.brandName,
+    product?.selectedVariant?.brandName,
+    product?.selectedVariant?.brand,
     product?.brandRef?.name,
     product?.brandRef?.title,
     product?.brandRef?.label,
@@ -512,15 +526,22 @@ export function getProductBrandName(product) {
     product?.brand?.title,
     product?.brand?.label,
     product?.brand?.brandName,
+    product?.brand?.value,
     product?.metadata?.brandName,
     product?.attributes?.brand,
+    ...attributeBrandValues,
     product?.manufacturer,
     product?.vendor,
     product?.brand,
   ];
   return candidates
-    .filter((value) => typeof value === "string")
-    .map((value) => value.trim())
+    .map((value) =>
+      typeof value === "string"
+        ? value.trim()
+        : value && typeof value === "object"
+          ? String(value.name || value.value || value.label || value.title || "").trim()
+          : "",
+    )
     .find((label) => label && !/^[a-f\d]{24}$/i.test(label)) || "";
 }
 

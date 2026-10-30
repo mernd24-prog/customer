@@ -25,6 +25,7 @@ export default function Breadcrumbs({
   dark = false,
   copyLastItem = false,
   copyValue = "",
+  lastItemOnNewLineMobile = false,
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -134,8 +135,22 @@ export default function Breadcrumbs({
         return (
           <span
             key={`${item.label}-${index}`}
-            className="inline-flex min-w-0 items-center gap-1.5"
+            className={cn(
+              "inline-flex min-w-0 items-center gap-1.5",
+              isLast && lastItemOnNewLineMobile &&
+                "basis-full mt-1 sm:basis-auto sm:mt-0",
+            )}
           >
+            {index > 0 && (
+              <IoIosArrowForward
+                className={cn(
+                  "h-3.5 w-3.5 shrink-0",
+                  isDarkBg ? "text-white/70" : "text-[#2E2E2E]",
+                  separatorClassName,
+                )}
+                aria-hidden="true"
+              />
+            )}
             {item.href && !isLast ? (
               <Link
                 to={item.href}
@@ -187,18 +202,6 @@ export default function Breadcrumbs({
               </span>
             )}
 
-            {!isLast && (
-              <IoIosArrowForward
-                className={cn(
-                  "h-3.5 w-3.5 shrink-0",
-                  isDarkBg
-                    ? "text-white/70"
-                    : "text-[#2E2E2E]",
-                  separatorClassName,
-                )}
-                aria-hidden="true"
-              />
-            )}
           </span>
         );
       })}

@@ -240,6 +240,7 @@ export default function ProductCard({
   const [isHovered, setIsHovered] = useState(false);
 
   const swiperRef = useRef(null);
+  const hoverIntervalRef = useRef(null);
 
   const allImages = useMemo(() => {
     const list = [];
@@ -305,8 +306,8 @@ export default function ProductCard({
 
   useEffect(() => {
     if (!isHovered || allImages.length <= 1) {
-      // Reset to first slide smoothly when not hovered
-      swiperRef.current?.slideTo(0, 300);
+      // Return to the primary image after the pointer leaves the card.
+      swiperRef.current?.slideToLoop(0, 650);
       setActiveImageIndex(0);
       return;
     }
@@ -319,12 +320,24 @@ export default function ProductCard({
       }
     });
 
-    // Advance slides using slideNext() on an interval
-    const interval = setInterval(() => {
-      swiperRef.current?.slideNext(400);
-    }, 1300);
+    // Cycle through product images while the card is hovered.
+    const startDelay = setTimeout(() => {
+      const interval = setInterval(() => {
+        const swiper = swiperRef.current;
+        if (!swiper || swiper.destroyed) return;
 
-    return () => clearInterval(interval);
+        const nextIndex = (swiper.realIndex + 1) % allImages.length;
+        swiper.slideToLoop(nextIndex, 650);
+      }, 1500);
+
+      hoverIntervalRef.current = interval;
+    }, 350);
+
+    return () => {
+      clearTimeout(startDelay);
+      clearInterval(hoverIntervalRef.current);
+      hoverIntervalRef.current = null;
+    };
   }, [isHovered, allImages]);
 
   const activeImage = allImages[activeImageIndex] || image;
@@ -508,6 +521,8 @@ export default function ProductCard({
    */
   return (
     <article
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border border-[#EAE2D3] bg-white transition-all duration-300 hover:border-[#CE9F2D] hover:shadow-[0_4px_16px_rgba(27,29,96,0.08)]",
         isFeatured && "border-[#CE9F2D]/60 shadow-[0_2px_8px_rgba(206,159,45,0.08)]",
@@ -526,7 +541,7 @@ export default function ProductCard({
           }
           onClick={handleWishlist}
           className={cn(
-            "absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-xs border border-black/5 transition-all duration-200 hover:scale-110 active:scale-95 hover:bg-white",
+            "absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-xs border border-black/5 transition-all duration-300 ease-out hover:scale-[1.03] active:scale-95 hover:bg-white",
             isWishlisted
               ? "text-rose-500 bg-rose-50/90 border-rose-200"
               : "text-[#1B1D60] hover:text-rose-500",
@@ -567,14 +582,12 @@ export default function ProductCard({
         {/* IMAGE CONTAINER (The Bear House Portrait Aspect Ratio, clean, fixed & elegant) */}
         <div
           className="relative aspect-[4/5] max-h-[290px] sm:max-h-[310px] w-full cursor-pointer overflow-hidden rounded-t-lg bg-[#FAF8F5]"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
         >
           {allImages.length > 0 ? (
             <Swiper
               slidesPerView={1}
               spaceBetween={0}
-              speed={400}
+              speed={700}
               loop={allImages.length > 1}
               allowTouchMove={allImages.length > 1}
               simulateTouch
@@ -598,7 +611,7 @@ export default function ProductCard({
                       alt=""
                       width="350"
                       height="350"
-                      className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105 will-change-transform"
+                      className="h-full w-full object-cover object-top transition-transform duration-700 ease-in-out group-hover:scale-[1.02] will-change-transform"
                       loading={idx === 0 ? "eager" : "lazy"}
                       decoding="async"
                       onError={handleImageError}

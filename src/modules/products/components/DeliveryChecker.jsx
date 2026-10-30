@@ -20,6 +20,7 @@ export default function DeliveryChecker({
   productId: initialProductId,
   onResultChange,
   standalone = false,
+  compactMobile = false,
 }) {
   const dispatch = useDispatch();
   const [pincode, setPincode] = useState("");
@@ -127,11 +128,23 @@ export default function DeliveryChecker({
       {/* Trigger Link directly below Quantity Selector */}
       {!standalone && (
         <div className="flex min-w-0 flex-col gap-2">
+          {compactMobile && (
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              disabled={loading}
+              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-border bg-white px-2 text-xs font-semibold text-navy transition-colors hover:border-gold hover:bg-cream disabled:cursor-wait sm:hidden"
+            >
+              {loading ? <Loader2 size={15} className="animate-spin" /> : <MapPin size={15} />}
+              <span className="truncate">{lastCheckedPincode ? "Change pincode" : "Enter pincode"}</span>
+              <ArrowRight size={13} aria-hidden="true" />
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
             disabled={loading}
-            className="flex w-full min-w-0 flex-col items-start gap-3 rounded-lg border border-border bg-surface-soft p-4 text-left transition-colors hover:border-gold hover:bg-cream disabled:cursor-wait sm:flex-row sm:items-center sm:justify-between"
+            className={`w-full min-w-0 flex-col items-start gap-3 rounded-lg border border-border bg-surface-soft p-4 text-left transition-colors hover:border-gold hover:bg-cream disabled:cursor-wait sm:flex-row sm:items-center sm:justify-between ${compactMobile ? "hidden sm:flex" : "flex"}`}
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">

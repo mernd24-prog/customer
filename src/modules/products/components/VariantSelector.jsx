@@ -33,14 +33,25 @@ export default function VariantSelector({
 
     return 0;
   });
-
   return (
-    <div className="flex flex-col gap-4">
-      {sortedVariantOptions.map((option) => (
-        <div key={option.slug} className="w-full">
+    <div className="flex min-w-0 flex-wrap items-start gap-x-6 gap-y-4">
+      {sortedVariantOptions.map((option) => {
+        const isColorOption =
+          option.displayType === "color_swatch" ||
+          option.slug?.toLowerCase().includes("color") ||
+          option.slug?.toLowerCase().includes("colour");
+
+        return (
+        <div
+          key={option.slug}
+          className={`min-w-0 max-w-full ${isColorOption ? "w-full" : "w-fit"}`}
+        >
           <div className="mb-3 flex items-center gap-4">
             <p className="text-lg font-semibold capitalize text-ink">
-              {option.displayType === "color_swatch" ? "Colour" : option.name}:
+              {option.displayType === "color_swatch" ? "Colour" : option.name}{":"}{" "}
+              <span className="text-sm font-medium text-muted">
+                {selectedAttributes[option.slug] || "Choose an option"}
+              </span>
             </p>
 
             {option.name?.toLowerCase() === "size" &&
@@ -74,11 +85,6 @@ export default function VariantSelector({
                   [option.slug]: value,
                 }),
               );
-
-              const isColorOption =
-                option.displayType === "color_swatch" ||
-                option.slug?.toLowerCase().includes("color") ||
-                option.slug?.toLowerCase().includes("colour");
 
               const isComboAvailable =
                 option.slug === "storage" || isColorOption
@@ -157,7 +163,7 @@ export default function VariantSelector({
                         height="400"
                         src={swatchImage}
                         alt={`${value} colour`}
-                        className="h-full w-full object-contain p-3"
+                        className="h-full w-full object-contain p-2"
                         onError={(event) =>
                           applyImageFallback(event, value, "product")
                         }
@@ -239,7 +245,8 @@ export default function VariantSelector({
             })}
           </HorizontalScrollControls>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

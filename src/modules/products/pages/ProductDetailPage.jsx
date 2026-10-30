@@ -19,16 +19,11 @@ import {
 } from "../../../constants";
 
 import ProductPriceBlock from "../components/ProductPriceBlock";
-import ProductStockStatus from "../components/ProductStockStatus";
 import ShowMoreText from "../../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../../components/ui/skeleton/layouts";
 import {
   Star,
   ChevronRight,
-  Clock,
-  RefreshCw,
-  ShieldCheck,
-  Banknote,
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
@@ -80,8 +75,7 @@ export default function ProductDetailPage() {
     isProductTitleTruncated,
     warranty,
     dynamicState,
-    crossSellProducts,
-    recommendedProducts,
+    categoryRelatedProducts,
     isLoggedIn,
     quantity,
     setQuantity,
@@ -199,6 +193,8 @@ export default function ProductDetailPage() {
                 <div className="min-w-0 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+64px)] lg:self-start">
                   <div className="mb-3 min-w-0">
                     <Breadcrumbs
+                      className="gap-x-2.5 gap-y-1.5"
+                      lastItemOnNewLineMobile
                       items={[
                         { label: "Home", href: "/" },
                         ...(product?.parentCategory &&
@@ -254,14 +250,19 @@ export default function ProductDetailPage() {
 
                 <div className="relative flex min-w-0 flex-col gap-5 lg:mt-10">
                   <div className="flex flex-col gap-2">
-                    {brand && (
-                      <Link
-                        to={`/brands/${encodeURIComponent(brand)}`}
-                        className="max-w-full w-fit break-words text-sm font-bold uppercase tracking-widest text-navy transition-colors hover:text-[#CE9F2D]"
-                      >
-                        {capitalizeFirst(brand)}
-                      </Link>
-                    )}
+                    <div className="mt-5 flex min-w-0 items-baseline gap-1.5 text-xs">
+                      <span className="shrink-0 font-medium text-muted">Brand:</span>
+                      {brand ? (
+                        <Link
+                          to={`/brands/${encodeURIComponent(brand)}`}
+                          className="max-w-full break-words font-bold uppercase tracking-wide text-navy transition-colors hover:text-[#CE9F2D]"
+                        >
+                          {capitalizeFirst(brand)}
+                        </Link>
+                      ) : (
+                        <span className="font-medium text-muted">Not specified</span>
+                      )}
+                    </div>
 
                     <h1
                       className={`break-words leading-snug ${
@@ -273,35 +274,27 @@ export default function ProductDetailPage() {
                       <ShowMoreText
                         text={productTitle}
                         mode="lines"
-                        limit={1}
+                        limit={2}
                         buttonClassName="ml-1 border-0 bg-transparent p-0 text-xs font-semibold text-[#CE9F2D] shadow-none outline-none hover:underline"
                       />
                     </h1>
 
                     {/* Rating */}
-                    {shouldShowProductRating && (
-                      <div className="flex flex-wrap items-center gap-2">
-                        {productRatingValue > 0 && (
-                          <div className="inline-flex items-center gap-1 rounded bg-[#388E3C] px-1.5 py-0.5 text-xs font-bold text-white shadow-xs">
-                            <span>{productRatingValue.toFixed(1)}</span>
-                            <Star size={10} className="fill-white" />
-                          </div>
-                        )}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {shouldShowProductRating && productRatingValue > 0 && (
+                        <div className="inline-flex items-center gap-1 rounded bg-[#388E3C] px-1.5 py-0.5 text-xs font-bold text-white shadow-xs">
+                          <span>{productRatingValue.toFixed(1)}</span>
+                          <Star size={10} className="fill-white" />
+                        </div>
+                      )}
 
-                        {productReviewCount > 0 && (
-                          <span className="text-xs font-medium text-[#878787]">
-                            {productReviewCount} reviews
-                          </span>
-                        )}
+                      {shouldShowProductRating && productReviewCount > 0 && (
+                        <span className="text-xs font-medium text-[#878787]">
+                          {productReviewCount} reviews
+                        </span>
+                      )}
 
-                        <ProductStockStatus
-                          inStock={inStock}
-                          selectedVariant={selectedVariant}
-                          product={product}
-                          availableStock={availableStock}
-                        />
-                      </div>
-                    )}
+                    </div>
                   </div>
 
                   {/* Divider */}
@@ -312,8 +305,8 @@ export default function ProductDetailPage() {
                     price={price}
                     mrp={mrp}
                     priceClassName="text-2xl font-extrabold text-[#1B1D60] sm:text-3xl"
-                    mrpClassName="text-sm font-medium text-[#9CA3AF] line-through"
-                    discountClassName="text-xs font-bold"
+                    mrpClassName="font-medium text-[#9CA3AF]"
+                    discountClassName="bg-[#E8F5E9] text-xs font-bold text-[#16833B]"
                     currency={currency}
                     discount={discount}
                     safeDynamicPrice={safeDynamicPrice}
@@ -344,44 +337,120 @@ export default function ProductDetailPage() {
                     />
                   )}
 
-                  {/* Quantity */}
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-xs  uppercase tracking-wider text-[#6F7480] font-bold">
-                      Quantity
-                    </span>
+                  <div className="grid min-w-0 grid-cols-2 items-end gap-3 sm:flex sm:flex-col sm:items-stretch sm:gap-5">
+                    {/* Quantity */}
+                    <div className="flex min-w-0 flex-col gap-1.5">
+                      <span className="text-xs uppercase tracking-wider text-[#6F7480] font-bold">
+                        Quantity
+                      </span>
 
-                    <div className="w-fit">
-                      <QuantitySelector
-                        quantity={quantity}
-                        onIncrease={() =>
-                          setQuantity((currentQuantity) => {
-                            if (!inStock || quantityAtStockLimit) {
-                              return currentQuantity;
-                            }
-                            return currentQuantity + 1;
-                          })
-                        }
-                        onDecrease={() =>
-                          setQuantity((currentQuantity) =>
-                            Math.max(1, currentQuantity - 1),
-                          )
-                        }
-                        max={effectiveMaxStock}
-                        increaseDisabled={!inStock || quantityAtStockLimit}
-                        increaseDisabledLabel={
-                          quantityStockMessage || undefined
-                        }
-                      />
+                      <div className="w-full sm:w-fit">
+                        <QuantitySelector
+                          quantity={quantity}
+                          fullWidth
+                          onIncrease={() =>
+                            setQuantity((currentQuantity) => {
+                              if (!inStock || quantityAtStockLimit) {
+                                return currentQuantity;
+                              }
+                              return currentQuantity + 1;
+                            })
+                          }
+                          onDecrease={() =>
+                            setQuantity((currentQuantity) =>
+                              Math.max(1, currentQuantity - 1),
+                            )
+                          }
+                          max={effectiveMaxStock}
+                          increaseDisabled={!inStock || quantityAtStockLimit}
+                          increaseDisabledLabel={
+                            quantityStockMessage || undefined
+                          }
+                        />
+                      </div>
+
+                      {quantityStockMessage && (
+                        <p className="text-xs font-semibold text-amber-600">
+                          {quantityStockMessage}
+                        </p>
+                      )}
                     </div>
 
-                    {quantityStockMessage && (
-                      <p className="text-xs font-semibold text-amber-600">
-                        {quantityStockMessage}
-                      </p>
-                    )}
+                    {/* Delivery Checker */}
+                    <DeliveryChecker
+                      productId={resolvedProductId}
+                      product={product}
+                      compactMobile
+                      onResultChange={setDeliveryResult}
+                    />
                   </div>
 
-                  {/* Action Buttons */}
+                  {/* Shop with Peace of Mind */}
+                  <div className="overflow-hidden rounded-lg border border-border bg-white shadow-xs">
+                    <button
+                      type="button"
+                      onClick={() => setPeaceOfMindOpen((prev) => !prev)}
+                      className="flex w-full items-center justify-between bg-white px-5 py-4 text-left transition-colors hover:bg-surface-soft"
+                      aria-expanded={peaceOfMindOpen}
+                    >
+                      <div>
+                        <h3 className="text-base font-bold text-ink sm:text-lg">
+                          Shop with peace of mind
+                        </h3>
+                        <p className={`overflow-hidden text-xs text-muted transition-all duration-300 ease-in-out sm:text-sm ${peaceOfMindOpen ? "mt-0 max-h-0 opacity-0" : "mt-0.5 max-h-8 opacity-100"}`}>
+                          Complete care and guarantee for your purchase
+                        </p>
+                      </div>
+
+                      <div className="ml-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cream text-ink transition-colors hover:bg-cream-strong">
+                        {peaceOfMindOpen ? (
+                          <ChevronUp size={18} />
+                        ) : (
+                          <ChevronDown size={18} />
+                        )}
+                      </div>
+                    </button>
+
+                    <div
+                      className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${peaceOfMindOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                      aria-hidden={!peaceOfMindOpen}
+                      inert={!peaceOfMindOpen}
+                    >
+                      <div className="min-h-0 overflow-hidden">
+                        <div className="border-t border-border">
+                          {!deliveryResult && (
+                            <div className="border-b border-border px-4 py-4 sm:px-5">
+                              <ProductServiceBadges
+                                shippingEtaText={shippingEtaText}
+                                staticIsFree={staticIsFree}
+                                staticCharge={staticCharge}
+                                productCodAvailable={productCodAvailable}
+                                productCodDisabled={productCodDisabled}
+                                layout="row"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Product Information */}
+                  <Suspense
+                    fallback={
+                      <div className="mt-4 h-32 animate-pulse rounded-xl bg-gray-100" />
+                    }
+                  >
+                    <ProductInfoSection
+                      detailRows={detailRows}
+                      warranty={warranty}
+                      product={product}
+                      selectedVariant={selectedVariant}
+                      effectiveDescription={productDescription}
+                    />
+                  </Suspense>
+
+                  {/* Keep purchase actions after the complete product information. */}
                   <ProductActionButtons
                     inStock={inStock}
                     product={product}
@@ -405,123 +474,11 @@ export default function ProductDetailPage() {
                       }
                     }}
                   />
-
-                  {/* Delivery Checker */}
-                  <DeliveryChecker
-                    productId={resolvedProductId}
-                    product={product}
-                    onResultChange={setDeliveryResult}
-                  />
-
-                  {/* Service Badges */}
-                  {!deliveryResult && (
-                    <ProductServiceBadges
-                      shippingEtaText={shippingEtaText}
-                      staticIsFree={staticIsFree}
-                      staticCharge={staticCharge}
-                      productCodAvailable={productCodAvailable}
-                      productCodDisabled={productCodDisabled}
-                    />
-                  )}
-
-                  {/* Shop with Peace of Mind */}
-                  <div className="overflow-hidden rounded-lg border border-border bg-white shadow-xs">
-                    <button
-                      type="button"
-                      onClick={() => setPeaceOfMindOpen((prev) => !prev)}
-                      className="flex w-full items-center justify-between bg-white px-5 py-4 text-left transition-colors hover:bg-surface-soft"
-                      aria-expanded={peaceOfMindOpen}
-                    >
-                      <div>
-                        <h3 className="text-base font-bold text-ink sm:text-lg">
-                          Shop with peace of mind
-                        </h3>
-                        <p className="mt-0.5 text-xs text-muted sm:text-sm">
-                          Complete care and guarantee for your purchase
-                        </p>
-                      </div>
-
-                      <div className="ml-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cream text-ink transition-colors hover:bg-cream-strong">
-                        {peaceOfMindOpen ? (
-                          <ChevronUp size={18} />
-                        ) : (
-                          <ChevronDown size={18} />
-                        )}
-                      </div>
-                    </button>
-
-                    {peaceOfMindOpen && (
-                      <div className="grid grid-cols-2 gap-3 border-t border-border p-4 text-center sm:p-5 2xl:grid-cols-4">
-                        <div className="flex flex-col items-center rounded-lg border border-border/70 bg-surface-soft p-3">
-                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
-                            <Clock size={22} className="stroke-[2.2]" />
-                          </div>
-                          <span className="text-xs font-bold text-ink sm:text-sm">
-                            Fast Dispatch
-                          </span>
-                          <span className="mt-0.5 text-xs text-muted">
-                            Within 24-48 hrs
-                          </span>
-                        </div>
-
-                        <div className="flex flex-col items-center rounded-lg border border-border/70 bg-surface-soft p-3">
-                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
-                            <RefreshCw size={22} className="stroke-[2.2]" />
-                          </div>
-                          <span className="text-xs font-bold text-ink sm:text-sm">
-                            Easy Returns
-                          </span>
-                          <span className="mt-0.5 text-xs text-muted">
-                            7-day policy
-                          </span>
-                        </div>
-
-                        <div className="flex flex-col items-center rounded-lg border border-border/70 bg-surface-soft p-3">
-                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
-                            <Banknote size={22} className="stroke-[2.2]" />
-                          </div>
-                          <span className="text-xs font-bold text-ink sm:text-sm">
-                            Cash on Delivery
-                          </span>
-                          <span className="mt-0.5 text-xs text-muted">
-                            Pay on delivery
-                          </span>
-                        </div>
-
-                        <div className="flex flex-col items-center rounded-lg border border-border/70 bg-surface-soft p-3">
-                          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
-                            <ShieldCheck size={22} className="stroke-[2.2]" />
-                          </div>
-                          <span className="text-xs font-bold text-ink sm:text-sm">
-                            100% Genuine
-                          </span>
-                          <span className="mt-0.5 text-xs text-muted">
-                            Quality verified
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Product Information */}
-                  <Suspense
-                    fallback={
-                      <div className="mt-4 h-32 animate-pulse rounded-xl bg-gray-100" />
-                    }
-                  >
-                    <ProductInfoSection
-                      detailRows={detailRows}
-                      warranty={warranty}
-                      product={product}
-                      selectedVariant={selectedVariant}
-                      effectiveDescription={productDescription}
-                    />
-                  </Suspense>
                 </div>
               </div>
 
               {/* Reviews */}
-              <div className="mx-auto mt-10 w-full max-w-5xl">
+              <div className="mt-10 w-full">
                 <Suspense
                   fallback={
                     <div className="h-40 animate-pulse rounded-xl bg-gray-100" />
@@ -544,24 +501,14 @@ export default function ProductDetailPage() {
                 <ProductRecommendationSection
                   title="You May Also Like"
                   linkText="Explore more →"
-                  products={crossSellProducts}
+                  products={categoryRelatedProducts}
+                  limit={categoryRelatedProducts.length}
                   addToCart={addToCart}
                   toggleWishlist={toggleWishlist}
                   isWishlisted={isWishlisted}
                   className="mt-10"
                 />
 
-                {recommendedProducts.length > 0 && (
-                  <ProductRecommendationSection
-                    title="Related Products"
-                    linkText="View all →"
-                    products={recommendedProducts}
-                    addToCart={addToCart}
-                    toggleWishlist={toggleWishlist}
-                    isWishlisted={isWishlisted}
-                    className="mt-10"
-                  />
-                )}
               </Suspense>
             </>
           )}

@@ -114,7 +114,7 @@ export function HomePage() {
           <FeaturedProductsSection
             title="Featured Products"
             actionLabel="View All Products"
-            actionHref="/products"
+            actionHref="/products?featured=true"
             products={featuredProducts}
             loading={false}
           />

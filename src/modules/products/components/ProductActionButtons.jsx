@@ -14,7 +14,7 @@ export default function ProductActionButtons({
 
   return (
     <>
-      <div className="sticky bottom-0 z-30 mt-2 border-t border-[#F0E6D2] bg-white/95 pb-2 pt-3 backdrop-blur-sm lg:shadow-[0_-8px_16px_rgba(255,255,255,0.9)]">
+      <div className="sticky bottom-0 z-40 mt-2 w-full border-t border-[#E7D9B8] bg-white pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-8px_20px_rgba(255,255,255,0.96)] lg:z-20 lg:pb-3">
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
           {inStock ? (
             <>
@@ -24,7 +24,7 @@ export default function ProductActionButtons({
                 onClick={() => {
                   addToCart({ ...product, selectedVariant }, quantity);
                 }}
-                className="h-11 min-w-0 w-full rounded-lg border border-gold bg-white px-2 text-sm font-bold text-gold shadow-sm transition-all duration-300 ease-in-out hover:bg-gold/5 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:text-base"
+                className="h-11 min-w-0 w-full rounded-lg border border-gold bg-white px-2 text-sm font-bold text-gold shadow-sm transition-colors duration-200 hover:bg-[#FFF8E8] active:bg-[#FFF1CC] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:text-base"
               >
                 Add to cart
               </button>
@@ -39,7 +39,7 @@ export default function ProductActionButtons({
                   );
                   onBuyNow?.(buyNowItem);
                 }}
-                className="h-11 min-w-0 w-full rounded-lg bg-gold px-2 text-sm font-bold text-white shadow-sm transition-all duration-300 ease-in-out hover:bg-gold-dark active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:text-base"
+                className="h-11 min-w-0 w-full rounded-lg bg-gold px-2 text-sm font-bold text-white shadow-sm transition-colors duration-200 hover:bg-gold-dark active:bg-[#A97810] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:text-base"
               >
                 Buy now
               </button>
@@ -48,7 +48,7 @@ export default function ProductActionButtons({
             <button
               type="button"
               onClick={() => setShowNotifyModal(true)}
-              className="h-11 w-full rounded-lg bg-gold px-3 text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark sm:h-12 sm:text-base"
+              className="h-11 w-full rounded-lg bg-gold px-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-gold-dark active:bg-[#A97810] sm:h-12 sm:text-base"
             >
               Notify Me
             </button>
