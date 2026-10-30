@@ -28,38 +28,43 @@ export default function AddressEditModal({
   if (!isOpen) return null;
 
   return (
-    <BaseModal onClose={onClose} maxWidth="max-w-3xl">
-      <div className="flex max-h-[85vh] flex-col rounded-[10px] bg-white p-4 sm:p-6">
-        <div className="mb-4 flex items-center gap-2 text-lg font-bold text-[#171A3A]">
-          <Icon size={20} className={iconClassName} />
-          <span>{title}</span>
-        </div>
-
-        <div className="custom-scrollbar flex-1 overflow-y-auto pr-2">
-          <div className="grid gap-4 pb-2">
-            <AddressFormFields
-              form={form}
-              idPrefix={idPrefix}
-              countries={countries}
-              states={states}
-              cities={cities}
-              postalCodes={postalCodes}
-              dialCodes={dialCodes}
-              selectedCountry={selectedCountry}
-              selectedState={selectedState}
-              selectedCity={selectedCity}
-              selectedPostalCode={selectedPostalCode}
-              addressLabels={addressLabels}
-            />
+    <BaseModal onClose={onClose} maxWidth="max-w-2xl">
+      <div className="flex max-h-[90vh] flex-col overflow-hidden rounded-2xl bg-white p-2">
+        <header className="flex shrink-0 items-center gap-3 border-b border-[#E8ECF3] px-5 py-4 sm:px-7">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#FFF7E6] text-[#CE9F2D]">
+            <Icon size={21} className={iconClassName} />
+          </span>
+          <div className="min-w-0">
+            <h2 className="text-base font-bold text-[#171A3A] sm:text-lg">{title}</h2>
+            <p className="mt-0.5 text-xs text-[#64708A] sm:text-sm">
+              Where should we deliver your shipment?
+            </p>
           </div>
+        </header>
+
+        <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-7 sm:py-5">
+          <AddressFormFields
+            form={form}
+            idPrefix={idPrefix}
+            countries={countries}
+            states={states}
+            cities={cities}
+            postalCodes={postalCodes}
+            dialCodes={dialCodes}
+            selectedCountry={selectedCountry}
+            selectedState={selectedState}
+            selectedCity={selectedCity}
+            selectedPostalCode={selectedPostalCode}
+            addressLabels={addressLabels}
+          />
         </div>
 
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+        <footer className="flex shrink-0 flex-row gap-2 border-t border-[#E8ECF3] px-5 py-3 sm:justify-end sm:px-7 sm:py-4">
           <Button
             type="button"
             variant="secondary"
             onClick={onClose}
-            className="w-full sm:w-auto"
+            className="min-w-0 flex-1 sm:flex-none"
           >
             Cancel
           </Button>
@@ -67,11 +72,11 @@ export default function AddressEditModal({
             type="button"
             onClick={onSave}
             loading={loading}
-            className="w-full sm:w-auto"
+            className="min-w-0 flex-1 sm:flex-none"
           >
             {submitLabel}
           </Button>
-        </div>
+        </footer>
       </div>
     </BaseModal>
   );

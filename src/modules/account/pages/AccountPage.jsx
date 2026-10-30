@@ -188,7 +188,7 @@ function AccountSidebar({
   setIsMobileMenuOpen,
 }) {
   return (
-    <aside className="relative z-30 w-full min-w-0 lg:w-[320px] xl:w-[330px] lg:shrink-0">
+    <aside className="relative z-0 w-full min-w-0 lg:w-[320px] xl:w-[330px] lg:shrink-0">
       <div className="min-w-0">
         <AccountMobileMenu
           items={MENU_ITEMS}

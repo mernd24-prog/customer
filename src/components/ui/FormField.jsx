@@ -11,6 +11,7 @@ export default function FormField({
   className = "",
   loading = false,
   required = false,
+  reserveErrorSpace = true,
   ...props
 }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -75,7 +76,7 @@ export default function FormField({
           id={id}
           type={inputType}
           inputMode={isWallet ? "decimal" : undefined}
-          className={`customer-input ${isPassword || loading ? "!pr-12" : ""} ${className}`}
+          className={`customer-input ${error?.message ? "!border-red-500 focus:!border-red-500" : ""} ${isPassword || loading ? "!pr-12" : ""} ${className}`}
           aria-invalid={Boolean(error)}
           {...registration}
           {...props}
@@ -100,9 +101,11 @@ export default function FormField({
           </button>
         ) : null}
       </span>
-      <span className="min-h-4 text-xs font-normal text-red-600">
-        {error?.message}
-      </span>
+      {(reserveErrorSpace || error?.message) && (
+        <span className={`${reserveErrorSpace ? "min-h-4" : ""} text-xs font-normal text-red-600`}>
+          {error?.message}
+        </span>
+      )}
     </label>
   );
 }

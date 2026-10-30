@@ -322,6 +322,9 @@ export function useAddressBook(user) {
     const addressFields = Object.fromEntries(
       Object.entries(values).filter(([key]) => key !== "dialCode"),
     );
+    addressFields.line1 = values.line1.trim();
+    addressFields.line2 = values.line2?.trim() || "";
+    addressFields.country = "India";
     await run(
       dispatch,
       addAddress({ ...addressFields, isDefault: Boolean(values.isDefault) }),
@@ -336,6 +339,9 @@ export function useAddressBook(user) {
     const addressFields = Object.fromEntries(
       Object.entries(values).filter(([key]) => key !== "dialCode"),
     );
+    addressFields.line1 = values.line1.trim();
+    addressFields.line2 = values.line2?.trim() || "";
+    addressFields.country = "India";
     await run(
       dispatch,
       updateAddress({

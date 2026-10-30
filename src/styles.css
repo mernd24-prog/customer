@@ -855,6 +855,18 @@ select:not([multiple]):disabled {
   box-shadow: none !important;
   border-color: #CE9F2D !important;
 }
+.address-state-dropdown,
+.address-state-dropdown:focus,
+.address-state-dropdown:focus-visible,
+.address-state-dropdown:active {
+  border-color: var(--customer-border) !important;
+}
+.address-state-dropdown-error,
+.address-state-dropdown-error:focus,
+.address-state-dropdown-error:focus-visible,
+.address-state-dropdown-error:active {
+  border-color: #ef4444 !important;
+}
 .sidebar-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

@@ -8,6 +8,7 @@ export default function SelectField({
   placeholder = "Select option",
   disabled = false,
   className = "",
+  reserveErrorSpace = true,
   ...props
 }) {
   const getOptionText = (option, fallback = "") => {
@@ -81,9 +82,9 @@ export default function SelectField({
           {...props}
         />
       )}
-      <span className="min-h-4  text-xs font-normal text-red-600">
+      {(reserveErrorSpace || error?.message) && <span className={`${reserveErrorSpace ? "min-h-4" : ""} text-xs font-normal text-red-600`}>
         {!disabled && error?.message}
-      </span>
+      </span>}
     </label>
   );
 }

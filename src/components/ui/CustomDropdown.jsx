@@ -4,6 +4,14 @@ import { cn } from "../../utils/common";
 
 const THUMB_HEIGHT = 32; // Fixed compact short pill thumb
 const TRACK_PADDING = 6; // Padding from top/bottom borders
+const getOptionValue = (option) =>
+  option && typeof option === "object"
+    ? option.value ?? option.id ?? option._id ?? option.code ?? option.name
+    : option;
+const getOptionLabel = (option) =>
+  option && typeof option === "object"
+    ? option.label ?? option.name ?? option.title ?? getOptionValue(option)
+    : option;
 
 export default function CustomDropdown({
   options = [],
@@ -11,6 +19,8 @@ export default function CustomDropdown({
   onChange,
   placeholder = "Select Option",
   label,
+  labelClassName = "",
+  labelGapClassName = "mb-2",
   required = false,
   disabled = false,
   error,
@@ -23,8 +33,12 @@ export default function CustomDropdown({
   // Used when custom option UI is required
   renderOption,
   isLoading = false,
+  reserveErrorSpace = false,
+  optionsInFlow = false,
+  searchable = false,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const [hasScroll, setHasScroll] = useState(false);
@@ -33,12 +47,15 @@ export default function CustomDropdown({
   const startYRef = useRef(0);
   const startScrollTopRef = useRef(0);
 
-  const selectedOption = options.find((option) => {
-    const optionValue = option?.value ?? option;
-    return optionValue === value;
-  });
-
-  const displayLabel = selectedOption?.label ?? selectedOption ?? placeholder;
+  const selectedOption = options.find((option) => getOptionValue(option) === value);
+  const displayLabel = getOptionLabel(selectedOption) ?? placeholder;
+  const visibleOptions = searchable && searchQuery.trim()
+    ? options.filter((option) =>
+        String(getOptionLabel(option) ?? "")
+          .toLocaleLowerCase()
+          .startsWith(searchQuery.trim().toLocaleLowerCase()),
+      )
+    : options;
 
   const updateScrollState = useCallback(() => {
     const el = scrollContainerRef.current;
@@ -72,11 +89,12 @@ export default function CustomDropdown({
 
   useEffect(() => {
     if (!isOpen) return;
+    if (searchable) scrollContainerRef.current?.focus();
     const timeout = setTimeout(() => {
       updateScrollState();
     }, 20);
     return () => clearTimeout(timeout);
-  }, [isOpen, options, updateScrollState]);
+  }, [isOpen, options, searchable, updateScrollState]);
 
   const handleThumbPointerDown = (e) => {
     e.stopPropagation();
@@ -165,7 +183,7 @@ export default function CustomDropdown({
   return (
     <div ref={dropdownRef} className={cn("relative", className)}>
       {label && (
-        <span className=" mb-2 block text-sm font-semibold text-[#2E2E2E]">
+        <span className={cn(labelGapClassName, "block text-sm font-semibold text-[#2E2E2E]", labelClassName)}>
           {label}
 
           {required && <span className="text-red-500"> *</span>}
@@ -175,7 +193,10 @@ export default function CustomDropdown({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen((previousState) => !previousState)}
+        onClick={() => {
+          setSearchQuery("");
+          setIsOpen((previousState) => !previousState);
+        }}
         className={cn( 
           
           "custom-dropdown-trigger",
@@ -191,6 +212,7 @@ export default function CustomDropdown({
           "active:outline-none active:ring-0 active:border-[#CE9F2D]",
           "disabled:cursor-not-allowed",
           "disabled:bg-gray-100 disabled:opacity-50",
+          error && "!border-red-500 focus:!border-red-500",
           buttonClassName,
         )}
         aria-expanded={isOpen}
@@ -220,7 +242,12 @@ export default function CustomDropdown({
         <div
           role="listbox"
           className={cn(
-            "absolute left-0 top-[calc(100%+6px)]",
+            optionsInFlow
+              ? "relative mt-0 w-full"
+              : cn(
+                  "absolute left-0",
+                  reserveErrorSpace ? "top-[calc(100%-20px)]" : "top-full",
+                ),
             "z-30 w-full overflow-hidden",
             "rounded-lg",
             "border border-[#CE9F2D]",
@@ -231,6 +258,19 @@ export default function CustomDropdown({
           <div
             ref={scrollContainerRef}
             onScroll={updateScrollState}
+            tabIndex={searchable ? 0 : undefined}
+            onKeyDown={(event) => {
+              if (!searchable) return;
+              if (event.key === "Backspace") {
+                event.preventDefault();
+                setSearchQuery((query) => query.slice(0, -1));
+              } else if (/^[a-z0-9]$/i.test(event.key)) {
+                event.preventDefault();
+                setSearchQuery((query) => query + event.key);
+              } else if (event.key === "Escape") {
+                setIsOpen(false);
+              }
+            }}
             className="max-h-[220px] overflow-y-auto no-scrollbar"
           >
             {isLoading ? (
@@ -241,11 +281,10 @@ export default function CustomDropdown({
                   </div>
                 ))}
               </>
-            ) : options.length > 0 ? (
-              options.map((option, index) => {
-                const optionValue = option?.value ?? option;
-
-                const optionLabel = option?.label ?? option;
+            ) : visibleOptions.length > 0 ? (
+              visibleOptions.map((option, index) => {
+                const optionValue = getOptionValue(option);
+                const optionLabel = getOptionLabel(option);
 
                 const isSelected = value === optionValue;
 
@@ -290,7 +329,7 @@ export default function CustomDropdown({
               })
             ) : (
               <p className="px-4 py-3 text-sm text-gray-500">
-                No Options Available
+                {searchable && searchQuery ? "No matching options" : "No Options Available"}
               </p>
             )}
           </div>
@@ -317,9 +356,9 @@ export default function CustomDropdown({
         </div>
       )}
 
-      {error && (
-        <span className="mt-1 block text-xs text-red-600">
-          {error.message || error}
+      {(reserveErrorSpace || error) && (
+        <span className={`${reserveErrorSpace ? "mt-1 min-h-4" : "mt-1"} block text-xs text-red-600`}>
+          {error?.message || error || "\u00A0"}
         </span>
       )}
     </div>
