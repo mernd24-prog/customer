@@ -128,49 +128,58 @@ export default function DeliveryChecker({
       {/* Trigger Link directly below Quantity Selector */}
       {!standalone && (
         <div className="flex min-w-0 flex-col gap-2">
-          {compactMobile && (
+          {compactMobile ? (
+            <div className="min-w-0">
+              <label
+                htmlFor="product-delivery-pincode"
+                className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[#6F7480]"
+              >
+                Pincode
+              </label>
+              <button
+                id="product-delivery-pincode"
+                type="button"
+                onClick={() => setIsModalOpen(true)}
+                disabled={loading}
+                className="flex h-11 w-full min-w-0 items-center gap-2 rounded-full border border-[#1B1D60]/25 bg-[#F4F4F8] py-1 pl-3 pr-1 text-sm font-semibold text-navy transition-colors hover:border-[#1B1D60]/50 disabled:cursor-wait"
+              >
+                {loading ? (
+                  <Loader2 size={16} className="shrink-0 animate-spin text-gold-dark" />
+                ) : (
+                  <MapPin size={16} className="shrink-0 text-gold-dark" />
+                )}
+                <span className="min-w-0 flex-1 truncate text-left">
+                  {lastCheckedPincode || "Enter pincode"}
+                </span>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white">
+                  <ArrowRight size={15} aria-hidden="true" />
+                </span>
+              </button>
+            </div>
+          ) : (
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
               disabled={loading}
-              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-border bg-white px-2 text-xs font-semibold text-navy transition-colors hover:border-gold hover:bg-cream disabled:cursor-wait sm:hidden"
+              className="flex w-full min-w-0 flex-col items-start gap-3 rounded-lg border border-border bg-surface-soft p-4 text-left transition-colors hover:border-gold hover:bg-cream disabled:cursor-wait sm:flex-row sm:items-center sm:justify-between"
             >
-              {loading ? <Loader2 size={15} className="animate-spin" /> : <MapPin size={15} />}
-              <span className="truncate">{lastCheckedPincode ? "Change pincode" : "Enter pincode"}</span>
-              <ArrowRight size={13} aria-hidden="true" />
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
+                  {loading ? <Loader2 size={18} className="animate-spin text-gold-dark" /> : <MapPin size={18} />}
+                </div>
+                <div className="min-w-0">
+                  <span className="block text-base font-semibold text-navy">Delivery details</span>
+                  <span className="mt-1 block break-words text-sm leading-relaxed text-muted">
+                    {lastCheckedPincode ? `Delivering to ${lastCheckedPincode}` : "Check delivery availability in your area"}
+                  </span>
+                </div>
+              </div>
+              <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 self-stretch rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold text-navy sm:self-center">
+                {lastCheckedPincode ? "Change pincode" : "Enter pincode"}
+                <ArrowRight size={14} aria-hidden="true" />
+              </span>
             </button>
           )}
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            disabled={loading}
-            className={`w-full min-w-0 flex-col items-start gap-3 rounded-lg border border-border bg-surface-soft p-4 text-left transition-colors hover:border-gold hover:bg-cream disabled:cursor-wait sm:flex-row sm:items-center sm:justify-between ${compactMobile ? "hidden sm:flex" : "flex"}`}
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
-                {loading ? (
-                  <Loader2 size={18} className="animate-spin text-gold-dark" />
-                ) : (
-                  <MapPin size={18} />
-                )}
-              </div>
-              <div className="min-w-0">
-                <span className="block text-base font-semibold text-navy">
-                  Delivery details
-                </span>
-                <span className="mt-1 block break-words text-sm leading-relaxed text-muted">
-                  {lastCheckedPincode
-                    ? `Delivering to ${lastCheckedPincode}`
-                    : "Check delivery availability in your area"}
-                </span>
-              </div>
-            </div>
-
-            <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 self-stretch rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold text-navy sm:self-center">
-              {lastCheckedPincode ? "Change pincode" : "Enter pincode"}
-              <ArrowRight size={14} aria-hidden="true" />
-            </span>
-          </button>
 
           {/* Quick inline status if already checked */}
           {result &&

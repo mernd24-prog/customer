@@ -714,7 +714,7 @@ export default function ProductReviewsSection({ productId, product }) {
                 <button
                   type="button"
                   onClick={openAuthModal}
-                  className="min-h-9 rounded-lg border border-[#1B1D60] px-3 py-1.5 text-xs font-bold text-[#1B1D60] transition-colors hover:bg-[#F4F4FA]"
+                  className="min-h-9 rounded-md border border-[#1B1D60] px-3 py-1.5 text-xs font-bold text-[#1B1D60] transition-colors hover:bg-[#F4F4FA]"
                 >
                   Sign in to review
                 </button>
@@ -769,18 +769,9 @@ export default function ProductReviewsSection({ productId, product }) {
 
           {/* Empty State */}
           {!bucket.loading && displayReviews.length === 0 && (
-            <div className="flex min-h-[240px] w-full flex-1 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center sm:min-h-[280px]">
+            <div className="flex min-h-[240px] w-full flex-1 items-center justify-center rounded-md border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center sm:min-h-[280px]">
               <div className="mx-auto flex w-full max-w-[320px] flex-col items-center">
-                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D]/15">
-                  <img
-                    width="400"
-                    height="400"
-                    src="/image/png/noReview.png"
-                    alt="No Reviews Yet"
-                    className="h-full w-full object-contain"
-                    loading="lazy"
-                  />
-                </div>
+               
                 <p className="mt-3 text-base font-bold text-[#1B1D60] sm:text-lg">
                   Be the First to Review
                 </p>

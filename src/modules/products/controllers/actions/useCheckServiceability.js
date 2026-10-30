@@ -35,9 +35,12 @@ export function useCheckServiceability() {
       });
       return false;
     } catch (error) {
-      notify.error({
-        title: "Delivery check unavailable",
-        message: typeof error === "string" ? error : "Please try adding this product again.",
+      // A failed availability lookup is not the same as an explicit
+      // non-serviceable result. Keep cart and wishlist actions usable during
+      // a temporary delivery-check/API failure.
+      notify.info({
+        title: "Could not verify delivery",
+        message: "You can still add this item to your cart. Confirm delivery at checkout.",
         actionLabel: "Check Availability",
         onAction: () => {
           window.dispatchEvent(
@@ -47,7 +50,7 @@ export function useCheckServiceability() {
           );
         },
       });
-      return false;
+      return true;
     }
   }, [customer?.addresses, dispatch, user?.addresses]);
 }

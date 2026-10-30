@@ -17,13 +17,15 @@ export default function ProductServiceBadges({
           maximumFractionDigits: 0,
         }).format(staticCharge)
       : "";
+  const rowItemClass =
+    "flex min-h-[76px] min-w-0 w-full items-center justify-center gap-2 rounded-lg border border-border bg-[#F5F5F9] px-2 py-4 text-center sm:px-3";
 
   return (
-    <div className={`${layout === "row" ? "flex w-full snap-x snap-mandatory gap-2 overflow-x-auto pb-2 hide-scrollbar sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0" : "grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 2xl:grid-cols-3 gap-3"} ${className}`}>
+    <div className={`${layout === "row" ? "grid w-full grid-cols-3 gap-1 sm:gap-2" : "grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 2xl:grid-cols-3 gap-3"} ${className}`}>
       {/* 1. Dispatch / Shipping ETA with Flipkart-style icon */}
       {shippingEtaText && (
-        <div className={`${layout === "row" ? "flex w-[110px] shrink-0 snap-start flex-col items-center gap-2 px-1 py-1 text-center sm:w-auto sm:shrink" : "flex items-center gap-3 rounded-lg border border-border bg-white p-3 shadow-xs hover:border-gold transition-colors"}`}>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
+        <div className={`${layout === "row" ? rowItemClass : "flex items-center gap-3 rounded-lg border border-border bg-white p-3 shadow-xs hover:border-gold transition-colors"}`}>
+          <div className={`flex shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark ${layout === "row" ? "h-9 w-9" : "h-10 w-10"}`}>
             <Clock size={20} className="stroke-[2.2]" />
           </div>
           <div className="min-w-0">
@@ -37,8 +39,8 @@ export default function ProductServiceBadges({
 
       {/* 2. COD Status with Flipkart-style icon */}
       {productCodAvailable && (
-        <div className={`${layout === "row" ? "flex w-[110px] shrink-0 snap-start flex-col items-center gap-2 px-1 py-1 text-center sm:w-auto sm:shrink" : "flex items-center gap-3 rounded-lg border border-border bg-white p-3 shadow-xs hover:border-gold transition-colors"}`}>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
+        <div className={`${layout === "row" ? rowItemClass : "flex items-center gap-3 rounded-lg border border-border bg-white p-3 shadow-xs hover:border-gold transition-colors"}`}>
+          <div className={`flex shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark ${layout === "row" ? "h-9 w-9" : "h-10 w-10"}`}>
             <Banknote size={20} className="stroke-[2.2]" />
           </div>
           <div className="min-w-0">
@@ -51,8 +53,8 @@ export default function ProductServiceBadges({
       )}
 
       {productCodDisabled && (
-        <div className={`${layout === "row" ? "flex w-[110px] shrink-0 snap-start flex-col items-center gap-2 px-1 py-1 text-center sm:w-auto sm:shrink" : "flex items-center gap-3 rounded-lg border border-[#FEE2E2] bg-white p-3 shadow-xs"}`}>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FEE2E2] text-[#DC2626]">
+        <div className={`${layout === "row" ? `${rowItemClass} border-[#FEE2E2]` : "flex items-center gap-3 rounded-lg border border-[#FEE2E2] bg-white p-3 shadow-xs"}`}>
+          <div className={`flex shrink-0 items-center justify-center rounded-full bg-[#FEE2E2] text-[#DC2626] ${layout === "row" ? "h-9 w-9" : "h-10 w-10"}`}>
             <Banknote size={20} className="stroke-[2.2]" />
           </div>
           <div className="min-w-0">
@@ -66,8 +68,8 @@ export default function ProductServiceBadges({
 
       {/* 3. Shipping Fee / Free Shipping */}
       {staticIsFree ? (
-        <div className={`${layout === "row" ? "flex w-[110px] shrink-0 snap-start flex-col items-center gap-2 px-1 py-1 text-center sm:w-auto sm:shrink" : "flex items-center gap-3 rounded-lg border border-border bg-white p-3 shadow-xs hover:border-gold transition-colors"}`}>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
+        <div className={`${layout === "row" ? rowItemClass : "flex items-center gap-3 rounded-lg border border-border bg-white p-3 shadow-xs hover:border-gold transition-colors"}`}>
+          <div className={`flex shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark ${layout === "row" ? "h-9 w-9" : "h-10 w-10"}`}>
             <Truck size={20} className="stroke-[2.2]" />
           </div>
           <div className="min-w-0">
@@ -78,8 +80,8 @@ export default function ProductServiceBadges({
           </div>
         </div>
       ) : staticCharge > 0 ? (
-        <div className={`${layout === "row" ? "flex w-[110px] shrink-0 snap-start flex-col items-center gap-2 px-1 py-1 text-center sm:w-auto sm:shrink" : "flex items-center gap-3 rounded-lg border border-border bg-white p-3 shadow-xs hover:border-gold transition-colors"}`}>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
+        <div className={`${layout === "row" ? rowItemClass : "flex items-center gap-3 rounded-lg border border-border bg-white p-3 shadow-xs hover:border-gold transition-colors"}`}>
+          <div className={`flex shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark ${layout === "row" ? "h-9 w-9" : "h-10 w-10"}`}>
             <Truck size={20} className="stroke-[2.2]" />
           </div>
           <div className="min-w-0">

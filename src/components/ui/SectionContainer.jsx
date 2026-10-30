@@ -16,6 +16,7 @@ export default function SectionContainer({
   contentClassName = "",
   actionStyle = "button", // 'button' or 'icon'
   mobileActionStyle, // defaults to actionStyle
+  mobileActionFullWidth = false,
   style = {},
   disablePadding = false,
 }) {
@@ -97,11 +98,13 @@ export default function SectionContainer({
       </div>
 
       {finalMobileActionStyle === "button" && hasAction && actionHref ? (
-        <div className="my-8 md:hidden flex justify-center ">
+        <div
+          className={`my-8 flex md:hidden ${mobileActionFullWidth ? "w-full px-3" : "justify-center"}`}
+        >
           <OutlineSmallButton
             to={actionHref}
             rightIcon={<ArrowRight className="w-4 h-4" strokeWidth={2.2} />}
-            className="inline-flex"
+            className={mobileActionFullWidth ? "flex w-full justify-center" : "inline-flex"}
             aria-label={`${actionLabel} ${title || ""}`}
           >
             {actionLabel}

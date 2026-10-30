@@ -5,6 +5,7 @@ import { openAddedToCartModal } from "../../../../modules/cart/slices/cartUiSlic
 import { addProductToCartPayload, writeGuestCart } from "../../../../utils/ecommerce";
 import { useToastThunk } from "../../../../hooks/useToastThunk";
 import { useCheckServiceability } from "./useCheckServiceability";
+import { store } from "../../../../app/store";
 
 export function useCartActions() {
   const dispatch = useDispatch();
@@ -16,8 +17,12 @@ export function useCartActions() {
   return useCallback(
     async (product, quantity = 1) => {
       if (!(await checkSavedAddressServiceability(product))) return null;
+      // Actions can be clicked before React has rendered the latest cart
+      // response. Build the payload from Redux's current value to avoid
+      // replacing items added by a previous action.
+      const currentCart = store.getState().cart.current || cart || {};
       if (!user) {
-        const nextCart = addProductToCartPayload(cart, product, quantity);
+        const nextCart = addProductToCartPayload(currentCart, product, quantity);
         const writtenCart = writeGuestCart(nextCart);
         dispatch(setGuestCart(writtenCart));
         dispatch(openAddedToCartModal({ product }));
@@ -25,7 +30,7 @@ export function useCartActions() {
       }
       const result = await run(
         dispatch,
-        updateCart(addProductToCartPayload(cart, product, quantity)),
+        updateCart(addProductToCartPayload(currentCart, product, quantity)),
         {
           title: "Added to cart",
           message: "Your item has been added to the cart successfully.",

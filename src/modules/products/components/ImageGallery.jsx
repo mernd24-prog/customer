@@ -212,7 +212,7 @@ function ProductGallery({
                     ) : (
                       <img
                         loading={i === 0 ? "eager" : "lazy"}
-                        fetchPriority={i === 0 ? "high" : "auto"}
+                        fetchpriority={i === 0 ? "high" : "auto"}
                         width="400"
                         height="400"
                         src={item.src}
@@ -304,7 +304,7 @@ function ProductGallery({
                   >
                     <img
                       loading={i === 0 ? "eager" : "lazy"}
-                      fetchPriority={i === 0 ? "high" : "auto"}
+                      fetchpriority={i === 0 ? "high" : "auto"}
                       width="400"
                       height="400"
                       src={item.src}

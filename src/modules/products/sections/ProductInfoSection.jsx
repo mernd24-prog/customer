@@ -89,7 +89,6 @@ export default function ProductInfoSection({
 }) {
   const [cardOpen, setCardOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("specs");
-  const [showAllSpecs, setShowAllSpecs] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const effectiveWarranty =
@@ -142,9 +141,7 @@ export default function ProductInfoSection({
     }
   }, [tabs, activeTab]);
 
-  // Show up to 10 specs by default, then button for remaining
-  const visibleSpecs = showAllSpecs ? detailRows : detailRows.slice(0, 10);
-  const hasMoreSpecs = detailRows.length > 10;
+  const visibleSpecs = detailRows;
 
   return (
     <div className="min-w-0 border border-border rounded-lg overflow-hidden bg-white shadow-xs">
@@ -152,7 +149,7 @@ export default function ProductInfoSection({
       <button
         type="button"
         onClick={() => setCardOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-surface-soft transition-colors text-left"
+        className="w-full flex items-center justify-between px-5 py-2 bg-white hover:bg-surface-soft transition-colors text-left"
         aria-expanded={cardOpen}
       >
         <div>
@@ -174,10 +171,10 @@ export default function ProductInfoSection({
         inert={!cardOpen}
       >
         <div className="min-h-0 min-w-0 overflow-hidden">
-        <div className="min-w-0 p-4 sm:p-5 border-t border-border">
+        <div className="min-w-0 p-2 sm:p-3 border-t border-border">
           {/* Keep tabs on one row; use the shared scroll controls on overflow. */}
           <HorizontalScrollControls
-            className="min-w-0 border-b border-border pb-4"
+            className="min-w-0 border-b border-border pb-2"
             viewportClassName="gap-2.5 py-1"
             showButtons={false}
             wheelToScroll
@@ -211,11 +208,8 @@ export default function ProductInfoSection({
 
           {/* ── Tab 1: Specifications (Highlighted Cards Grid) ── */}
           {activeTab === "specs" && (
-            <div className="pt-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <h4 className="text-sm font-bold text-navy uppercase tracking-wider">
-                  Product Specifications
-                </h4>
+            <div className="pt-2">
+              <div className="flex flex-wrap items-center justify-end gap-2 mb-2">
                 <span className="text-xs font-medium text-muted">
                   {detailRows.length} {detailRows.length === 1 ? "detail" : "details"} listed
                 </span>
@@ -225,7 +219,7 @@ export default function ProductInfoSection({
                 {visibleSpecs.map(([key, value]) => (
                   <div
                     key={key}
-                    className="flex min-w-0 items-baseline justify-between gap-4 border-b border-border/70 py-3 last:border-b-0"
+                    className="flex min-w-0 items-baseline justify-between gap-4 border-b border-border/70 py-2 last:border-b-0"
                   >
                     <span className="shrink-0 text-xs font-medium text-muted sm:text-sm">
                       {formatPageTitle(key)}
@@ -237,29 +231,12 @@ export default function ProductInfoSection({
                 ))}
               </div>
 
-              {hasMoreSpecs && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllSpecs((prev) => !prev)}
-                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-border bg-white text-sm font-bold text-navy hover:bg-surface-soft hover:border-gold transition-all shadow-xs"
-                >
-                  <span>{showAllSpecs ? "Show less specifications" : `View all ${detailRows.length} specifications`}</span>
-                  {showAllSpecs ? (
-                    <ChevronUp size={16} />
-                  ) : (
-                    <ChevronDown size={16} />
-                  )}
-                </button>
-              )}
             </div>
           )}
 
           {/* ── Tab 2: Description ── */}
           {activeTab === "desc" && (
-            <div className="pt-4">
-              <h4 className="text-sm font-bold text-navy mb-3 uppercase tracking-wider">
-                Product Description
-              </h4>
+            <div className="pt-2">
               <div className="border-0 bg-transparent p-0">
                 <ProductDescription
                   content={decodeHtml(
@@ -274,11 +251,7 @@ export default function ProductInfoSection({
 
           {/* ── Tab 3: Warranty & Returns ── */}
           {activeTab === "warranty" && (
-            <div className="pt-4 space-y-4">
-              <h4 className="text-sm font-bold text-navy uppercase tracking-wider">
-                Warranty &amp; Return Information
-              </h4>
-
+            <div className="pt-2 space-y-3">
               <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-1 border-b border-border/70 py-3">
                   <span className="text-xs font-medium text-muted">
@@ -331,7 +304,7 @@ export default function ProductInfoSection({
 
           {/* ── Tab 4: Manufacturer / Seller Info ── */}
           {activeTab === "seller" && (
-            <div className="pt-4">
+            <div className="pt-2">
               <section className="overflow-hidden rounded-lg border border-[#E7D9B8] bg-white">
                 <h4 className="bg-[#EAD8B3] px-4 py-3 text-base font-bold text-ink sm:px-5">
                   Seller Information
@@ -384,16 +357,13 @@ export default function ProductInfoSection({
 
           {/* ── Tab 5: Catalogue ── */}
           {activeTab === "catalogue" && hasCatalogueImages && (
-            <div className="pt-4">
-              <h4 className="text-sm font-bold text-navy mb-3 uppercase tracking-wider">
-                Catalogue Images ({product.commonImages.length})
-              </h4>
-              <div className="flex flex-wrap gap-3">
+            <div className="pt-2">
+              <div className="grid grid-cols-4 gap-3">
                 {product.commonImages.map((img, i) => (
                   <div
                     key={i}
                     onClick={() => setIsModalOpen(true)}
-                    className="relative aspect-square w-20 sm:w-24 rounded-lg border border-border bg-white p-1.5 cursor-pointer hover:border-gold hover:shadow-sm transition-all"
+                    className="relative aspect-square min-w-0 rounded-lg border border-border bg-white p-1.5 cursor-pointer hover:border-gold hover:shadow-sm transition-all"
                   >
                     <img
                       src={getImageUrlFromValue(img)}

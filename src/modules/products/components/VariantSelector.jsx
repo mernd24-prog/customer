@@ -36,6 +36,9 @@ export default function VariantSelector({
   return (
     <div className="flex min-w-0 flex-wrap items-start gap-x-6 gap-y-4">
       {sortedVariantOptions.map((option) => {
+        const isAgeGroupOption =
+          option.slug?.toLowerCase().includes("age") ||
+          option.name?.toLowerCase().includes("age");
         const isColorOption =
           option.displayType === "color_swatch" ||
           option.slug?.toLowerCase().includes("color") ||
@@ -44,9 +47,9 @@ export default function VariantSelector({
         return (
         <div
           key={option.slug}
-          className={`min-w-0 max-w-full ${isColorOption ? "w-full" : "w-fit"}`}
+          className="min-w-0 w-full max-w-full"
         >
-          <div className="mb-3 flex items-center gap-4">
+          <div className="mb-2 flex items-center gap-3">
             <p className="text-lg font-semibold capitalize text-ink">
               {option.displayType === "color_swatch" ? "Colour" : option.name}{":"}{" "}
               <span className="text-sm font-medium text-muted">
@@ -68,10 +71,14 @@ export default function VariantSelector({
           </div>
 
           <HorizontalScrollControls
-            className="relative"
-            viewportClassName="hide-scrollbar flex max-w-full items-center gap-4 overflow-x-auto pb-1"
-            leftButtonClassName="left-0"
-            rightButtonClassName="right-0"
+            className="relative min-w-0 w-full"
+            viewportClassName="hide-scrollbar flex max-w-full items-center gap-2.5 overflow-x-auto pb-1"
+            showButtons={false}
+            wheelToScroll
+            dragToScroll
+            resetOnMount
+            scrollSelectedToStart
+            resetKey={`${option.slug}:${option.values.join("|")}:${selectedAttributes[option.slug] || ""}`}
           >
             {option.values.map((value, valueIndex) => {
               const isSelected =
@@ -137,6 +144,7 @@ export default function VariantSelector({
                   <button
                     key={value}
                     type="button"
+                    data-scroll-selected={isSelected ? "true" : undefined}
                     disabled={!isComboAvailable}
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
@@ -158,12 +166,13 @@ export default function VariantSelector({
                   >
                     {swatchImage ? (
                       <img
+                        draggable={false}
                         loading="lazy"
                         width="400"
                         height="400"
                         src={swatchImage}
                         alt={`${value} colour`}
-                        className="h-full w-full object-contain p-2"
+                        className="pointer-events-none h-full w-full select-none object-contain p-2 [-webkit-user-drag:none]"
                         onError={(event) =>
                           applyImageFallback(event, value, "product")
                         }
@@ -196,51 +205,73 @@ export default function VariantSelector({
               }
 
               return (
-                <button
+                <div
                   key={value}
-                  type="button"
-                  disabled={!isComboAvailable}
-                  onClick={() =>
-                    matchingVariant && setSelectedVariant(matchingVariant)
+                  className={
+                    isAgeGroupOption && isUnavailable
+                      ? "flex shrink-0 flex-col items-center gap-1"
+                      : "contents"
                   }
-                  aria-label={`${option.name} ${value}${
-                    !isComboAvailable
-                      ? ", not available in this combination"
-                      : isUnavailable
-                        ? ", out Of Stock"
-                        : ""
-                  }`}
-                  title={
-                    !isComboAvailable
-                      ? `${value} - Not available in this combination`
-                      : isUnavailable
-                        ? `${value} - Out Of stock`
-                        : value
-                  }
-                  className={`relative min-h-10 min-w-12 shrink-0 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
-                    isSelected
-                      ? "border border-gold bg-gold/10 text-gold-dark shadow-sm"
-                      : "border border-gold/20 hover:border-gold/50"
-                  } ${
-                    isUnavailable ? "border-red-200 bg-red-50 text-red-500" : ""
-                  } ${!isComboAvailable ? "opacity-40" : ""}`}
                 >
-                  <span
-                    className={
-                      isUnavailable || !isComboAvailable
-                        ? "text-gray-400 line-through"
-                        : ""
+                  <button
+                    type="button"
+                    data-scroll-selected={isSelected ? "true" : undefined}
+                    disabled={!isComboAvailable}
+                    onClick={() =>
+                      matchingVariant && setSelectedVariant(matchingVariant)
                     }
+                    aria-label={`${option.name} ${value}${
+                      !isComboAvailable
+                        ? ", not available in this combination"
+                        : isUnavailable
+                          ? ", out Of Stock"
+                          : ""
+                    }`}
+                    title={
+                      !isComboAvailable
+                        ? `${value} - Not available in this combination`
+                        : isUnavailable
+                          ? `${value} - Out Of stock`
+                          : value
+                    }
+                    className={`relative min-w-12 border px-4 py-1.5 text-xs font-bold transition-all duration-200 ease-out focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed ${
+                      isUnavailable && isSelected
+                        ? "border-[#ead8d5] bg-[#f3f2fb] text-navy shadow-sm"
+                        : isUnavailable
+                          ? "border-[#e2ddd4] bg-[#f4f4f5] text-[#806461] hover:border-[#e2ddd4] hover:bg-[#f4f4f5]"
+                          : isSelected
+                            ? "border-navy bg-navy text-white shadow-sm"
+                            : "border-border bg-cream/60 text-ink hover:border-gold hover:bg-gold-soft"
+                    } rounded-full ${isAgeGroupOption ? "min-h-12" : "min-h-9"} ${
+                      isAgeGroupOption && !isUnavailable ? "py-2" : ""
+                    } ${!isComboAvailable ? "opacity-40" : ""}`}
                   >
-                    {value}
-                  </span>
+                    <span
+                      className={
+                        isUnavailable
+                          ? isSelected
+                            ? "font-medium text-navy"
+                            : "font-medium text-[#806461]"
+                          : !isComboAvailable
+                            ? "text-gray-400 line-through"
+                            : ""
+                      }
+                    >
+                      {value}
+                    </span>
 
-                  {isUnavailable && (
-                    <span className="mt-0.5 block whitespace-nowrap text-xs font-semibold leading-none no-underline">
-                      Out Of Stock
+                    {isUnavailable && !isAgeGroupOption && (
+                      <span className="mt-0.5 block whitespace-nowrap text-[10px] font-medium leading-none text-[#85858a] no-underline">
+                        Out of stock
+                      </span>
+                    )}
+                  </button>
+                  {isAgeGroupOption && isUnavailable && (
+                    <span className="whitespace-nowrap text-[10px] font-medium leading-none text-[#85858a]">
+                      Out of stock
                     </span>
                   )}
-                </button>
+                </div>
               );
             })}
           </HorizontalScrollControls>

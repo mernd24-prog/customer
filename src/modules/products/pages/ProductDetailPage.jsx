@@ -24,8 +24,6 @@ import { PRODUCT_DETAIL_SKELETON } from "../../../components/ui/skeleton/layouts
 import {
   Star,
   ChevronRight,
-  ChevronUp,
-  ChevronDown,
 } from "lucide-react";
 import QuantitySelector from "../../cart/components/QuantitySelector";
 import ImageGallery from "../components/ImageGallery";
@@ -154,7 +152,6 @@ export default function ProductDetailPage() {
 
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
-  const [peaceOfMindOpen, setPeaceOfMindOpen] = useState(true);
   const infoTabs = [
     ...(product?.commonImages?.length
       ? [{ key: "common-images", label: " Catalogue Images" }]
@@ -250,7 +247,7 @@ export default function ProductDetailPage() {
 
                 <div className="relative flex min-w-0 flex-col gap-5 lg:mt-10">
                   <div className="flex flex-col gap-2">
-                    <div className="mt-5 flex min-w-0 items-baseline gap-1.5 text-xs">
+                    <div className="mt-5 flex min-w-0 items-baseline gap-1.5 text-base">
                       <span className="shrink-0 font-medium text-muted">Brand:</span>
                       {brand ? (
                         <Link
@@ -274,7 +271,7 @@ export default function ProductDetailPage() {
                       <ShowMoreText
                         text={productTitle}
                         mode="lines"
-                        limit={2}
+                        limit={1}
                         buttonClassName="ml-1 border-0 bg-transparent p-0 text-xs font-semibold text-[#CE9F2D] shadow-none outline-none hover:underline"
                       />
                     </h1>
@@ -296,9 +293,6 @@ export default function ProductDetailPage() {
 
                     </div>
                   </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-[#F0E6D2]" />
 
                   {/* Price */}
                   <ProductPriceBlock
@@ -337,17 +331,32 @@ export default function ProductDetailPage() {
                     />
                   )}
 
-                  <div className="grid min-w-0 grid-cols-2 items-end gap-3 sm:flex sm:flex-col sm:items-stretch sm:gap-5">
+                  {/* Service information without a heading or enclosing card */}
+                  {!deliveryResult && (
+                    <div className="w-full py-2">
+                      <ProductServiceBadges
+                        shippingEtaText={shippingEtaText}
+                        staticIsFree={staticIsFree}
+                        staticCharge={staticCharge}
+                        productCodAvailable={productCodAvailable}
+                        productCodDisabled={productCodDisabled}
+                        layout="row"
+                      />
+                    </div>
+                  )}
+
+                  <div className="grid min-w-0 w-full grid-cols-2 items-start gap-3 sm:gap-4 lg:w-[65%]">
                     {/* Quantity */}
                     <div className="flex min-w-0 flex-col gap-1.5">
                       <span className="text-xs uppercase tracking-wider text-[#6F7480] font-bold">
                         Quantity
                       </span>
 
-                      <div className="w-full sm:w-fit">
+                      <div className="w-full">
                         <QuantitySelector
                           quantity={quantity}
                           fullWidth
+                          fluid
                           onIncrease={() =>
                             setQuantity((currentQuantity) => {
                               if (!inStock || quantityAtStockLimit) {
@@ -377,61 +386,12 @@ export default function ProductDetailPage() {
                     </div>
 
                     {/* Delivery Checker */}
-                    <DeliveryChecker
-                      productId={resolvedProductId}
-                      product={product}
-                      compactMobile
-                      onResultChange={setDeliveryResult}
-                    />
-                  </div>
-
-                  {/* Shop with Peace of Mind */}
-                  <div className="overflow-hidden rounded-lg border border-border bg-white shadow-xs">
-                    <button
-                      type="button"
-                      onClick={() => setPeaceOfMindOpen((prev) => !prev)}
-                      className="flex w-full items-center justify-between bg-white px-5 py-4 text-left transition-colors hover:bg-surface-soft"
-                      aria-expanded={peaceOfMindOpen}
-                    >
-                      <div>
-                        <h3 className="text-base font-bold text-ink sm:text-lg">
-                          Shop with peace of mind
-                        </h3>
-                        <p className={`overflow-hidden text-xs text-muted transition-all duration-300 ease-in-out sm:text-sm ${peaceOfMindOpen ? "mt-0 max-h-0 opacity-0" : "mt-0.5 max-h-8 opacity-100"}`}>
-                          Complete care and guarantee for your purchase
-                        </p>
-                      </div>
-
-                      <div className="ml-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cream text-ink transition-colors hover:bg-cream-strong">
-                        {peaceOfMindOpen ? (
-                          <ChevronUp size={18} />
-                        ) : (
-                          <ChevronDown size={18} />
-                        )}
-                      </div>
-                    </button>
-
-                    <div
-                      className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${peaceOfMindOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-                      aria-hidden={!peaceOfMindOpen}
-                      inert={!peaceOfMindOpen}
-                    >
-                      <div className="min-h-0 overflow-hidden">
-                        <div className="border-t border-border">
-                          {!deliveryResult && (
-                            <div className="border-b border-border px-4 py-4 sm:px-5">
-                              <ProductServiceBadges
-                                shippingEtaText={shippingEtaText}
-                                staticIsFree={staticIsFree}
-                                staticCharge={staticCharge}
-                                productCodAvailable={productCodAvailable}
-                                productCodDisabled={productCodDisabled}
-                                layout="row"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                    <div className="min-w-0 flex-1">
+                      <DeliveryChecker
+                        productId={resolvedProductId}
+                        compactMobile
+                        onResultChange={setDeliveryResult}
+                      />
                     </div>
                   </div>
 

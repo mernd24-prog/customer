@@ -7,6 +7,7 @@ export default function QuantitySelector({
   increaseDisabled,
   increaseDisabledLabel,
   fullWidth = false,
+  fluid = false,
 }) {
   const atMax = max != null && quantity >= max;
   const disableIncrease =
@@ -14,7 +15,7 @@ export default function QuantitySelector({
 
   return (
     <div
-      className={`flex flex-col gap-1.5 ${fullWidth ? "w-full sm:w-[150px]" : "w-[140px] sm:w-[150px]"}`}
+      className={`flex flex-col gap-1.5 ${fluid ? "w-full" : fullWidth ? "w-full sm:w-[150px]" : "w-[140px] sm:w-[150px]"}`}
     >
       <div className="flex h-11 w-full items-center justify-between rounded-full border border-[#1B1D60]/25 bg-[#F4F4F8] p-1">
         <button

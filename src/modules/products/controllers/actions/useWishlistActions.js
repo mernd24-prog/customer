@@ -59,9 +59,10 @@ export function useWishlistActions() {
         });
         return null;
       }
+      const currentCart = store.getState().cart.current || cart || {};
       return run(
         dispatch,
-        updateCart(wishlistPayload(cart, product, added, true)),
+        updateCart(wishlistPayload(currentCart, product, added, true)),
         added
           ? {
               title: "Removed from wishlist",
@@ -91,7 +92,8 @@ export function useWishlistActions() {
         });
         return null;
       }
-      return run(dispatch, updateCart(wishlistPayload(cart, product, true)), {
+      const currentCart = store.getState().cart.current || cart || {};
+      return run(dispatch, updateCart(wishlistPayload(currentCart, product, true)), {
         title: "Removed from wishlist",
         message: "The item has been removed from your wishlist.",
         tone: "remove",

@@ -70,6 +70,7 @@ export default function FeaturedProductsSection({
         actionHref={actionHref}
         actionStyle="icon"
         mobileActionStyle="button"
+        mobileActionFullWidth
         className={sectionClassName}
         style={sectionStyle}
         disablePadding={true}
@@ -97,6 +98,7 @@ export default function FeaturedProductsSection({
       actionHref={actionHref}
       actionStyle="icon"
       mobileActionStyle="button"
+      mobileActionFullWidth
       className={sectionClassName}
       style={sectionStyle}
       disablePadding={true}

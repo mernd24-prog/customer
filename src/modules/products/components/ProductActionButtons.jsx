@@ -14,7 +14,7 @@ export default function ProductActionButtons({
 
   return (
     <>
-      <div className="sticky bottom-0 z-40 mt-2 w-full border-t border-[#E7D9B8] bg-white pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-8px_20px_rgba(255,255,255,0.96)] lg:z-20 lg:pb-3">
+      <div className="sticky bottom-0 z-40 mt-2 w-full bg-white pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-8px_20px_rgba(255,255,255,0.96)] lg:z-20 lg:pb-3">
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
           {inStock ? (
             <>

@@ -2,6 +2,7 @@ import {
   applyImageFallback,
   getImageUrlFromValue,
 } from "../../../utils/ecommerce";
+import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
 
 /**
  * ImageVariantPicker — a thumbnail-based variant selector shown when variants
@@ -25,8 +26,15 @@ export default function ImageVariantPicker({
     <div className="w-full">
       <p className="mb-3 text-base font-semibold capitalize text-ink">Style:</p>
 
-      <div className="w-full overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-        <div className="flex min-w-max flex-nowrap gap-3">
+      <HorizontalScrollControls
+        className="min-w-0 w-full"
+        viewportClassName="hide-scrollbar flex min-w-0 max-w-full flex-nowrap gap-3 overflow-x-auto pb-2"
+        showButtons={false}
+        wheelToScroll
+        dragToScroll
+        resetOnMount
+        resetKey={variants.map((variant) => variant._id || variant.id || variant.sku).join("|")}
+      >
           {variants.map((variant, index) => {
           const variantId = variant._id || variant.id || variant.sku || index;
           const isSelected = String(variantId) === String(selectedId);
@@ -90,8 +98,7 @@ export default function ImageVariantPicker({
             </button>
           );
         })}
-        </div>
-      </div>
+      </HorizontalScrollControls>
     </div>
   );
 }
