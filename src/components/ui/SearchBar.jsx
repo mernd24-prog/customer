@@ -543,7 +543,7 @@ const SearchBar = ({
                       : "invisible -translate-y-2 opacity-0 pointer-events-none"
                   }`}
                 >
-                  <div className="max-h-[280px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin] sm:max-h-[320px]">
+                  <div className="max-h-[280px] overflow-y-auto overscroll-contain p-1.5  [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin] sm:max-h-[320px]">
                     {categories.length > 0 ? (
                       categories.map((category) => {
                         const label = getCategoryLabel(category);

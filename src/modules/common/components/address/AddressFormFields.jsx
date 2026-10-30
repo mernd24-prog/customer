@@ -61,9 +61,11 @@ export default function AddressFormFields({
   const {
     register,
     setValue,
-    watch,
-    formState: { errors },
-  } = form;
+    watch: formWatch,
+    formState: { errors = {} } = {},
+  } = form || {};
+
+  const watch = typeof formWatch === "function" ? formWatch : () => undefined;
   const addressTypeIcons = {
     home: House,
     work: BriefcaseBusiness,

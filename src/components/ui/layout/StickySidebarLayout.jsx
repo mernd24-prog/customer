@@ -8,7 +8,7 @@ export default function StickySidebarLayout({
   containerClass = "w-full flex flex-col lg:flex-row lg:items-stretch gap-4 lg:gap-8",
   sidebarClass = "w-full lg:w-[420px]",
   mainClass = "w-full flex min-w-0 flex-1 flex-col",
-  stickyOffset = "calc(var(--customer-header-height, 95px) + 80px)",
+  stickyOffset = "calc(var(--customer-header-height, 40px) + 40px)",
   stickyMain = false,
 }) {
   const [isDesktop, setIsDesktop] = useState(false);

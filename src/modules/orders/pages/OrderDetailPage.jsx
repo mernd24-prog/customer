@@ -168,44 +168,42 @@ export default function OrderDetailPage({ orderId }) {
               sidebarClass="w-full lg:w-[320px] xl:w-[350px] 2xl:w-[380px]"
               mainClass=" w-full flex min-w-0 flex-1 flex-col"
               mainContent={
-               
-<OrderItemsSection
-  items={visibleOrderItems}
-  order={order}
-  selectedOrderItem={selectedOrderItem}
-  orderId={orderId}
-  orderStatus={status}
-  shipments={shipments}
-  sellerFulfillmentGroups={
-    order?.relations?.sellerFulfillmentGroups || []
-  }
-  returns={visibleReturns}
-  cancellations={visibleCancellations}
-  currency={currency}
-  getItemImage={getItemImage}
-  getProductTitle={getProductTitle}
-  getItemProductPath={getItemProductPath}
-  getOrderItemColor={getOrderItemColor}
-  getItemLineTotal={getItemLineTotal}
-  formatMoney={formatMoney}
-  isCodOrder={isCodOrder}
-  downloadableDocuments={downloadableDocuments}
-  visiblePendingSellerDocuments={visiblePendingSellerDocuments}
-  invoiceDownloadAvailable={invoiceDownloadAvailable}
-  customerInvoices={customerInvoices}
-  getInvoiceUrl={getInvoiceUrl}
-  downloadingId={downloadingId}
-  handleDownload={handleDownload}
-  canCancelOrder={canCancelOrder}
-  retrying={retrying}
-  handleRetryPayment={handleRetryPayment}
-  openCancellation={openCancellation}
-  hasCancellableQuantity={hasCancellableQuantity}
-  canRequestReturn={canRequestReturn}
-  selectedItemCanReturn={selectedItemCanReturn}
-  getOrderItemId={getOrderItemId}
-/>
-
+                <OrderItemsSection
+                  items={visibleOrderItems}
+                  order={order}
+                  selectedOrderItem={selectedOrderItem}
+                  orderId={orderId}
+                  orderStatus={status}
+                  shipments={shipments}
+                  sellerFulfillmentGroups={
+                    order?.relations?.sellerFulfillmentGroups || []
+                  }
+                  returns={visibleReturns}
+                  cancellations={visibleCancellations}
+                  currency={currency}
+                  getItemImage={getItemImage}
+                  getProductTitle={getProductTitle}
+                  getItemProductPath={getItemProductPath}
+                  getOrderItemColor={getOrderItemColor}
+                  getItemLineTotal={getItemLineTotal}
+                  formatMoney={formatMoney}
+                  isCodOrder={isCodOrder}
+                  downloadableDocuments={downloadableDocuments}
+                  visiblePendingSellerDocuments={visiblePendingSellerDocuments}
+                  invoiceDownloadAvailable={invoiceDownloadAvailable}
+                  customerInvoices={customerInvoices}
+                  getInvoiceUrl={getInvoiceUrl}
+                  downloadingId={downloadingId}
+                  handleDownload={handleDownload}
+                  canCancelOrder={canCancelOrder}
+                  retrying={retrying}
+                  handleRetryPayment={handleRetryPayment}
+                  openCancellation={openCancellation}
+                  hasCancellableQuantity={hasCancellableQuantity}
+                  canRequestReturn={canRequestReturn}
+                  selectedItemCanReturn={selectedItemCanReturn}
+                  getOrderItemId={getOrderItemId}
+                />
               }
               sidebarContent={
                 (subtotal !== undefined || items.length > 0) && (
@@ -299,7 +297,6 @@ export default function OrderDetailPage({ orderId }) {
               }
             />
           </div>
-        
         </ApiState>
       </PageContainer>
 
