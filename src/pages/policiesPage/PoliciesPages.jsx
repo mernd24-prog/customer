@@ -177,7 +177,7 @@ export default function PoliciesPages({ slugOverride }) {
               <div className="w-full">
                 {description && (
                   <p
-                    className="mb-8 text-[14px] leading-relaxed text-muted md:text-base"
+                    className="mb-8 text-base leading-relaxed text-muted md:text-base"
                     dangerouslySetInnerHTML={{ __html: description }}
                   />
                 )}

@@ -55,7 +55,7 @@ export default function FAQAccordion({ faqs = [] }) {
                       : "max-h-0 px-5 py-0 opacity-0"
                   }`}
                 >
-                  <p className=" text-[14px] leading-6 text-muted">
+                  <p className=" text-base leading-6 text-muted">
                     {faq.answer}
                   </p>
                 </div>

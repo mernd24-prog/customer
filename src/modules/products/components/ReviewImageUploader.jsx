@@ -197,7 +197,7 @@ export default function ReviewImageUploader({
             ) : (
               <ImagePlus size={22} />
             )}
-            <span className="text-[11px] font-bold">
+            <span className="text-xs font-bold">
               {uploading ? "Uploading" : "Add"}
             </span>
           </button>

@@ -40,13 +40,13 @@ export default function OrderDocuments({
                     className="shrink-0 text-[#3E4093]"
                   />
 
-                  <span className="min-w-0 truncate text-[13px] font-semibold text-[#2E2E2E]">
+                  <span className="min-w-0 truncate text-sm font-semibold text-[#2E2E2E]">
                     {document.title}
                   </span>
                 </div>
 
                 {document.pending ? (
-                  <span className="shrink-0 rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D]">
+                  <span className="shrink-0 rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-xs font-bold text-[#CE9F2D]">
                     Pending
                   </span>
                 ) : (

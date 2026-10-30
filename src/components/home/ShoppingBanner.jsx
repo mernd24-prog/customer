@@ -81,7 +81,7 @@ export default function ShoppingMadeEasyBanner({
               </span>
 
               <span
-                className="text-[13px] leading-none font-black tracking-[-0.01em] text-[#FFDF00] sm:text-[16px] md:text-[20px] lg:text-[27px] xl:text-[40px]"
+                className="text-sm leading-none font-black tracking-[-0.01em] text-[#FFDF00] sm:text-[16px] md:text-[20px] lg:text-[27px] xl:text-[40px]"
                 style={{ WebkitTextStroke: "0.7px #6B4226" }}
               >
                 OFF
@@ -95,15 +95,15 @@ export default function ShoppingMadeEasyBanner({
     className="
       mt-1
       text-center
-      text-[7px]
+      text-xs
       font-extrabold
       leading-[1.1]
       tracking-tight
       text-white
       min-[360px]:mt-1
-      min-[360px]:text-[8px]
+      min-[360px]:text-xs
       sm:mt-2
-      sm:text-[10px]
+      sm:text-xs
 
       md:mt-2.5
       md:text-[17px]

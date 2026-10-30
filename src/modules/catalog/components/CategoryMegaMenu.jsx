@@ -103,7 +103,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
     <div className="flex h-full min-h-0 flex-col border-r border-border bg-cream/40 p-3">
       <div className="mb-2 flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={15} className="text-gold" />
-        <h3 className=" text-[11px] font-black uppercase tracking-normal text-ink">
+        <h3 className=" text-xs font-black uppercase tracking-normal text-ink">
           {title}
         </h3>
       </div>
@@ -175,7 +175,7 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
     <div className="flex h-full min-h-0 flex-col border-r border-border bg-white p-3">
       <div className="mb-2 flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={13} className="text-gold shrink-0" />
-        <h3 className="text-[11px] font-black uppercase tracking-normal text-ink">
+        <h3 className="text-xs font-black uppercase tracking-normal text-ink">
           {title}
         </h3>
       </div>
@@ -247,7 +247,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
     <div className="flex h-full min-h-0 flex-col bg-white p-3">
       <div className="mb-2 flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={13} className="text-gold shrink-0" />
-        <h3 className="text-[11px] font-black uppercase tracking-normal text-ink">
+        <h3 className="text-xs font-black uppercase tracking-normal text-ink">
           {title}
         </h3>
       </div>
@@ -388,7 +388,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
     <div className="custom-scrollbar flex max-h-[60vh] w-full flex-col gap-2 overflow-y-auto border-t border-border bg-white p-3">
       <div className="flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={14} className="text-gold" />
-        <span className=" text-[10px] font-black uppercase tracking-normal text-gold">
+        <span className=" text-xs font-black uppercase tracking-normal text-gold">
           {rootTitle}
         </span>
       </div>

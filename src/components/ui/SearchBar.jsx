@@ -520,7 +520,7 @@ const SearchBar = ({
                       return next;
                     });
                   }}
-                  className="flex h-full w-[92px] min-w-0 items-center gap-1 rounded-l-full pl-2 pr-1.5 text-[11px] font-medium text-[var(--customer-ink)] !outline-none transition-all duration-300  ease-in-out hover:bg-black/[0.02] hover:text-[#03014D] focus:!outline-none focus-visible:!outline-none min-[375px]:w-[100px] min-[375px]:pl-2.5 min-[375px]:pr-2 min-[375px]:text-[12px] min-[425px]:w-[108px] sm:w-auto sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
+                  className="flex h-full w-[92px] min-w-0 items-center gap-1 rounded-l-full pl-2 pr-1.5 text-xs font-medium text-[var(--customer-ink)] !outline-none transition-all duration-300  ease-in-out hover:bg-black/[0.02] hover:text-[#03014D] focus:!outline-none focus-visible:!outline-none min-[375px]:w-[100px] min-[375px]:pl-2.5 min-[375px]:pr-2 min-[375px]:text-xs min-[425px]:w-[108px] sm:w-auto sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
                 >
                   <span className="truncate">
                     {selectedCategory
@@ -565,7 +565,7 @@ const SearchBar = ({
                             key={key}
                             type="button"
                             onClick={() => handleSelectCategory(category)}
-                            className={`w-full rounded-lg px-3 py-2.5 text-left text-[13px] leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
+                            className={`w-full rounded-lg px-3 py-2.5 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
                               isSelected
                                 ? "font-semibold text-[#03014D]"
                                 : "font-medium text-[var(--customer-ink)]"
@@ -616,7 +616,7 @@ const SearchBar = ({
             aria-controls={
               enableAutocomplete ? "search-suggestions" : undefined
             }
-            className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-[11px] font-medium leading-[16px] tracking-[0%] text-[#2E2E2E] outline-none ring-0 text-ellipsis overflow-hidden whitespace-nowrap placeholder:text-[#6e6d6d] placeholder:text-ellipsis focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-[12px] min-[425px]:text-[13px] sm:px-4 xl:text-[15px]"
+            className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-base font-medium leading-6 tracking-normal text-[#2E2E2E] outline-none ring-0 text-ellipsis overflow-hidden whitespace-nowrap placeholder:text-[#6e6d6d] placeholder:text-ellipsis focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-base min-[425px]:text-base sm:px-4 xl:text-[15px]"
           />
 
           {/* Clear Button */}

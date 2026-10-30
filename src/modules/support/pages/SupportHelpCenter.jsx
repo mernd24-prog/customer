@@ -60,7 +60,7 @@ function SupportStatusBadge({ status }) {
 
   return (
     <span
-      className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-[3px] text-[11px] font-semibold leading-none capitalize ${className}`}
+      className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-[3px] text-xs font-semibold leading-none capitalize ${className}`}
     >
       {normalized.replace(/_/g, " ")}
     </span>
@@ -283,7 +283,7 @@ export default function SupportHelpCenter() {
                           Instant AI Help Assistant
                         </h2>
 
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-sm">
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/90 backdrop-blur-sm">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                           24/7 Live
                         </span>
@@ -337,7 +337,7 @@ export default function SupportHelpCenter() {
                           />
                         </div>
 
-                        <span className="mt-2 max-w-[90px] text-[13px] font-semibold leading-[15px] text-[#2E2E2E]">
+                        <span className="mt-2 max-w-[90px] text-sm font-semibold leading-[15px] text-[#2E2E2E]">
                           {topic.title}
                         </span>
                       </Link>

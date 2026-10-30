@@ -86,7 +86,7 @@ export default function ReturnTrackingCard({ steps: customSteps, title }) {
                 </div>
 
                 {step.time && (
-                  <span className="shrink-0 text-[11px] sm:text-xs font-medium text-[#6F7480]">
+                  <span className="shrink-0 text-xs sm:text-xs font-medium text-[#6F7480]">
                     {step.time}
                   </span>
                 )}

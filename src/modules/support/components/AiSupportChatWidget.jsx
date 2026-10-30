@@ -31,7 +31,7 @@ const INITIAL_GREETING = {
 function AgentAvatar({ size = "md" }) {
   const dim =
     size === "sm"
-      ? "h-7 w-7 text-[11px]"
+      ? "h-7 w-7 text-xs"
       : "h-10 w-10 text-sm";
 
   return (
@@ -345,7 +345,7 @@ export default function AiSupportChatWidget() {
                  
                 </div>
 
-                <p className="mt-0.5 text-[11px] font-medium text-blue-200">
+                <p className="mt-0.5 text-xs font-medium text-blue-200">
                   {isSignedIn
                     ? `Hi ${
                         user?.name?.split(" ")[0] ||
@@ -383,7 +383,7 @@ export default function AiSupportChatWidget() {
               >
                 {/* Avatar */}
                 {msg.role === "user" ? (
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[9px] font-bold text-slate-600">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600">
                     YOU
                   </div>
                 ) : (
@@ -399,7 +399,7 @@ export default function AiSupportChatWidget() {
                 >
                   {/* Message Bubble */}
                   <div
-                    className={`rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed shadow-sm ${
+                    className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
                       msg.role === "user"
                         ? "rounded-tr-none bg-[#1B1D60] font-medium text-white"
                         : "rounded-tl-none border border-slate-200/80 bg-white text-slate-800"
@@ -426,7 +426,7 @@ export default function AiSupportChatWidget() {
                                 onClick={() =>
                                   setIsOpen(false)
                                 }
-                                className="rounded-md border border-blue-100 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-[#1B1D60] transition hover:bg-blue-100"
+                                className="rounded-md border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#1B1D60] transition hover:bg-blue-100"
                               >
                                 {link.label}
                               </Link>
@@ -445,7 +445,7 @@ export default function AiSupportChatWidget() {
                           Need more help?
                         </p>
 
-                        <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500">
+                        <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
                           Our support team can
                           help you directly.
                         </p>
@@ -474,7 +474,7 @@ export default function AiSupportChatWidget() {
 
                 <div className="rounded-2xl rounded-tl-none border border-slate-200 bg-white px-4 py-3 shadow-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-[12px] font-medium text-slate-500">
+                    <span className="text-xs font-medium text-slate-500">
                       Support is typing
                     </span>
 
@@ -497,7 +497,7 @@ export default function AiSupportChatWidget() {
           {messages.length <= 2 &&
             !isTyping && (
               <div className="border-t border-slate-100 bg-white px-3.5 py-2.5">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
                   Quick questions
                 </p>
 
@@ -512,7 +512,7 @@ export default function AiSupportChatWidget() {
                             prompt,
                           )
                         }
-                        className="min-h-8 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-left text-[11px] font-medium leading-tight text-slate-600 transition hover:border-[#1B1D60]/30 hover:bg-[#1B1D60]/5 hover:text-[#1B1D60] active:scale-[0.98]"
+                        className="min-h-8 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-left text-xs font-medium leading-tight text-slate-600 transition hover:border-[#1B1D60]/30 hover:bg-[#1B1D60]/5 hover:text-[#1B1D60] active:scale-[0.98]"
                       >
                         {prompt}
                       </button>

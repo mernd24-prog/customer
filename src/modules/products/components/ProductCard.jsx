@@ -432,14 +432,14 @@ export default function ProductCard({
               <button
                 type="button"
                 onClick={handleBrandClick}
-                className="text-left text-[11px] font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
+                className="text-left text-xs font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
                 {capitalizeFirst(brand)}
               </button>
             )}
 
             {isDealProduct && dealBadge && (
-              <span className="mb-1 inline-flex w-fit rounded-full bg-[#1B1D60] px-2.5 py-1 text-[11px] font-semibold leading-none text-white">
+              <span className="mb-1 inline-flex w-fit rounded-full bg-[#1B1D60] px-2.5 py-1 text-xs font-semibold leading-none text-white">
                 {dealBadge}
               </span>
             )}
@@ -466,7 +466,7 @@ export default function ProductCard({
             />
 
             {codAvailable && (
-              <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+              <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                 <Banknote size={12} />
                 COD Available
               </span>
@@ -545,13 +545,13 @@ export default function ProductCard({
       {/* BADGES (Top-Left: Subtle geometric tag) */}
       <div className="absolute left-2 top-2 z-20 flex max-w-[calc(100%-3rem)] flex-wrap items-center gap-1">
         {isFeatured && (
-          <span className="rounded bg-[#CE9F2D] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-xs sm:text-[10px]">
+          <span className="rounded bg-[#CE9F2D] px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs sm:text-xs">
             Featured
           </span>
         )}
 
         {isDealProduct && dealBadge && (
-          <span className="rounded bg-[#1B1D60] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-xs sm:text-[10px]">
+          <span className="rounded bg-[#1B1D60] px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs sm:text-xs">
             {dealBadge}
           </span>
         )}
@@ -617,14 +617,14 @@ export default function ProductCard({
           {rating > 0 && (
             <div
               className={cn(
-                "absolute left-2 z-20 flex items-center gap-0.5 rounded bg-white/90 backdrop-blur-sm px-1.5 py-0.5 text-[10px] font-bold text-slate-800 shadow-xs border border-black/5",
+                "absolute left-2 z-20 flex items-center gap-0.5 rounded bg-white/90 backdrop-blur-sm px-1.5 py-0.5 text-xs font-bold text-slate-800 shadow-xs border border-black/5",
                 isDealProduct && dealEndDate ? "bottom-7" : "bottom-2",
               )}
             >
               <Star size={10} className="fill-[#CE9F2D] text-[#CE9F2D]" />
               <span>{Number(rating).toFixed(1)}</span>
               {ratingCount > 0 && (
-                <span className="text-[9px] font-normal text-slate-500">
+                <span className="text-xs font-normal text-slate-500">
                   ({formatRatingCount(ratingCount)})
                 </span>
               )}
@@ -656,7 +656,7 @@ export default function ProductCard({
           {/* DEAL END DATE */}
           {isDealProduct && dealEndDate && (
             <div className="absolute inset-x-0 bottom-0 z-20 flex h-[20px] items-center justify-between gap-1 bg-[#FFFDF8]/95 px-2 shadow-xs sm:h-[22px]">
-              <div className="flex shrink-0 items-center gap-1 text-[9px] font-semibold text-[#1B1D60]">
+              <div className="flex shrink-0 items-center gap-1 text-xs font-semibold text-[#1B1D60]">
                 <span className="relative flex h-1.5 w-1.5 shrink-0">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
@@ -664,7 +664,7 @@ export default function ProductCard({
                 <span>Ends</span>
               </div>
 
-              <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-[9px] font-bold text-[#1B1D60]">
+              <span className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-xs font-bold text-[#1B1D60]">
                 <Clock3 size={10} className="shrink-0" />
                 <span className="truncate">{dealEndDate}</span>
               </span>
@@ -679,7 +679,7 @@ export default function ProductCard({
             <button
               type="button"
               onClick={handleBrandClick}
-              className="w-fit text-left truncate text-sm sm:text-sm font-bold uppercase tracking-wider text-[#CE9F2D] hover:text-[#B8860B] transition-colors"
+              className="max-w-full w-fit text-left truncate text-sm sm:text-sm font-bold uppercase tracking-wider text-[#CE9F2D] hover:text-[#B8860B] transition-colors"
               title={brand}
             >
               {capitalizeFirst(brand)}
@@ -690,7 +690,7 @@ export default function ProductCard({
 
           {/* TITLE */}
           <h3
-            className="mt-0.5 truncate text-xs sm:text-[12px] font-medium text-[#171A3A] transition-colors"
+            className="mt-0.5 line-clamp-2 break-words text-sm sm:text-base font-medium text-[#171A3A] transition-colors"
             title={title}
           >
             {title}
@@ -704,11 +704,11 @@ export default function ProductCard({
               currency={currency || cardProduct?.currency}
               className="flex min-w-0 flex-wrap items-baseline gap-x-1.5"
               priceClassName="text-sm sm:text-base font-bold text-[#1B1D60]"
-              oldPriceClassName="text-[12px] sm:text-[13px] font-normal text-slate-400 line-through"
+              oldPriceClassName="text-xs sm:text-sm font-normal text-slate-400 line-through"
             />
 
             {discountLabel && (
-              <span className="whitespace-nowrap text-[12px] sm:text-[13px] font-semibold text-emerald-600">
+              <span className="whitespace-nowrap text-xs sm:text-sm font-semibold text-emerald-600">
                 ({computedDiscountPercent}% off)
               </span>
             )}

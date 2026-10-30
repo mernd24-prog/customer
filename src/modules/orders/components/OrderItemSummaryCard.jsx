@@ -108,12 +108,12 @@ export const StarRatingUI = ({
       </div>
 
       <span className="text-[#BBF7D0] sm:hidden">|</span>
-      <span className="text-[11px] font-bold text-[#1F2430] sm:hidden">
+      <span className="text-xs font-bold text-[#1F2430] sm:hidden">
         {Number(rating).toFixed(1)}
       </span>
       <span className="text-[#BBF7D0] sm:hidden">|</span>
 
-      <span className="rounded-md text-[10px] font-bold text-[#065F46] sm:bg-[#DCFCE7] sm:px-2 sm:py-0.5 sm:text-[11px]">
+      <span className="rounded-md text-xs font-bold text-[#065F46] sm:bg-[#DCFCE7] sm:px-2 sm:py-0.5 sm:text-xs">
         Reviewed
       </span>
     </div>
@@ -275,16 +275,16 @@ export default function OrderItemSummaryCard({
           </div>
 
           <div className="min-w-0 flex-1 py-0.5">
-            <h3 className="line-clamp-2 text-[13px] font-semibold leading-[1.4] text-[#292929] sm:text-[14px]">
+            <h3 className="line-clamp-2 text-sm font-semibold leading-[1.4] text-[#292929] sm:text-base">
               {statusLabel} on {orderDate}
             </h3>
 
-            <p className="mt-1 line-clamp-2 text-[11px] leading-[1.5] text-[#707070] sm:text-[13px]">
+            <p className="mt-1 line-clamp-2 text-xs leading-[1.5] text-[#707070] sm:text-sm">
               {statusDescription}
             </p>
 
             {/* Mobile: show quantity only, never show color */}
-            <div className="mt-1.5 flex items-center gap-x-2 text-[11px] text-[#777777]">
+            <div className="mt-1.5 flex items-center gap-x-2 text-xs text-[#777777]">
               {orderedQuantity > 1 && (
                 <span>Qty: {orderedQuantity}</span>
               )}
@@ -353,7 +353,7 @@ export default function OrderItemSummaryCard({
 
             <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs">
               {getOrderItemColor(item) !== "N/A" && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5 text-[11px] font-medium text-[#1F2430]">
+                <span className="inline-flex items-center gap-1 rounded-md border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5 text-xs font-medium text-[#1F2430]">
                   <span className="font-normal text-[#6F7480]">
                     Color:
                   </span>
@@ -361,7 +361,7 @@ export default function OrderItemSummaryCard({
                 </span>
               )}
 
-              <span className="inline-flex items-center gap-1 rounded-md border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5 text-[11px] font-medium text-[#1F2430]">
+              <span className="inline-flex items-center gap-1 rounded-md border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5 text-xs font-medium text-[#1F2430]">
                 <span className="font-normal text-[#6F7480]">
                   Qty:
                 </span>

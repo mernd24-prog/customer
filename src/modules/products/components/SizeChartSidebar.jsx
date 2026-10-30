@@ -74,7 +74,7 @@ export default function SizeChartSidebar({ isOpen, onClose, productName }) {
           <div className="space-y-5 bg-white p-4 sm:p-5 rounded-xl border border-border shadow-sm">
             <h3 className="font-bold text-ink text-base sm:text-lg">Measurement Guidelines</h3>
             
-            <div className="text-[13px] sm:text-sm text-[#4E4E4E] leading-relaxed">
+            <div className="text-sm sm:text-sm text-[#4E4E4E] leading-relaxed">
               <span className="font-bold text-ink">Women Kurta</span> Not sure about your kurta size? Follow these simple steps to figure it out: 
               <span className="font-bold text-ink"> Waist</span> - Measure at the slimmest part of natural waist above the naval. 
               <span className="font-bold text-ink"> Sleeve</span> - Measure from the shoulder seam to the cuff / hem along the outer arm. 
@@ -87,23 +87,23 @@ export default function SizeChartSidebar({ isOpen, onClose, productName }) {
                 <div className="relative w-[140px] h-[180px] flex flex-col items-center justify-center opacity-80">
                    {/* Shoulders */}
                    <div className="w-24 h-10 bg-gold-soft rounded-t-3xl border-b border-dashed border-gold/40 relative">
-                      <span className="absolute -left-12 top-2 text-[11px] text-gold-dark font-medium">Bust</span>
+                      <span className="absolute -left-12 top-2 text-xs text-gold-dark font-medium">Bust</span>
                       <div className="absolute top-6 left-0 w-full h-[1px] border-b border-dashed border-gold/40"></div>
                    </div>
                    {/* Waist */}
                    <div className="w-20 h-14 bg-gold-soft relative">
-                      <span className="absolute -left-14 top-4 text-[11px] text-gold-dark font-medium">Waist</span>
+                      <span className="absolute -left-14 top-4 text-xs text-gold-dark font-medium">Waist</span>
                       <div className="absolute top-8 left-0 w-full h-[1px] border-b border-dashed border-gold/40"></div>
                    </div>
                    {/* Hips */}
                    <div className="w-[104px] h-24 bg-gold-soft rounded-b-xl relative">
-                      <span className="absolute -left-12 top-6 text-[11px] text-gold-dark font-medium">Hips</span>
+                      <span className="absolute -left-12 top-6 text-xs text-gold-dark font-medium">Hips</span>
                       <div className="absolute top-10 left-0 w-full h-[1px] border-b border-dashed border-gold/40"></div>
                    </div>
                 </div>
             </div>
 
-            <div className="text-[13px] sm:text-sm text-[#4E4E4E] leading-relaxed pb-2">
+            <div className="text-sm sm:text-sm text-[#4E4E4E] leading-relaxed pb-2">
               <span className="font-bold text-ink">Men Kurta</span> Not sure about your kurta size? Follow these simple steps to figure it out: 
               <span className="font-bold text-ink"> Shoulder</span> - Measure the shoulder at the back, from edge to edge with arms relaxed on both sides. 
               <span className="font-bold text-ink"> Chest</span> - Measure around the body under the arms at the fullest part of the chest with a tape measure.

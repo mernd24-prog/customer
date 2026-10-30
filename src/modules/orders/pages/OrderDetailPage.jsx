@@ -268,7 +268,7 @@ export default function OrderDetailPage({ orderId }) {
                                 className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80]"
                               >
                                 <div className="min-w-0 flex items-center gap-1.5">
-                                  <span className="font-semibold text-[13px] text-[#2E2E2E] truncate">
+                                  <span className="font-semibold text-sm text-[#2E2E2E] truncate">
                                     {document.title}
                                   </span>
                                 </div>

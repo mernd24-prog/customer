@@ -22,7 +22,7 @@ export default function NotFoundPage() {
           <h1 className="mt-2 text-[28px] leading-[36px] tracking-[-0.01em] font-bold text-[var(--customer-navy)] sm:text-[32px] sm:leading-[40px] sm:tracking-[-0.01em]">
             Page not found
           </h1>
-          <p className="mx-auto mt-4 max-w-xl text-[14px] leading-[22px] leading-relaxed text-[var(--customer-muted)] sm:text-[16px] sm:leading-[24px]">
+          <p className="mx-auto mt-4 max-w-xl text-base leading-[22px] leading-relaxed text-[var(--customer-muted)] sm:text-[16px] sm:leading-[24px]">
             We couldn&apos;t find the page you&apos;re looking for. It may have
             been moved or the link might be incorrect.
           </p>
@@ -30,14 +30,14 @@ export default function NotFoundPage() {
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               to="/"
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[var(--customer-gold)] bg-[var(--customer-gold)] px-5 py-2.5 text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-[var(--customer-navy)] shadow-sm transition-all duration-300 hover:border-[var(--customer-gold-dark)] hover:bg-[var(--customer-gold-dark)]"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[var(--customer-gold)] bg-[var(--customer-gold)] px-5 py-2.5 text-sm leading-[20px] tracking-[0.5px] font-semibold text-[var(--customer-navy)] shadow-sm transition-all duration-300 hover:border-[var(--customer-gold-dark)] hover:bg-[var(--customer-gold-dark)]"
             >
               <Home size={17} />
               Go to Home
             </Link>
             <Link
               to="/categories"
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[var(--customer-border)] bg-white px-5 py-2.5 text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-[var(--customer-navy)] shadow-sm transition-all duration-300 hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold-dark)]"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[var(--customer-border)] bg-white px-5 py-2.5 text-sm leading-[20px] tracking-[0.5px] font-semibold text-[var(--customer-navy)] shadow-sm transition-all duration-300 hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold-dark)]"
             >
               <Grid2X2 size={17} />
               Browse Categories

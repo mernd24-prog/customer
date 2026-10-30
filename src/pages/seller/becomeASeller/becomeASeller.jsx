@@ -438,7 +438,7 @@ export default function BecomeASeller() {
                         )}
 
                         {text && (
-                          <p className="mt-2 text-[14px] leading-6 text-gray-600 md:text-[15px]">
+                          <p className="mt-2 text-base leading-6 text-gray-600 md:text-[15px]">
                             {text}
                           </p>
                         )}
@@ -489,7 +489,7 @@ export default function BecomeASeller() {
                             </span>
                           </div>
 
-                          <p className="mt-2 text-[13px] leading-5 text-white/70 sm:text-[14px] sm:leading-[1.4rem]">
+                          <p className="mt-2 text-sm leading-5 text-white/70 sm:text-base sm:leading-[1.4rem]">
                             {text}
                           </p>
                         </div>

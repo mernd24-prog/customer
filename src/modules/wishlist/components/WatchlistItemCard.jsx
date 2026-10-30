@@ -195,7 +195,7 @@ export function WatchlistItemCard({
 
         <div className="flex min-w-0 flex-1 flex-col justify-between pr-5">
           <div className="min-w-0">
-            <h4 className="truncate text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
+            <h4 className="truncate text-sm font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
               <Link
                 to={productPath}
                 target="_blank"
@@ -207,7 +207,7 @@ export function WatchlistItemCard({
               </Link>
             </h4>
 
-            <p className="mt-1 text-[12px] font-bold text-ink">
+            <p className="mt-1 text-xs font-bold text-ink">
               {formatMoney(price, currency)}
             </p>
           </div>
@@ -216,7 +216,7 @@ export function WatchlistItemCard({
             to={productPath}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 text-[11px] font-medium text-gold hover:underline"
+            className="mt-1 text-xs font-medium text-gold hover:underline"
             aria-label={`View details for ${title}`}
           >
             View Item
@@ -257,13 +257,13 @@ export function WatchlistItemCard({
               bg-blue
               px-[8px] py-[3px]
               font-dmSans
-              text-[10px] font-semibold
+              text-xs font-semibold
               leading-none
               tracking-[0%]
               text-white
               sm:h-[28px] sm:min-w-[84px]
               sm:px-[15px] sm:py-[5px]
-              sm:text-[14px]
+              sm:text-base
             "
           >
             {discountLabel}
@@ -333,7 +333,7 @@ export function WatchlistItemCard({
             <div className="flex flex-col items-center justify-center gap-2 text-gray-400">
               <span className="text-xs">No Image</span>
               {isUnavailable && (
-                <span className="rounded bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600">
+                <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-bold text-red-600">
                   UNAVAILABLE
                 </span>
               )}
@@ -382,7 +382,7 @@ export function WatchlistItemCard({
             />
           }
           className={cn(
-            "w-full flex-1 gap-1 sm:gap-2 text-[10px] sm:text-[14px] md:text-[15px] font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-2 sm:px-4 py-1.5 sm:py-2.5 h-8 sm:h-10",
+            "w-full flex-1 gap-1 sm:gap-2 text-xs sm:text-base md:text-[15px] font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-2 sm:px-4 py-1.5 sm:py-2.5 h-8 sm:h-10",
             (isUnavailable || !isInStock) && "cursor-not-allowed opacity-60",
           )}
         >

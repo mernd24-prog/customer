@@ -28,10 +28,10 @@ export function PreferenceChannelCard({ channel, isChecked, onToggle }) {
         </div>
 
         <div className="min-w-0">
-          <h4 className="text-[14px] font-bold text-[#1B1D60] leading-tight">
+          <h4 className="text-base font-bold text-[#1B1D60] leading-tight">
             {channel.title}
           </h4>
-          <p className="text-[11px] sm:text-[12px] text-[#6F7480] mt-1 leading-snug line-clamp-2">
+          <p className="text-xs sm:text-xs text-[#6F7480] mt-1 leading-snug line-clamp-2">
             {channel.description}
           </p>
         </div>

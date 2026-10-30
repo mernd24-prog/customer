@@ -19,8 +19,8 @@ export default function NewArrivalCard({
           
           <TextWhiteButton
             to={seeAllLink}
-            rightIcon={<IoArrowForwardOutline className="text-[12px]" />}
-            className=" text-[14px]  text-[#FFFFFF]"
+            rightIcon={<IoArrowForwardOutline className="text-xs" />}
+            className=" text-base  text-[#FFFFFF]"
           >
             See All
           </TextWhiteButton>

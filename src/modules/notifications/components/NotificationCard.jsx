@@ -83,11 +83,11 @@ export function NotificationCard({ notif, onClick }) {
 
             <div className="flex items-center gap-2 shrink-0">
               {count ? (
-                <span className="text-[11px] font-semibold text-[#3E4093] bg-[#F3F4F9] border border-[#EAEFF5] px-2 py-0.5 rounded-lg">
+                <span className="text-xs font-semibold text-[#3E4093] bg-[#F3F4F9] border border-[#EAEFF5] px-2 py-0.5 rounded-lg">
                   {count} {count === 1 ? "Product" : "Products"}
                 </span>
               ) : null}
-              <span className="text-[12px] text-[#8E8E8E] font-medium shrink-0">
+              <span className="text-xs text-[#8E8E8E] font-medium shrink-0">
                 {formatRelativeTime(notif.createdAt)}
               </span>
             </div>
@@ -95,7 +95,7 @@ export function NotificationCard({ notif, onClick }) {
 
           {/* Message */}
           <p
-            className={`mt-0.5 text-[13px] sm:text-[14px] leading-snug break-words ${isRead ? "text-[#6E6E6E]" : "text-[#4E4E4E]"}`}
+            className={`mt-0.5 text-sm sm:text-base leading-snug break-words ${isRead ? "text-[#6E6E6E]" : "text-[#4E4E4E]"}`}
           >
             {displayMessage}
           </p>

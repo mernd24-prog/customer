@@ -16,7 +16,7 @@ export default function Badge({
   return (
     <span
       className={cn(
-        "mb-1 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-normal sm:px-3 sm:text-[11px]",
+        "mb-1 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-bold uppercase tracking-normal sm:px-3 sm:text-xs",
         variantMap[variant] || variantMap.gold,
         className
       )}

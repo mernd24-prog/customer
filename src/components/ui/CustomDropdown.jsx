@@ -259,7 +259,7 @@ export default function CustomDropdown({
                     className={cn(
                       "block w-full",
                       "px-3.5 pr-4 py-2.5",
-                      "text-left text-[13px]",
+                      "text-left text-sm",
                       "font-semibold",
                       "transition-all",
                       "border-y border-transparent",

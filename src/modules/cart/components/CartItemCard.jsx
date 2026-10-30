@@ -190,19 +190,19 @@ export default function CartItemCard({
             {hasVariantTags && (
               <div className="mb-3 flex flex-wrap gap-1.5">
                 {item?.condition && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-xs font-semibold text-[#1B1D60]">
                     {item.condition}
                   </span>
                 )}
 
                 {item?.color && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-xs font-semibold text-[#1B1D60]">
                     Color: {item.color}
                   </span>
                 )}
 
                 {item?.size && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-xs font-semibold text-[#1B1D60]">
                     Size: {item.size}
                   </span>
                 )}
@@ -212,7 +212,7 @@ export default function CartItemCard({
                   .map(([key, value]) => (
                     <span
                       key={key}
-                      className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold capitalize text-[#1B1D60]"
+                      className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-xs font-semibold capitalize text-[#1B1D60]"
                     >
                       {key.replace(/_/g, " ")}: {String(value)}
                     </span>

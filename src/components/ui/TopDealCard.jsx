@@ -26,7 +26,7 @@ export default function TopDealCard({
         <div className="mt-3 flex flex-1 flex-col gap-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Title */}
           <h3
-            className="line-clamp-2 text-center  text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-left"
+            className="line-clamp-2 text-center  text-sm font-semibold leading-5 text-[var(--customer-ink)] sm:text-left"
             title={title}
           >
             {title}
@@ -37,8 +37,8 @@ export default function TopDealCard({
             price={price}
             oldPrice={oldPrice}
             className="mx-auto h-[34px] w-full max-w-[130px] gap-1 rounded-full px-2 sm:mx-0 sm:h-[38px] sm:max-w-[150px] sm:gap-1.5 sm:px-3 md:h-[40px] md:max-w-[165px]"
-            priceClassName="text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px]"
-            oldPriceClassName="text-[9px] sm:text-[10px] md:text-[11px] lg:text-[12px]"
+            priceClassName="text-xs sm:text-xs md:text-sm lg:text-base"
+            oldPriceClassName="text-xs sm:text-xs md:text-xs lg:text-xs"
           />
         </div>
       </article>

@@ -15,7 +15,7 @@ export default function PageHeader({
     >
       <div className="min-w-0">
         {eyebrow && (
-          <p className=" text-[12px] font-bold uppercase text-[var(--customer-gold-dark)]">
+          <p className=" text-xs font-bold uppercase text-[var(--customer-gold-dark)]">
             {eyebrow}
           </p>
         )}
@@ -23,7 +23,7 @@ export default function PageHeader({
           {displayTitle}
         </h1> */}
         {description && (
-          <p className="mt-2 max-w-2xl  text-[14px] leading-6 text-[var(--customer-muted)]">
+          <p className="mt-2 max-w-2xl  text-base leading-6 text-[var(--customer-muted)]">
             {description}
           </p>
         )}

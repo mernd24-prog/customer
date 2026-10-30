@@ -54,7 +54,7 @@ const HeroSwiper = memo(({ slides }) => {
   {slide.badge && (
     <Label
       variant="seasonSale"
-      className="max-w-[290px] rounded-full border border-[#CE9F2D]/50 bg-[#FFF8E7] px-3 py-1.5 text-center text-[10px] font-semibold leading-4 text-[#18156D] shadow-sm min-[375px]:max-w-[330px] min-[375px]:text-[11px] sm:max-w-fit sm:px-4 sm:text-[12px] lg:text-[14px]"
+      className="max-w-[290px] rounded-full border border-[#CE9F2D]/50 bg-[#FFF8E7] px-3 py-1.5 text-center text-xs font-semibold leading-4 text-[#18156D] shadow-sm min-[375px]:max-w-[330px] min-[375px]:text-xs sm:max-w-fit sm:px-4 sm:text-xs lg:text-base"
       leftIcon={
         <Tag
           size={12}

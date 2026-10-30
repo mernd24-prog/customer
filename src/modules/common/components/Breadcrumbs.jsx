@@ -30,9 +30,9 @@ export default function Breadcrumbs({
 
   const isCompact =
     linkClassName.includes("text-xs") ||
-    linkClassName.includes("text-[10px]") ||
-    linkClassName.includes("text-[11px]") ||
-    linkClassName.includes("text-[12px]");
+    linkClassName.includes("text-xs") ||
+    linkClassName.includes("text-xs") ||
+    linkClassName.includes("text-xs");
 
   const resolvedHomeSize = homeIconSize || (isCompact ? 13 : 16);
 

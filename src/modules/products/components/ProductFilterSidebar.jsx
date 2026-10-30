@@ -455,8 +455,8 @@ function FilterOptionGroup({
   const headerClass = `flex w-full min-w-0 items-center justify-between py-1.5 text-left transition-colors duration-200`;
 
   const labelClass = isRoot
-    ? "text-[14px] font-semibold text-[#111827]"
-    : "text-[13px] font-medium text-[#434343]";
+    ? "text-base font-semibold text-[#111827]"
+    : "text-sm font-medium text-[#434343]";
 
   return (
     <div className={`max-w-full overflow-hidden ${isRoot ? "mb-1" : "mb-0.5"}`}>
@@ -469,7 +469,7 @@ function FilterOptionGroup({
         <span className={`${labelClass} min-w-0 truncate`}>{group.label}</span>
         <div className="flex items-center gap-1.5 shrink-0">
           {selectedCount > 0 && (
-            <span className="text-[12px] text-[#999] font-medium">
+            <span className="text-xs text-[#999] font-medium">
               ({selectedCount})
             </span>
           )}
@@ -548,7 +548,7 @@ function FilterOptionGroup({
                 </span>
 
                 {count != null && (
-                  <span className="shrink-0 text-[12px] text-[#888] whitespace-nowrap">
+                  <span className="shrink-0 text-xs text-[#888] whitespace-nowrap">
                     ({count})
                   </span>
                 )}
@@ -722,7 +722,7 @@ export function OptionFilter({
               </span>
 
               {count != null && (
-                <span className="shrink-0 font-medium leading-none text-[#373737] text-[14px] whitespace-nowrap">
+                <span className="shrink-0 font-medium leading-none text-[#373737] text-base whitespace-nowrap">
                   ( {count} )
                 </span>
               )}
@@ -803,7 +803,7 @@ export function CheckboxListFilter({
             </span>
 
             {count != null && (
-              <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
+              <span className="shrink-0  font-medium leading-none text-[#373737] text-base">
                 ( {count} )
               </span>
             )}
@@ -877,7 +877,7 @@ export function RatingFilter({
               </span>
 
               {counts[String(stars)] != null && (
-                <span className="shrink-0 whitespace-nowrap text-[14px] font-medium leading-none text-[#373737]">
+                <span className="shrink-0 whitespace-nowrap text-base font-medium leading-none text-[#373737]">
                   ( {counts[String(stars)]} )
                 </span>
               )}
@@ -947,7 +947,7 @@ export default function ProductFilterSidebar({
             <button
               type="button"
               onClick={onClearAll}
-              className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[14px] text-[14px] font-semibold text-[#5960B8] sm:text-[16px]"
+              className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[14px] text-base font-semibold text-[#5960B8] sm:text-[16px]"
             >
               Clear All
             </button>

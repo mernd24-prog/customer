@@ -100,7 +100,7 @@ export function PaymentsPage() {
                             {providerName}
                           </p>
                           {(payment.orderId || payment.order_id) && (
-                            <span className="rounded bg-[#F8F1E2] px-2 py-0.5 text-[11px] font-semibold text-[#855B14]">
+                            <span className="rounded bg-[#F8F1E2] px-2 py-0.5 text-xs font-semibold text-[#855B14]">
                               Order #
                               {String(
                                 payment.orderId || payment.order_id,
@@ -112,7 +112,7 @@ export function PaymentsPage() {
                           {formattedDate && <span>{formattedDate}</span>}
                           {formattedDate && id && <span>•</span>}
                           {id && (
-                            <span className="font-mono text-[11px] text-stone-500">
+                            <span className="font-mono text-xs text-stone-500">
                               ID: {id}
                             </span>
                           )}

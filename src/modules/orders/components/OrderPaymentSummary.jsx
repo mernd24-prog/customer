@@ -65,10 +65,10 @@ function AddressBlock({ shippingAddress, getAddressValue }) {
 
   return (
     <div className="flex w-full max-w-[515px] flex-col items-start py-3">
-      <span className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
+      <span className="text-base font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
         Shipping Address
       </span>
-      <div className="mt-2  w-full break-words text-[14px] font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
+      <div className="mt-2  w-full break-words text-base font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
         {fullName && <p className="font-semibold">{fullName}</p>}
         {street && <p>{street}</p>}
         {cityLine && <p>{cityLine}</p>}
@@ -87,10 +87,10 @@ function TaxBreakupBlock({
 }) {
   return (
     <div className="flex w-full max-w-[515px] flex-col items-start py-3">
-      <span className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
+      <span className="text-base font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
         Gst Invoice Breakup
       </span>
-      <div className="mt-2 grid gap-1 text-[14px] font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
+      <div className="mt-2 grid gap-1 text-base font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
         {taxBreakup && (
           <p>
             Tax Mode:{" "}

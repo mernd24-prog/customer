@@ -2,11 +2,11 @@ import { cn } from "../../../utils/common";
 import { SpinnerIcon } from "../icons";
 
 const sizeMap = {
-  xs: "text-[11px] leading-[16px] tracking-[0.5px] min-h-[24px] px-2.5 py-1",
-  sm: "text-[12px] leading-[18px] tracking-[0.5px] min-h-[30px] px-3 py-1.5",
-  md: "text-[13px] leading-[20px] tracking-[0.5px] min-h-[38px] px-4 py-2",
-  lg: "text-[13px] leading-[20px] tracking-[0.5px] md:text-[14px] md:leading-[20px] md:tracking-[0.5px] min-h-[44px] px-5 py-2.5",
-  xl: "text-[14px] leading-[20px] tracking-[0.5px] min-h-[50px] px-6 py-3",
+  xs: "text-sm leading-[22px] tracking-[0.5px] min-h-[36px] px-2.5 py-1",
+  sm: "text-sm leading-[22px] tracking-[0.5px] min-h-[40px] px-3 py-1.5",
+  md: "text-sm leading-[22px] tracking-[0.5px] min-h-[44px] px-4 py-2",
+  lg: "text-sm leading-[22px] tracking-[0.5px] md:text-base md:leading-[20px] md:tracking-[0.5px] min-h-[44px] px-5 py-2.5",
+  xl: "text-base leading-[20px] tracking-[0.5px] min-h-[50px] px-6 py-3",
 };
 
 const variantMap = {

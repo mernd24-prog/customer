@@ -257,7 +257,7 @@ export default function ProductDetailPage() {
                     {brand && (
                       <Link
                         to={`/brands/${encodeURIComponent(brand)}`}
-                        className="max-w-full w-fit break-words text-[13px] font-bold uppercase tracking-widest text-navy transition-colors hover:text-[#CE9F2D]"
+                        className="max-w-full w-fit break-words text-sm font-bold uppercase tracking-widest text-navy transition-colors hover:text-[#CE9F2D]"
                       >
                         {capitalizeFirst(brand)}
                       </Link>
@@ -346,7 +346,7 @@ export default function ProductDetailPage() {
 
                   {/* Quantity */}
                   <div className="flex flex-col gap-1.5">
-                    <span className="text-[11px]  uppercase tracking-wider text-[#6F7480] font-bold">
+                    <span className="text-xs  uppercase tracking-wider text-[#6F7480] font-bold">
                       Quantity
                     </span>
 

@@ -129,7 +129,7 @@ export function OrderItemCard({
     ) : null;
 
   const quantityBreakdown = showQuantityBreakdown ? (
-    <div className="flex flex-wrap gap-1.5 text-[11px] font-semibold">
+    <div className="flex flex-wrap gap-1.5 text-xs font-semibold">
       {deliveredQuantity > 0 && (
         <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">
           Delivered {deliveredQuantity}

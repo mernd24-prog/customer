@@ -155,8 +155,8 @@ export default function WatchlistPage() {
               <div className="flex items-center gap-3 mt-6 lg:mt-8">
                 <OutlineSmallButton
                   to="/products"
-                  rightIcon={<FaAngleRight className="text-[10px]" />}
-                  className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
+                  rightIcon={<FaAngleRight className="text-xs" />}
+                  className="xl:text-[18px] text-base xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
                 >
                   Continue Shopping
                 </OutlineSmallButton>

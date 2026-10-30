@@ -26,12 +26,12 @@ export default function Rating({
         }`}
       >
         <Star size={size > 14 ? size : 12} className="fill-white text-white" />
-        <span className="text-xs font-bold sm:text-[13px]">
+        <span className="text-xs font-bold sm:text-sm">
           {rating.toFixed(1)}
         </span>
       </div>
       {count != null && (
-        <span className="text-[13px] font-medium text-[#2E2E2E]">
+        <span className="text-sm font-medium text-[#2E2E2E]">
           ({count})
         </span>
       )}

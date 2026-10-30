@@ -235,7 +235,7 @@ export default function SellerPolicy() {
               {primaryCtaLabel && (
                 <SolidLargeButton
                   to={primaryCtaUrl}
-                  className="h-[42px] min-w-[138px] px-4 text-[13px] font-bold whitespace-nowrap sm:h-[48px] sm:min-w-[158px] sm:px-6 sm:text-[15px]"
+                  className="h-[42px] min-w-[138px] px-4 text-sm font-bold whitespace-nowrap sm:h-[48px] sm:min-w-[158px] sm:px-6 sm:text-[15px]"
                 >
                   {primaryCtaLabel}
                 </SolidLargeButton>
@@ -244,7 +244,7 @@ export default function SellerPolicy() {
               {secondaryCtaLabel && (
                 <OutlineSecondaryButton
                   to={secondaryCtaUrl}
-                  className="h-[42px] min-w-[130px] px-4 text-[13px] font-semibold whitespace-nowrap text-[#18156D] sm:h-[48px] sm:min-w-[150px] sm:px-6 sm:text-[15px]"
+                  className="h-[42px] min-w-[130px] px-4 text-sm font-semibold whitespace-nowrap text-[#18156D] sm:h-[48px] sm:min-w-[150px] sm:px-6 sm:text-[15px]"
                 >
                   {secondaryCtaLabel}
                 </OutlineSecondaryButton>
@@ -300,7 +300,7 @@ export default function SellerPolicy() {
                           )}
 
                           {item.desc && (
-                            <p className="mt-2 text-[14px] leading-5 text-gray-600 sm:leading-6">
+                            <p className="mt-2 text-base leading-5 text-gray-600 sm:leading-6">
                               {item.desc}
                             </p>
                           )}
@@ -363,7 +363,7 @@ export default function SellerPolicy() {
                           )}
 
                           {item.desc && (
-                            <p className="mt-2 text-[14px] leading-5 text-gray-600 sm:leading-6">
+                            <p className="mt-2 text-base leading-5 text-gray-600 sm:leading-6">
                               {item.desc}
                             </p>
                           )}
@@ -425,7 +425,7 @@ export default function SellerPolicy() {
                           )}
 
                           {item.desc && (
-                            <p className="mt-2 text-[14px] leading-5 text-white/70 sm:leading-6">
+                            <p className="mt-2 text-base leading-5 text-white/70 sm:leading-6">
                               {item.desc}
                             </p>
                           )}

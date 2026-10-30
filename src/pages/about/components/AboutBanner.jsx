@@ -26,7 +26,7 @@ export default function AboutBanner({ image, data }) {
           <div className="customer-container flex w-full justify-center">
             <div className="w-full max-w-[980px] rounded-lg  px-5 py-6 text-center shadow-[0_30px_80px_rgba(34,27,17,0.18)] backdrop-blur-[2px] sm:px-8 lg:px-12 lg:py-11">
               {/* {banner?.badge && (
-                <span className="mb-4 inline-block rounded-lg border border-white/60 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white sm:text-[11px]">
+                <span className="mb-4 inline-block rounded-lg border border-white/60 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white sm:text-xs">
                   {banner.badge}
                 </span>
               )} */}

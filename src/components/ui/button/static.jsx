@@ -5,7 +5,7 @@ import DynamicButton from "./button";
 
 const buttonStyles = {
   solidSmall:
-    "h-[35px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[14px] py-[7px] text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-white hover:bg-[linear-gradient(#bd9025,#bd9025)]",
+    "h-[35px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[14px] py-[7px] text-sm leading-[20px] tracking-[0.5px] font-semibold text-white hover:bg-[linear-gradient(#bd9025,#bd9025)]",
 
   outlineSmall:
     "inline-flex h-[42px] px-4 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md  cursor-pointer",
@@ -17,7 +17,7 @@ const buttonStyles = {
     "border border-white/50 bg-transparent text-white hover:bg-white/10",
   solidLarge:
   "h-[48px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[22px] py-[10px] text-[15px] leading-[20px] tracking-[0.5px] font-bold !text-[#18156D] hover:bg-[linear-gradient(#B88419,#B88419)] hover:!text-[#18156D] transition-colors duration-200",headerGold:
-    "h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-[11px] leading-[16px] tracking-[0.5px] font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-w-[153px] sm:px-4 sm:text-[13px] sm:leading-[20px] sm:tracking-[0.5px]",
+    "h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-xs leading-[16px] tracking-[0.5px] font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-w-[153px] sm:px-4 sm:text-sm sm:leading-[20px] sm:tracking-[0.5px]",
   
     headerIcon:
     "group relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-transparent p-0 shadow-none",
@@ -25,17 +25,17 @@ const buttonStyles = {
   pill: "inline-flex min-w-[110px]  sm:min-w-[130px] h-[40px] sm:h-[38px] items-center justify-center  gap-1 sm:gap-[15px] md:gap-2 rounded-lg bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 sm:px-[34px]    font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[linear-gradient(#bd9025,#bd9025)]",
 
   ghostPill:
-    "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-[12px] leading-[18px] tracking-[0.5px] font-semibold text-[#D6A323] hover:bg-black/60 xl:text-[14px] xl:leading-[20px] xl:tracking-[0.5px]",
+    "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-xs leading-[18px] tracking-[0.5px] font-semibold text-[#D6A323] hover:bg-black/60 xl:text-base xl:leading-[20px] xl:tracking-[0.5px]",
   textGold:
     "h-auto  justify-start rounded-none bg-transparent p-0  md:text-base text-sm font-semibold text-[#8A6500] [&_svg]:text-[#CE9F2D] hover:text-[#7A5A00] [&_svg]:hover:text-[#bd9025]",
   textWhite:
-    "h-auto justify-start rounded-none bg-transparent p-0 text-[12px] leading-[18px] tracking-[0.5px] font-medium text-white hover:text-white/80",
+    "h-auto justify-start rounded-none bg-transparent p-0 text-xs leading-[18px] tracking-[0.5px] font-medium text-white hover:text-white/80",
  iconCircle:
   "h-[40px] w-[40px] rounded-full border border-[#1B1D60] bg-[#1B1D600D] p-[10px] text-[#1B1D60] hover:border-[#1B1D60] hover:text-[#CE9F2D] focus:border-[#1B1D60] focus-visible:border-[#1B1D60] active:border-[#1B1D60]",
   categoryMore:
     "group flex h-auto min-h-0 min-w-[80px] flex-col items-center rounded-md bg-transparent px-0 py-0 text-inherit shadow-none outline-none transition-all duration-300 ease-in-out hover:bg-transparent focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2 sm:min-w-[100px] lg:min-w-[140px]",
   continueShopping:
-  "mx-auto mt-6 flex h-[42px] w-full max-w-[210px] items-center justify-center rounded-full bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-5 text-[13px] font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]",
+  "mx-auto mt-6 flex h-[42px] w-full max-w-[210px] items-center justify-center rounded-full bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-5 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]",
 };
 
 export const PrimaryGradientButton = ({ children, ...props }) => (
@@ -202,7 +202,7 @@ export const CategoryMoreButton = ({
 
         {/* LABEL */}
         <span
-          className={`mt-3 sm:mt-4 lg:mt-4.5 text-center text-[11px] sm:text-[13px] md:text-[14px] lg:text-[15px] whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
+          className={`mt-3 sm:mt-4 lg:mt-4.5 text-center text-xs sm:text-sm md:text-base lg:text-[15px] whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
             active
               ? "font-bold text-[#1E204A]"
               : "font-semibold text-[#2D2D2D] group-hover:text-[#1E204A]"

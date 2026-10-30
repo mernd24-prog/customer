@@ -152,7 +152,7 @@ export function OrderTimeline({
                     limit={1}
                     className="mt-1 block"
                     textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                    buttonClassName="ml-1 text-[11px] font-semibold text-[#26A541] hover:underline"
+                    buttonClassName="ml-1 text-xs font-semibold text-[#26A541] hover:underline"
                     moreLabel="Show more"
                     lessLabel="Show less"
                   />
@@ -292,7 +292,7 @@ export function OrderTimeline({
                   limit={1}
                   className="mt-1 block"
                   textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+                  buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -303,7 +303,7 @@ export function OrderTimeline({
                   limit={1}
                   className="mt-1 block"
                   textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+                  buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -314,7 +314,7 @@ export function OrderTimeline({
                   limit={1}
                   className="mt-1 block"
                   textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+                  buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />
@@ -325,7 +325,7 @@ export function OrderTimeline({
                   limit={1}
                   className="mt-1 block"
                   textClassName="text-xs text-[#6F7480] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+                  buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
                   moreLabel="Show more"
                   lessLabel="Show less"
                 />

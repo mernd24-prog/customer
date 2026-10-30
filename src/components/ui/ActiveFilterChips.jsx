@@ -72,7 +72,7 @@ export default function ActiveFilterChips({
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="w-fit text-[11px] font-semibold uppercase tracking-wide text-[#2874F0] hover:underline"
+          className="w-fit text-xs font-semibold uppercase tracking-wide text-[#2874F0] hover:underline"
         >
           {expanded ? "Show less" : "Show more"}
         </button>

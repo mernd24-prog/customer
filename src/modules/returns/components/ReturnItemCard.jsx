@@ -183,7 +183,7 @@ export default function ReturnItemCard({
     <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 rounded-lg border border-[#e4ca8e] bg-[#FFFDF9] p-3.5">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 flex-1">
         <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EFE5D2] pb-2 sm:pb-0 sm:pr-3">
-          <p className="text-[11px] font-medium text-[#6E6E6E] flex items-center gap-1">
+          <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
             <AlertCircle size={13} className="text-[#CE9F2D] shrink-0" />
             Reason for Return
           </p>
@@ -194,13 +194,13 @@ export default function ReturnItemCard({
               text={capitalizeFirst(reason) || "Not specified"}
               mode="lines"
               limit={1}
-              buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
+              buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
             />
           </div>
         </div>
 
         <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EFE5D2] pb-2 sm:pb-0 sm:pr-3">
-          <p className="text-[11px] font-medium text-[#6E6E6E] flex items-center gap-1">
+          <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
             <PackageCheck size={13} className="text-[#0D652D] shrink-0" />
             Refund Amount
           </p>
@@ -211,7 +211,7 @@ export default function ReturnItemCard({
         </div>
 
         <div className="min-w-0 space-y-0.5">
-          <p className="text-[11px] font-medium text-[#6E6E6E] flex items-center gap-1">
+          <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
             <CalendarDays size={13} className="text-[#CE9F2D] shrink-0" />
             Expected Date
           </p>

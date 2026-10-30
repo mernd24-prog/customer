@@ -23,20 +23,20 @@ function AddressBlock({ address, title, icon: Icon }) {
       </div>
       <div className="flex flex-col gap-2">
         {fullName && (
-          <div className="flex items-start gap-2 text-[13px] sm:text-sm font-medium text-[#2E2E2E]">
+          <div className="flex items-start gap-2 text-sm sm:text-sm font-medium text-[#2E2E2E]">
             <span className="mt-0.5"><User size={15} className="text-[#D4A428]" /></span>
             <span>{fullName}</span>
           </div>
         )}
         {phone && (
-          <div className="flex items-start gap-2 text-[13px] sm:text-sm font-medium text-[#2E2E2E]">
+          <div className="flex items-start gap-2 text-sm sm:text-sm font-medium text-[#2E2E2E]">
             <span className="mt-0.5"><Phone size={15} className="text-[#D4A428]" /></span>
             <span>{phone}</span>
           </div>
         )}
-        <div className="flex items-start gap-2 text-[13px] sm:text-sm font-medium text-[#2E2E2E]">
+        <div className="flex items-start gap-2 text-sm sm:text-sm font-medium text-[#2E2E2E]">
           <span className="mt-0.5"><MapPin size={15} className="text-[#D4A428]" /></span>
-          <span className="leading-relaxed">
+          <span className="min-w-0 break-words leading-relaxed">
             {line1}
             {line2 ? `, ${line2}` : ""}
             <br />
@@ -56,7 +56,7 @@ export default function OrderAddressCard({ shippingAddress, billingAddress }) {
   return (
     <div className="flex flex-col md:flex-row gap-6 md:gap-8 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-5 md:p-6">
       {shippingAddress && (
-        <div className="flex-1">
+        <div className="min-w-0 flex-1 break-words">
           <AddressBlock address={shippingAddress} title="Shipping Address" icon={MapPin} />
         </div>
       )}
@@ -69,7 +69,7 @@ export default function OrderAddressCard({ shippingAddress, billingAddress }) {
       )}
 
       {billingAddress && (
-        <div className="flex-1">
+        <div className="min-w-0 flex-1 break-words">
           <AddressBlock address={billingAddress} title="Billing Address" icon={FileText} />
         </div>
       )} */}

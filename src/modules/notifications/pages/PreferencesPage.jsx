@@ -56,7 +56,7 @@ export function PreferencesPage() {
                   <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] leading-tight">
                     Notification Channels
                   </h2>
-                  <p className="text-xs sm:text-[13px] text-[#6F7480] mt-0.5">
+                  <p className="text-xs sm:text-sm text-[#6F7480] mt-0.5">
                     Select the channels you want to receive notifications
                     through.
                   </p>
@@ -102,7 +102,7 @@ export function PreferencesPage() {
                 className={cn(
                   "flex items-center gap-2.5 px-6 py-3 rounded-xl",
                   "bg-gradient-to-r from-[#D6A323] via-[#CE9F2D] to-[#B8871B]",
-                  "text-white font-bold text-[14px]",
+                  "text-white font-bold text-base",
                   "shadow-[0_4px_16px_rgba(206,159,45,0.35)]",
                   "hover:shadow-[0_6px_22px_rgba(206,159,45,0.45)] hover:scale-[1.01] active:scale-[0.99]",
                   "transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",

@@ -74,7 +74,7 @@ function ChatBubble({
       >
         {tone !== "system" ? (
           <div
-            className={`mb-1 flex items-center gap-2 text-[11px] font-semibold ${isRight ? "text-[#717684]" : "text-[#1B1D60]"}`}
+            className={`mb-1 flex items-center gap-2 text-xs font-semibold ${isRight ? "text-[#717684]" : "text-[#1B1D60]"}`}
           >
             <span>{name}</span>
             {time ? (
@@ -387,12 +387,12 @@ export default function SupportTicketDetailsPage() {
                           Sam Global Support
                         </h1>
                         <span
-                          className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2.5 py-[8px] text-[10px] sm:text-[11px] font-semibold leading-none ${statusClass(ticket.status)}`}
+                          className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2.5 py-[8px] text-xs sm:text-xs font-semibold leading-none ${statusClass(ticket.status)}`}
                         >
                           {statusLabel(ticket.status)}
                         </span>
                       </div>
-                      <p className="mt-0.5 truncate text-[11px] font-medium text-white/80 sm:text-xs">
+                      <p className="mt-0.5 truncate text-xs font-medium text-white/80 sm:text-xs">
                         {ticket.subject} ·{" "}
                         {ticket.categoryLabel || ticket.category}
                       </p>
@@ -470,7 +470,7 @@ export default function SupportTicketDetailsPage() {
                         </p>
                       </div>
                       {ticket.resolvedAt ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/80 bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 shadow-2xs">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/80 bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 shadow-2xs">
                           <CheckCircle2 size={12} />
                           Resolved
                         </span>
@@ -513,7 +513,7 @@ export default function SupportTicketDetailsPage() {
                                 </p>
                               </div>
                               <span
-                                className={`shrink-0 whitespace-nowrap rounded-full px-2 py-2 text-[10px] font-semibold leading-none ${statusClass(item.status)}`}
+                                className={`shrink-0 whitespace-nowrap rounded-full px-2 py-2 text-xs font-semibold leading-none ${statusClass(item.status)}`}
                               >
                                 {statusLabel(item.status)}
                               </span>

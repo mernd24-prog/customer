@@ -273,7 +273,7 @@ export default function ContactUs() {
                           </div>
 
                           <div className="min-w-0 pt-0.5">
-                            <p className="mb-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
+                            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
                               {item.title}
                             </p>
 
@@ -287,7 +287,7 @@ export default function ContactUs() {
                   </div>
 
                   <div className="mt-8 rounded-lg border border-[#e7d9b8] bg-white/80 p-4 shadow-[0_8px_18px_rgba(27,35,70,0.04)]">
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
                       For Brand &amp; Business Inquiries
                     </p>
                     <p className="mt-3 text-[15px] leading-7 text-[#4c4f6d]">

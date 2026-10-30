@@ -282,7 +282,7 @@ export default function AddressSelection({
   };
 
   const infoClass =
-    "flex items-start gap-2 font-medium leading-[18px] text-[#1B1D60] text-xs sm:text-[14px] sm:leading-[22px] md:text-[15px] md:leading-[24px]";
+    "flex items-start gap-2 font-medium leading-[18px] text-[#1B1D60] text-xs sm:text-base sm:leading-[22px] md:text-[15px] md:leading-[24px]";
 
   return (
     <DetailSectionCard
@@ -318,7 +318,7 @@ export default function AddressSelection({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
-                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-bold capitalize sm:text-[12px] ${
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-bold capitalize sm:text-xs ${
                         label?.toLowerCase() === "work"
                           ? "bg-[#1B1D60] text-white"
                           : "bg-[#CE9F2D] text-white"

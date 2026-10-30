@@ -181,7 +181,7 @@ export default function VariantSelector({
                     )}
 
                     {isUnavailable && (
-                      <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
+                      <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-xs font-semibold text-white">
                         Out Of Stock
                       </span>
                     )}
@@ -230,7 +230,7 @@ export default function VariantSelector({
                   </span>
 
                   {isUnavailable && (
-                    <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline">
+                    <span className="mt-0.5 block whitespace-nowrap text-xs font-semibold leading-none no-underline">
                       Out Of Stock
                     </span>
                   )}

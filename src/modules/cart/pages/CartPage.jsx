@@ -214,7 +214,7 @@ export default function CartPage() {
                           </p>
 
                           {stockBlockedItems.length > 0 && (
-                            <p className="mt-1 max-w-[680px] truncate text-[11px] leading-4 text-red-600/90">
+                            <p className="mt-1 max-w-[680px] truncate text-xs leading-4 text-red-600/90">
                               {stockBlockedItems
                                 .map((item) => item.title || item.name || "Product")
                                 .join(" • ")}

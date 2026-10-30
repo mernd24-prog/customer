@@ -349,7 +349,7 @@ function ReturnRequestPage({ orderId }) {
                         <p className="text-xs font-bold uppercase tracking-wider text-[#9A7A27]">
                           Estimated Refund
                         </p>
-                        <span className="inline-flex items-center rounded-full bg-[#FFF8E7] border border-[#E7D9B8] px-2.5 py-0.5 text-[11px] font-bold text-[#855B14]">
+                        <span className="inline-flex items-center rounded-full bg-[#FFF8E7] border border-[#E7D9B8] px-2.5 py-0.5 text-xs font-bold text-[#855B14]">
                           Summary
                         </span>
                       </div>
@@ -410,7 +410,7 @@ function ReturnRequestPage({ orderId }) {
                           the configured COD refund process.
                         </p>
                       )}
-                      <p className="mt-1.5 text-[11px] font-medium text-[#9A7A27]">
+                      <p className="mt-1.5 text-xs font-medium text-[#9A7A27]">
                         Final refund is subject to review and Quality Check
                         (QC).
                       </p>

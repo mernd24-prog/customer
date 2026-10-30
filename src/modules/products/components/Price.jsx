@@ -47,7 +47,7 @@ export default function Price({
         className={cn(
           "font-semibold leading-none text-[var(--customer-ink)]",
           layout === "pill"
-            ? "text-[12px] sm:text-[13px] lg:text-[14px] xl:text-[15px]"
+            ? "text-xs sm:text-sm lg:text-base xl:text-[15px]"
             : "text-sm",
           priceClassName,
         )}
@@ -60,7 +60,7 @@ export default function Price({
           className={cn(
             "leading-none text-[var(--customer-gold-dark)] line-through",
             layout === "pill"
-              ? "text-[10px] sm:text-[11px] lg:text-[12px] xl:text-[13px]"
+              ? "text-xs sm:text-xs lg:text-xs xl:text-sm"
               : "text-xs",
             oldPriceClassName,
           )}
@@ -70,7 +70,7 @@ export default function Price({
       )}
 
       {showDiscount && discountPct > 0 && (
-        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-xs font-semibold text-emerald-700">
           {discountPct}% Off
         </span>
       )}

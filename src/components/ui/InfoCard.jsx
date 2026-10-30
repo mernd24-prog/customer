@@ -23,7 +23,7 @@ export default function InfoCard({
         </div>
         {actionLabel ? (
           <Component
-            className="inline-flex  items-center rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13px] font-semibold text-accent transition-all duration-300 ease-in-out hover:bg-accent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="inline-flex  items-center rounded-full border border-accent bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition-all duration-300 ease-in-out hover:bg-accent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             aria-label={actionLabel}
             {...linkProps}
           >

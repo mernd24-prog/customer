@@ -423,7 +423,7 @@ export const Navbar = ({ icons: propIcons }) => {
                 <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
                 {cartItemCount > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-xs font-extrabold leading-none text-white shadow-sm">
                     {cartItemCount > 99 ? "99+" : cartItemCount}
                   </span>
                 )}
@@ -446,7 +446,7 @@ export const Navbar = ({ icons: propIcons }) => {
                 <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
                 {wishlistCount > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-xs font-extrabold leading-none text-white shadow-sm">
                     {wishlistCount > 99 ? "99+" : wishlistCount}
                   </span>
                 )}
@@ -492,7 +492,7 @@ export const Navbar = ({ icons: propIcons }) => {
               </HeaderDropdown>
             ) : (
               <HeaderGoldButton
-                className="ml-1 flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[14px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+                className="ml-1 flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-base font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-sm sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-base lg:text-[16px]"
                 onClick={() => navigate("/login")}
               >
                 Login
@@ -820,7 +820,7 @@ export const CategoryBar = ({
                     aria-current={isActive ? "page" : undefined}
                     onMouseEnter={() => handleCategoryMouseEnter(item)}
                     onMouseLeave={handleCategoryMouseLeave}
-                    className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                    className={`relative flex h-full shrink-0 items-center text-sm font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-base ${
                       isActive ? "!text-[#03014D]" : "text-[#2E2E2E]"
                     }`}
                   >
@@ -843,7 +843,7 @@ export const CategoryBar = ({
                   aria-current={
                     location.pathname === "/categories" ? "page" : undefined
                   }
-                  className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                  className={`relative flex h-full shrink-0 items-center text-sm font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-base ${
                     location.pathname === "/categories"
                       ? "!text-[#03014D]"
                       : "text-[#2E2E2E]"
@@ -935,7 +935,7 @@ export const CategoryBar = ({
                     </div>
 
                     <span
-                      className={`mt-3 whitespace-normal text-center text-[11px] leading-tight transition-colors duration-200 sm:mt-2 sm:text-[13px] md:text-[14px] lg:text-[15px] 2xl:whitespace-nowrap ${
+                      className={`mt-3 whitespace-normal text-center text-xs leading-tight transition-colors duration-200 sm:mt-2 sm:text-sm md:text-base lg:text-[15px] 2xl:whitespace-nowrap ${
                         isActive
                           ? "font-bold text-[#1E204A]"
                           : "font-semibold text-[#2D2D2D] group-hover:text-[#1E204A]"
@@ -998,7 +998,7 @@ export const CategoryBar = ({
                     aria-current={isActive ? "page" : undefined}
                     onMouseEnter={() => handleCategoryMouseEnter(item)}
                     onMouseLeave={handleCategoryMouseLeave}
-                    className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                    className={`relative flex h-full shrink-0 items-center text-sm font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-base ${
                       isActive ? "!text-[#03014D]" : "text-[#2E2E2E]"
                     }`}
                   >
@@ -1021,7 +1021,7 @@ export const CategoryBar = ({
                   aria-current={
                     location.pathname === "/categories" ? "page" : undefined
                   }
-                  className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                  className={`relative flex h-full shrink-0 items-center text-sm font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-base ${
                     location.pathname === "/categories"
                       ? "!text-[#03014D]"
                       : "text-[#2E2E2E]"

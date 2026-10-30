@@ -31,7 +31,7 @@ export default function StarRating({ rating, count }) {
         }`}
       >
         <Star size={12} className="fill-white text-white" />
-        <span className="text-xs font-bold sm:text-[13px]">
+        <span className="text-xs font-bold sm:text-sm">
           {ratingValue.toFixed(1)}
         </span>
       </div>

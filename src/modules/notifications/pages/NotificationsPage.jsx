@@ -87,7 +87,7 @@ export function NotificationsPage() {
                         page >= totalPages ? handleShowLess : handleLoadMore
                       }
                       disabled={loading}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-[#D9DDE8] bg-white px-5 py-2 text-[13px] font-semibold text-[#1B1D60] shadow-sm transition hover:bg-[#F3F3F7] disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[#D9DDE8] bg-white px-5 py-2 text-sm font-semibold text-[#1B1D60] shadow-sm transition hover:bg-[#F3F3F7] disabled:opacity-50"
                     >
                       {loading
                         ? "Loading..."
