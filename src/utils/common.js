@@ -44,8 +44,6 @@ export function scrollToTop(callback) {
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-
-    // Fallback in case scroll finishes or is interrupted
     timer = setTimeout(() => {
       window.removeEventListener("scroll", onScroll);
       callback();

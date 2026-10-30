@@ -145,47 +145,30 @@ export default function AddressTab({ user }) {
 
         {/* Saved Addresses Panel */}
         {addresses.length > 0 ? (
-          <div className="overflow-hidden rounded-lg bg-white">
+          <div
+            className={`${
+              visibleAddresses.length > 1
+                ? "overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#fffdf8] p-2 shadow-[0_10px_25px_rgba(27,29,96,0.04)] sm:p-3"
+                : "rounded-xl bg-white"
+            }`}
+          >
             <div
-  className={`grid grid-cols-1 gap-3 ${
-    visibleAddresses.length > 1 ? "sm:grid-cols-2" : ""
-  }`}
->
-              {visibleAddresses.map((addr, index) => {
+              className={`grid grid-cols-1 gap-4 ${
+                visibleAddresses.length > 1 ? "sm:grid-cols-2" : ""
+              }`}
+            >
+              {visibleAddresses.map((addr) => {
                 const addrId = addr._id || addr.id;
                 const isEditing = editingId === addrId;
-                const totalRows = Math.ceil(visibleAddresses.length / 2);
-                const currentRow = Math.floor(index / 2);
-                const isLastMobileItem =
-                  index === visibleAddresses.length - 1;
-                const isLastDesktopRow = currentRow === totalRows - 1;
-                const hasNextAddress =
-                  index < visibleAddresses.length - 1;
 
                 return (
                   <div
                     key={addrId}
-                    className={[
-                      "relative min-w-0 px-5 py-5 transition-colors sm:px-6 sm:py-6",
-
-                      // Mobile: separate addresses vertically.
-                      !isLastMobileItem
-                        ? "border-b border-[#E7D9B8]"
-                        : "",
-
-                      // Desktop: remove mobile borders and add row separators.
-                      "sm:border-b-0",
-                      visibleAddresses.length > 2 && !isLastDesktopRow
-                        ? "sm:border-b sm:border-[#E7D9B8]"
-                        : "",
-
-                      // Desktop: add a vertical divider only between columns.
-                      visibleAddresses.length > 1 &&
-                      index % 2 === 0 &&
-                      hasNextAddress
-                        ? "sm:border-r sm:border-[#E7D9B8]"
-                        : "",
-                    ].join(" ")}
+                    className={`relative min-w-0 rounded-lg bg-white p-3 transition-all duration-200 sm:p-4 ${
+                      visibleAddresses.length > 1
+                        ? "border border-[#EADCB0] shadow-[0_6px_18px_rgba(27,29,96,0.04)] hover:border-[#D7B55D] hover:shadow-[0_10px_25px_rgba(27,29,96,0.06)]"
+                        : "border border-[#E7D9B8] shadow-[0_4px_14px_rgba(27,29,96,0.02)]"
+                    } ${visibleAddresses.length === 1 ? "min-h-[220px]" : ""}`}
                   >
                     <SharedAddressCard
                       addr={addr}

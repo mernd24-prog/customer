@@ -566,7 +566,7 @@ export default function ProductCard({
       >
         {/* IMAGE CONTAINER (The Bear House Portrait Aspect Ratio, clean, fixed & elegant) */}
         <div
-          className="relative aspect-[4/5] max-h-[290px] sm:max-h-[310px] w-full cursor-pointer overflow-hidden rounded-t-lg bg-[#FAF8F5]"
+          className=" relative aspect-[4/5] max-h-[290px] sm:max-h-[330px] w-full cursor-pointer overflow-hidden rounded-t-lg bg-[#FAF8F5]"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -673,7 +673,7 @@ export default function ProductCard({
         </div>
 
         {/* PRODUCT INFO (The Bear House style: Clean, tight, perfectly aligned) */}
-        <div className="flex min-w-0 flex-1 flex-col p-2.5 sm:p-3 ">
+        <div className="flex min-w-0 flex-1 flex-col p-2 sm:p-2 ">
           {/* BRAND */}
           {brand ? (
             <button
@@ -688,16 +688,15 @@ export default function ProductCard({
             <div className="h-[15px]" />
           )}
 
-          {/* TITLE */}
           <h3
-            className="mt-0.5 line-clamp-2 break-words text-sm sm:text-base font-medium text-[#171A3A] transition-colors"
+            className="mt-1 truncate text-sm sm:text-sm font-medium text-[#171A3A] transition-colors"
             title={title}
           >
             {title}
           </h3>
 
           {/* PRICE & DISCOUNT */}
-          <div className="mt-1.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+          <div className="mt-1 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
             <Price
               price={price}
               oldPrice={oldPrice}

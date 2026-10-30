@@ -16,7 +16,7 @@ export default function SharedAddressCard({
   handleDelete,
 }) {
   return (
-    <div className="flex h-full flex-col justify-between">
+    <div className="flex h-full flex-col justify-between rounded-lg bg-white">
       <div>
         {/* Label badge & Default indicator */}
         <div className="flex items-center justify-between gap-3">
@@ -62,7 +62,7 @@ export default function SharedAddressCard({
         <button
           type="button"
           onClick={() => startEdit(addr)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-gold/60 px-3 py-1.5 text-xs sm:text-sm font-semibold text-gold-dark transition-colors hover:bg-gold/10 focus-visible:outline-none"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-gold/60 bg-[#FFF8E8] px-3 py-1.5 text-xs sm:text-sm font-semibold text-gold-dark transition-colors hover:bg-[#FDEEC6] focus-visible:outline-none"
         >
           <Pencil className="size-3.5" />
           Edit
@@ -71,7 +71,7 @@ export default function SharedAddressCard({
         <button
           type="button"
           onClick={() => handleDelete(addrId)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-xs sm:text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 focus-visible:outline-none"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs sm:text-sm font-semibold text-red-600 transition-colors hover:bg-red-100 focus-visible:outline-none"
         >
           <Trash2 className="size-3.5" />
           Remove

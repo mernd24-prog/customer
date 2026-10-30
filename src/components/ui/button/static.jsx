@@ -6,10 +6,8 @@ import DynamicButton from "./button";
 const buttonStyles = {
   solidSmall:
     "h-[35px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[14px] py-[7px] text-sm leading-[20px] tracking-[0.5px] font-semibold text-white hover:bg-[linear-gradient(#bd9025,#bd9025)]",
-
-  outlineSmall:
-    "inline-flex h-[42px] px-4 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md  cursor-pointer",
-
+outlineSmall:
+  "inline-flex h-[42px] items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer",
   outlineSecondary:
     "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] backdrop-blur transition-all duration-200 hover:bg-white hover:border-[#18156D]/30 hover:shadow-sm sm:px-7",
 
@@ -265,7 +263,7 @@ export const RoundIconWithBg = (props) => (
     customHeight="45px"
     className="bg-primary text-white rounded-full"
     {...props}
-  >
+  > 
     <FaRegHeart />
   </DynamicButton>
 );
