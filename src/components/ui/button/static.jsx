@@ -1,4 +1,5 @@
 import React from "react";
+import { ArrowRight } from "lucide-react";
 import { FaRegHeart } from "react-icons/fa";
 import { cn } from "../../../utils/common";
 import DynamicButton from "./button";
@@ -9,7 +10,7 @@ const buttonStyles = {
 outlineSmall:
   "inline-flex h-[42px] items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer",
   outlineSecondary:
-    "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] backdrop-blur transition-all duration-200 hover:bg-white hover:border-[#18156D]/30 hover:shadow-sm sm:px-7",
+    "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] backdrop-blur transition-all duration-200 hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-sm sm:px-7",
 
   outlineLight:
     "border border-white/50 bg-transparent text-white hover:bg-white/10",
@@ -33,7 +34,7 @@ outlineSmall:
   categoryMore:
     "group flex h-auto min-h-0 min-w-[80px] flex-col items-center rounded-md bg-transparent px-0 py-0 text-inherit shadow-none outline-none transition-all duration-300 ease-in-out hover:bg-transparent focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2 sm:min-w-[100px] lg:min-w-[140px]",
   continueShopping:
-  "mx-auto mt-6 flex h-[42px] w-full max-w-[210px] items-center justify-center rounded-full bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-5 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]",
+    "inline-flex h-[42px] sm:h-[44px] w-auto whitespace-nowrap items-center justify-center rounded-full border border-[#18156D]/20 bg-white/70 px-6 sm:px-7 text-sm sm:text-base font-semibold text-[#3E4093] shadow-xs transition-all duration-200 ease-in-out hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3E4093]/40 active:bg-[#2A2B66] active:!text-white disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer",
 };
 
 export const PrimaryGradientButton = ({ children, ...props }) => (
@@ -220,16 +221,21 @@ export const CategoryMoreButton = ({
 export const ContinueShoppingButton = ({
   children = "Continue Shopping",
   className = "",
+  rightIcon = <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2} />,
   ...props
 }) => (
   <DynamicButton
     variant="unstyled"
     className={cn(buttonStyles.continueShopping, className)}
+    rightIcon={rightIcon}
     {...props}
   >
     {children}
   </DynamicButton>
 );
+
+export const ActionShoppingButton = ContinueShoppingButton;
+export const ShoppingActionButton = ContinueShoppingButton;
 
 export const BannerActionButton = ({
   children = "Explore Our Platform",

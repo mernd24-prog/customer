@@ -7,8 +7,7 @@ import { useWishlistActions } from "../../products/controllers/actions";
 import { useWatchlistProducts } from "../../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { wishlistItemKey } from "../../../utils/ecommerce";
-import { OutlineSmallButton } from "../../../components/ui/button/static";
-import { FaAngleRight } from "react-icons/fa6";
+import { ContinueShoppingButton } from "../../../components/ui/button/static";
 import { Loader2 } from "lucide-react";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
 
@@ -26,13 +25,9 @@ export default function WatchlistPage() {
 
   const visibleProducts = products.slice(0, visibleCount);
   const hasMore = visibleCount < products.length;
-
-  // Reset visible count when product list changes (e.g. item removed)
   useEffect(() => {
     setVisibleCount((prev) => Math.max(PAGE_SIZE, prev));
   }, [products.length]);
-
-  // IntersectionObserver — load next batch when sentinel enters viewport
   useEffect(() => {
     if (!sentinelRef.current || !hasMore) return;
 
@@ -153,13 +148,9 @@ export default function WatchlistPage() {
               )}
 
               <div className="flex items-center gap-3 mt-6 lg:mt-8">
-                <OutlineSmallButton
-                  to="/products"
-                  rightIcon={<FaAngleRight className="text-xs" />}
-                  className="xl:text-[18px] text-base xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
-                >
+                <ContinueShoppingButton to="/products">
                   Continue Shopping
-                </OutlineSmallButton>
+                </ContinueShoppingButton>
               </div>
             </>
           ) : (

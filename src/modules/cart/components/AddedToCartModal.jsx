@@ -201,7 +201,7 @@ export default function AddedToCartModal({
           <Link
             to={addedProductPath}
             onClick={onClose}
-            className="relative mt-5 flex items-center gap-4 rounded-lg border border-[var(--customer-border)] bg-white/80 p-3 shadow-sm sm:p-4"
+            className="relative mt-5 flex items-center gap-4 rounded-lg border border-[var(--customer-border)] bg-white/80 p-3 sm:p-4"
             aria-label={`View ${addedTitle}`}
           >
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-[var(--customer-cream)] ring-1 ring-black/5 sm:h-24 sm:w-24">

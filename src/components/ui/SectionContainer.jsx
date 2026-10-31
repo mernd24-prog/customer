@@ -14,73 +14,84 @@ export default function SectionContainer({
   className = "",
   headerClassName = "",
   contentClassName = "",
-  actionStyle = "button", // 'button' or 'icon'
-  mobileActionStyle, // defaults to actionStyle
+  actionStyle = "button",
+  mobileActionStyle,
   mobileActionFullWidth = false,
   style = {},
   disablePadding = false,
 }) {
   const finalMobileActionStyle = mobileActionStyle || actionStyle;
   const hasHeader = Boolean(title || subtitle || actionLabel);
+
   const hasAction =
     Boolean(actionLabel && (actionHref || onAction)) ||
     Boolean(actionStyle === "icon" && actionHref);
+  const iconButtonClass =
+    "group inline-flex h-8 w-[52px] shrink-0 items-center justify-center rounded-lg !bg-[#3E4093] !text-white shadow-none outline-none transition-none hover:!bg-[#3E4093] hover:shadow-none focus:!bg-[#3E4093] focus:shadow-none focus:outline-none focus-visible:!bg-[#3E4093] focus-visible:outline-none active:!bg-[#3E4093] active:shadow-none";
 
+  const arrowIconClass =
+    "h-5 w-5 !text-white transition-none group-hover:!text-white group-focus:!text-white group-active:!text-white";
   return (
-    <section className={`${className || "bg-white"}`} style={style}>
+    <section className={className || "bg-white"} style={style}>
       {hasHeader && (
         <header
-          className={`text-[var(--customer-ink)] ${headerbgColor || "bg-transparent"} mb-3 sm:mb-4`}
+          className={`text-[var(--customer-ink)] ${
+            headerbgColor || "bg-transparent"
+          } mb-3 sm:mb-4`}
         >
           <div
-            className={`flex flex-col gap-2 mt-0 lg:mt-1 sm:gap-4 sm:flex-row sm:items-center sm:justify-between ${!disablePadding ? "px-4 sm:px-6 lg:px-8" : ""} ${headerClassName}`}
+            className={`mt-0 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 lg:mt-1 ${
+              !disablePadding ? "px-4 sm:px-6 lg:px-8" : ""
+            } ${headerClassName}`}
           >
-            <div className="min-w-0 flex items-center justify-between w-full sm:w-auto">
+            <div className="flex w-full min-w-0 items-center justify-between sm:w-auto">
               <div>
                 {title && (
-                  <h2 className="font-bold text-[20px] md:text-[24px] text-[#3E4093]">
+                  <h2 className="text-[20px] font-bold text-[#3E4093] md:text-[24px]">
                     {title}
                   </h2>
                 )}
+
                 {subtitle && (
-                  <p className="font-medium mb-4 text-p md:text-small lg:pt-1.5 align-middle text-[var(--customer-muted,#5E626D)]">
+                  <p className="mb-4 text-p font-medium text-[var(--customer-muted,#5E626D)] md:text-small lg:pt-1.5">
                     {subtitle}
                   </p>
                 )}
               </div>
 
-              {/* Mobile-only header action if icon */}
+              {/* Mobile Icon Button */}
               {hasAction &&
                 actionHref &&
                 actionStyle === "icon" &&
                 finalMobileActionStyle === "icon" && (
                   <Link
                     to={actionHref}
-                    className="sm:hidden flex w-8 h-8 rounded-[100px] bg-[#3E4093] text-white items-center justify-center hover:bg-[#2A2B66] transition-colors outline-none focus:outline-none"
+                    className="group flex h-8 w-8 shrink-0 items-center justify-center rounded-full !bg-[#3E4093] !text-white shadow-none outline-none transition-none hover:!bg-[#3E4093] hover:shadow-none focus:!bg-[#3E4093] focus:shadow-none focus:outline-none focus-visible:!bg-[#3E4093] focus-visible:outline-none active:!bg-[#3E4093] active:shadow-none"
                     aria-label={`Go to ${title}`}
                   >
-                    <ArrowRight className="w-4 h-4" strokeWidth={2} />
+                    <ArrowRight className="h-4 w-4 !text-white transition-none group-hover:!text-white group-focus:!text-white group-active:!text-white" />
                   </Link>
                 )}
             </div>
 
+            {/* Desktop Action */}
             {hasAction && (actionHref || onAction) ? (
               actionStyle === "icon" && actionHref ? (
                 <Link
                   to={actionHref}
-                  className="self-start sm:self-center hidden sm:flex w-[52px] h-8 sm:h-7 rounded-lg bg-[#3E4093] text-white items-center justify-center hover:bg-[#2A2B66] transition-colors outline-none focus:outline-none"
+                  className={`${iconButtonClass} hidden sm:inline-flex`}
                   aria-label={`Go to ${title}`}
                 >
-                  <ArrowRight className="w-5 h-5" strokeWidth={2} />
+                  <ArrowRight className={arrowIconClass} strokeWidth={2} />
                 </Link>
               ) : (
                 <OutlineSmallButton
                   to={actionHref}
                   onClick={onAction}
                   rightIcon={
-                    <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
+                    <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
                   }
-                  className="self-start my-2 sm:self-center md:inline-flex hidden"
+                  className="my-2 hidden self-start sm:self-center md:inline-flex"
                   aria-label={`${actionLabel} ${title || ""}`}
                 >
                   {actionLabel}
@@ -91,20 +102,30 @@ export default function SectionContainer({
         </header>
       )}
 
+      {/* Section Content */}
       <div
-        className={`${bodybgColor || "bg-transparent"} ${!disablePadding ? "px-4 sm:px-6 lg:px-8" : ""} ${contentClassName}`}
+        className={`${bodybgColor || "bg-transparent"} ${
+          !disablePadding ? "px-4 sm:px-6 lg:px-8" : ""
+        } ${contentClassName}`}
       >
         {children}
       </div>
 
+      {/* Mobile Button */}
       {finalMobileActionStyle === "button" && hasAction && actionHref ? (
         <div
-          className={`my-8 flex md:hidden ${mobileActionFullWidth ? "w-full px-3" : "justify-center"}`}
+          className={`my-8 flex md:hidden ${
+            mobileActionFullWidth ? "w-full px-3" : "justify-center"
+          }`}
         >
           <OutlineSmallButton
             to={actionHref}
-            rightIcon={<ArrowRight className="w-4 h-4" strokeWidth={2.2} />}
-            className={mobileActionFullWidth ? "flex w-full justify-center" : "inline-flex"}
+            rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={2.2} />}
+            className={
+              mobileActionFullWidth
+                ? "flex w-full justify-center"
+                : "inline-flex"
+            }
             aria-label={`${actionLabel} ${title || ""}`}
           >
             {actionLabel}

@@ -138,7 +138,6 @@ export default function VariantSelector({
                   : "";
 
               const swatchColor = option?.valueCodes?.[value] || value;
-
               if (option.displayType === "color_swatch") {
                 return (
                   <button
@@ -149,10 +148,8 @@ export default function VariantSelector({
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
                     }
-                    className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-lg border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
-                      isSelected
-                        ? "border border-gold shadow-sm"
-                        : "border border-gold/20 hover:border-gold/50"
+                    className={`product-variant-option relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-lg border border-[#d9d1c4] bg-white transition-all duration-300 ease-in-out focus:border-0 focus-visible:border-0 active:border-0 sm:h-[95px] sm:w-[95px] ${
+                      isSelected ? "shadow-none" : "shadow-none"
                     } ${isUnavailable ? "opacity-55 grayscale" : ""} ${
                       !isComboAvailable ? "cursor-not-allowed opacity-40" : ""
                     }`}
@@ -234,14 +231,14 @@ export default function VariantSelector({
                           ? `${value} - Out Of stock`
                           : value
                     }
-                    className={`relative min-w-12 shrink-0 whitespace-nowrap border px-4 py-1.5 text-xs font-bold transition-all duration-200 ease-out focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed ${
+                    className={`product-variant-option relative min-w-12 shrink-0 whitespace-nowrap border border-[#d9d1c4] px-4 py-1.5 text-xs font-bold transition-all duration-200 ease-out focus:border-0 focus-visible:border-0 active:border-0 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed ${
                       isUnavailable && isSelected
-                        ? "border-[#ead8d5] bg-[#f3f2fb] text-navy shadow-sm"
+                        ? "bg-[#f3f2fb] text-navy shadow-none"
                         : isUnavailable
-                          ? "border-[#e2ddd4] bg-[#f4f4f5] text-[#806461] hover:border-[#e2ddd4] hover:bg-[#f4f4f5]"
+                          ? "bg-[#f4f4f5] text-[#806461] hover:bg-[#f4f4f5]"
                           : isSelected
-                            ? "border-navy bg-navy text-white shadow-sm"
-                            : "border-border bg-cream/60 text-ink hover:border-gold hover:bg-gold-soft"
+                            ? "bg-navy text-white shadow-none"
+                            : "bg-cream/60 text-ink hover:bg-gold-soft"
                     } rounded-full ${isAgeGroupOption ? "min-h-12" : "min-h-9"} ${
                       isAgeGroupOption && !isUnavailable ? "py-2" : ""
                     } ${!isComboAvailable ? "opacity-40" : ""}`}
