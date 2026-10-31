@@ -45,6 +45,7 @@ export default function CheckoutPage() {
     register,
     handleSubmit,
     setValue,
+    watch,
     errors,
     useNewAddress,
     selectedAddressId,
@@ -238,7 +239,7 @@ export default function CheckoutPage() {
                       form={{
                         register,
                         setValue,
-                        
+                        watch,
                         formState: { errors },
                       }}
                       idPrefix="shipping"

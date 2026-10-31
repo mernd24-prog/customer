@@ -14,6 +14,7 @@ export default function ShippingAddressForm({
   selectedCity,
   watchedPostalCode,
   setValue,
+  watch,
   postalCodes,
   showSavedAddressFields = false,
   addressLabels = [],
@@ -24,6 +25,7 @@ export default function ShippingAddressForm({
   const form = {
     register,
     setValue,
+    watch,
     formState: { errors },
   };
 

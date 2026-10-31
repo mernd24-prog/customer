@@ -102,7 +102,8 @@ export default function AddressSelection({
     );
     if (selectedIdx > 1) {
       const selected = displayAddresses[selectedIdx];
-      displayAddresses.splice(selectedIdx, 1);
+      
+      
       displayAddresses.unshift(selected);
     }
   }
