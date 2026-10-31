@@ -12,7 +12,7 @@ import { ConfirmModal } from "../../../components/ui";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";
 import { ContinueShoppingButton } from "../../../components/ui/button/static";
-import { ArrowRight, CircleAlert, X } from "lucide-react";
+import { CircleAlert, X } from "lucide-react";
 import { CART_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../../utils/ecommerce/money";
 import { PageContainer } from "../../../components/ui/layout";
@@ -187,10 +187,11 @@ export default function CartPage() {
           ) : (
             <StickySidebarLayout
               sidebarPosition="right"
+              stickyOffset="calc(var(--customer-header-height, 40px) + 40px)"
               containerClass="flex flex-col gap-5 lg:flex-row lg:gap-6"
               sidebarClass="w-full shrink-0 transition-[top] duration-300 ease-in-out lg:w-[350px] 2xl:w-[369px]"
               mainContent={
-                <div className="min-w-0 space-y-5">
+                <div className="min-w-0 ">
                 {checkoutBlockedByStock && (
                   <section
                     role="alert"
@@ -235,29 +236,31 @@ export default function CartPage() {
                 )}
 
                   {hasCartItems && (
-                    <div className="flex items-center justify-between gap-3 py-1">
-                      <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-[#2D2D2D]">
-                        <input
-                          type="checkbox"
-                          checked={
-                            selectedItems.length === items.length &&
-                            items.length > 0
-                          }
-                          onChange={(event) =>
-                            handleSelectAll(event.target.checked)
-                          }
-                          className="h-4 w-4 shrink-0 cursor-pointer rounded accent-[#3F4095]"
-                        />
-                        <span>Select all items</span>
-                      </label>
-                      <span className="shrink-0 text-sm font-medium text-[#555555]">
-                        {selectedItems.length} of {items.length} selected
-                      </span>
+                    <div className="overflow-hidden rounded-t-lg border border-[#E7E2D7] bg-white">
+                      <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
+                        <label className="flex min-w-0 cursor-pointer items-center gap-3 text-base font-semibold text-[#2D2D2D]">
+                          <input
+                            type="checkbox"
+                            checked={
+                              selectedItems.length === items.length &&
+                              items.length > 0
+                            }
+                            onChange={(event) =>
+                              handleSelectAll(event.target.checked)
+                            }
+                            className="m-0 h-4 w-4 shrink-0 cursor-pointer rounded accent-[#3F4095]"
+                          />
+                          <span className="leading-5">Select All</span>
+                        </label>
+                        <span className="shrink-0 whitespace-nowrap text-sm font-medium text-[#555555]">
+                          {selectedItems.length} of {items.length} Selected
+                        </span>
+                      </div>
                     </div>
                   )}
 
                   {hasCartItems && (
-                    <div className="rounded-lg border border-[#F0E6D2] bg-[#FFFDF8]  sm:rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                    <div className=" overflow-hidden rounded-b-lg border border-[#E7E2D7] border-t-0 bg-[#FFFDF8] shadow-[0_4px_20px_rgba(0,0,0,0.02)] sm:rounded-b-lg">
                       {items.map((item, index) => (
                         <div key={item.id}>
                           <CartItemCard
@@ -323,16 +326,8 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="flex items-center gap-3 pt-2">
-                      <ContinueShoppingButton
-                        to="/products"
-                        rightIcon={
-                          <ArrowRight
-                            className="w-3.5 h-3.5"
-                            strokeWidth={2.5}
-                          />
-                        }
-                      >
+                    <div className="flex items-center justify-center pt-4">
+                      <ContinueShoppingButton to="/products">
                         Continue Shopping
                       </ContinueShoppingButton>
                     </div>

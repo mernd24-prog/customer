@@ -107,11 +107,11 @@ function SellerStoryCard({ story, featured = false }) {
       className={`h-full overflow-hidden rounded-lg bg-white ${
         featured
           ? "grid grid-cols-1 gap-0 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]"
-          : "flex flex-col p-3 sm:p-4"
+          : "flex flex-col p-2.5 "
       }`}
     >
       <div
-        className={`overflow-hidden bg-[#e8e5df] ${featured ? "min-h-[240px] md:min-h-full" : "rounded-lg"}`}
+        className={`overflow-hidden bg-[#e8e5df] ${featured ? "min-h-[220px] md:min-h-full" : "rounded-lg"}`}
       >
         {story.photo ? (
           <img
@@ -119,12 +119,12 @@ function SellerStoryCard({ story, featured = false }) {
             height="400"
             src={story.photo}
             alt={`${story.name} at their business`}
-            className={`w-full object-cover object-top ${featured ? "h-full min-h-[240px] md:min-h-[360px]" : "h-44 sm:h-52"}`}
+            className={`w-full object-cover object-top ${featured ? "h-full min-h-[220px] md:min-h-[360px]" : "h-40 sm:h-52"}`}
             loading="lazy"
           />
         ) : (
           <div
-            className={`flex items-center justify-center text-3xl font-bold text-[#201b78] ${featured ? "h-full min-h-[240px] md:min-h-[360px]" : "h-44 sm:h-52"}`}
+            className={`flex items-center justify-center text-3xl font-bold text-[#201b78] ${featured ? "h-full min-h-[220px] md:min-h-[360px]" : "h-40 sm:h-52"}`}
           >
             {story.initials}
           </div>
@@ -132,28 +132,28 @@ function SellerStoryCard({ story, featured = false }) {
       </div>
 
       <div
-        className={`flex flex-col ${featured ? "justify-center p-5 sm:p-7 lg:p-9" : "flex-1 px-2 pt-5 sm:pt-6"}`}
+        className={`flex flex-col ${featured ? "justify-center p-4 sm:p-7 lg:p-9" : "flex-1 px-1 pt-3 sm:px-2 sm:pt-6"}`}
       >
-        <h3 className="text-lg font-bold leading-tight text-[#181928] sm:text-xl">
+        <h3 className="text-base font-bold leading-tight text-[#181928] sm:text-xl">
           {story.name}
         </h3>
 
         {story.role && (
-          <p className="mt-2 text-sm font-medium text-[#3e4093]">
+          <p className="mt-1.5 text-xs font-medium text-[#3e4093] sm:mt-2 sm:text-sm">
             {story.role}
           </p>
         )}
 
-        <div className="mt-3 h-px bg-[#eee9df] sm:mt-4" />
+        <div className="mt-2.5 h-px bg-[#eee9df] sm:mt-4" />
 
         {story.quote && (
-          <p className="mt-3 text-sm leading-6 text-[#50545e] sm:mt-4 sm:text-[15px]">
+          <p className="mt-2.5 text-xs leading-5 text-[#50545e] sm:mt-4 sm:text-[15px] sm:leading-6">
             {story.quote}
           </p>
         )}
 
         {story.result && (
-          <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#f7f2e7] px-3 py-1.5 text-xs font-bold text-[#8d610d] sm:mt-5">
+          <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-[#f7f2e7] px-2.5 py-1.5 text-[11px] font-bold text-[#8d610d] sm:mt-5 sm:px-3 sm:text-xs">
             <BarChart3 size={14} />
             {story.result}
           </div>
@@ -185,9 +185,35 @@ export default function BecomeASeller() {
 
   const stepsSection = sellerPage?.sections?.[2];
 
-  const sellerStories = Array.isArray(storySection?.points)
-    ? storySection.points
+  const fallbackStoryPoints = Array.isArray(FALLBACK_SELLER_PAGE?.sections?.[0]?.points)
+    ? FALLBACK_SELLER_PAGE.sections[0].points
     : [];
+
+  const sellerStories = Array.isArray(storySection?.points) && storySection.points.length
+    ? storySection.points
+    : fallbackStoryPoints;
+
+  const mergedSellerStories = sellerStories.map((point, index) => {
+    const fallbackPoint =
+      fallbackStoryPoints.find((item) => item?.title === point?.title) ||
+      fallbackStoryPoints[index] ||
+      fallbackStoryPoints[fallbackStoryPoints.length - 1] ||
+      {};
+
+    return {
+      ...fallbackPoint,
+      ...point,
+      image:
+        point?.image?.url ||
+        point?.image ||
+        fallbackPoint?.image ||
+        "",
+      description: point?.description || fallbackPoint?.description || "",
+      title: point?.title || fallbackPoint?.title || "",
+      cta: point?.cta || fallbackPoint?.cta || {},
+      metadata: { ...(fallbackPoint?.metadata || {}), ...(point?.metadata || {}) },
+    };
+  });
 
   const benefits = Array.isArray(benefitsSection?.points)
     ? benefitsSection.points
@@ -195,13 +221,13 @@ export default function BecomeASeller() {
 
   const steps = Array.isArray(stepsSection?.points) ? stepsSection.points : [];
 
-  const mappedExperiences = sellerStories.map((point) => ({
+  const mappedExperiences = mergedSellerStories.map((point) => ({
     quote: point?.description || "",
     name: point?.title || "",
     role: point?.metadata?.role || "",
     category: point?.metadata?.category || "",
     result: point?.cta?.label || "",
-    photo: point?.image?.url || "",
+    photo: point?.image?.url || point?.image || "",
     initials: point?.title?.substring(0, 2).toUpperCase() || "",
   }));
 
@@ -297,10 +323,10 @@ export default function BecomeASeller() {
           ===================================================== */}
 
           {mappedExperiences.length > 0 && (
-            <section className="relative overflow-hidden bg-[#faf6ee] py-10 sm:py-14 lg:py-16">
+            <section className="relative overflow-hidden bg-[#faf6ee] py-7 sm:py-12 lg:py-16">
               <div className="customer-container relative">
                 <div
-                  className={`flex flex-col gap-5 md:flex-row md:items-end md:justify-between ${mappedExperiences.length < 3 ? "mb-7 sm:mb-9" : ""}`}
+                  className={`flex flex-col gap-3 sm:gap-5 md:flex-row md:items-end md:justify-between ${mappedExperiences.length < 3 ? "mb-5 sm:mb-9" : ""}`}
                 >
                   <div
                     className={`max-w-2xl ${mappedExperiences.length < 3 ? "mx-auto text-center" : "text-center md:text-left"}`}
@@ -310,13 +336,13 @@ export default function BecomeASeller() {
                       Real Seller Stories
                     </span>
 
-                    <h2 className="mt-4 text-h2 font-bold leading-tight text-[#201b78] sm:mt-5">
+                    <h2 className="mt-3 text-h2 font-bold leading-tight text-[#201b78] sm:mt-5">
                       Their Growth Is Our{" "}
                       <span className="text-[#b17d15]">Favourite Story.</span>
                     </h2>
 
                     <p
-                      className={`mt-3 leading-7 text-[#6f7480] sm:mt-4 ${mappedExperiences.length < 3 ? "mx-auto max-w-xl" : "max-w-xl"}`}
+                      className={`mt-2 text-sm leading-6 text-[#6f7480] sm:mt-4 sm:text-base sm:leading-7 ${mappedExperiences.length < 3 ? "mx-auto max-w-xl" : "max-w-xl"}`}
                     >
                       Meet the entrepreneurs building remarkable businesses with
                       Sam Global by their side.
@@ -324,7 +350,7 @@ export default function BecomeASeller() {
                   </div>
 
                   {mappedExperiences.length > storySlidesPerView && (
-                    <div className="flex justify-center gap-2.5 sm:gap-3 md:shrink-0">
+                    <div className="hidden justify-center gap-2.5 sm:flex sm:gap-3 md:shrink-0">
                       <button
                         type="button"
                         className="seller-story-prev grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
@@ -361,7 +387,14 @@ export default function BecomeASeller() {
                 )}
 
                 {mappedExperiences.length >= 3 && (
-                  <div className="mt-8 sm:mt-10">
+                  <>
+                    <div className="mt-5 grid grid-cols-1 gap-3 sm:hidden">
+                    {mappedExperiences.map((story, index) => (
+                      <SellerStoryCard key={story.name || index} story={story} />
+                    ))}
+                  </div>
+
+                  <div className="mt-8 hidden sm:block sm:mt-10">
                     <CustomSwiper
                       prevEl=".seller-story-prev"
                       nextEl=".seller-story-next"
@@ -392,6 +425,7 @@ export default function BecomeASeller() {
                       ))}
                     </CustomSwiper>
                   </div>
+                  </>
                 )}
               </div>
             </section>
@@ -402,8 +436,8 @@ export default function BecomeASeller() {
           ===================================================== */}
 
           {mappedBenefits.length > 0 && (
-            <section className="bg-[#FAF8F3] py-12 sm:py-16 lg:py-24">
-              <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <section className="bg-[#FAF8F3] py-8 sm:py-14 lg:py-24">
+              <div className="mx-auto max-w-7xl px-3 sm:px-6">
                 <div className="mx-auto max-w-3xl text-center">
                   <span className="inline-flex items-center gap-2 rounded-lg bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
                     <ShieldCheck size={14} />
@@ -420,25 +454,25 @@ export default function BecomeASeller() {
                   </p>
                 </div>
 
-                <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
+                <div className="mt-6 grid gap-3 sm:mt-10 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
                   {mappedBenefits.map(({ icon: Icon, title, text }, index) => (
                     <div
                       key={title || index}
-                      className="flex items-start gap-4 rounded-lg border border-[#E8E1D4] bg-white p-5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:p-6 lg:p-7"
+                      className="flex items-start gap-3 rounded-lg border border-[#E8E1D4] bg-white p-3.5 shadow-sm transition-colors duration-200 hover:border-[#D4A52A] sm:gap-4 sm:p-6 lg:p-7"
                     >
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D]">
-                        <Icon size={24} strokeWidth={2} />
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#18156D]/10 text-[#18156D] sm:h-12 sm:w-12">
+                        <Icon size={20} strokeWidth={2} />
                       </div>
 
                       <div className="min-w-0 flex-1">
                         {title && (
-                          <h3 className="text-[18px] font-bold leading-6 text-[#18156D]">
+                          <h3 className="text-base font-bold leading-5 text-[#18156D] sm:text-[18px] sm:leading-6">
                             {title}
                           </h3>
                         )}
 
                         {text && (
-                          <p className="mt-2 text-base leading-6 text-gray-600 md:text-[15px]">
+                          <p className="mt-1.5 text-sm leading-5 text-gray-600 sm:mt-2 sm:text-[15px] sm:leading-6">
                             {text}
                           </p>
                         )}
@@ -455,7 +489,7 @@ export default function BecomeASeller() {
           ===================================================== */}
 
           {mappedSteps.length > 0 && (
-            <section className="relative overflow-hidden bg-[#17145f] py-12 sm:py-16 lg:py-24">
+            <section className="relative overflow-hidden bg-[#17145f] py-8 sm:py-14 lg:py-24">
               <div className="customer-container relative">
                 <SectionHeading
                   light
@@ -467,29 +501,29 @@ export default function BecomeASeller() {
                   }
                 />
 
-                <div className="relative mt-8 sm:mt-12 lg:mt-14">
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-4">
+                <div className="relative mt-6 sm:mt-12 lg:mt-14">
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-4">
                     {mappedSteps.map(({ icon: Icon, number, title, text }) => (
                       <article
                         key={number}
-                        className="flex h-full items-start gap-3 rounded-lg border border-white/15 bg-white/[0.07] p-4 text-white transition-colors duration-200 hover:border-[#d6a323]/60 hover:bg-white/[0.10] sm:gap-3.5 sm:p-4"
+                        className="flex h-full items-start gap-2.5 rounded-lg border border-white/15 bg-white/[0.07] p-3 text-white transition-colors duration-200 hover:border-[#d6a323]/60 hover:bg-white/[0.10] sm:gap-3.5 sm:p-4"
                       >
-                        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#d6a323] text-[#17145f] shadow-sm sm:h-12 sm:w-12">
-                          <Icon size={23} strokeWidth={1.9} />
+                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#d6a323] text-[#17145f] shadow-sm sm:h-12 sm:w-12">
+                          <Icon size={20} strokeWidth={1.9} />
                         </span>
 
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
-                            <h3 className="min-w-0 text-[16px] font-bold leading-5 sm:text-[17px] sm:leading-6">
+                            <h3 className="min-w-0 text-[15px] font-bold leading-5 sm:text-[17px] sm:leading-6">
                               {title}
                             </h3>
 
-                            <span className="shrink-0 text-[24px] font-extrabold leading-none tracking-tight text-[#d6a323] sm:text-[27px]">
+                            <span className="shrink-0 text-[21px] font-extrabold leading-none tracking-tight text-[#d6a323] sm:text-[27px]">
                               {String(number).padStart(2, "0")}
                             </span>
                           </div>
 
-                          <p className="mt-2 text-sm leading-5 text-white/70 sm:text-base sm:leading-[1.4rem]">
+                          <p className="mt-1.5 text-xs leading-5 text-white/70 sm:mt-2 sm:text-base sm:leading-[1.4rem]">
                             {text}
                           </p>
                         </div>
@@ -498,7 +532,7 @@ export default function BecomeASeller() {
                   </div>
                 </div>
 
-                <div className="mt-8 text-center sm:mt-12">
+                <div className="mt-6 text-center sm:mt-12">
                   <SolidLargeButton
                     as="a"
                     href={SELLER_LOGIN_URL}

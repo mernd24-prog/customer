@@ -8,6 +8,7 @@ import { useWatchlistProducts } from "../../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { wishlistItemKey } from "../../../utils/ecommerce";
 import { FaAngleRight } from "react-icons/fa6";
+import { ContinueShoppingButton } from "../../../components/ui/button/static";
 import { Loader2 } from "lucide-react";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
 
@@ -25,13 +26,9 @@ export default function WatchlistPage() {
 
   const visibleProducts = products.slice(0, visibleCount);
   const hasMore = visibleCount < products.length;
-
-  // Reset visible count when product list changes (e.g. item removed)
   useEffect(() => {
     setVisibleCount((prev) => Math.max(PAGE_SIZE, prev));
   }, [products.length]);
-
-  // IntersectionObserver — load next batch when sentinel enters viewport
   useEffect(() => {
     if (!sentinelRef.current || !hasMore) return;
 

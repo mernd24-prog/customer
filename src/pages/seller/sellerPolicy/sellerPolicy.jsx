@@ -322,7 +322,7 @@ export default function SellerPolicy() {
               <div className="mx-auto max-w-3xl text-center">
                 {respBadge && (
                   <span className="inline-flex items-center gap-2 rounded-lg bg-[#18156D]/5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#18156D] sm:px-4 sm:py-2">
-                    <ClipboardList size={14} />
+                    <ClipboardList size={14}  />
 
                     {respBadge}
                   </span>

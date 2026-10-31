@@ -9,6 +9,7 @@ function OrderDetailLayout({ children }) {
   return (
     <StickySidebarLayout
       stickyMain={true}
+      stickyOffset="calc(var(--customer-header-height, 40px) + 56px)"
       sidebarPosition="right"
       containerClass="flex flex-col lg:flex-row gap-4 md:gap-6 xl:gap-8"
       sidebarClass="w-full lg:w-[340px] xl:w-[380px] 2xl:w-[420px]"

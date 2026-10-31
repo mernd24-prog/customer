@@ -356,7 +356,6 @@ body,
   font-family: var(--font-sans);
 
   scrollbar-width: none;
-  /* Firefox */
   -ms-overflow-style: none;
   /* IE and Edge */
 }
@@ -382,8 +381,30 @@ textarea {
   font: inherit;
 }
 :focus-visible {
-  outline: 2px solid rgba(214, 163, 35, 0.55);
-  outline-offset: 2px;
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+
+.product-variant-option:focus,
+.product-variant-option:focus-visible,
+.product-variant-option:focus-within,
+.product-variant-option:active,
+button.product-variant-option:focus,
+button.product-variant-option:focus-visible,
+button.product-variant-option:focus-within,
+button.product-variant-option:active {
+  border: none !important;
+  border-width: 0 !important;
+  border-color: transparent !important;
+  border-style: none !important;
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-shadow: none !important;
 }
 
 .customer-dropdown-button:focus-visible {

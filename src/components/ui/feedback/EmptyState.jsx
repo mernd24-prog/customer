@@ -16,6 +16,7 @@ export default function EmptyState({
   buttonLabel,
   onButtonClick,
   className = "",
+  buttonClassName = "",
   children,
   bordered = true,
 }) {
@@ -59,10 +60,10 @@ className="h-28 w-28 object-contain mix-blend-multiply xs:h-32 xs:w-32 sm:h-40 s
         <div className="mt-6 flex justify-center">
           <ContinueShoppingButton
             onClick={resolvedAction}
-            className="!mx-0 !mt-0 !h-12 !w-auto !min-w-0 !max-w-full !gap-2 !px-8 !rounded-full"
+            className={`!mx-0 !mt-0 !h-[44px] sm:!h-[46px] !w-auto px-7 sm:px-8 whitespace-nowrap !rounded-full !bg-[#3E4093] !text-white !border-[#3E4093] hover:!bg-[#32347C] hover:!border-[#32347C] hover:!text-white shadow-sm hover:shadow-md ${buttonClassName}`}
           >
             {resolvedActionLabel}
-            <ArrowRight size={16} aria-hidden="true" />
+            {/* <ArrowRight size={16} aria-hidden="true" /> */}
           </ContinueShoppingButton>
         </div>
       )}
