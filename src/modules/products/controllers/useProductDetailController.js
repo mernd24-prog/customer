@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById, fetchProducts } from "../slices/productSlice";
 import { fetchProductWarranty } from "../../../features/warranty/warrantySlice";
@@ -109,60 +109,12 @@ export function useProductDetailController(
   // Variant Selection and Syncing
   const variants = product?.variants || [];
 
-  useEffect(() => {
-    if (!variants.length) {
-      setSelectedVariant(null);
-      return;
-    }
-
-    const pathVariantKey =
-      rawParamId && rawParamId.includes(":") ? rawParamId.split(":")[1] : null;
-    const opaqueVariantPayload = decodeVariantRouteToken(searchParams.get("x"));
-    const paramVariantKey =
-      opaqueVariantPayload?.v ||
-      searchParams.get("v") ||
-      searchParams.get("variant") ||
-      searchParams.get("variantId") ||
-      searchParams.get("sku") ||
-      pathVariantKey;
-    const storedVariantKey = productIdentifier
-      ? window.sessionStorage.getItem(`selected_variant_${productIdentifier}`)
-      : null;
-    const targetKey = paramVariantKey || storedVariantKey;
-
-    let targetVariant = null;
-    if (targetKey) {
-      targetVariant = variants.find(
-        (v) =>
-          String(v._id || "") === String(targetKey) ||
-          String(v.id || "") === String(targetKey) ||
-          String(v.sku || "") === String(targetKey) ||
-          String(v.code || "") === String(targetKey) ||
-          String(getVariantRouteKey(v) || "") === String(targetKey),
-      );
-    }
-
-    const defaultVariant = getDefaultVariant(product) || variants[0];
-
-    setSelectedVariant((current) => {
-      if (targetVariant) return targetVariant;
-      if (
-        current &&
-        variants.some(
-          (variant) =>
-            (variant._id || variant.sku) === (current._id || current.sku),
-        )
-      )
-        return current;
-      return defaultVariant;
-    });
-  }, [variants, searchParams, productIdentifier, rawParamId]);
-
-  const selectedVariantKey = selectedVariant?.sku || selectedVariant?._id || "";
-
-  useEffect(() => {
-    if (!selectedVariant || !productIdentifier) return;
-    const variantKey = getVariantRouteKey(selectedVariant);
+  // Only an explicit selection (or route hydration) writes the variant URL.
+  // A separate state-to-URL effect can write the previous render's variant back.
+  const selectVariant = useCallback((variant) => {
+    setSelectedVariant(variant);
+    if (!variant || !productIdentifier) return;
+    const variantKey = getVariantRouteKey(variant);
 
     if (variantKey) {
       window.sessionStorage.setItem(
@@ -211,7 +163,49 @@ export function useProductDetailController(
         { replace: true },
       );
     }
-  }, [selectedVariant, productIdentifier, searchParams, setSearchParams]);
+  }, [productIdentifier, searchParams, setSearchParams]);
+
+
+  useEffect(() => {
+    if (!variants.length) {
+      setSelectedVariant(null);
+      return;
+    }
+
+    const pathVariantKey =
+      rawParamId && rawParamId.includes(":") ? rawParamId.split(":")[1] : null;
+    const opaqueVariantPayload = decodeVariantRouteToken(searchParams.get("x"));
+    const paramVariantKey =
+      opaqueVariantPayload?.v ||
+      searchParams.get("v") ||
+      searchParams.get("variant") ||
+      searchParams.get("variantId") ||
+      searchParams.get("sku") ||
+      pathVariantKey;
+    const storedVariantKey = productIdentifier
+      ? window.sessionStorage.getItem(`selected_variant_${productIdentifier}`)
+      : null;
+    const targetKey = paramVariantKey || storedVariantKey;
+
+    let targetVariant = null;
+    if (targetKey) {
+      targetVariant = variants.find(
+        (v) =>
+          String(v._id || "") === String(targetKey) ||
+          String(v.id || "") === String(targetKey) ||
+          String(v.sku || "") === String(targetKey) ||
+          String(v.code || "") === String(targetKey) ||
+          String(getVariantRouteKey(v) || "") === String(targetKey),
+      );
+    }
+
+    const defaultVariant = getDefaultVariant(product) || variants[0];
+
+    selectVariant(targetVariant || defaultVariant);
+  }, [variants, searchParams, productIdentifier, rawParamId, selectVariant]);
+
+  const selectedVariantKey = selectedVariant?.sku || selectedVariant?._id || "";
+
 
   // Initial Fetching
   useEffect(() => {
@@ -585,7 +579,7 @@ export function useProductDetailController(
     deliveryResult,
     setDeliveryResult,
     selectedVariant,
-    setSelectedVariant,
+    setSelectedVariant: selectVariant,
     zoomOpen,
     setZoomOpen,
     shareOpen,

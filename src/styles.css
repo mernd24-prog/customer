@@ -1136,6 +1136,25 @@ select:not([multiple]):disabled {
   }
 }
 
+/* Explicit animation requested for the product details accordion. */
+.product-details-accordion {
+  overflow-anchor: none;
+}
+
+.product-details-content,
+.product-details-chevron {
+  transition-duration: 450ms !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-details-content {
+  transition-property: height;
+}
+
+.product-details-chevron {
+  transition-property: transform;
+}
+
 /* Keep the existing storefront palette with readable secondary copy. */
 :root {
   --customer-muted: #626773;

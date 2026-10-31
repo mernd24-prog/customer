@@ -77,7 +77,7 @@ export default function VariantSelector({
             wheelToScroll
             dragToScroll
             resetOnMount
-            scrollSelectedToStart
+            scrollSelectedToCenter
             resetKey={`${option.slug}:${option.values.join("|")}:${selectedAttributes[option.slug] || ""}`}
           >
             {option.values.map((value, valueIndex) => {
@@ -208,7 +208,7 @@ export default function VariantSelector({
                 <div
                   key={value}
                   className={
-                    isAgeGroupOption && isUnavailable
+                    isAgeGroupOption
                       ? "flex shrink-0 flex-col items-center gap-1"
                       : "contents"
                   }
@@ -234,7 +234,7 @@ export default function VariantSelector({
                           ? `${value} - Out Of stock`
                           : value
                     }
-                    className={`relative min-w-12 border px-4 py-1.5 text-xs font-bold transition-all duration-200 ease-out focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed ${
+                    className={`relative min-w-12 shrink-0 whitespace-nowrap border px-4 py-1.5 text-xs font-bold transition-all duration-200 ease-out focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed ${
                       isUnavailable && isSelected
                         ? "border-[#ead8d5] bg-[#f3f2fb] text-navy shadow-sm"
                         : isUnavailable
@@ -266,8 +266,11 @@ export default function VariantSelector({
                       </span>
                     )}
                   </button>
-                  {isAgeGroupOption && isUnavailable && (
-                    <span className="whitespace-nowrap text-[10px] font-medium leading-none text-[#85858a]">
+                  {isAgeGroupOption && (
+                    <span
+                      aria-hidden={!isUnavailable}
+                      className={`whitespace-nowrap text-[10px] font-medium leading-none text-[#85858a] ${!isUnavailable ? "invisible" : ""}`}
+                    >
                       Out of stock
                     </span>
                   )}

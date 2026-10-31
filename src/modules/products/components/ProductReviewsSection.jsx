@@ -684,7 +684,7 @@ export default function ProductReviewsSection({ productId, product }) {
         {/* Right Section */}
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Top Bar: Heading + Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E7D9B8] pb-3 pt-3.5 mb-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 pt-3.5 mb-2">
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
               <h3 className="whitespace-nowrap text-sm font-bold text-[#1B1D60] sm:text-base">
                 Customer Reviews

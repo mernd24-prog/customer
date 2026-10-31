@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, ShieldCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { formatPageTitle } from "../../../utils/common";
@@ -88,6 +88,18 @@ export default function ProductInfoSection({
   effectiveDescription,
 }) {
   const [cardOpen, setCardOpen] = useState(true);
+  const contentRef = useRef(null);
+  const [contentHeight, setContentHeight] = useState(null);
+
+  useLayoutEffect(() => {
+    const content = contentRef.current;
+    if (!content) return;
+    const measure = () => setContentHeight(content.getBoundingClientRect().height);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(content);
+    return () => observer.disconnect();
+  }, []);
   const [activeTab, setActiveTab] = useState("specs");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -144,7 +156,7 @@ export default function ProductInfoSection({
   const visibleSpecs = detailRows;
 
   return (
-    <div className="min-w-0 border border-border rounded-lg overflow-hidden bg-white shadow-xs">
+    <div className="product-details-accordion min-w-0 border border-border rounded-lg overflow-hidden bg-white shadow-xs">
       {/* ── Flipkart-style Header: Title + Subtitle + Square Chevron Button ── */}
       <button
         type="button"
@@ -156,21 +168,24 @@ export default function ProductInfoSection({
           <h3 className="text-base sm:text-lg font-bold text-ink">
             All details
           </h3>
-          <p className={`overflow-hidden text-xs sm:text-sm text-muted transition-all duration-300 ease-in-out ${cardOpen ? "mt-0 max-h-0 opacity-0" : "mt-0.5 max-h-8 opacity-100"}`}>
-            Features, specifications, description and more
-          </p>
         </div>
         <div className="w-8 h-8 rounded-lg bg-cream hover:bg-cream-strong flex items-center justify-center text-ink transition-colors shrink-0 ml-3">
-          {cardOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          <ChevronDown
+            size={18}
+            className={`product-details-chevron ${cardOpen ? "rotate-180" : "rotate-0"}`}
+          />
         </div>
       </button>
 
       <div
-        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${cardOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+        className="product-details-content overflow-hidden"
+        style={{
+          height: cardOpen ? (contentHeight ?? "auto") : 0,
+        }}
         aria-hidden={!cardOpen}
-        inert={!cardOpen}
+        inert={cardOpen ? undefined : ""}
       >
-        <div className="min-h-0 min-w-0 overflow-hidden">
+        <div ref={contentRef} className="min-h-0 min-w-0 overflow-hidden">
         <div className="min-w-0 p-2 sm:p-3 border-t border-border">
           {/* Keep tabs on one row; use the shared scroll controls on overflow. */}
           <HorizontalScrollControls
@@ -179,6 +194,8 @@ export default function ProductInfoSection({
             showButtons={false}
             wheelToScroll
             dragToScroll
+            scrollSelectedToCenter
+            resetKey={activeTab}
           >
             {tabs.map((tab) => {
               const isActive = activeTab === tab.key;
@@ -186,14 +203,8 @@ export default function ProductInfoSection({
                 <button
                   key={tab.key}
                   type="button"
-                  onClick={(event) => {
-                    setActiveTab(tab.key);
-                    event.currentTarget.scrollIntoView({
-                      behavior: "smooth",
-                      block: "nearest",
-                      inline: "start",
-                    });
-                  }}
+                  data-scroll-selected={isActive ? "true" : undefined}
+                  onClick={() => setActiveTab(tab.key)}
                   className={`shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                     isActive
                       ? "bg-navy text-white shadow-xs"

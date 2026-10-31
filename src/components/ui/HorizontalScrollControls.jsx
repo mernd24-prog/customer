@@ -15,7 +15,7 @@ export default function HorizontalScrollControls({
   wheelToScroll = false,
   dragToScroll = false,
   resetOnMount = false,
-  scrollSelectedToStart = false,
+  scrollSelectedToCenter = false,
   resetKey,
 }) {
   const scrollRef = useRef(null);
@@ -30,11 +30,16 @@ export default function HorizontalScrollControls({
     if (!node) return;
 
     const scrollToSelected = () => {
-      if (!scrollSelectedToStart) return false;
+      if (!scrollSelectedToCenter) return false;
       const selected = node.querySelector('[data-scroll-selected="true"]');
       if (!selected) return false;
-      node.scrollLeft +=
-        selected.getBoundingClientRect().left - node.getBoundingClientRect().left;
+      const selectedRect = selected.getBoundingClientRect();
+      const viewportRect = node.getBoundingClientRect();
+      node.scrollTo({
+        left: node.scrollLeft + selectedRect.left - viewportRect.left
+          + selectedRect.width / 2 - node.clientWidth / 2,
+        behavior: "smooth",
+      });
       return true;
     };
 
@@ -63,7 +68,7 @@ export default function HorizontalScrollControls({
       if (resizeObserver) resizeObserver.disconnect();
       window.removeEventListener("resize", updateState);
     };
-  }, [resetKey, resetOnMount, scrollSelectedToStart]);
+  }, [resetKey, resetOnMount, scrollSelectedToCenter]);
 
   const scroll = (direction) => {
     const node = scrollRef.current;
