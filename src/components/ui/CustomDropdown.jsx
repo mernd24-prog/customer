@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/common";
+import { createPortal } from "react-dom";
 
 const THUMB_HEIGHT = 32; // Fixed compact short pill thumb
 const TRACK_PADDING = 6; // Padding from top/bottom borders
@@ -11,6 +12,8 @@ export default function CustomDropdown({
   onChange,
   placeholder = "Select Option",
   label,
+  labelClassName = "",
+  labelGapClassName = "mb-2",
   required = false,
   disabled = false,
   error,
@@ -19,13 +22,53 @@ export default function CustomDropdown({
   optionsClassName = "",
   optionClassName = "",
   ariaLabel,
+  searchable = false,
+  portal = false,
+  typeahead = false,
 
   // Used when custom option UI is required
   renderOption,
   isLoading = false,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const searchRef = useRef(null);
+  const filteredOptions = searchable || typeahead
+    ? options.filter((option) =>
+        String(option?.label ?? option?.value ?? option)
+          .trim().toLowerCase().startsWith(search.trim().toLowerCase()),
+      )
+    : options;
+  useEffect(() => {
+    if (isOpen && searchable) searchRef.current?.focus();
+    if (!isOpen) {
+      setSearch("");
+      typedRef.current = { text: "", time: 0 };
+    }
+  }, [isOpen, searchable]);
+  useEffect(() => {
+    if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
+  }, [search]);
   const dropdownRef = useRef(null);
+  const panelRef = useRef(null);
+  const typedRef = useRef({ text: "", time: 0 });
+  const [panelStyle, setPanelStyle] = useState({});
+  useEffect(() => {
+    if (!isOpen || !portal) return;
+    const rect = dropdownRef.current?.querySelector("button")?.getBoundingClientRect();
+    if (!rect) return;
+    const below = window.innerHeight - rect.bottom - 12;
+    const above = rect.top - 12;
+    const upwards = below < 220 && above > below;
+    setPanelStyle({
+      position: "fixed", left: rect.left, width: rect.width,
+      top: upwards ? "auto" : rect.bottom + 6,
+      bottom: upwards ? window.innerHeight - rect.top + 6 : "auto",
+      zIndex: 11000,
+      maxHeight: Math.max(80, Math.min(220, upwards ? above : below)),
+    });
+  }, [isOpen, portal]);
+  const renderPanel = (panel) => portal ? createPortal(panel, document.body) : panel;
   const scrollContainerRef = useRef(null);
   const [hasScroll, setHasScroll] = useState(false);
   const [thumbTop, setThumbTop] = useState(0);
@@ -45,7 +88,7 @@ export default function CustomDropdown({
     if (!el) return;
 
     // Do not show scrollbar for 5 or fewer options
-    if (options.length <= 5) {
+    if (filteredOptions.length <= 5) {
       setHasScroll(false);
       setThumbTop(0);
       return;
@@ -68,7 +111,7 @@ export default function CustomDropdown({
 
       setThumbTop(scrollRatio * availableTrackDistance);
     }
-  }, [options.length]);
+  }, [filteredOptions.length]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -76,7 +119,7 @@ export default function CustomDropdown({
       updateScrollState();
     }, 20);
     return () => clearTimeout(timeout);
-  }, [isOpen, options, updateScrollState]);
+  }, [isOpen, options, search, updateScrollState]);
 
   const handleThumbPointerDown = (e) => {
     e.stopPropagation();
@@ -136,13 +179,13 @@ export default function CustomDropdown({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && !panelRef.current?.contains(event.target)) {
         setIsOpen(false);
       }
     };
 
     const handleScroll = (event) => {
-      if (dropdownRef.current?.contains(event.target)) return;
+      if (dropdownRef.current?.contains(event.target) || panelRef.current?.contains(event.target)) return;
       setIsOpen(false);
     };
 
@@ -165,7 +208,7 @@ export default function CustomDropdown({
   return (
     <div ref={dropdownRef} className={cn("relative", className)}>
       {label && (
-        <span className=" mb-2 block text-sm font-semibold text-[#2E2E2E]">
+        <span className={cn("block text-sm font-semibold text-[#2E2E2E]", labelGapClassName, labelClassName)}>
           {label}
 
           {required && <span className="text-red-500"> *</span>}
@@ -176,6 +219,25 @@ export default function CustomDropdown({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen((previousState) => !previousState)}
+        onKeyDown={(event) => {
+          if (!typeahead) return;
+          if (event.key === "Escape") { setIsOpen(false); return; }
+          if (event.key === "Backspace") {
+            event.preventDefault();
+            const text = typedRef.current.text.slice(0, -1);
+            typedRef.current = { text, time: Date.now() };
+            setSearch(text);
+            return;
+          }
+          if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey || event.key === " ") return;
+          event.preventDefault();
+          const now = Date.now();
+          const previous = now - typedRef.current.time < 700 ? typedRef.current.text : "";
+          const text = previous + event.key.toLowerCase();
+          typedRef.current = { text, time: now };
+          setSearch(text);
+          setIsOpen(true);
+        }}
         className={cn( 
           
           "custom-dropdown-trigger",
@@ -216,9 +278,10 @@ export default function CustomDropdown({
         />
       </button>
 
-      {isOpen && (
+      {isOpen && renderPanel(
         <div
-          role="listbox"
+          ref={panelRef}
+          style={portal ? panelStyle : undefined}
           className={cn(
             "absolute left-0 top-[calc(100%+6px)]",
             "z-30 w-full overflow-hidden",
@@ -228,10 +291,33 @@ export default function CustomDropdown({
             optionsClassName,
           )}
         >
+          {searchable && (
+            <div className="border-b border-[#E7D9B8] p-2">
+              <input
+                ref={searchRef}
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") event.preventDefault();
+                  if (event.key === "Escape") {
+                    event.stopPropagation();
+                    setIsOpen(false);
+                    dropdownRef.current?.querySelector("button")?.focus();
+                  }
+                }}
+                placeholder="Search..."
+                aria-label={`Search ${label || placeholder}`}
+                className="h-9 w-full min-w-0 rounded-md border border-[#E7D9B8] bg-white px-2 text-sm outline-none focus:border-[#CE9F2D]"
+              />
+            </div>
+          )}
           <div
+            role="listbox"
             ref={scrollContainerRef}
             onScroll={updateScrollState}
             className="max-h-[220px] overflow-y-auto no-scrollbar"
+            style={portal ? { maxHeight: panelStyle.maxHeight } : undefined}
           >
             {isLoading ? (
               <>
@@ -241,8 +327,8 @@ export default function CustomDropdown({
                   </div>
                 ))}
               </>
-            ) : options.length > 0 ? (
-              options.map((option, index) => {
+            ) : filteredOptions.length > 0 ? (
+              filteredOptions.map((option, index) => {
                 const optionValue = option?.value ?? option;
 
                 const optionLabel = option?.label ?? option;
@@ -290,7 +376,7 @@ export default function CustomDropdown({
               })
             ) : (
               <p className="px-4 py-3 text-sm text-gray-500">
-                No Options Available
+                {search ? "No matching options" : "No Options Available"}
               </p>
             )}
           </div>
@@ -298,8 +384,9 @@ export default function CustomDropdown({
           {hasScroll && (
             <div
               onPointerDown={handleTrackPointerDown}
-              className="absolute right-0.5 top-0 bottom-0 w-[14px] z-20 flex justify-center cursor-pointer select-none"
+              className="absolute right-0.5 bottom-0 w-[14px] z-20 flex justify-center cursor-pointer select-none"
               style={{
+                top: searchable ? "53px" : 0,
                 paddingTop: `${TRACK_PADDING}px`,
                 paddingBottom: `${TRACK_PADDING}px`,
               }}

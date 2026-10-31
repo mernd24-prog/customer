@@ -31,7 +31,9 @@ export function useAddressBook(user) {
   const [deleteAddressId, setDeleteAddressId] = useState(null);
   const [showAllAddresses, setShowAllAddresses] = useState(false);
 
-  const addresses = user?.addresses || [];
+  const addresses = [...(user?.addresses || [])].sort(
+    (a, b) => Number(Boolean(b.isDefault)) - Number(Boolean(a.isDefault)),
+  );
   const addressLabels = ADDRESS_LABEL_OPTIONS;
 
   const addForm = useForm({

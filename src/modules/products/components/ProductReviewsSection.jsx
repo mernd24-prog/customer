@@ -18,6 +18,7 @@ import ReviewImageUploader from "./ReviewImageUploader";
 import ReviewMediaLightbox from "./ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
+import EmptyState from "../../../components/ui/feedback/EmptyState";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -769,19 +770,14 @@ export default function ProductReviewsSection({ productId, product }) {
 
           {/* Empty State */}
           {!bucket.loading && displayReviews.length === 0 && (
-            <div className="flex min-h-[240px] w-full flex-1 items-center justify-center rounded-md border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center sm:min-h-[280px]">
-              <div className="mx-auto flex w-full max-w-[320px] flex-col items-center">
-               
-                <p className="mt-3 text-base font-bold text-[#1B1D60] sm:text-lg">
-                  Be the First to Review
-                </p>
-                <p className="mt-1 text-sm text-[#6F7480]">
-                  {canWriteReview
+            <EmptyState
+              illustration="reviews"
+              title="Be the First to Review"
+              description={canWriteReview
                     ? "Your feedback can help other shoppers choose with confidence."
                     : "Verified customer reviews will appear here. Check back after shoppers share their experience."}
-                </p>
-              </div>
-            </div>
+              className="!border-solid lg:!min-h-[350px] [&_p]:!max-w-[400px]"
+            />
           )}
 
           {/* View All Reviews Link */}

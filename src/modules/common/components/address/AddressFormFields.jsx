@@ -74,7 +74,7 @@ export default function AddressFormFields({
   };
 
   return (
-    <div className="grid gap-3.5">
+    <div className="address-form-fields grid gap-3.5">
       {showLabel && (
         <div className="grid gap-2">
           <input type="hidden" {...register("label")} />
@@ -147,33 +147,26 @@ export default function AddressFormFields({
         <input type="hidden" {...register("country")} value="India" />
         <input type="hidden" {...register("state")} />
         <CustomDropdown
-          className="pt-0"
-          buttonClassName={
-            errors.state
-              ? "address-state-dropdown-error"
-              : "address-state-dropdown !border-[var(--customer-border)]"
-          }
           label="State"
           labelClassName="text-sm lg:text-base font-medium leading-5 text-[var(--customer-ink)]"
           labelGapClassName="mb-1.5"
+          buttonClassName="!border-[var(--customer-border)]"
           options={states.map((state) => {
-            const name =
-              state && typeof state === "object"
-                ? state.name ?? state.label ?? state.value ?? ""
-                : state;
+            const name = state && typeof state === "object"
+              ? state.name ?? state.label ?? state.value ?? "" : state;
             return { value: name, label: name };
           })}
           value={watch("state") || selectedState || ""}
           onChange={(value) => {
-            setValue("state", value, { shouldValidate: true });
+            setValue("state", value, { shouldValidate: true, shouldDirty: true });
             setValue("city", "");
             setValue("postalCode", "");
           }}
           placeholder="Select State"
           error={errors.state?.message}
           required
-          reserveErrorSpace={false}
-          searchable
+          portal
+          typeahead
         />
         <FormField
           id={`${idPrefix}-city`}

@@ -145,18 +145,8 @@ export default function AddressTab({ user }) {
 
         {/* Saved Addresses Panel */}
         {addresses.length > 0 ? (
-          <div
-            className={`${
-              visibleAddresses.length > 1
-                ? "overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#fffdf8] p-2 shadow-[0_10px_25px_rgba(27,29,96,0.04)] sm:p-3"
-                : "rounded-xl bg-white"
-            }`}
-          >
-            <div
-              className={`grid grid-cols-1 gap-4 ${
-                visibleAddresses.length > 1 ? "sm:grid-cols-2" : ""
-              }`}
-            >
+          <div className="min-w-0 bg-white">
+            <div className="grid min-w-0 grid-cols-1 gap-4">
               {visibleAddresses.map((addr) => {
                 const addrId = addr._id || addr.id;
                 const isEditing = editingId === addrId;
@@ -164,11 +154,11 @@ export default function AddressTab({ user }) {
                 return (
                   <div
                     key={addrId}
-                    className={`relative min-w-0 rounded-lg bg-white p-3 transition-all duration-200 sm:p-4 ${
+                    className={`relative min-w-0 rounded-md bg-white p-3 transition-all duration-200 sm:p-4 ${
                       visibleAddresses.length > 1
                         ? "border border-[#EADCB0] shadow-[0_6px_18px_rgba(27,29,96,0.04)] hover:border-[#D7B55D] hover:shadow-[0_10px_25px_rgba(27,29,96,0.06)]"
                         : "border border-[#E7D9B8] shadow-[0_4px_14px_rgba(27,29,96,0.02)]"
-                    } ${visibleAddresses.length === 1 ? "min-h-[220px]" : ""}`}
+                    }`}
                   >
                     <SharedAddressCard
                       addr={addr}

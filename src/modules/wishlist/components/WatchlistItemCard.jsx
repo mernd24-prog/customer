@@ -210,7 +210,7 @@ export function WatchlistItemCard({
 
   // Full Watchlist Card - Reuses Existing ProductCard
   return (
-    <div className="relative min-w-0 h-full">
+    <div className="wishlist-product-card relative min-w-0 h-full rounded-lg">
       <ProductCard
         product={product}
         showActions={false}
@@ -225,7 +225,7 @@ export function WatchlistItemCard({
           e.stopPropagation();
           onRemove?.(product);
         }}
-        className="absolute right-2 top-2 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-black/5 bg-white/90 text-[#1B1D60] shadow-xs backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:bg-white hover:text-red-500 active:scale-95 sm:h-8 sm:w-8"
+        className="wishlist-remove-button absolute right-2 top-2 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-black/5 bg-white/90 text-[#1B1D60] shadow-xs backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:bg-white hover:text-red-500 active:scale-95 sm:h-8 sm:w-8"
         aria-label={`Remove ${title} from wishlist`}
         title={`Remove ${title} from wishlist`}
       >
@@ -248,7 +248,7 @@ export function WatchlistItemCard({
               className="shrink-0"
             />
           }
-          className="h-8 w-full gap-2 whitespace-nowrap px-3 py-1.5 text-xs font-semibold sm:h-10 sm:px-4 sm:py-2.5 sm:text-sm"
+          className="wishlist-cart-button h-8 w-full gap-2 whitespace-nowrap !bg-none !bg-[#CE9F2D] hover:!bg-[#bd9025] hover:shadow-md active:scale-[0.98] transition-[background-color,box-shadow,transform] duration-300 ease-in-out disabled:transform-none disabled:hover:shadow-none motion-reduce:transition-none px-3 py-1.5 text-xs font-semibold sm:h-10 sm:px-4 sm:py-2.5 sm:text-sm"
         >
           <span className="truncate">Move to Cart</span>
         </PillButton>

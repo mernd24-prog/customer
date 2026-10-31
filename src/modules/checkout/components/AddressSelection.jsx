@@ -292,7 +292,7 @@ export default function AddressSelection({
     <DetailSectionCard
       title="Delivery Address"
       className="w-full"
-      bodyClassName="flex flex-col w-full max-w-full gap-4 px-3 pb-0 pt-4 sm:px-5 sm:pt-5 sm:pb-0"
+      bodyClassName="flex flex-col w-full max-w-full gap-3 px-3 py-3 sm:px-5 sm:py-3"
       headerContent={
         <button
           type="button"
@@ -303,7 +303,7 @@ export default function AddressSelection({
         </button>
       }
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         {(showAllAddresses
           ? displayAddresses
           : displayAddresses.slice(0, 2)
@@ -318,7 +318,7 @@ export default function AddressSelection({
               key={addrId}
               className={`border-b border-border transition-all duration-300 ease-in-out last:border-b-0 bg-white`}
             >
-              <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D]">
+              <div className="flex w-full items-start gap-3 sm:gap-[15px]">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
@@ -334,12 +334,12 @@ export default function AddressSelection({
 
                   {isSingle ? (
                     /* Single address: plain display, no radio */
-                    <div className="my-4 flex w-full items-start gap-2 sm:gap-3">
+                    <div className="my-2 flex w-full items-start gap-2 sm:gap-3">
                       <span className="min-w-0">
                         <span className="block font-bold text-base leading-6 text-[#2E2E2E] sm:text-lg sm:leading-7">
                           {addr.fullName || "Address"}
                         </span>
-                        <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
+                        <div className="mt-2 flex flex-col gap-1.5">
                           {addr.phone && (
                             <span className={infoClass}>
                               <Phone size={18} className="text-gold-dark mt-1 shrink-0" />
@@ -366,7 +366,7 @@ export default function AddressSelection({
                     </div>
                   ) : (
                     /* Multiple addresses: radio selection */
-                    <label className="my-4 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
+                    <label className="my-2 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
                       <input
                         type="radio"
                         name="addressSelect"
@@ -386,7 +386,7 @@ export default function AddressSelection({
                         <span className="block font-bold text-base leading-6 text-[#2E2E2E] sm:text-lg sm:leading-7">
                           {addr.fullName || "Address"}
                         </span>
-                        <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
+                        <div className="mt-2 flex flex-col gap-1.5">
                           {addr.phone && (
                             <span className={infoClass}>
                               <Phone size={18} className="text-gold-dark mt-1 shrink-0" />

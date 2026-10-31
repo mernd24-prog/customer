@@ -64,9 +64,9 @@ function AccountMenuItem({
       to={item.path}
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={`group flex w-full min-w-0 items-start gap-3.5 border-b border-[#04258626] transition-colors last:border-b-0 ${
+      className={`group flex w-full min-w-0 items-start gap-3.5 !rounded-none border-b border-[#04258626] transition-colors last:border-b-0 ${
         isMobile
-          ? `p-3.5 ${active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"}`
+          ? `p-3 ${active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"}`
           : `p-5 sm:p-6 ${active ? "bg-[#FFF9E9]" : "bg-white hover:bg-[#FFF9E9]"}`
       }`}
     >
@@ -125,7 +125,7 @@ function AccountMobileMenu({
   onClose,
 }) {
   return (
-    <div className="relative z-40 min-w-0 lg:hidden">
+    <div className="min-w-0 lg:hidden">
       <button
         type="button"
         onClick={onToggle}
@@ -147,7 +147,7 @@ function AccountMobileMenu({
       {isOpen && (
         <nav
           aria-label="Mobile account navigation"
-          className="absolute left-0 top-[calc(100%+6px)] z-50 flex w-full min-w-0 flex-col items-start overflow-hidden rounded-lg border border-gold bg-white shadow-lg"
+          className="mt-2 flex w-full min-w-0 flex-col items-start overflow-hidden rounded-sm border border-gold bg-white shadow-sm"
         >
           {items.map((item) => (
             <AccountMenuItem
@@ -259,7 +259,7 @@ export default function AccountPage({ tab = "profile" }) {
           setIsMobileMenuOpen={setIsMobileMenuOpen}
         />
 
-        <main className="relative z-0 w-full min-w-0 rounded-lg border border-gold/70 bg-white p-4 sm:p-5 lg:p-6 shadow-2xs">
+        <main className="relative z-0 w-full min-w-0 rounded-md border border-gold/70 bg-white p-3 sm:p-5 lg:p-6 shadow-2xs">
           <ApiState
             loading={userState.loading && !user}
             error={userState.error}

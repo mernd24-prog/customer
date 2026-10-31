@@ -1,9 +1,14 @@
 
 import { ContinueShoppingButton } from "../../ui/button/static";
+import { ArrowRight } from "lucide-react";
+import EmptyStateIllustration from "./EmptyStateIllustration";
+import ReviewEmptyIllustration from "./ReviewEmptyIllustration";
 
 export default function EmptyState({
   icon: Icon,
-  imageSrc = "/image/png/NoProductFound.png",
+  imageSrc,
+  count = 0,
+  illustration = "box",
   title = "Nothing here yet",
   description = "Once data is available, it will appear here.",
   actionLabel,
@@ -18,8 +23,8 @@ export default function EmptyState({
   const resolvedAction = onAction || onButtonClick;
 
   const containerClasses = bordered
-    ? "rounded-xl border border-dashed border-[#D8E3F0] bg-[#F5F8FC] px-5 py-10 text-center"
-    : "rounded-[16px] bg-[#F7F9FC] px-4 py-8 text-center";
+    ? "rounded-xl border border-dashed border-[#E7D9B8] bg-[#FFFDF6] px-5 py-10 text-center"
+    : "rounded-xl bg-[#FFFDF6] px-4 py-8 text-center";
 
   return (
     <div
@@ -32,7 +37,7 @@ export default function EmptyState({
             aria-hidden="true"
           />
         </div>
-      ) : (
+      ) : imageSrc ? (
         <img
           loading="lazy"
           width="400"
@@ -40,13 +45,13 @@ export default function EmptyState({
           src={imageSrc}
           alt={title}
 className="h-28 w-28 object-contain mix-blend-multiply xs:h-32 xs:w-32 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-52 lg:w-52 xl:h-60 xl:w-60"        />
-      )}
+      ) : illustration === "reviews" ? <ReviewEmptyIllustration /> : <EmptyStateIllustration count={count} />}
 
-      <h2 className="mt-5 max-w-lg text-lg font-bold text-[var(--customer-ink)] sm:text-xl md:text-2xl">
+      <h2 className="mt-5 max-w-lg text-lg font-bold text-[var(--customer-ink)] sm:text-xl">
         {title}
       </h2>
 
-      <p className="mt-3 max-w-xs text-sm leading-6 text-[var(--customer-muted)] sm:max-w-md sm:text-base lg:max-w-xl">
+      <p className="mt-2 max-w-xs text-sm leading-6 text-[var(--customer-muted)] sm:max-w-md sm:text-base lg:max-w-xl">
         {description}
       </p>
 
@@ -54,9 +59,10 @@ className="h-28 w-28 object-contain mix-blend-multiply xs:h-32 xs:w-32 sm:h-40 s
         <div className="mt-6 flex justify-center">
           <ContinueShoppingButton
             onClick={resolvedAction}
-            className="!mx-0 !mt-0 !h-[46px] !w-[206px] !min-w-[206px] !max-w-none !shrink-0 !rounded-full"
+            className="!mx-0 !mt-0 !h-12 !w-auto !min-w-0 !max-w-full !gap-2 !px-8 !rounded-full"
           >
             {resolvedActionLabel}
+            <ArrowRight size={16} aria-hidden="true" />
           </ContinueShoppingButton>
         </div>
       )}

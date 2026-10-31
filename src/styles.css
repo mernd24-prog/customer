@@ -1136,6 +1136,64 @@ select:not([multiple]):disabled {
   }
 }
 
+.address-form-fields input.customer-input:not([type="hidden"]),
+.address-form-fields select.customer-input,
+.address-form-fields .custom-dropdown-trigger,
+.address-form-fields label > .relative.flex {
+  height: 38px;
+  min-height: 38px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.address-form-fields label > .relative.flex {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.address-form-fields label > .relative.flex input.customer-input {
+  height: 100%;
+  min-height: 0;
+}
+
+.wishlist-product-card {
+  transition: transform 300ms ease-in-out, box-shadow 300ms ease-in-out;
+}
+
+.wishlist-cart-button,
+.wishlist-continue-button,
+.wishlist-remove-button {
+  cursor: pointer;
+  transition: background-color 300ms ease-in-out, color 300ms ease-in-out,
+    border-color 300ms ease-in-out, box-shadow 300ms ease-in-out,
+    transform 300ms ease-in-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wishlist-product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(27, 29, 96, 0.08);
+  }
+  .wishlist-product-card:hover > :first-child {
+    border-color: #CE9F2D;
+  }
+  .wishlist-cart-button:not(:disabled):hover {
+    background-image: none;
+    background-color: #bd9025;
+    box-shadow: 0 4px 10px rgba(206, 159, 45, 0.22);
+  }
+  a.wishlist-continue-button[href]:not([aria-disabled="true"]):hover {
+    background-color: #3E4093;
+    color: white;
+    border-color: #3E4093;
+    box-shadow: 0 4px 10px rgba(62, 64, 147, 0.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wishlist-product-card:hover { transform: none; }
+}
+
 /* Explicit animation requested for the product details accordion. */
 .product-details-accordion {
   overflow-anchor: none;

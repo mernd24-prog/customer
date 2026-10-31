@@ -362,9 +362,9 @@ export default function ProfileTab({ user }) {
 
   const fieldLabelClass = "text-xs sm:text-sm font-semibold text-[#171A3A]";
   const readonlyBoxClass =
-    "flex h-11 min-h-[44px] min-w-0 items-center gap-2.5 rounded-lg border border-[#E7D9B8]/70 bg-[#FAFAFC] px-3.5 text-sm sm:text-base font-normal text-[#171A3A]";
+    "flex h-11 min-h-[44px] min-w-0 items-center gap-2.5 rounded-md border border-[#E7D9B8]/70 bg-[#FAFAFC] px-3.5 text-sm sm:text-base font-normal text-[#171A3A]";
   const inputClass =
-    "h-11 min-h-[44px] w-full rounded-lg border border-[#04258633] bg-white px-3.5 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold";
+    "h-11 min-h-[44px] w-full rounded-md border border-[#04258633] bg-white px-3.5 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold";
 
   return (
     <form
@@ -382,7 +382,7 @@ export default function ProfileTab({ user }) {
       className="grid w-full min-w-0 gap-5"
     >
       {/* Avatar + User Header Card */}
-      <section className="flex min-w-0 w-full flex-col gap-3 rounded-lg border border-[#E7D9B8]/70 bg-[#FFFDF8] p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4">
+      <section className="flex min-w-0 w-full flex-col gap-3 rounded-md border border-[#E7D9B8]/70 bg-[#FFFDF8] p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4">
         <div className="flex min-w-0 items-center gap-3.5 sm:gap-4">
           <div className="relative shrink-0">
             {isAvatarLoading ? (
@@ -452,7 +452,7 @@ export default function ProfileTab({ user }) {
           <button
             type="button"
             onClick={handleEdit}
-            className="inline-flex min-h-10 w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none"
+            className="inline-flex min-h-10 w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-md bg-gold px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none"
           >
             <Pencil size={15} />
             <span>Edit Profile</span>
@@ -566,14 +566,14 @@ export default function ProfileTab({ user }) {
                     }}
                     disabled={emailBusy}
                     placeholder="Add your email address"
-                    className="h-11 min-h-[44px] w-full rounded-lg border border-[#04258633] bg-white py-2 pl-10 pr-3 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold"
+                    className="h-11 min-h-[44px] w-full rounded-md border border-[#04258633] bg-white py-2 pl-10 pr-3 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={handleSendEmailOtp}
                   disabled={emailBusy || !isEmailFormatValid}
-                  className="min-h-11 shrink-0 rounded-lg bg-[#1B1D60] px-3.5 text-xs font-semibold text-white transition hover:bg-[#2C3080] disabled:opacity-50"
+                  className="min-h-11 shrink-0 rounded-md bg-[#1B1D60] px-3.5 text-xs font-semibold text-white transition hover:bg-[#2C3080] disabled:opacity-50"
                 >
                   {emailOtpSent ? "Resend OTP" : "Verify email"}
                 </button>
@@ -608,12 +608,12 @@ export default function ProfileTab({ user }) {
 
       {/* Editing Action Buttons */}
       {isEditing && (
-        <div className="flex flex-col-reverse justify-end gap-3 border-t border-[#E7D9B8]/60 pt-4 sm:flex-row">
+        <div className="flex flex-row justify-end gap-2 border-t border-[#E7D9B8]/60 pt-4 sm:gap-3">
           <button
             type="button"
             onClick={handleCancel}
             disabled={loading || isAvatarUploading}
-            className="min-h-10 w-full sm:w-auto rounded-lg border border-[#D9DCE5] px-5 text-xs sm:text-sm font-semibold text-[#171A3A] transition hover:bg-[#F7F7F9] disabled:opacity-60"
+            className="min-h-10 min-w-0 flex-1 sm:flex-none sm:w-auto rounded-md border border-[#D9DCE5] px-3 sm:px-5 text-xs sm:text-sm font-semibold text-[#171A3A] transition hover:bg-[#F7F7F9] disabled:opacity-60"
           >
             Cancel
           </button>
@@ -622,7 +622,7 @@ export default function ProfileTab({ user }) {
             type="submit"
             loading={loading}
             disabled={!isValid || loading || isAvatarUploading}
-            className="w-full sm:w-auto px-6 text-xs sm:text-sm font-semibold text-white min-w-0 sm:min-w-[130px]"
+            className="rounded-md flex-1 sm:flex-none sm:w-auto px-3 sm:px-6 text-xs sm:text-sm font-semibold text-white min-w-0 sm:min-w-[130px]"
             size="md"
           >
             Save Profile
@@ -676,7 +676,7 @@ export default function ProfileTab({ user }) {
                 disabled={emailBusy}
                 variant="secondary"
                 size="md"
-                className="min-h-11 rounded-lg px-4 text-sm"
+                className="min-h-11 rounded-md px-4 text-sm"
               >
                 Resend code
               </Button>
@@ -686,7 +686,7 @@ export default function ProfileTab({ user }) {
                 loading={emailBusy}
                 variant="primary"
                 size="md"
-                className="min-h-11 rounded-lg px-5 text-sm"
+                className="min-h-11 rounded-md px-5 text-sm"
               >
                 Verify email
               </Button>
