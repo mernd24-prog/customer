@@ -697,7 +697,7 @@ export default function useCheckout() {
           )
             return null;
 
-          if (mode === "allowlist") {
+          if (!hasProfile && mode === "allowlist") {
             const allowed =
               shipping.allowPincodes || shipping.serviceablePincodes || [];
             if (normalizeList(allowed).length === 0) return null;
@@ -705,7 +705,7 @@ export default function useCheckout() {
             if (pincodes.includes(pincode)) return null;
           }
 
-          if (mode === "regions") {
+          if (!hasProfile && mode === "regions") {
             const regions = normalizeList(shipping.regions);
             const states = normalizeList(shipping.states);
             const cities = normalizeList(shipping.cities);

@@ -526,6 +526,7 @@ export const getClientDeliverabilityBlockers = (items = [], address = {}) => {
         product?.shipping && typeof product.shipping === "object"
           ? product.shipping
           : {};
+      if (shipping.shippingProfileId) return null;
       const mode = normalizeServiceabilityMode(shipping.serviceabilityMode);
       const allowed =
         shipping.allowPincodes || shipping.serviceablePincodes || [];
