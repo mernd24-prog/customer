@@ -144,12 +144,15 @@ export default function VariantSelector({
                     key={value}
                     type="button"
                     data-scroll-selected={isSelected ? "true" : undefined}
+                    aria-pressed={isSelected}
                     disabled={!isComboAvailable}
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
                     }
-                    className={`product-variant-option relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-lg border border-[#d9d1c4] bg-white transition-all duration-300 ease-in-out focus:border-0 focus-visible:border-0 active:border-0 sm:h-[95px] sm:w-[95px] ${
-                      isSelected ? "shadow-none" : "shadow-none"
+                    className={`product-variant-option relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-lg border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
+                      isSelected
+                        ? "border-gold shadow-sm"
+                        : "border-[#d9d1c4] hover:border-gold/50"
                     } ${isUnavailable ? "opacity-55 grayscale" : ""} ${
                       !isComboAvailable ? "cursor-not-allowed opacity-40" : ""
                     }`}
@@ -213,6 +216,7 @@ export default function VariantSelector({
                   <button
                     type="button"
                     data-scroll-selected={isSelected ? "true" : undefined}
+                    aria-pressed={isSelected}
                     disabled={!isComboAvailable}
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
@@ -231,7 +235,7 @@ export default function VariantSelector({
                           ? `${value} - Out Of stock`
                           : value
                     }
-                    className={`product-variant-option relative min-w-12 shrink-0 whitespace-nowrap border border-[#d9d1c4] px-4 py-1.5 text-xs font-bold transition-all duration-200 ease-out focus:border-0 focus-visible:border-0 active:border-0 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed ${
+                    className={`product-variant-option relative min-w-12 shrink-0 whitespace-nowrap border border-[#d9d1c4] px-4 py-1.5 text-xs font-bold transition-all duration-200 ease-out focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed ${
                       isUnavailable && isSelected
                         ? "bg-[#f3f2fb] text-navy shadow-none"
                         : isUnavailable

@@ -393,10 +393,6 @@ button.product-variant-option:focus,
 button.product-variant-option:focus-visible,
 button.product-variant-option:focus-within,
 button.product-variant-option:active {
-  border: none !important;
-  border-width: 0 !important;
-  border-color: transparent !important;
-  border-style: none !important;
   outline: none !important;
   outline-offset: 0 !important;
   box-shadow: none !important;
