@@ -76,6 +76,7 @@ export function getBrandLogo(brand) {
   return (
     getImageUrlFromValue(brand.logo) ||
     getImageUrlFromValue(brand.logoUrl) ||
+    getImageUrlFromValue(brand.imageUrl) ||
     ""
   );
 }

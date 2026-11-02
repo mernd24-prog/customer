@@ -103,8 +103,17 @@ export default function ProductInfoSection({
   const [activeTab, setActiveTab] = useState("specs");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // The product response is the source of truth for whether warranty is enabled.
+  // The warranty endpoint can return cached/registered details for a product,
+  // so it must not override an explicit `enabled: false` on the product.
+  const productWarranty = product?.warranty || {};
+  const warrantyResponse = warranty?.warrantyDetails || warranty || {};
   const effectiveWarranty =
-    warranty?.warrantyDetails || warranty || product?.warranty || {};
+    productWarranty.enabled === false
+      ? productWarranty
+      : Object.keys(warrantyResponse).length
+        ? warrantyResponse
+        : productWarranty;
   const rawPeriodCount = Number(effectiveWarranty.period);
   const hasValidPeriod =
     effectiveWarranty.period !== null &&
@@ -125,6 +134,13 @@ export default function ProductInfoSection({
         .join(" ")
     : "";
   const returnPolicy = effectiveWarranty.returnPolicy || {};
+  const warrantyDescription =
+    effectiveWarranty.coveredInWarranty || effectiveWarranty.terms || "";
+  const sellerDisplayName =
+    product.seller?.storeName ||
+    product.seller?.name ||
+    product.sellerName ||
+    "SamGlobal Seller";
 
   const hasDescription = Boolean(
     effectiveDescription ||
@@ -273,7 +289,7 @@ export default function ProductInfoSection({
                       ? capitalizeFirst(warrantyPeriod || "Standard Warranty")
                       : "No Warranty"}
                   </span>
-                  {effectiveWarranty.type && (
+              {hasWarranty && effectiveWarranty.type && (
                     <span className="text-xs text-muted">
                       Type: {capitalizeFirst(effectiveWarranty.type.replace(/_/g, " "))}
                     </span>
@@ -297,15 +313,15 @@ export default function ProductInfoSection({
                 </div>
               </div>
 
-              {effectiveWarranty.coveredInWarranty && (
+              {hasWarranty && warrantyDescription && (
                 <div className="border-t border-border/70 pt-3">
                   <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">
-                    Covered in Warranty
+                    Warranty Description
                   </span>
                   <div
                     className="text-sm leading-relaxed text-ink"
                     dangerouslySetInnerHTML={{
-                      __html: decodeHtml(effectiveWarranty.coveredInWarranty),
+                      __html: decodeHtml(warrantyDescription),
                     }}
                   />
                 </div>
@@ -325,10 +341,9 @@ export default function ProductInfoSection({
                   <div className="px-4 py-4 sm:px-5 sm:py-5">
                     <span className="block text-xs font-medium text-muted">Store Name</span>
                     <span className="mt-1.5 block break-words text-sm font-bold text-ink sm:text-base">
-                      {product.seller?.storeName ||
-                        product.seller?.name ||
-                        product.sellerName ||
-                        "SamGlobal Seller"}
+                      {sellerDisplayName
+                        .toLocaleLowerCase("en-IN")
+                        .replace(/(^|\s)\p{L}/gu, (letter) => letter.toLocaleUpperCase("en-IN"))}
                     </span>
                   </div>
 
