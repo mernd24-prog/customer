@@ -141,7 +141,7 @@ export default function DeliveryChecker({
                 type="button"
                 onClick={() => setIsModalOpen(true)}
                 disabled={loading}
-                className="flex h-11 w-full min-w-0 items-center gap-2 rounded-full border border-[#1B1D60]/25 bg-[#F4F4F8] py-1 pl-3 pr-1 text-sm font-semibold text-navy transition-colors hover:border-[#1B1D60]/50 disabled:cursor-wait"
+                className="flex h-11 w-full min-w-0 items-center gap-2 rounded-lg border border-[#1B1D60]/25 bg-[#F4F4F8] py-1 pl-3 pr-1 text-sm font-semibold text-navy transition-colors hover:border-[#1B1D60]/50 disabled:cursor-wait"
               >
                 {loading ? (
                   <Loader2 size={16} className="shrink-0 animate-spin text-gold-dark" />

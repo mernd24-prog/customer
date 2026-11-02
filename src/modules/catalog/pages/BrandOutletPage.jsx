@@ -6,7 +6,7 @@ import { ArrowRight, Search, X } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import BrandCard from "../components/BrandCard";
-import { EmptyState } from "../../../components/ui/feedback";
+import { EmptyState } from "../../../components/ui";
 import { Pagination } from "../../../modules/products/components";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
 import CUSTOMER_ROUTES from "../../../constants/routes";
@@ -265,7 +265,7 @@ export default function BrandOutletPage() {
               </>
             ) : (
               <EmptyState
-                imageSrc="/image/png/NoProductFound.png"
+               
                 title="No Brands Found"
                 description={
                   search

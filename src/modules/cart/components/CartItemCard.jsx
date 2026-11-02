@@ -71,35 +71,36 @@ export default function CartItemCard({
 
   return (
     <article
-      className={`relative w-full p-2 ${
+      className={`w-full px-3 py-4 sm:px-4 sm:py-5 ${
         fullWidth ? "xl:max-w-none" : "xl:max-w-[1161px]"
       }`}
     >
       <div
-        className={`grid grid-cols-1 sm:grid-cols-[170px_1fr] lg:grid-cols-[190px_1fr] gap-5 sm:gap-6 pb-2 sm:pb-3 ${
-          !isLastItem ? " border-b border-[#CE9F2D4D]" : ""
+        className={`grid grid-cols-[104px_minmax(0,1fr)] items-start gap-3 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-5 ${
+          !isLastItem ? "border-b border-[#CE9F2D4D] pb-4 sm:pb-5" : ""
         }`}
       >
-        <div className="flex items-start gap-2.5 sm:gap-3 w-full">
-          {showCheckbox && (
-            <label className="flex shrink-0 cursor-pointer items-center justify-center p-1 pt-1.5 sm:pt-2 rounded transition hover:bg-black/5">
-              <input
-                type="checkbox"
-                checked={selected}
-                onChange={(event) =>
-                  onSelect?.(item?.id, event.target.checked)
-                }
-                className="h-4 w-4 rounded-[4px] border-[#A9B4D8] accent-[#3F4095] cursor-pointer"
-              />
-              <span className="sr-only">
-                Select {item?.title} For Checkout
-              </span>
-            </label>
-          )}
+        {/* Product image and quantity */}
+        <div className="flex min-w-0 flex-col items-center gap-2">
+          <div className="relative flex w-full items-start justify-center">
+            {showCheckbox && (
+              <label className="absolute left-0 top-1 z-10 flex h-6 w-6 cursor-pointer items-center justify-center rounded-md bg-white shadow-sm sm:left-0">
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  onChange={(event) =>
+                    onSelect?.(item?.id, event.target.checked)
+                  }
+                  className="m-0 h-4 w-4 cursor-pointer rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
+                />
+                <span className="sr-only">
+                  Select {item?.title} For Checkout
+                </span>
+              </label>
+            )}
 
-          <div className="flex flex-col items-center gap-3 flex-1 min-w-0">
             {item?.image && (
-              <div className="relative flex aspect-square w-full max-w-full sm:max-w-[165px] h-auto max-h-[260px] sm:max-h-[190px] items-center justify-center overflow-hidden rounded-lg border border-[#F0E6D2] bg-white">
+              <div className="h-[112px] w-[96px] shrink-0 overflow-hidden rounded-lg border border-[#E9E2D5] bg-white sm:h-[132px] sm:w-[112px]">
                 {productPath ? (
                   <Link
                     to={productPath}
@@ -111,13 +112,10 @@ export default function CartItemCard({
                       width="400"
                       height="400"
                       src={getOptimizedCloudinaryUrl(item.image, 300)}
-                      srcSet={generateCloudinarySrcSet(
-                        item.image,
-                        [200, 300, 400],
-                      )}
-                      sizes="(max-width: 640px) 165px, 200px"
+                      srcSet={generateCloudinarySrcSet(item.image, [200, 300, 400])}
+                      sizes="(max-width: 640px) 96px, 112px"
                       alt=""
-                      className="h-full w-full object-contain p-2 transition duration-300 hover:scale-105 sm:p-3"
+                      className="h-full w-full object-contain"
                       onError={(event) =>
                         applyImageFallback(event, item.title, "cart")
                       }
@@ -130,9 +128,9 @@ export default function CartItemCard({
                     height="400"
                     src={getOptimizedCloudinaryUrl(item.image, 300)}
                     srcSet={generateCloudinarySrcSet(item.image, [200, 300, 400])}
-                    sizes="(max-width: 640px) 165px, 200px"
+                    sizes="(max-width: 640px) 96px, 112px"
                     alt=""
-                    className="h-full w-full object-contain p-2 sm:p-3"
+                    className="h-full w-full object-contain"
                     onError={(event) =>
                       applyImageFallback(event, item.title, "cart")
                     }
@@ -140,131 +138,83 @@ export default function CartItemCard({
                 )}
               </div>
             )}
-
-            {showQuantitySelector && (
-              <div className="hidden sm:flex mt-1.5 w-full flex-col items-center">
-                <QuantitySelector
-                  quantity={item.quantity}
-                  onIncrease={() => onIncrease(item.id)}
-                  onDecrease={() => onDecrease(item.id)}
-                  max={quantityMax}
-                  increaseDisabled={item.increaseDisabled}
-                  increaseDisabledLabel={item.stockMessage || undefined}
-                />
-                {item.stockMessage ? (
-                  <p className="mt-1 text-center text-xs font-semibold text-red-600">
-                    {item.stockMessage}
-                  </p>
-                ) : null}
-              </div>
-            )}
           </div>
+
+          {showQuantitySelector && (
+            <div className="flex w-full flex-col items-center gap-1">
+              <QuantitySelector
+                quantity={item.quantity}
+                onIncrease={() => onIncrease(item.id)}
+                onDecrease={() => onDecrease(item.id)}
+                max={quantityMax}
+                increaseDisabled={item.increaseDisabled}
+                increaseDisabledLabel={item.stockMessage || undefined}
+                variant="cart"
+              />
+              {item.stockMessage ? (
+                <p className="text-center text-[11px] font-semibold leading-4 text-red-600">
+                  {item.stockMessage}
+                </p>
+              ) : null}
+            </div>
+          )}
         </div>
 
-        <div className="min-w-0 flex flex-col justify-between py-1">
-          <div>
-            <div className="mb-2">
+        {/* Product details start at exactly the same top edge as the image */}
+        <div className="min-w-0 self-start">
+          {Number.isFinite(ratingValue) && ratingValue > 0 && (
+            <div className="mb-1.5">
               <StarRating rating={ratingValue} count={reviewCount} />
             </div>
-            {productPath ? (
-              <Link
-                to={productPath}
-                className="block mb-2.5 font-bold text-sm sm:text-base text-[#2d2d2d] transition hover:text-[#1B1D60]"
-              >
-                <ShowMoreText
-                  text={item?.title}
-                  mode="characters"
-                  limit={65}
-                  moreLabel="more"
-                  lessLabel="less"
-                  textClassName="inline"
-                  buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
-                />
-              </Link>
-            ) : (
-              <h3 className="line-clamp-2 block mb-2.5 font-bold text-sm sm:text-base text-[#2d2d2d]">
-                {item?.title}
-              </h3>
-            )}
+          )}
 
-            {hasVariantTags && (
-              <div className="mb-3 flex flex-wrap gap-1.5">
-                {item?.condition && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-xs font-semibold text-[#1B1D60]">
-                    {item.condition}
-                  </span>
-                )}
-
-                {item?.color && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-xs font-semibold text-[#1B1D60]">
-                    Color: {item.color}
-                  </span>
-                )}
-
-                {item?.size && (
-                  <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-xs font-semibold text-[#1B1D60]">
-                    Size: {item.size}
-                  </span>
-                )}
-
-                {Object.entries(item?.attributes || {})
-                  .filter(([key]) => !["color", "size"].includes(key))
-                  .map(([key, value]) => (
-                    <span
-                      key={key}
-                      className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-xs font-semibold capitalize text-[#1B1D60]"
-                    >
-                      {key.replace(/_/g, " ")}: {String(value)}
-                    </span>
-                  ))}
-              </div>
-            )}
-
-            <div className="space-y-2 mb-4">
-              <ProductStockStatus
-                inStock={!isOutOfStock}
-                selectedVariant={selectedVariant}
-                product={product}
-                availableStock={hasStockQuantity ? stockQuantity : undefined}
+          {productPath ? (
+            <Link
+              to={productPath}
+              className="mb-2 block text-sm font-bold leading-5 text-[#2D2D2D] transition hover:text-[#1B1D60] sm:text-base sm:leading-6"
+            >
+              <ShowMoreText
+                text={item?.title}
+                mode="characters"
+                limit={65}
+                moreLabel="more"
+                lessLabel="less"
+                textClassName="inline"
+                buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
               />
+            </Link>
+          ) : (
+            <h3 className="mb-2 line-clamp-2 text-sm font-bold leading-5 text-[#2D2D2D] sm:text-base sm:leading-6">
+              {item?.title}
+            </h3>
+          )}
 
-              <ProductPriceBlock
-                price={price}
-                mrp={oldPrice}
-                currency={item?.currency ?? item?._raw?.currency}
-                discount={discountPct}
-                priceClassName="text-base sm:text-lg font-extrabold text-[#001F3F]"
-                mrpClassName="text-xs sm:text-sm font-semibold text-[#737373]"
-                discountClassName="bg-emerald-50 text-emerald-700 text-xs font-semibold"
-              />
+          <div className="mb-3 flex flex-col gap-2 sm:mb-3.5">
+            <ProductStockStatus
+              inStock={!isOutOfStock}
+              selectedVariant={selectedVariant}
+              product={product}
+              availableStock={hasStockQuantity ? stockQuantity : undefined}
+            />
 
-              {atMaxQty && !isOutOfStock && (
-                <p className="mt-0.5 text-xs font-medium text-[var(--customer-muted)]">
-                  Max {maxQty} Per Order
-                </p>
-              )}
+            <ProductPriceBlock
+              price={price}
+              mrp={oldPrice}
+              currency={item?.currency ?? item?._raw?.currency}
+              discount={discountPct}
+              priceClassName="text-base font-extrabold text-[#001F3F] sm:text-lg"
+              mrpClassName="text-xs font-semibold text-[#737373] sm:text-sm"
+              discountClassName="bg-emerald-50 text-emerald-700 text-[11px] font-semibold sm:text-xs"
+            />
 
-              {showQuantitySelector && (
-                <div className="mt-3 sm:hidden">
-                  <QuantitySelector
-                    quantity={item.quantity}
-                    onIncrease={() => onIncrease(item.id)}
-                    onDecrease={() => onDecrease(item.id)}
-                    max={quantityMax}
-                    increaseDisabled={item.increaseDisabled}
-                    increaseDisabledLabel={item.stockMessage || undefined}
-                  />
-                  {item.stockMessage ? (
-                    <p className="mt-1 text-xs font-semibold text-red-600">
-                      {item.stockMessage}
-                    </p>
-                  ) : null}
-                </div>
-              )}
-            </div>
+            {atMaxQty && !isOutOfStock && (
+              <p className="text-xs font-medium text-[var(--customer-muted)]">
+                Max {maxQty} Per Order
+              </p>
+            )}
           </div>
 
-          <div className="pt-2 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[#F0E6D2] pt-2.5 sm:gap-x-5 sm:pt-3">
             {saveForLaterLabel === "Move to Wishlist" ? (
               <button
                 type="button"
@@ -274,21 +224,19 @@ export default function CartItemCard({
                   try {
                     await onSaveForLater?.(item?.id);
                   } finally {
-                    // Opening or cancelling authentication must not leave the
-                    // guest-facing heart in its selected state.
                     setIsSaving(false);
                   }
                 }}
                 disabled={isWishlisted}
-                className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium transition ${
+                className={`inline-flex items-center gap-1.5 text-xs font-medium transition sm:text-sm ${
                   isWishlisted
-                    ? "text-[#1B1D60] cursor-default"
-                    : "text-[#2d2d2d] hover:text-[#1B1D60]"
+                    ? "cursor-default text-[#1B1D60]"
+                    : "text-[#2D2D2D] hover:text-[#1B1D60]"
                 }`}
               >
                 <Heart
                   size={16}
-                  className="text-[#1B1D60]"
+                  className="shrink-0 text-[#1B1D60]"
                   fill={isWishlisted || isSaving ? "currentColor" : "none"}
                 />
                 {isWishlisted ? "Wishlisted" : saveForLaterLabel}
@@ -299,7 +247,7 @@ export default function CartItemCard({
                 onClick={() => onSaveForLater?.(item?.id)}
                 disabled={isOutOfStock}
                 title={isOutOfStock ? "Out of stock" : undefined}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-6 py-1.5 text-xs font-semibold text-white transition hover:opacity-90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:opacity-60 disabled:active:scale-100"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#CE9F2D] px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-[#B98B20] disabled:cursor-not-allowed disabled:opacity-60 sm:px-4"
               >
                 <FaShoppingCart size={13} />
                 {saveForLaterLabel}
@@ -309,9 +257,9 @@ export default function CartItemCard({
             <button
               type="button"
               onClick={() => onRemove?.(item?.id)}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35]"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#2D2D2D] transition hover:text-[#FF3B35] sm:text-sm"
             >
-              <Trash2 size={16} className="text-[#FF3B35]" />
+              <Trash2 size={15} className="shrink-0 text-[#FF3B35]" />
               {removeLabel}
             </button>
 
@@ -319,7 +267,7 @@ export default function CartItemCard({
               <button
                 type="button"
                 onClick={() => onBuyNow(item?.id)}
-                className="inline-flex items-center text-xs sm:text-sm font-semibold text-[#1B1D60] transition hover:text-[#CE9F2D]"
+                className="inline-flex items-center text-xs font-semibold text-[#1B1D60] transition hover:text-[#CE9F2D] sm:text-sm"
               >
                 Buy Now
               </button>
