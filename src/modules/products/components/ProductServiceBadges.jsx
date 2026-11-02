@@ -26,7 +26,13 @@ export default function ProductServiceBadges({
       key: "dispatch",
       icon: Clock,
       label: "Dispatch",
-      value: `Ships in ${shippingEtaText} ${shippingEtaText === "1" ? "Day" : "Days"}`,
+      value: `Ships in ${shippingEtaText} ${
+        shippingEtaText === "1" ? "Day" : "Days"
+      }`,
+      cardBg: "bg-[#F3F2FC]",
+      cardBorder: "border-[#DCD9F2]",
+      iconBg: "bg-[#302A87]",
+      textColor: "text-[#211B70]",
     });
   }
 
@@ -36,6 +42,10 @@ export default function ProductServiceBadges({
       icon: Banknote,
       label: "Payment",
       value: "Cash on Delivery",
+      cardBg: "bg-[#FFF8EC]",
+      cardBorder: "border-[#F0DDBB]",
+      iconBg: "bg-[#DDA51D]",
+      textColor: "text-[#211B70]",
     });
   } else if (productCodDisabled) {
     services.push({
@@ -44,6 +54,10 @@ export default function ProductServiceBadges({
       label: "Payment",
       value: "Prepaid Only",
       disabled: true,
+      cardBg: "bg-[#FFF8EC]",
+      cardBorder: "border-[#F0DDBB]",
+      iconBg: "bg-[#DDA51D]",
+      textColor: "text-[#211B70]",
     });
   }
 
@@ -53,7 +67,10 @@ export default function ProductServiceBadges({
       icon: Truck,
       label: "Delivery",
       value: "Free Delivery",
-      success: true,
+      cardBg: "bg-[#EFF8F1]",
+      cardBorder: "border-[#D3E9D8]",
+      iconBg: "bg-[#25804B]",
+      textColor: "text-[#185C36]",
     });
   } else if (staticCharge > 0) {
     services.push({
@@ -61,93 +78,90 @@ export default function ProductServiceBadges({
       icon: Truck,
       label: "Delivery",
       value: formattedCharge,
+      cardBg: "bg-[#FFF8EC]",
+      cardBorder: "border-[#F0DDBB]",
+      iconBg: "bg-[#DDA51D]",
+      textColor: "text-[#211B70]",
     });
   }
 
   if (!services.length) return null;
 
-  if (layout === "row") {
-    return (
-      <div
-        className={`grid w-full grid-cols-3 overflow-hidden rounded-lg border border-[#E9DCC3] bg-[#FFFAF0] divide-x divide-[#E9DCC3] ${className}`}
-      >
-        {services.map(({ key, icon: Icon, label, value, disabled, success }) => (
+  const isThreeServices = services.length >= 3;
+
+  const gridClass = isThreeServices
+    ? "grid-cols-3"
+    : "grid-cols-2";
+
+  return (
+    <div
+      className={`grid w-full ${gridClass} gap-2 ${className}`}
+    >
+      {services.map(
+        ({
+          key,
+          icon: Icon,
+          label,
+          value,
+          disabled,
+          cardBg,
+          cardBorder,
+          iconBg,
+          textColor,
+        }) => (
           <div
             key={key}
-            className="flex min-w-0 items-center justify-center gap-2 px-2 py-3 sm:gap-2.5 sm:py-3.5"
+            className={`flex min-h-[76px] min-w-0 items-center gap-2 rounded-lg border px-2 py-2 transition-all duration-200 hover:shadow-sm ${
+              isThreeServices ? "min-h-[70px] gap-1.5 px-1.5" : ""
+            } ${cardBg} ${cardBorder}`}
           >
+            {/* Icon */}
             <div
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                disabled
-                  ? "bg-red-50 text-red-600"
-                  : success
-                    ? "bg-emerald-50 text-emerald-700"
-                    : "bg-[#FFF0CC] text-[#A96300]"
-              }`}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${iconBg} ${
+                isThreeServices ? "h-8 w-8 rounded-md" : ""
+              } text-white`}
             >
-              <Icon size={18} strokeWidth={2} />
+              <Icon
+                size={isThreeServices ? 16 : 19}
+                strokeWidth={2}
+              />
             </div>
 
-            <div className="min-w-0">
-              <span className="block text-[11px] font-medium leading-4 text-gray-500 sm:text-xs">
+            {/* Divider */}
+            <div className="h-8 w-px shrink-0 bg-[#D8D5E3]" />
+
+            {/* Content */}
+            <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
+              <span
+                className={`text-[11px] font-bold uppercase leading-4 tracking-wide text-[#73758A] ${
+                  isThreeServices ? "text-[9px] leading-3" : ""
+                }`}
+              >
                 {label}
               </span>
 
               <span
-                className={`block text-[11px] font-bold leading-4 sm:text-sm ${
-                  disabled
-                    ? "text-red-600"
-                    : success
-                      ? "text-emerald-700"
-                      : "text-[#25233B]"
+                className={`break-words text-[14px] font-extrabold leading-5 ${textColor} ${
+                  isThreeServices ? "text-[10px] leading-4" : ""
                 }`}
+                title={value}
               >
                 {value}
               </span>
+
+              {disabled && (
+                <span
+                  className={`inline-flex w-fit items-center rounded bg-[#F8E8C6] px-1.5 py-0.5 text-[9px] font-extrabold uppercase leading-3 tracking-wide text-[#875900] ${
+                    isThreeServices ? "px-1 text-[7px]" : ""
+                  }`}
+                >
+                  COD NOT AVAILABLE
+                </span>
+              )}
             </div>
           </div>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className={`grid grid-cols-1 gap-2 min-[380px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 2xl:grid-cols-3 ${className}`}>
-      {services.map(({ key, icon: Icon, label, value, disabled, success }) => (
-        <div
-          key={key}
-          className="flex min-w-0 items-center gap-3 rounded-lg border border-[#E9E1D4] bg-[#FFFAF3] p-3 transition-colors hover:border-[#D5B77A]"
-        >
-          <div
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-              disabled
-                ? "bg-red-50 text-red-600"
-                : success
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "bg-[#FFF0CC] text-[#A96300]"
-            }`}
-          >
-            <Icon size={20} strokeWidth={2} />
-          </div>
-
-          <div className="min-w-0">
-            <span className="block text-xs font-medium text-gray-500">
-              {label}
-            </span>
-            <span
-              className={`block break-words text-sm font-bold ${
-                disabled
-                  ? "text-red-600"
-                  : success
-                    ? "text-emerald-700"
-                    : "text-[#25233B]"
-              }`}
-            >
-              {value}
-            </span>
-          </div>
-        </div>
-      ))}
+        )
+      )}
     </div>
   );
 }

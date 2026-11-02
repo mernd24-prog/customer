@@ -89,7 +89,7 @@ export const SUPPORT_FALLBACK_TOPICS = [
   {
     title: "Payment Issues",
     image: "/image/png/fallback/Help&Support/payment-issues.png",
-    path: "/payments",
+    path: "/#",
   },
   {
     title: "Rewards Help",

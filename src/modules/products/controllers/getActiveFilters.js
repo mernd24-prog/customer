@@ -58,17 +58,13 @@ export function getActiveFilters(
     ...parseMultiValue(searchParams.get("category")).map((val) => ({
       key: `category:${val}`,
       type: "category",
-      label:
-        "Category: " +
-        capitalizeFirst(displayValue(val, categoryOptions).replace(/-/g, " ")),
+      label: capitalizeFirst(displayValue(val, categoryOptions).replace(/-/g, " ")),
       value: val,
     })),
     ...parseMultiValue(searchParams.get("brand")).map((val) => ({
       key: `brand:${val}`,
       type: "brand",
-      label:
-        "Brand: " +
-        capitalizeFirst(displayValue(val, brandOptions).replace(/-/g, " ")),
+      label: capitalizeFirst(displayValue(val, brandOptions).replace(/-/g, " ")),
       value: val,
     })),
     ...parseMultiValue(searchParams.get("rating")).map((val) => ({
@@ -120,7 +116,7 @@ export function getActiveFilters(
             key: `${k}:${val}`,
             type: "attribute",
             attributeKey: k,
-            label: attribute.label + ": " + capitalizeFirst(displayLabel),
+            label: capitalizeFirst(displayLabel),
             value: val,
           };
         });

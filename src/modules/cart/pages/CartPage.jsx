@@ -168,7 +168,9 @@ export default function CartPage() {
       />
 
       <PageContainer>
-        <Breadcrumbs items={breadcrumbItems} />
+        <div className="mb-4 sm:mb-5">
+          <Breadcrumbs items={breadcrumbItems} />
+        </div>
 
         <ApiState
           loading={cartState.loading && !cart.items}
@@ -188,15 +190,15 @@ export default function CartPage() {
             <StickySidebarLayout
               sidebarPosition="right"
               stickyOffset="calc(var(--customer-header-height, 40px) + 40px)"
-              containerClass="flex flex-col gap-5 lg:flex-row lg:gap-6"
-              sidebarClass="w-full shrink-0 transition-[top] duration-300 ease-in-out lg:w-[350px] 2xl:w-[369px]"
+              containerClass="flex min-w-0 flex-col items-start gap-5 lg:flex-row lg:gap-6"
+              sidebarClass="w-full min-w-0 shrink-0 transition-[top] duration-300 ease-in-out lg:w-[350px] 2xl:w-[369px]"
               mainContent={
-                <div className="min-w-0 ">
+                <div className="flex min-w-0 flex-col gap-3 sm:gap-4">
                 {checkoutBlockedByStock && (
                   <section
                     role="alert"
                     aria-live="polite"
-                    className="rounded-lg border border-red-200 bg-red-50/70 px-3 py-2.5"
+                    className="rounded-lg border border-red-200 bg-red-50/70 px-3 py-3 sm:px-4"
                   >
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex min-w-0 items-start gap-2.5">
@@ -236,8 +238,8 @@ export default function CartPage() {
                 )}
 
                   {hasCartItems && (
-                    <div className="overflow-hidden rounded-t-lg border border-[#E7E2D7] bg-white">
-                      <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
+                    <div className="overflow-hidden rounded-lg border border-[#E7E2D7] bg-white">
+                      <div className="flex min-h-12 items-center justify-between gap-3 px-3 py-2.5 sm:px-5 sm:py-3">
                         <label className="flex min-w-0 cursor-pointer items-center gap-3 text-base font-semibold text-[#2D2D2D]">
                           <input
                             type="checkbox"
@@ -260,7 +262,7 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className=" overflow-hidden rounded-b-lg border border-[#E7E2D7] border-t-0 bg-[#FFFDF8] shadow-[0_4px_20px_rgba(0,0,0,0.02)] sm:rounded-b-lg">
+                    <div className="overflow-hidden rounded-lg border border-[#E7E2D7] bg-[#FFFDF8] shadow-[0_3px_14px_rgba(31,36,48,0.035)]">
                       {items.map((item, index) => (
                         <div key={item.id}>
                           <CartItemCard
@@ -285,7 +287,7 @@ export default function CartPage() {
 
                   {/* On screens below lg, display Order Summary ABOVE Wishlist */}
                   {hasCartItems && (
-                    <div className="block lg:hidden pt-2">
+                    <div className="block pt-0.5 lg:hidden">
                       <OrderPaymentSummary
                         variant="cart"
                         mrpSubtotal={mrpSubtotal}
@@ -326,7 +328,7 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="flex items-center justify-center pt-4">
+                    <div className="flex items-center justify-center pt-0.5">
                       <ContinueShoppingButton to="/products">
                         Continue Shopping
                       </ContinueShoppingButton>
@@ -336,7 +338,7 @@ export default function CartPage() {
               }
               sidebarContent={
                 hasCartItems && (
-                  <div className="hidden lg:block w-full min-w-0">
+                  <div className="hidden w-full min-w-0 lg:block">
                     <OrderPaymentSummary
                       variant="cart"
                       mrpSubtotal={mrpSubtotal}

@@ -144,7 +144,7 @@ export const FALLBACK_SUPPORT = {
   topics: [
     ["Track Order", "Track-order.png", "/orders"],
     ["Return & Refund", "Return-refund.png", "/returns-refunds"],
-    ["Payment Issues", "payment-issues.png", "/payments"],
+    ["Payment Issues", "payment-issues.png", "/#"],
     ["Rewards Help", "account-security.png", "#"],
     ["Account Security", "account-security.png", "/account/profile"],
   ].map(([title, file, path]) => ({

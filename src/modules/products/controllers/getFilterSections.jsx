@@ -140,7 +140,7 @@ export function getFilterSections({
       absolutePriceLimits.max > 0 &&
       absolutePriceLimits.min < absolutePriceLimits.max && {
         key: "price",
-        title: "Price Range",
+        title: "Price",
         content: (
           <PriceRangeFilter
             min={searchParams.get("minPrice")}
