@@ -247,12 +247,12 @@ export default function ProductDetailPage() {
 
                 <div className="relative flex min-w-0 flex-col gap-5 lg:mt-10">
                   <div className="flex flex-col gap-2">
-                    <div className="mt-5 flex min-w-0 items-baseline gap-1.5 text-base">
-                      <span className="shrink-0 font-medium text-muted">Brand:</span>
+                    <div className="mt-5 flex min-w-0 items-baseline gap-1.5 text-[#CE9F2D]">
+                      {/* <span className="shrink-0 font-medium text-muted">Brand:</span> */}
                       {brand ? (
                         <Link
                           to={`/brands/${encodeURIComponent(brand)}`}
-                          className="max-w-full break-words font-bold uppercase tracking-wide text-navy transition-colors hover:text-[#CE9F2D]"
+                          className="max-w-full text-[#CE9F2D] break-words font-bold uppercase tracking-wide  transition-colors hover:text-[#CE9F2D]"
                         >
                           {capitalizeFirst(brand)}
                         </Link>
