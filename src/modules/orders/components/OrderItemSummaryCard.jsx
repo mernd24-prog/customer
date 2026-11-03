@@ -1,9 +1,9 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { PiStarThin, PiStarFill } from "react-icons/pi";
 import { Package, ChevronRight } from "lucide-react";
 import { useSelector } from "react-redux";
+import { StarRatingUI } from "../../../components/ui/display/StarRating";
 import { orderReviewKey } from "../../../features/review/reviewSlice";
 import ShowMoreText from "../../../utils/showMore";
 import { getOpaqueOrderPath } from "../../../utils/routeTokens";
@@ -21,104 +21,6 @@ import {
   resolveOrderItemDisplayStatus,
   getOrderCardImage,
 } from "../../../utils/pages/orderUtils";
-
-export const StarRatingUI = ({
-  item,
-  order,
-  isUnreviewed,
-  myReview,
-  onReviewClick,
-  hoverStar,
-  setHoverStar,
-}) => {
-  if (isUnreviewed) {
-    return (
-      <div className="flex items-center justify-between gap-3 sm:justify-start sm:gap-2.5">
-        <div
-          className="flex items-center gap-1"
-          onMouseLeave={() => setHoverStar(0)}
-        >
-          {[1, 2, 3, 4, 5].map((star) => {
-            const isFilled = star <= (hoverStar || 0);
-
-            return (
-              <button
-                key={star}
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onReviewClick?.(item, order, star);
-                }}
-                onMouseEnter={() => setHoverStar(star)}
-                className="focus:outline-none"
-                aria-label={`${star} star`}
-              >
-                {isFilled ? (
-                  <PiStarFill
-                    size={22}
-                    className="text-[#F59E0B] sm:h-6 sm:w-6"
-                  />
-                ) : (
-                  <PiStarThin
-                    size={22}
-                    className="text-[#9CA3AF] sm:h-6 sm:w-6"
-                  />
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onReviewClick?.(item, order, hoverStar || 5);
-          }}
-          className="whitespace-nowrap border-none text-xs font-bold text-[#201B78] outline-none"
-        >
-          Rate & Review
-        </button>
-      </div>
-    );
-  }
-
-  const rating = myReview?.rating || item?.review?.rating || 5;
-
-  return (
-    <div className="inline-flex items-center gap-1.5 rounded-lg bg-[#F0FDF4] px-2.5 py-1 sm:bg-transparent sm:px-0 sm:py-0">
-      <div className="flex items-center gap-0.5 sm:gap-1">
-        {[1, 2, 3, 4, 5].map((star) =>
-          star <= rating ? (
-            <PiStarFill
-              key={star}
-              size={18}
-              className="text-[#16A34A] sm:h-5 sm:w-5"
-            />
-          ) : (
-            <PiStarThin
-              key={star}
-              size={18}
-              className="text-[#16A34A] sm:h-5 sm:w-5"
-            />
-          ),
-        )}
-      </div>
-
-      <span className="text-[#BBF7D0] sm:hidden">|</span>
-      <span className="text-xs font-bold text-[#1F2430] sm:hidden">
-        {Number(rating).toFixed(1)}
-      </span>
-      <span className="text-[#BBF7D0] sm:hidden">|</span>
-
-      <span className="rounded-md text-xs font-bold text-[#065F46] sm:bg-[#DCFCE7] sm:px-2 sm:py-0.5 sm:text-xs">
-        Reviewed
-      </span>
-    </div>
-  );
-};
 
 export default function OrderItemSummaryCard({
   order,

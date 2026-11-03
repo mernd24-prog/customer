@@ -8,7 +8,6 @@ import {
   lastNameField,
   loginPasswordField,
   nameField,
-  optionalUrlField,
   otpField,
   panField,
   passwordField,
@@ -72,11 +71,7 @@ export const resetSchema = z.object({
   newPassword: commonFieldValidators.password,
 });
 
-export const profileSchema = z.object({
-  firstName: firstNameField(),
-  lastName: lastNameField(),
-  avatarUrl: optionalUrlField,
-});
+export { profileSchema } from "./profileSchemas";
 
 export const securitySchema = withMatchingFields(
   z

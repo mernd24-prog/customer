@@ -1,11 +1,20 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CreditCard, CheckCircle2, XCircle, Clock } from "lucide-react";
+import {
+  CreditCard,
+  CheckCircle2,
+  XCircle,
+  Clock,
+} from "lucide-react";
 
+import Breadcrumbs from "../../common/components/Breadcrumbs";
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
 import { fetchPayments } from "../../../features/payment/paymentSlice";
+import { fetchOrderById } from "../../orders/slices/orderSlice";
 import { formatMoney } from "../../../utils/ecommerce";
+import { PageContainer } from "../../../components/ui/layout"; 
+
 
 export function PaymentsPage() {
   const dispatch = useDispatch();
@@ -19,16 +28,16 @@ export function PaymentsPage() {
   return (
     <>
       <Seo title="Payment History | Sam Global" />
-      <div className="w-container py-8">
-        <div className="mb-6 border-b border-[#EFE5D2] pb-5">
-          <h1 className="text-2xl font-extrabold text-[#1B1D60] sm:text-3xl">
-            Payment History
-          </h1>
-          <p className="mt-1 text-sm font-medium text-[#5E6472]">
-            View and track all your past transaction history and payment
-            details.
-          </p>
-        </div>
+     
+  <PageContainer>
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Payments", href: "/payments" },
+          ]}
+        />
+
+       
 
         <ApiState
           loading={paymentState.loading && !payments.length}
@@ -37,7 +46,7 @@ export function PaymentsPage() {
           emptyTitle="No payments yet"
           emptyText="Your payment transactions will appear here."
         >
-          <div className="overflow-hidden rounded-2xl border border-[#E7D9B8] bg-white ">
+          <div className="overflow-hidden rounded-lg border border-[#E7D9B8] bg-white ">
             <div className="hidden border-b border-[#EFE5D2] bg-[#FFFCF6] px-6 py-3.5 sm:block">
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[#855B14]">
                 <span>Transaction Details</span>
@@ -140,7 +149,7 @@ export function PaymentsPage() {
             </div>
           </div>
         </ApiState>
-      </div>
+      </PageContainer>
     </>
   );
 }

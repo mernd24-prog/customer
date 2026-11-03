@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/ui/Seo";
+import PageIntroBanner from "../../components/ui/PageIntroBanner";
 import ApiState from "../../components/ui/ApiState";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import PageContainer from "../../components/ui/layout/PageContainer";
@@ -178,13 +179,7 @@ export default function CmsPage({ slugOverride = "" }) {
     <AppErrorBoundary>
       <Seo title={`${title} | Sam Global`} description={description} />
 
-      <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-10 md:py-12 lg:py-14">
-        <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-center text-2xl font-bold text-white md:text-3xl lg:text-[32px]">
-            {title}
-          </h1>
-        </div>
-      </section>
+      <PageIntroBanner title={title} description={description} />
 
       <section className="w-full pt-3 pb-10 md:pb-12">
         <PageContainer>

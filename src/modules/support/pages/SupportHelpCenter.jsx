@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -13,6 +12,7 @@ import { useSelector } from "react-redux";
 
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 import Seo from "../../../components/ui/Seo";
+import PageIntroBanner from "../../../components/ui/PageIntroBanner";
 import ApiState from "../../../components/ui/ApiState";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import NeedHelpPanel from "../components/NeedHelpPanel";
@@ -104,10 +104,7 @@ export default function SupportHelpCenter() {
   const pageDescription =
     supportPage?.description || supportPage?.excerpt || "";
 
-  const topics = useMemo(
-    () => normalizeHelpTopics(supportPage),
-    [supportPage],
-  );
+  const topics = useMemo(() => normalizeHelpTopics(supportPage), [supportPage]);
 
   const contactItems = useMemo(
     () => normalizeContactSupport(supportPage, { Phone, Mail, Ticket }),
@@ -189,132 +186,69 @@ export default function SupportHelpCenter() {
 
   return (
     <AppErrorBoundary>
-      <Seo
-        title={`${pageTitle} | Sam Global`}
-        description={pageDescription}
-      />
+      <Seo title={`${pageTitle} | Sam Global`} description={pageDescription} />
 
-      <main className="main-container px-0 pb-6 pt-0 sm:px-6 sm:pb-6 sm:pt-0 lg:px-0 lg:pb-8">
-        <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
-          <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-            <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
-              Help &amp; Support
-            </h1>
-          </div>
-        </section>
+      <main className="main-container px-0 pb-6 pt-0  sm:pb-6 sm:pt-0 lg:px-0 lg:pb-8">
+        <PageIntroBanner title={pageTitle} description={pageDescription} />
 
-        <div className="px-4 pt-4 sm:px-0 sm:pt-6">
-          <Breadcrumbs items={breadcrumbs} />
-        </div>
-
-        {/* Mobile Quick Actions */}
+        {/* Mobile Quick Actions - Vertical List */}
         {quickActions.length > 0 && (
-          <section className="relative mb-5 md:hidden">
-            <button
-              type="button"
-              onClick={() => setIsQuickActionsOpen((open) => !open)}
-              aria-expanded={isQuickActionsOpen}
-              className="flex w-full items-center justify-between rounded-[14px] border border-[#D7A522] bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
-            >
-              <span>Quick Actions</span>
+          <section className="mb-5  md:hidden ">
+           <div className="mb-2 pt-3 pb-1 lg:mb-3 lg:py-2">
+              <h2 className="text-base font-bold text-[#1B1D60]">
+                Quick Actions
+              </h2>
+              <p className="text-xs text-[#666666]">
+                Quickly find what you are looking for.
+              </p>
+            </div>
 
-              <ChevronDown
-                className={`size-5 shrink-0 transition-transform duration-200 ${
-                  isQuickActionsOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
+            <nav className="flex flex-col gap-1.5">
+              {quickActions.map((topic, index) => (
+                <Link
+                  key={`${topic.title}-${index}`}
+                  to={topic.path || "/contact-us"}
+                  className="group flex w-full min-w-0 items-center gap-2.5 rounded-lg border border-[#E5E8F0] bg-white p-2.5 transition-colors duration-200 hover:border-[#D4A12F] hover:bg-[#FFFAEF]"
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#FFF5DF]">
+                    <img
+                      loading="lazy"
+                      src={topic.image}
+                      alt=""
+                      className="size-6 object-contain"
+                    />
+                  </span>
 
-            {isQuickActionsOpen && (
-              <nav className="absolute left-0 top-[calc(100%+6px)] z-30 flex w-full flex-col overflow-hidden rounded-[14px] border border-[#D7A522] bg-white shadow-lg">
-                {quickActions.map((topic, index) => (
-                  <Link
-                    key={`${topic.title}-${index}`}
-                    to={topic.path || "/contact-us"}
-                    onClick={() => setIsQuickActionsOpen(false)}
-                    className="flex w-full items-center gap-3 border-b border-[#04258626] p-2 text-[#2E2E2E] last:border-b-0"
-                  >
-                    <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FFC82E]">
-                      <img
-                        loading="lazy"
-                        width="400"
-                        height="400"
-                        src={topic.image}
-                        alt=""
-                        className="size-5 object-contain"
-                      />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold leading-5 text-[#1B1D60]">
+                      {topic.title}
                     </span>
 
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-base font-semibold">
-                        {topic.title}
+                    {topic.description && (
+                      <span className="mt-0.5 block text-xs leading-4 text-[#666666]">
+                        {topic.description}
                       </span>
+                    )}
+                  </span>
 
-                      {topic.description && (
-                        <span className="mt-0.5 block text-xs text-[#4E4E4E]">
-                          {topic.description}
-                        </span>
-                      )}
-                    </span>
-                  </Link>
-                ))}
-              </nav>
-            )}
+                  <ChevronDown className="size-4 shrink-0 -rotate-90 text-[#8A8FA3] transition-transform group-hover:-translate-x-0.5 group-hover:text-[#D4A12F]" />
+                </Link>
+              ))}
+            </nav>
           </section>
         )}
 
         <StickySidebarLayout
           sidebarPosition="right"
-          containerClass="flex flex-col md:flex-row gap-5 items-start"
+          containerClass="flex flex-col md:flex-row gap-3 lg:gap-5 items-start"
           sidebarClass="w-full md:w-[280px] lg:w-[320px] xl:w-[340px]"
           mainContent={
-            <div className="min-w-0 space-y-5">
-              {/* AI Support Assistant */}
-              <section className="relative mt-3 overflow-hidden rounded-lg border border-[#1B1D60]/10 bg-[#17145F] p-5 text-white shadow-sm sm:p-6">
-                <div className="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
-                  <div className="flex items-start gap-3.5 sm:gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[#efc75f] backdrop-blur-sm">
-                      <Sparkles size={20} />
-                    </div>
-
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-                        <h2 className="text-base font-bold tracking-tight text-white sm:text-lg">
-                          Instant AI Help Assistant
-                        </h2>
-
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/90 backdrop-blur-sm">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                          24/7 Live
-                        </span>
-                      </div>
-
-                      <p className="mt-1 max-w-xl text-xs leading-relaxed text-gray-200">
-                        Have a question about your order, returns, or store
-                        policies? Ask our AI assistant for instant, grounded
-                        answers.
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      window.dispatchEvent(new CustomEvent("open-ai-chat"));
-                    }}
-                    className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors duration-150 hover:bg-[#B88B22] active:bg-[#A3781A] sm:text-sm"
-                  >
-                    <MessageSquare size={16} />
-                    <span>Ask AI Now</span>
-                  </button>
-                </div>
-              </section>
-
+            <div className="min-w-0 space-y-3 pt-2 lg:space-y-5 lg:pt-5">
               {/* Desktop Quick Actions */}
               {quickActions.length > 0 && (
-                <section className="hidden overflow-hidden rounded-lg border border-[#E7D9B8] bg-white md:block">
-                  <div className="bg-[#F7EED8] px-5 py-3">
-                    <h2 className="text-[18px] font-bold text-[#2E2E2E]">
+                <section className=" hidden overflow-hidden rounded-lg border border-[#E7D9B8] bg-white md:block">
+                  <div className="bg-[#F7EED8]  py-3">
+                    <h2 className=" px-2 text-[18px] font-bold text-[#2E2E2E]">
                       Quick Actions
                     </h2>
                   </div>
@@ -395,7 +329,7 @@ export default function SupportHelpCenter() {
             </div>
           }
           sidebarContent={
-            <div className="min-w-0 self-start space-y-5">
+            <div className="min-w-0 self-start space-y-3 py-3 lg:space-y-5 lg:py-5">
               {/* Contact Support */}
               {contactSupportData.length > 0 && (
                 <NeedHelpPanel
@@ -438,8 +372,8 @@ export default function SupportHelpCenter() {
                   </h2>
 
                   <CustomDropdown
-                    className="w-[190px]"
-                    buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
+                    className="w-[155px]"
+                    buttonClassName="h-10 rounded-lg border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
                     options={[
                       { value: "", label: "All" },
                       ...CUSTOMER_SUPPORT_CATEGORIES,

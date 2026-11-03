@@ -189,7 +189,6 @@ export default function CartPage() {
           ) : (
             <StickySidebarLayout
               sidebarPosition="right"
-              stickyOffset="calc(var(--customer-header-height, 40px) + 40px)"
               containerClass="flex min-w-0 flex-col items-start gap-5 lg:flex-row lg:gap-6"
               sidebarClass="w-full min-w-0 shrink-0 transition-[top] duration-300 ease-in-out lg:w-[350px] 2xl:w-[369px]"
               mainContent={
@@ -238,8 +237,8 @@ export default function CartPage() {
                 )}
 
                   {hasCartItems && (
-                    <div className="overflow-hidden rounded-lg border border-[#E7E2D7] bg-white">
-                      <div className="flex min-h-12 items-center justify-between gap-3 px-3 py-2.5 sm:px-5 sm:py-3">
+                    <div className="overflow-hidden  bg-white">
+                      <div className="flex min-h-12 items-center justify-between gap-3 ">
                         <label className="flex min-w-0 cursor-pointer items-center gap-3 text-base font-semibold text-[#2D2D2D]">
                           <input
                             type="checkbox"
@@ -262,7 +261,7 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="overflow-hidden rounded-lg border border-[#E7E2D7] bg-[#FFFDF8] shadow-[0_3px_14px_rgba(31,36,48,0.035)]">
+                  <div className="flex flex-col gap-4">
                       {items.map((item, index) => (
                         <div key={item.id}>
                           <CartItemCard
@@ -328,7 +327,7 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="flex items-center justify-center pt-0.5">
+                    <div className="flex items-center justify-center pt-5">
                       <ContinueShoppingButton to="/products">
                         Continue Shopping
                       </ContinueShoppingButton>

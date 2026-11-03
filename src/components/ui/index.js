@@ -11,6 +11,7 @@ export { default as ApiState } from "./ApiState";
 export { default as ActiveFilterChips } from "./ActiveFilterChips";
 export { default as AppErrorBoundary } from "./AppErrorBoundary";
 export { default as PageHeader } from "./PageHeader";
+export { default as PageIntroBanner } from "./PageIntroBanner";
 export { default as ScrollToTop } from "./ScrollToTop";
 export { default as Seo } from "./Seo";
 export { default as SocialIcons } from "./SocialIcons";

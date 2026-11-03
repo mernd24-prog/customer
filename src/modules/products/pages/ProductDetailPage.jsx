@@ -22,7 +22,6 @@ import ProductPriceBlock from "../components/ProductPriceBlock";
 import ShowMoreText from "../../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../../components/ui/skeleton/layouts";
 import {
-  Star,
   ChevronRight,
 } from "lucide-react";
 import QuantitySelector from "../../cart/components/QuantitySelector";
@@ -31,6 +30,7 @@ import DeliveryChecker from "../components/DeliveryChecker";
 import VariantSelector from "../components/VariantSelector";
 import ImageVariantPicker from "../components/ImageVariantPicker";
 import ProductActionButtons from "../components/ProductActionButtons";
+import StarRating from "../../../components/ui/display/StarRating";
 
 const ProductInfoSection = lazy(() => import("../sections/ProductInfoSection"));
 const ProductRecommendationSection = lazy(
@@ -277,21 +277,13 @@ export default function ProductDetailPage() {
                     </h1>
 
                     {/* Rating */}
-                    <div className="flex flex-wrap items-center gap-2">
-                      {shouldShowProductRating && productRatingValue > 0 && (
-                        <div className="inline-flex items-center gap-1 rounded bg-[#388E3C] px-1.5 py-0.5 text-xs font-bold text-white shadow-xs">
-                          <span>{productRatingValue.toFixed(1)}</span>
-                          <Star size={10} className="fill-white" />
-                        </div>
-                      )}
-
-                      {shouldShowProductRating && productReviewCount > 0 && (
-                        <span className="text-xs font-medium text-[#878787]">
-                          {productReviewCount} reviews
-                        </span>
-                      )}
-
-                    </div>
+                    {shouldShowProductRating && productRatingValue > 0 && (
+                      <StarRating
+                        rating={productRatingValue}
+                        count={productReviewCount}
+                        variant="product-detail"
+                      />
+                    )}
                   </div>
 
                   {/* Price */}

@@ -14,7 +14,7 @@ export const FALLBACK_COMPANY_CONTACT = {
 };
 
 export const FALLBACK_CONTACT_PAGE = {
-  title: "CONTACT US – SAM GLOBAL",
+  title: "Contact Us ",
   excerpt: "Every great experience begins with a conversation.",
   sections: [
     {

@@ -21,7 +21,7 @@ export default function FAQContentSection({ faqs = [] }) {
   }, [faqs, activeTopic]);
 
   return (
-    <section className="pb-16">
+    <section className="pb-4">
       <div className="mx-auto grid w-full max-w-[1495px] grid-cols-1 gap-6 lg:grid-cols-[250px_1fr]">
         <FAQSidebar
           activeTopic={activeTopic}

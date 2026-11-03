@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 import Seo from "../../components/ui/Seo";
+import PageIntroBanner from "../../components/ui/PageIntroBanner";
 import ApiState from "../../components/ui/ApiState";
 import { SKELETON_PRESETS } from "../../components/ui/skeleton/skeletonPresets";
 import Breadcrumbs from "../../modules/common/components/Breadcrumbs";
@@ -124,7 +125,11 @@ export default function PoliciesPages({ slugOverride }) {
   );
 
   const description = cleanPolicyText(
-    policy?.description || fallbackPolicy?.description || "",
+    policy?.description ||
+      policy?.excerpt ||
+      fallbackPolicy?.description ||
+      fallbackPolicy?.excerpt ||
+      "",
   );
 
   if (!config) {
@@ -155,13 +160,7 @@ export default function PoliciesPages({ slugOverride }) {
         metaDescription={description || `Read the ${title} of Sam Global.`}
       />
 
-      <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
-        <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
-            {title}
-          </h1>
-        </div>
-      </section>
+      <PageIntroBanner title={title} description={description} />
 
       <section className="w-full  pt-3 pb-10 md:pb-3">
         <PageContainer>

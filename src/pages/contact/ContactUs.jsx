@@ -1,77 +1,40 @@
-
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CheckCircle,
+  ChevronRight,
+  CircleHelp,
   Handshake,
   Headset,
+  Info,
   Mail,
   MapPin,
-  MessageSquareText,
+  MessageCircle,
+  Package,
   Phone,
+  RefreshCw,
   Send,
   Store,
+  Truck,
+  Wallet,
 } from "lucide-react";
+import { useForm } from "react-hook-form";
+
 import Seo from "../../components/ui/Seo";
+import PageIntroBanner from "../../components/ui/PageIntroBanner";
 import CustomDropdown from "../../components/ui/CustomDropdown";
 import BaseModal from "../../components/ui/overlay/BaseModal";
 import PageContainer from "../../components/ui/layout/PageContainer";
 import Loader from "../../components/ui/Loader";
-import { useCmsRecord } from "../../hooks/useCmsRecord";
+import { TextInput } from "../../components/ui/inputs";
+import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import { FALLBACK_CONTACT_PAGE } from "../../data/fallbackCmsData";
-
-const getCmsPayload = (page) =>
-  page?.metadata?.data ||
-  page?.metadata?.content ||
-  page?.data ||
-  page?.content ||
-  page;
-
-const getSectionByTitle = (sections, title) => {
-  if (!Array.isArray(sections)) return null;
-
-  const normalizedTitle = title.trim().toLowerCase();
-
-  return (
-    sections.find(
-      (section) =>
-        section?.title?.trim().toLowerCase() === normalizedTitle,
-    ) || null
-  );
-};
-
-const getContactIcon = (title = "") => {
-  switch (title.trim().toLowerCase()) {
-    case "email":
-      return Mail;
-    case "phone":
-      return Phone;
-    case "address":
-    case "office":
-      return MapPin;
-    default:
-      return Mail;
-  }
-};
-
-const mapContactInformation = (section) => {
-  if (!Array.isArray(section?.points)) return [];
-
-  return section.points
-    .map((point) => ({
-      icon: getContactIcon(point?.title),
-      title: point?.title?.trim() || "",
-      value: point?.description?.trim() || "",
-    }))
-    .filter((item) => item.title && item.value);
-};
-
-const getSubjectOptions = (section) => {
-  if (!Array.isArray(section?.points)) return [];
-
-  return section.points
-    .map((point) => point?.title?.trim() || "")
-    .filter(Boolean);
-};
+import { contactSchema } from "../../validations/validationSchemas";
+import {
+  getSectionByTitle,
+  mapContactInformation,
+  getSubjectOptions,
+} from "./contactUtils";
 
 const INITIAL_FORM = {
   name: "",
@@ -81,32 +44,37 @@ const INITIAL_FORM = {
   message: "",
 };
 
+const inquiryTypes = [
+  { label: "General Inquiry", icon: MessageCircle, subject: "General Inquiry" },
+  { label: "Order & Delivery", icon: Package, subject: "Order & Delivery" },
+  { label: "Returns & Refunds", icon: RefreshCw, subject: "Returns & Refunds" },
+  { label: "Business Partnership", icon: Handshake, subject: "Business Partnership" },
+  { label: "Seller Support", icon: Store, subject: "Seller Support" },
+  { label: "Customer Support", icon: Headset, subject: "Customer Support" },
+];
+
+
+const fieldClass =
+  "h-10 w-full rounded-lg border border-[#D8DCE8] bg-white px-3.5 text-sm text-[#171B3F] outline-none transition-colors duration-200 placeholder:text-[#9298AA] hover:border-[#B9A36B] focus:border-[#D4A12F] focus:ring-2 focus:ring-[#D4A12F]/15";
+
 export default function ContactUs() {
   const { page: cmsPage, loading } = useCmsRecord("contact-us");
 
   const cmsPayload = getCmsPayload(cmsPage);
-
   const cmsSections = Array.isArray(cmsPayload?.sections)
     ? cmsPayload.sections
     : [];
-
   const fallbackSections = Array.isArray(FALLBACK_CONTACT_PAGE?.sections)
     ? FALLBACK_CONTACT_PAGE.sections
     : [];
 
-  // Contact Information
-  const cmsContactSection = getSectionByTitle(
-    cmsSections,
-    "contact-info",
-  );
-
+  const cmsContactSection = getSectionByTitle(cmsSections, "contact-info");
   const fallbackContactSection = getSectionByTitle(
     fallbackSections,
     "contact-info",
   );
 
   const cmsContactInformation = mapContactInformation(cmsContactSection);
-
   const fallbackContactInformation = mapContactInformation(
     fallbackContactSection,
   );
@@ -116,30 +84,16 @@ export default function ContactUs() {
       ? cmsContactInformation
       : fallbackContactInformation;
 
-  // Subject Dropdown
   const cmsSubjectSection = getSectionByTitle(cmsSections, "subject");
-
-  const fallbackSubjectSection = getSectionByTitle(
-    fallbackSections,
-    "subject",
-  );
-
+  const fallbackSubjectSection = getSectionByTitle(fallbackSections, "subject");
   const cmsSubjectOptions = getSubjectOptions(cmsSubjectSection);
-
-  const fallbackSubjectOptions = getSubjectOptions(
-    fallbackSubjectSection,
-  );
+  const fallbackSubjectOptions = getSubjectOptions(fallbackSubjectSection);
 
   const subjectOptions =
-    cmsSubjectOptions.length > 0
-      ? cmsSubjectOptions
-      : fallbackSubjectOptions;
+    cmsSubjectOptions.length > 0 ? cmsSubjectOptions : fallbackSubjectOptions;
 
-  // Page Content
   const pageTitle =
-    cmsPayload?.title?.trim() ||
-    FALLBACK_CONTACT_PAGE?.title ||
-    "Contact Us";
+    cmsPayload?.title?.trim() || FALLBACK_CONTACT_PAGE?.title || "Contact Us";
 
   const pageDescription =
     cmsPayload?.description?.trim() ||
@@ -151,67 +105,57 @@ export default function ContactUs() {
     contactInformation.find((item) => item.title.toLowerCase() === "email")
       ?.value || "maintenancestesting@gmail.com";
 
-  const [form, setForm] = useState(INITIAL_FORM);
-  const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [loadingForm, setLoadingForm] = useState(false);
 
-  const validate = () => {
-    const err = {};
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(contactSchema),
+    mode: "onChange",
+    defaultValues: INITIAL_FORM,
+  });
 
-    if (!form.name.trim()) {
-      err.name = "Name is required";
-    } else if (form.name.trim().length < 3) {
-      err.name = "Minimum 3 characters";
-    }
+  const currentSubject = watch("subject") || "";
+  const subjectDisplayMap = new Map(
+    [...inquiryTypes, ...subjectOptions.map((subject) => ({
+      label: subject,
+      subject,
+      icon: MessageCircle,
+    }))]
+      .filter((item) => item?.subject)
+      .map((item) => [String(item.subject).trim(), item.label || item.subject]),
+  );
 
-    if (!form.email.trim()) {
-      err.email = "Email is required";
-    } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(form.email)
-    ) {
-      err.email = "Invalid email";
-    }
+  const dropdownOptions = Array.from(
+    new Map(
+      [...inquiryTypes.map((item) => item.subject), ...subjectOptions]
+        .filter(Boolean)
+        .map((subject) => [String(subject).trim().toLowerCase(), subject]),
+    ).values(),
+  );
 
-    if (!form.phone.trim()) {
-      err.phone = "Phone is required";
-    } else if (!/^\d{10}$/.test(form.phone)) {
-      err.phone = "Enter valid 10 digit number";
-    }
+  const selectedInquiry =
+    subjectDisplayMap.get(currentSubject) || "General Inquiry";
 
-    if (!form.subject) {
-      err.subject = "Please select subject";
-    }
-
-    if (!form.message.trim()) {
-      err.message = "Message is required";
-    } else if (form.message.trim().length < 10) {
-      err.message = "Minimum 10 characters";
-    }
-
-    setErrors(err);
-    return Object.keys(err).length === 0;
+  const handleInquirySelect = (inquiry) => {
+    setValue("subject", inquiry.subject, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setForm((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!validate()) return;
-
+  const onSubmit = (values) => {
     setLoadingForm(true);
-
     setTimeout(() => {
       setLoadingForm(false);
       setSubmitted(true);
-      setForm({ ...INITIAL_FORM });
-      setErrors({});
+      reset(INITIAL_FORM);
     }, 1500);
   };
 
@@ -228,121 +172,119 @@ export default function ContactUs() {
         </div>
       ) : (
         <>
-          {/* Contact Content */}
-          <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#211B73] py-8 md:py-10 lg:py-12">
-            <div className="flex w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-              <h1 className="text-center text-[26px] font-bold text-white md:text-[28px] lg:text-[30px]">
-                Contact Us
-              </h1>
-            </div>
-          </section>
+          <PageIntroBanner title={pageTitle} description={pageDescription} />
 
-          <section className="w-full pb-10 pt-4 md:pb-12 md:pt-6">
+          <section className="w-full py-5 sm:py-6">
             <PageContainer>
-              
-
-              <div className="mt-10 grid items-start gap-8 lg:grid-cols-[0.9fr_1.6fr] lg:gap-10">
-                <aside className="rounded-lg bg-white p-6 shadow-[0_18px_40px_rgba(30,35,76,0.12)] sm:p-8">
-                  <div className="mb-7">
-                    <h2 className="text-[2.1rem] font-bold leading-tight tracking-[-0.04em] text-[#1d2377]">
+              <div className="grid items-start gap-5 lg:grid-cols-[minmax(280px,0.78fr)_minmax(0,2fr)]">
+                <aside className="rounded-lg border border-[#E5E8F0] bg-white p-4 shadow-[0_8px_24px_rgba(23,27,63,0.06)] sm:p-5">
+                  <div className="mb-4">
+                    <h2 className="text-xl font-bold tracking-tight text-[#171B65] sm:text-2xl">
                       Get in Touch
                     </h2>
-
-                    <div className="mt-2 h-[2px] w-16 bg-[#d4a12f]" />
-
-                    <p className="mt-4 text-base leading-7 text-[#2f315d]">
+                    <div className="mt-2 h-0.5 w-12 bg-[#D4A12F]" />
+                    <p className="mt-2 text-sm text-[#626982]">
                       We&apos;d love to hear from you.
                     </p>
                   </div>
 
-                  <div className="space-y-7">
+                  <div className="space-y-4">
                     {contactInformation.map((item, index) => {
                       const Icon = item.icon;
-
                       return (
                         <div
                           key={`${item.title}-${index}`}
-                          className="group flex items-start gap-4"
+                          className="group flex items-start gap-3"
                         >
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#fff8e8] transition-all duration-300 group-hover:bg-[#d4a12f]">
-                            <Icon
-                              size={20}
-                              strokeWidth={1.8}
-                              className="text-[#d4a12f] transition-colors duration-300 group-hover:text-white"
-                            />
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#FBF5E9] text-[#B98212] transition-colors duration-200 group-hover:bg-[#D4A12F] group-hover:text-white">
+                            <Icon size={19} strokeWidth={1.8} />
                           </div>
 
-                          <div className="min-w-0 pt-0.5">
-                            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
-                              {item.title}
+                          <div className="min-w-0 flex-1 pt-0.5">
+                            <p className="text-sm font-semibold text-[#171B3F]">
+                              {item.title === "email"
+                                ? "Email Us"
+                                : item.title === "phone"
+                                  ? "Call Us"
+                                  : item.title === "address"
+                                    ? "Visit Us"
+                                    : item.title}
                             </p>
-
-                            <p className="whitespace-pre-line break-words text-[15px] leading-6 text-[#4c4f6d]">
+                            <p className="mt-0.5 whitespace-pre-line break-words text-sm leading-5 text-[#626982] cursaor-pointer">
                               {item.value}
                             </p>
+                            {item.title.toLowerCase() === "phone" && (
+                              <p className="mt-0.5 text-xs text-[#858BA0]">
+                                Mon – Sat, 10:00 AM – 7:00 PM
+                              </p>
+                            )}
                           </div>
                         </div>
                       );
                     })}
                   </div>
 
-                  <div className="mt-8 rounded-lg border border-[#e7d9b8] bg-white/80 p-4 shadow-[0_8px_18px_rgba(27,35,70,0.04)]">
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1d2377]">
-                      For Brand &amp; Business Inquiries
+                  <div className="my-4 border-t border-[#E5E8F0]" />
+
+                
+                  <div className="mt-4 rounded-lg border border-[#E9D9B5] bg-[#FFFAEF] p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-[#171B65]">
+                      Brand & Business Inquiries
                     </p>
-                    <p className="mt-3 text-[15px] leading-7 text-[#4c4f6d]">
+                    <p className="mt-1.5 text-sm leading-5 text-[#626982]">
                       Looking to partner with us or expand with Sam Global?
                     </p>
-                    <p className="mt-2 text-[15px] leading-7 text-[#4c4f6d]">
-                      Write to us at: <span className="font-semibold text-[#1d2377]">{businessEmail}</span>
+                    <p className="mt-1.5 break-all text-sm font-semibold text-[#171B65] cursor-pointer">
+                      {businessEmail}
                     </p>
                   </div>
                 </aside>
 
-                <div className="rounded-lg bg-white p-6 shadow-[0_18px_40px_rgba(30,35,76,0.10)] sm:p-7">
-                  <div className="mb-7">
-                    <h2 className="text-[2rem] font-bold leading-tight tracking-[-0.04em] text-[#1d2377]">
+                {/* Contact form */}
+                <div className="rounded-lg border border-[#E5E8F0] bg-white p-4 shadow-[0_8px_24px_rgba(23,27,63,0.06)] sm:p-5">
+                  <div className="mb-4">
+                    <h2 className="text-xl font-bold tracking-tight text-[#171B65] sm:text-2xl">
                       How Can We Help You?
                     </h2>
-
-                    <div className="mt-2 h-[2px] w-16 bg-[#d4a12f]" />
-
-                    <p className="mt-4 max-w-2xl text-base leading-7 text-[#4c4f6d]">
-                      From product queries to partnership opportunities, our team is available to support you at every step.
+                    <div className="mt-2 h-0.5 w-12 bg-[#D4A12F]" />
+                    <p className="mt-2 text-sm leading-5 text-[#626982]">
+                      Select a topic and share your details. Our team will get
+                      back to you at the earliest.
                     </p>
                   </div>
 
-                  <div className="mb-6 grid gap-4 md:grid-cols-4">
-                    {[
-                      {
-                        label: "General inquiries",
-                        icon: MessageSquareText,
-                      },
-                      {
-                        label: "Brand and partnership discussions",
-                        icon: Handshake,
-                      },
-                      {
-                        label: "Store and retail opportunities",
-                        icon: Store,
-                      },
-                      {
-                        label: "Customer support",
-                        icon: Headset,
-                      },
-                    ].map(({ label, icon: Icon }) => (
-                      <div
-                        key={label}
-                        className="flex min-h-[110px] flex-col items-center justify-center rounded-lg border border-[#e7d4a1] bg-[#f6efe4] px-3 py-4 text-center shadow-[0_12px_24px_rgba(29,35,119,0.10)]"
-                      >
-                        <span className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-full border border-[#e7d4a1] bg-[#fffaf1] text-[#1d2377] shadow-[0_6px_12px_rgba(212,161,47,0.18)]">
-                          <Icon size={18} strokeWidth={2} />
-                        </span>
-                        <span className="text-sm font-medium leading-5 text-[#1d2377]">
-                          {label}
-                        </span>
-                      </div>
-                    ))}
+                  <div className="mb-5 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
+                    {inquiryTypes.map((inquiry) => {
+                      const Icon = inquiry.icon;
+                      const isSelected = selectedInquiry === inquiry.label;
+
+                      return (
+                        <button
+                          key={inquiry.label}
+                          type="button"
+                          onClick={() => handleInquirySelect(inquiry)}
+                          aria-pressed={isSelected}
+                          className={`flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-lg border px-2 py-3 text-center transition-all duration-200 ${
+                            isSelected
+                              ? "border-[#D4A12F] bg-[#FFF7E7] text-[#171B65] shadow-[0_3px_10px_rgba(212,161,47,0.12)]"
+                              : "border-[#E0E4EE] bg-white text-[#171B3F] hover:border-[#D4A12F] hover:bg-[#FFFAEF]"
+                          }`}
+                        >
+                          <span
+                            className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
+                              isSelected
+                                ? "bg-white text-[#B98212]"
+                                : "bg-[#F5F6FA] text-[#171B65] group-hover:bg-white"
+                            }`}
+                          >
+                            <Icon size={21} strokeWidth={1.8} />
+                          </span>
+                          <span className="text-xs font-semibold leading-4">
+                            {inquiry.label}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {submitted && (
@@ -350,24 +292,22 @@ export default function ContactUs() {
                       onClose={() => setSubmitted(false)}
                       maxWidth="max-w-md"
                     >
-                      <div className="relative p-6 md:p-10">
-                        <div className="mt-2 flex flex-col items-center text-center">
-                          <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-green-50">
-                            <CheckCircle className="h-12 w-12 text-green-500" />
+                      <div className="p-6 sm:p-8">
+                        <div className="flex flex-col items-center text-center">
+                          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-green-50">
+                            <CheckCircle className="h-9 w-9 text-green-600" />
                           </div>
-
-                          <h3 className="mb-4 text-2xl font-bold text-[#1d2377] md:text-3xl">
+                          <h3 className="text-2xl font-bold text-[#171B65]">
                             Thank You!
                           </h3>
-
-                          <p className="mb-8 text-[1.05rem] leading-relaxed text-gray-500">
-                            Your message has been submitted successfully. Our team will contact you within 24 hours.
+                          <p className="mt-2 text-sm leading-6 text-[#626982]">
+                            Your message has been submitted successfully. Our
+                            team will contact you within 24 hours.
                           </p>
-
                           <button
                             type="button"
                             onClick={() => setSubmitted(false)}
-                            className="w-full rounded-lg border border-[#E7D9B8] bg-[#d4a12f] px-8 py-4 font-semibold text-white shadow-yellow-500/20 transition-all duration-300 hover:bg-yellow-500"
+                            className="mt-5 h-10 w-full rounded-lg bg-[#D4A12F] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#B98212]"
                           >
                             Done
                           </button>
@@ -376,125 +316,111 @@ export default function ContactUs() {
                     </BaseModal>
                   )}
 
-                  <form onSubmit={handleSubmit}>
-                    <div className="grid gap-5 md:grid-cols-2">
-                      <div>
-                        <label
-                          htmlFor="contact-name"
-                          className="mb-2 block text-sm font-medium text-[#1d2377]"
-                        >
-                          Full Name
-                        </label>
+                  <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <div className="grid gap-x-4 gap-y-3.5 sm:grid-cols-2">
+                      <TextInput
+                        id="contact-name"
+                        label="Full Name"
+                        required
+                        type="text"
+                        autoComplete="name"
+                        placeholder="Enter your full name"
+                        registration={register("name")}
+                        error={errors.name}
+                        inputClassName={`${fieldClass} ${errors.name ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
+                      />
 
-                        <input
-                          id="contact-name"
-                          name="name"
-                          value={form.name}
-                          onChange={handleChange}
-                          placeholder="Enter your full name"
-                          className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
-                        />
+                      <TextInput
+                        id="contact-email"
+                        label="Email Address"
+                        required
+                        type="email"
+                        autoComplete="email"
+                        placeholder="Enter your email address"
+                        registration={register("email")}
+                        error={errors.email}
+                        inputClassName={`${fieldClass} ${errors.email ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
+                      />
 
-                        {errors.name && (
-                          <p className="mt-1 text-sm text-red-500">{errors.name}</p>
-                        )}
-                      </div>
+                      <TextInput
+                        id="contact-phone"
+                        label="Phone Number"
+                        required
+                        type="tel"
+                        autoComplete="tel"
+                        placeholder="Enter your 10-digit phone number"
+                        registration={{
+                          ...register("phone"),
+                          onChange: (event) => {
+                            const sanitizedValue = event.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 10);
 
-                      <div>
-                        <label
-                          htmlFor="contact-email"
-                          className="mb-2 block text-sm font-medium text-[#1d2377]"
-                        >
-                          Email
-                        </label>
-
-                        <input
-                          id="contact-email"
-                          type="email"
-                          name="email"
-                          value={form.email}
-                          onChange={handleChange}
-                          placeholder="Enter your email"
-                          className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
-                        />
-
-                        {errors.email && (
-                          <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="contact-phone"
-                          className="mb-2 block text-sm font-medium text-[#1d2377]"
-                        >
-                          Phone Number
-                        </label>
-
-                        <input
-                          id="contact-phone"
-                          type="tel"
-                          name="phone"
-                          value={form.phone}
-                          onChange={handleChange}
-                          placeholder="Enter your phone number"
-                          className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-[#fafafa] px-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
-                        />
-
-                        {errors.phone && (
-                          <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
-                        )}
-                      </div>
+                            event.target.value = sanitizedValue;
+                            register("phone").onChange(event);
+                          },
+                        }}
+                        error={errors.phone}
+                        inputClassName={`${fieldClass} ${errors.phone ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
+                      />
 
                       <div>
-                        <label className="mb-2 block text-sm font-medium text-[#1d2377]">
-                          Subject
+                        <label className="mb-1.5 block text-sm font-semibold text-[#171B3F]">
+                          Subject <span className="text-red-500">*</span>
                         </label>
-
                         <CustomDropdown
-                          options={subjectOptions}
-                          value={form.subject}
+                          options={dropdownOptions}
+                          value={currentSubject}
                           onChange={(val) => {
-                            setForm((prev) => ({ ...prev, subject: val }));
-                            setErrors((prev) => ({ ...prev, subject: "" }));
+                            setValue("subject", val, {
+                              shouldValidate: true,
+                              shouldDirty: true,
+                            });
                           }}
-                          placeholder="Select Subject"
-                          buttonClassName="!h-11 !rounded-lg !border !border-[#E7D9B8] !bg-[#fafafa] !text-sm !outline-none !shadow-none focus:!border-[#E7D9B8] focus:!outline-none focus:!ring-0 focus:!shadow-none focus-visible:!outline-none focus-visible:!ring-0 focus-visible:!shadow-none"
+                          placeholder="Select a subject"
+                          buttonClassName={`!h-10 !rounded-lg !border !border-[#D8DCE8] !bg-white !text-sm !text-[#171B3F] !shadow-none transition-colors hover:!border-[#B9A36B] focus:!border-[#D4A12F] focus:!ring-2 focus:!ring-[#D4A12F]/15 ${errors.subject ? "!border-red-400" : ""}`}
                           error={errors.subject}
                         />
                       </div>
 
-                      <div className="md:col-span-2">
+                      <div className="sm:col-span-2">
                         <label
                           htmlFor="contact-message"
-                          className="mb-2 block text-sm font-medium text-[#1d2377]"
+                          className="mb-1.5 block text-sm font-semibold text-[#171B3F]"
                         >
-                          Message
+                          Message <span className="text-red-500">*</span>
                         </label>
-
                         <textarea
                           id="contact-message"
-                          rows={3}
-                          name="message"
-                          value={form.message}
-                          onChange={handleChange}
-                          placeholder="Write your message"
-                          className="h-[100px] w-full resize-none rounded-lg border border-[#E7D9B8] bg-[#fafafa] p-4 text-sm text-gray-700 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-[#CE9F2D] focus:bg-white focus:outline-none focus:ring-0"
+                          rows={4}
+                          {...register("message")}
+                          placeholder="Describe your query in detail..."
+                          aria-invalid={Boolean(errors.message)}
+                          className={`min-h-[104px] w-full resize-y rounded-lg border border-[#D8DCE8] bg-white px-3.5 py-3 text-sm text-[#171B3F] outline-none transition-colors duration-200 placeholder:text-[#9298AA] hover:border-[#B9A36B] focus:border-[#D4A12F] focus:ring-2 focus:ring-[#D4A12F]/15 ${errors.message ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
                         />
-
                         {errors.message && (
-                          <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                          <p className="mt-1 text-xs text-red-600">{errors.message.message}</p>
                         )}
                       </div>
                     </div>
 
-                    <div className="mt-6 flex justify-center">
+                    <div className=" flex flex-col gap-3 border-t border-[#EEF0F5] pt-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-start gap-2 text-[#626982]">
+                        <Info size={17} className="mt-0.5 shrink-0 text-[#171B65]" />
+                        <p className="text-xs leading-5">
+                          We typically respond within 24 hours.
+                          <span className="block text-[#858BA0]">
+                            Mon – Sat, 10:00 AM – 7:00 PM
+                          </span>
+                        </p>
+                      </div>
+
                       <button
                         type="submit"
                         disabled={loadingForm}
-                        className="flex h-11 min-w-[160px] items-center justify-center gap-2 rounded-lg bg-[#d4a12f] px-6 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(212,161,47,0.25)] transition-all duration-300 hover:bg-[#c08d1f] disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex h-10 min-w-[150px] items-center justify-center gap-2 rounded-lg bg-[#D4A12F] px-5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(212,161,47,0.2)] transition-colors duration-200 hover:bg-[#B98212] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A12F] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        <Send size={17} />
+                        <Send size={16} />
                         {loadingForm ? "Sending..." : "Send Message"}
                       </button>
                     </div>
