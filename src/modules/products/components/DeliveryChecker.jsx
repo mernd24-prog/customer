@@ -141,7 +141,7 @@ export default function DeliveryChecker({
                 type="button"
                 onClick={() => setIsModalOpen(true)}
                 disabled={loading}
-                className="flex h-11 w-full min-w-0 items-center gap-2 rounded-lg border border-[#1B1D60]/25 bg-[#F4F4F8] py-1 pl-3 pr-1 text-sm font-semibold text-navy transition-colors hover:border-[#1B1D60]/50 disabled:cursor-wait"
+                className="flex h-10 w-full min-w-0 items-center gap-2 rounded-lg border border-[#1B1D60]/25 bg-[#F4F4F8] py-1 pl-3 pr-1 text-sm font-semibold text-navy transition-colors hover:border-[#1B1D60]/50 disabled:cursor-wait"
               >
                 {loading ? (
                   <Loader2 size={16} className="shrink-0 animate-spin text-gold-dark" />
@@ -151,7 +151,7 @@ export default function DeliveryChecker({
                 <span className="min-w-0 flex-1 truncate text-left">
                   {lastCheckedPincode || "Enter pincode"}
                 </span>
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white">
                   <ArrowRight size={15} aria-hidden="true" />
                 </span>
               </button>

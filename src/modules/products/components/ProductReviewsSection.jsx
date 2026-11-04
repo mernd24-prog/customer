@@ -108,7 +108,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
 
   return (
     <article className="py-1 border-b border-[#E7D9B8]/50 last:border-b-0">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
         <StarRating
           rating={Number(review.rating || 0)}
           showValue={true}
@@ -117,7 +117,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
           variant="inline"
         />
         {review.title && (
-          <span className="text-sm sm:text-base font-bold text-[#1F2430]">
+          <span className="min-w-0 break-words text-sm sm:text-base font-bold text-[#1F2430]">
             {review.title}
           </span>
         )}
@@ -169,9 +169,9 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </div>
       )}
 
-      <div className="mt-3 flex items-center justify-between gap-4">
-        <div className="min-w-0">
-          <p className="break-words text-sm font-medium text-[#1F2430]/80">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="break-words text-xs sm:text-sm font-medium text-[#1F2430]/80">
             {name}
             {(dateStr || review.date) && (
               <span className="font-normal text-[#737373]">
@@ -185,7 +185,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
           type="button"
           onClick={() => onHelpful?.(reviewId)}
           disabled={!reviewId || isOwn}
-          className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
             alreadyVoted
               ? "border-[#CE9F2D] bg-[#CE9F2D]/15 text-[#1B1D60]"
               : "border-[#E7D9B8] text-[#6F7480] hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#1B1D60]"
@@ -259,7 +259,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border border-[#E7D9B8] rounded-xl bg-white p-5 sm:p-6 flex flex-col gap-4 shadow-xs"
+      className="w-full min-w-0 rounded-xl border border-[#E7D9B8] bg-white p-3 sm:p-5 lg:p-6 flex flex-col gap-3 sm:gap-4 shadow-xs"
     >
       <h3 className="text-sm sm:text-base font-bold text-[#1B1D60]">
         Write a Review
@@ -296,7 +296,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
         <StarInput
           value={form.rating}
           onChange={(r) => setForm((f) => ({ ...f, rating: r }))}
-          size={24}
+          size={22}
         />
       </div>
 
@@ -587,95 +587,102 @@ export default function ProductReviewsSection({ productId, product }) {
   const displayRatingBreakdown = getRatingBreakdown(stats);
   const hasReviewSummary = displayReviewCount > 0 || displayTotal > 0;
   return (
-    <section id="reviews" className="w-full mt-8 lg:mt-12">
-      <div className={`flex flex-col gap-6 ${hasReviewSummary ? "lg:flex-row lg:items-start lg:gap-8" : ""}`}>
+    <section id="reviews" className="mt-8 w-full min-w-0 lg:mt-12">
+      <div
+        className={`flex min-w-0 flex-col gap-5 sm:gap-6 ${
+          hasReviewSummary ? "lg:flex-row lg:items-start lg:gap-6 xl:gap-8" : ""
+        }`}
+      >
         {/* Left Sidebar */}
-        {hasReviewSummary && <aside className="w-full shrink-0 lg:w-[280px] xl:w-[300px]">
-          <div className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
-            <div className="p-3 bg-white border-b border-[#E5E7EB]">
-              <h2 className="text-base font-bold text-[#111827]">
-                Ratings &amp; Reviews
-              </h2>
-            </div>
+        {hasReviewSummary && (
+          <aside className="w-full min-w-0 shrink-0 lg:w-[280px] xl:w-[300px]">
+            <div className="w-full min-w-0 overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
+              <div className="border-b border-[#E5E7EB] bg-white px-3 py-3 sm:px-4">
+                <h2 className="text-sm font-bold text-[#111827] sm:text-base">
+                  Ratings &amp; Reviews
+                </h2>
+              </div>
 
-            <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 p-3 sm:p-4 lg:block">
-              <div>
-                {displayReviewCount > 0 ? (
-                  <div className="flex flex-col items-start gap-1">
-                    <StarRating rating={displayAvgRating} count={displayReviewCount} />
-                    <p className="text-xs font-semibold text-[#6F7480]">
-                      {displayReviewCount}{" "}
-                      {displayReviewCount === 1 ? "Rating" : "Ratings"} &amp;{" "}
-                      {displayTotal} {displayTotal === 1 ? "Review" : "Reviews"}
-                    </p>
+              <div className="flex flex-col gap-4 p-3 sm:p-4">
+                {/* Overall Rating */}
+                <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 lg:flex-col lg:items-start">
+                  <div className="min-w-0">
+                    {displayReviewCount > 0 ? (
+                      <div className="flex flex-col items-start gap-1.5">
+                        <StarRating rating={displayAvgRating} count={displayReviewCount} />
+                        <p className="text-xs font-semibold leading-relaxed text-[#6F7480]">
+                          {displayReviewCount}{" "}
+                          {displayReviewCount === 1 ? "Rating" : "Ratings"} &amp;{" "}
+                          {displayTotal} {displayTotal === 1 ? "Review" : "Reviews"}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm font-semibold text-[#6F7480]">
+                        No ratings yet
+                      </p>
+                    )}
                   </div>
-                ) : (
-                  <p className="text-sm font-semibold text-[#6F7480]">
-                    No ratings yet
-                  </p>
+                </div>
+
+                {/* Rating Distribution */}
+                <div className="w-full min-w-0 space-y-2">
+                  {displayRatingBreakdown.map((item, index) => {
+                    const rating = item.rating || 5 - index;
+                    return (
+                      <button
+                        key={item.label}
+                        type="button"
+                        onClick={() => {
+                          setRatingFilter(ratingFilter === rating ? 0 : rating);
+                          setPage(1);
+                        }}
+                        className={`flex w-full min-w-0 items-center gap-2 text-left text-xs transition-opacity ${
+                          ratingFilter && ratingFilter !== rating
+                            ? "opacity-35"
+                            : "opacity-100 hover:opacity-80"
+                        }`}
+                      >
+                        <span className="w-[76px] shrink-0 text-[11px] font-medium text-[#2E2E2E] sm:text-xs">
+                          {item.label}
+                        </span>
+                        <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full border border-[#E7D9B8]/40 bg-[#FAF6EE]">
+                          <div
+                            className={`h-full rounded-full transition-all duration-300 ${item.color}`}
+                            style={{ width: item.width }}
+                          />
+                        </div>
+                        <span className="w-6 shrink-0 text-right text-[11px] font-medium text-[#6F7480]">
+                          {item.count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {ratingFilter > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setRatingFilter(0)}
+                    className="w-fit text-xs font-bold text-[#A96F14] underline hover:text-[#CE9F2D]"
+                  >
+                    Clear Filter ({ratingFilter}★)
+                  </button>
                 )}
               </div>
-
-              {/* Rating Bars */}
-              <div className="space-y-2 lg:mt-4">
-                {displayRatingBreakdown.map((item, index) => {
-                  const rating = item.rating || 5 - index;
-                  return (
-                    <button
-                      key={item.label}
-                      type="button"
-                      onClick={() => {
-                        setRatingFilter(ratingFilter === rating ? 0 : rating);
-                        setPage(1);
-                      }}
-                      className={`flex w-full items-center gap-2 text-left text-xs transition-opacity ${
-                        ratingFilter && ratingFilter !== rating
-                          ? "opacity-35"
-                          : "opacity-100 hover:opacity-80"
-                      }`}
-                    >
-                      <span className="w-16 shrink-0 font-medium text-[#2E2E2E]">
-                        {item.label}
-                      </span>
-
-                      <div className="h-2 rounded-full overflow-hidden bg-[#FAF6EE] flex-1 border border-[#E7D9B8]/40">
-                        <div
-                          className={`h-full transition-all duration-300 ${item.color}`}
-                          style={{ width: item.width }}
-                        />
-                      </div>
-
-                      <span className="w-5 shrink-0 text-right font-medium text-[#6F7480]">
-                        {item.count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {ratingFilter > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setRatingFilter(0)}
-                  className="mt-3 text-xs font-bold text-[#A96F14] hover:text-[#CE9F2D] underline block"
-                >
-                  Clear Filter ({ratingFilter}★)
-                </button>
-              )}
             </div>
-          </div>
-        </aside>}
+          </aside>
+        )}
 
         {/* Right Section */}
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex w-full min-w-0 flex-1 flex-col gap-3 sm:gap-4">
           {/* Top Bar: Heading + Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
-              <h3 className="whitespace-nowrap text-sm font-bold text-[#1B1D60] sm:text-base">
+          <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <h3 className="text-sm font-bold text-[#1B1D60] sm:text-base">
                 Customer Reviews
               </h3>
               {displayTotal > 0 && (
-                <span className="rounded-md bg-[#FAF6EE] px-2  text-xs font-bold text-[#A96F14] border border-[#E7D9B8]">
+                <span className="rounded-md border border-[#E7D9B8] bg-[#FAF6EE] px-2 py-0.5 text-xs font-bold text-[#A96F14]">
                   {displayTotal}
                 </span>
               )}
@@ -686,12 +693,12 @@ export default function ProductReviewsSection({ productId, product }) {
               )}
             </div>
 
-            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
               {canWriteReview ? (
                 <button
                   type="button"
                   onClick={() => setShowForm((prev) => !prev)}
-                  className="min-h-9 rounded-lg bg-[#1B1D60] px-3 py-1.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-[#15115d]"
+                  className="min-h-9 w-full rounded-lg bg-[#1B1D60] px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-[#15115d] sm:w-auto"
                 >
                   {showForm ? "Cancel Review" : "Write a Review"}
                 </button>
@@ -699,18 +706,17 @@ export default function ProductReviewsSection({ productId, product }) {
                 <button
                   type="button"
                   onClick={openAuthModal}
-                  className="min-h-9 rounded-md border border-[#1B1D60] px-3 py-1.5 text-xs font-bold text-[#1B1D60] transition-colors hover:bg-[#F4F4FA]"
+                  className="min-h-9 w-full rounded-lg border border-[#1B1D60] px-4 py-2 text-xs font-bold text-[#1B1D60] transition-colors hover:bg-[#F4F4FA] sm:w-auto"
                 >
                   Sign in to review
                 </button>
               ) : null}
-
             </div>
           </div>
 
           {/* Form */}
           {showForm && canWriteReview && (
-            <div className="my-4">
+            <div className="my-3 w-full min-w-0 sm:my-4">
               <WriteReviewForm
                 productId={productId}
                 deliveredOrders={deliveredOrders}
@@ -733,7 +739,7 @@ export default function ProductReviewsSection({ productId, product }) {
 
           {/* Reviews List */}
           {displayReviews.length > 0 && (
-            <div className="divide-y divide-[#E7D9B8]/40">
+            <div className="w-full min-w-0 divide-y divide-[#E7D9B8]/40">
               {previewReviews.map((review, index) => (
                 <ProductReviewCard
                   key={
@@ -766,7 +772,7 @@ export default function ProductReviewsSection({ productId, product }) {
 
           {/* View All Reviews Link */}
           {displayTotal > 0 && (
-            <div className=" pt-3 border-t border-[#E7D9B8]/40 flex justify-start">
+            <div className="flex w-full min-w-0 justify-start border-t border-[#E7D9B8]/40 pt-3">
               <Link
                 to={`/products/${productId}/reviews`}
                 state={{ product }}

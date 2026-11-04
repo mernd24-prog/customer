@@ -89,13 +89,9 @@ export default function ProductServiceBadges({
 
   const isThreeServices = services.length >= 3;
 
-  const gridClass = isThreeServices
-    ? "grid-cols-3"
-    : "grid-cols-2";
-
   return (
     <div
-      className={`grid w-full ${gridClass} gap-2 ${className}`}
+      className={`grid w-full min-w-0 grid-cols-1 min-[380px]:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 ${className}`}
     >
       {services.map(
         ({
@@ -111,18 +107,26 @@ export default function ProductServiceBadges({
         }) => (
           <div
             key={key}
-            className={`flex min-h-[76px] min-w-0 items-center gap-2 rounded-lg border px-2 py-2 transition-all duration-200 hover:shadow-sm ${
-              isThreeServices ? "min-h-[70px] gap-1.5 px-1.5" : ""
-            } ${cardBg} ${cardBorder}`}
+            className={`
+              flex min-w-0 items-center gap-2
+              rounded-lg border p-2 sm:p-2.5
+              min-h-[68px] sm:min-h-[76px]
+              ${cardBg} ${cardBorder}
+              transition-colors duration-200
+              hover:border-opacity-80
+              ${isThreeServices ? "xl:gap-2" : ""}
+            `}
           >
             {/* Icon */}
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${iconBg} ${
-                isThreeServices ? "h-8 w-8 rounded-md" : ""
-              } text-white`}
+              className={`
+                flex h-9 w-9 sm:h-10 sm:w-10 shrink-0
+                items-center justify-center rounded-lg
+                ${iconBg} text-white
+              `}
             >
               <Icon
-                size={isThreeServices ? 16 : 19}
+                size={18}
                 strokeWidth={2}
               />
             </div>
@@ -133,17 +137,22 @@ export default function ProductServiceBadges({
             {/* Content */}
             <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
               <span
-                className={`text-[11px] font-bold uppercase leading-4 tracking-wide text-[#73758A] ${
-                  isThreeServices ? "text-[9px] leading-3" : ""
-                }`}
+                className="
+                  text-[10px] sm:text-[11px]
+                  font-bold uppercase leading-4
+                  tracking-wide text-[#73758A]
+                "
               >
                 {label}
               </span>
 
               <span
-                className={`break-words text-[14px] font-extrabold leading-5 ${textColor} ${
-                  isThreeServices ? "text-[10px] leading-4" : ""
-                }`}
+                className={`
+                  break-words [overflow-wrap:anywhere]
+                  text-xs sm:text-sm
+                  font-extrabold leading-4 sm:leading-5
+                  ${textColor}
+                `}
                 title={value}
               >
                 {value}
@@ -151,9 +160,14 @@ export default function ProductServiceBadges({
 
               {disabled && (
                 <span
-                  className={`inline-flex w-fit items-center rounded bg-[#F8E8C6] px-1.5 py-0.5 text-[9px] font-extrabold uppercase leading-3 tracking-wide text-[#875900] ${
-                    isThreeServices ? "px-1 text-[7px]" : ""
-                  }`}
+                  className="
+                    mt-0.5 inline-flex w-fit max-w-full
+                    whitespace-normal rounded
+                    bg-[#F8E8C6] px-1.5 py-0.5
+                    text-[8px] sm:text-[9px]
+                    font-extrabold uppercase leading-3
+                    tracking-wide text-[#875900]
+                  "
                 >
                   COD NOT AVAILABLE
                 </span>
