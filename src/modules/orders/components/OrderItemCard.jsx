@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Package, ExternalLink } from "lucide-react";
-import ShowMoreText from "../../../utils/showMore";
 import {
   getOrderItemProductPath,
   formatDate,
@@ -8,7 +7,6 @@ import {
   reviewKeyForItem,
 } from "../utils/orderItems";
 import { OrderItemReviewAction } from "./OrderItemReview";
-import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export function OrderItemCard({
   item,
@@ -379,73 +377,71 @@ export function OrderItemCard({
       </div>
     );
   };
-
-  const renderProductImage = (imageWidthClass) => (
-    <div
-      className={`flex aspect-square ${imageWidthClass} shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/50 p-2 shadow-2xs`}
-    >
-      {getItemImage(item) ? (
-        productPath ? (
-          <Link
-            to={productPath}
-            className="flex h-full w-full items-center justify-center"
-          >
-            <img
-              loading="lazy"
-              width="400"
-              height="400"
-              src={getItemImage(item)}
-              alt={getProductTitle(item)}
-              className="h-full w-full object-contain"
-            />
-          </Link>
-        ) : (
+ const renderProductImage = () => (
+  <div className="h-[112px] w-[88px] shrink-0 overflow-hidden rounded-lg bg-white min-[375px]:h-[120px] min-[375px]:w-[96px] sm:h-[140px] sm:w-[115px]">
+    {getItemImage(item) ? (
+      productPath ? (
+        <Link
+          to={productPath}
+          className="block h-full w-full"
+        >
           <img
             loading="lazy"
             width="400"
             height="400"
             src={getItemImage(item)}
             alt={getProductTitle(item)}
-            className="h-full w-full object-contain"
+            className="h-full w-full object-contain p-0 sm:p-1"
           />
-        )
+        </Link>
       ) : (
+        <img
+          loading="lazy"
+          width="400"
+          height="400"
+          src={getItemImage(item)}
+          alt={getProductTitle(item)}
+          className="h-full w-full object-contain p-0 sm:p-1"
+        />
+      )
+    ) : (
+      <div className="flex h-full w-full items-center justify-center">
         <Package size={28} className="text-[#9E886A]/50" />
-      )}
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
 
-  const renderProductTitle = (limit = 65, titleClassName = "") => (
-    <h3
-      className={`min-w-0 flex-1 text-sm font-bold leading-snug text-[#1F2430] sm:text-base ${titleClassName}`}
-    >
-      <ShowMoreText
-        text={getProductTitle(item)}
-        mode="characters"
-        limit={limit}
-        moreLabel="more"
-        lessLabel="less"
-        textClassName="inline"
-        buttonClassName="ml-1 text-xs font-semibold text-[#201B78] hover:underline sm:text-sm"
-      />
-    </h3>
-  );
+  const renderProductTitle = (titleClassName = "") => {
+    const productTitle = getProductTitle(item) || "";
+
+    return (
+      <h3
+        className={`w-full min-w-0 basis-full flex-1 truncate whitespace-nowrap text-sm font-bold leading-snug text-[#1F2430] sm:basis-[180px] sm:whitespace-normal sm:break-words sm:text-base sm:leading-6 sm:line-clamp-2 ${titleClassName}`}
+        title={productTitle}
+      >
+        {productTitle}
+      </h3>
+    );
+  };
 
   if (compact) {
     return (
       <div className="w-full min-w-0">
         <div className="flex w-full min-w-0 items-start gap-3 sm:gap-4">
-          {renderProductImage("w-[85px] sm:w-[110px] lg:w-[125px]")}
+         {renderProductImage()}
 
           <div className="flex min-w-0 flex-1 flex-col">
-            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
-              {renderProductTitle(65, "basis-[180px]")}
+            <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-0 sm:gap-y-2">
+              {renderProductTitle()}
 
-              <div className="w-full min-w-0 sm:ml-auto sm:w-auto">
-                {renderProductActions()}
-              </div>
+              {((!isCancelled && !isReturned && shipment?.tracking_url) ||
+                (canReview && !hasExistingReview)) && (
+                <div className="hidden w-full min-w-0 sm:ml-auto sm:block sm:w-auto">
+                  {renderProductActions()}
+                </div>
+              )}
             </div>
-
             {renderShipmentAndRequestDetails()}
 
             {quantityBreakdown && (
@@ -478,6 +474,13 @@ export function OrderItemCard({
                 {String(item?.quantity || 1).padStart(2, "0")}
               </span>
             </div>
+
+            {((!isCancelled && !isReturned && shipment?.tracking_url) ||
+              (canReview && !hasExistingReview)) && (
+              <div className="mt-3 w-full min-w-0 sm:hidden">
+                {renderProductActions()}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -487,15 +490,18 @@ export function OrderItemCard({
   return (
     <div className="w-full min-w-0">
       <div className="flex w-full min-w-0 items-start gap-3 sm:gap-4 lg:gap-6">
-        {renderProductImage("w-[85px] sm:w-[130px] md:w-[150px] lg:w-[170px]")}
+       {renderProductImage()}
 
         <div className="flex min-w-0 flex-1 flex-col pt-1 sm:pt-2">
-          <div className="flex w-full min-w-0 flex-wrap items-start gap-x-3 gap-y-2">
-            {renderProductTitle(65, "basis-[180px] md:text-lg")}
+          <div className="flex w-full min-w-0 flex-wrap items-start gap-x-3 gap-y-0 sm:gap-y-2">
+            {renderProductTitle("md:text-lg")}
 
-            <div className="w-full min-w-0 sm:ml-auto sm:w-auto">
-              {renderProductActions()}
-            </div>
+            {((!isCancelled && !isReturned && shipment?.tracking_url) ||
+              (canReview && !hasExistingReview)) && (
+              <div className="hidden w-full min-w-0 sm:ml-auto sm:block sm:w-auto">
+                {renderProductActions()}
+              </div>
+            )}
           </div>
 
           <div className="my-2 flex min-w-0 flex-wrap items-center gap-2 text-xs font-semibold text-[#1F2430]">
@@ -538,6 +544,13 @@ export function OrderItemCard({
               Inclusive of all taxes
             </p>
           </div>
+
+          {((!isCancelled && !isReturned && shipment?.tracking_url) ||
+            (canReview && !hasExistingReview)) && (
+            <div className="mt-3 w-full min-w-0 sm:hidden">
+              {renderProductActions()}
+            </div>
+          )}
         </div>
       </div>
     </div>

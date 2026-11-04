@@ -238,8 +238,7 @@ export default function OrderListPage({ returnOnly = false }) {
                     )}
                   </label>
 
-                  <div className=" flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
-                    <FilterDropdown
+<div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:gap-3">                    <FilterDropdown
                       options={[
                         {
                           value: 10,
@@ -264,7 +263,7 @@ export default function OrderListPage({ returnOnly = false }) {
                         setCurrentPage(1);
                       }}
                       placeholder="Per page"
-                      className="w-full sm:w-[150px]"
+                     className="w-full min-w-0 sm:w-[150px]"
                     />
 
                     <FilterDropdown

@@ -100,7 +100,7 @@ export default function OrderDetailPage({ orderId }) {
           skeletonLayout={SKELETON_PRESETS.ORDER_DETAIL_PAGE}
         >
           <div className="grid ">
-            <section className="grid gap-4 sm:gap-8">
+            <section className="grid gap-4 sm:gap-8 mb-2">
               <Breadcrumbs
                 items={breadcrumbItems}
                 copyLastItem

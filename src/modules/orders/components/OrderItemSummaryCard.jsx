@@ -157,7 +157,7 @@ export default function OrderItemSummaryCard({
           className="flex min-h-[100px] items-center gap-3 transition-colors hover:bg-[#FCFBF8] sm:gap-4"
           aria-label={`${productTitle}, ${statusLabel} on ${orderDate}`}
         >
-          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F5F5F5] p-1.5 sm:h-[76px] sm:w-[76px]">
+          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-lg  p-1.5 sm:h-[76px] sm:w-[76px]">
             {itemImage ? (
               <img
                 loading="lazy"
@@ -177,16 +177,16 @@ export default function OrderItemSummaryCard({
           </div>
 
           <div className="min-w-0 flex-1 py-0.5">
-            <h3 className="line-clamp-2 text-sm font-semibold leading-[1.4] text-[#292929] sm:text-base">
+            <h3 className="line-clamp-2 text-[12px] font-semibold leading-[1.4] text-[#292929] sm:text-xs">
               {statusLabel} on {orderDate}
             </h3>
 
-            <p className="mt-1 line-clamp-2 text-xs leading-[1.5] text-[#707070] sm:text-sm">
+            <p className="mt-1 line-clamp-2 text-[11px] leading-[1.5] text-[#707070] sm:text-xs">
               {statusDescription}
             </p>
 
             {/* Mobile: show quantity only, never show color */}
-            <div className="mt-1.5 flex items-center gap-x-2 text-xs text-[#777777]">
+            <div className="mt-1.5 flex items-center gap-x-2 text-[11px] text-[#777777]">
               {orderedQuantity > 1 && (
                 <span>Qty: {orderedQuantity}</span>
               )}
@@ -203,7 +203,7 @@ export default function OrderItemSummaryCard({
 
         {canReview && (
           <div
-            className="mx-4 border-t border-[#EDE8DE] px-1 py-3 sm:mx-5"
+            className="mx-4 border-t border-[#EDE8DE] px-1 py-2 sm:mx-5"
             onClick={(e) => e.stopPropagation()}
           >
             <StarRatingUI
@@ -225,7 +225,7 @@ export default function OrderItemSummaryCard({
         className="hidden grid-cols-12 items-start gap-3 p-4 transition-colors hover:bg-[#FCFBF8] lg:grid lg:gap-4"
       >
         <div className="col-span-6 flex min-w-0 items-start gap-4 lg:col-span-7">
-          <div className="relative flex aspect-square w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1.5 sm:w-20">
+          <div className="relative flex aspect-square w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1 sm:w-20">
             {itemImage ? (
               <img
                 loading="lazy"

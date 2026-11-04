@@ -1,3 +1,4 @@
+
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
@@ -5,7 +6,6 @@ import Seo from "../../components/ui/Seo";
 import PageIntroBanner from "../../components/ui/PageIntroBanner";
 import ApiState from "../../components/ui/ApiState";
 import { SKELETON_PRESETS } from "../../components/ui/skeleton/skeletonPresets";
-import Breadcrumbs from "../../modules/common/components/Breadcrumbs";
 import PolicySection from "../../components/policy/PolicySection";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import { FALLBACK_POLICY_DATA } from "../../data/fallbackCmsData";
@@ -22,22 +22,18 @@ const POLICY_CONFIG = {
     cmsSlug: "shipping-delivery-policy",
     fallbackKey: "shipping",
   },
-
   "return-refund-policy": {
     cmsSlug: "return-refund-policy",
     fallbackKey: "returns",
   },
-
   "terms-of-use": {
     cmsSlug: "terms-of-use",
     fallbackKey: "terms",
   },
-
   "privacy-policy": {
     cmsSlug: "privacy-policy",
     fallbackKey: "privacy",
   },
-
   "cookie-policy": {
     cmsSlug: "cookie-policy",
     fallbackKey: "cookies",
@@ -53,11 +49,8 @@ function normalizeSections(sections = []) {
     .filter(Boolean)
     .map((section, index) => ({
       ...section,
-
       title: cleanPolicyText(section.title),
-
       description: cleanPolicyText(section.description),
-
       points: Array.isArray(section.points)
         ? section.points
             .filter((point) => point?.title || point?.description)
@@ -67,9 +60,10 @@ function normalizeSections(sections = []) {
               description: cleanPolicyText(point.description),
             }))
         : [],
-
       sortOrder:
-        typeof section.sortOrder === "number" ? section.sortOrder : index,
+        typeof section.sortOrder === "number"
+          ? section.sortOrder
+          : index,
     }))
     .sort((a, b) => a.sortOrder - b.sortOrder);
 }
@@ -107,7 +101,6 @@ export default function PoliciesPages({ slugOverride }) {
     return {
       ...fallbackPolicy,
       ...cmsData,
-
       sections:
         Array.isArray(cmsData.sections) && cmsData.sections.length > 0
           ? cmsData.sections
@@ -117,11 +110,11 @@ export default function PoliciesPages({ slugOverride }) {
 
   const sections = useMemo(
     () => normalizeSections(policy?.sections),
-    [policy?.sections],
+    [policy?.sections]
   );
 
   const title = cleanPolicyText(
-    policy?.title || fallbackPolicy?.title || "Policy",
+    policy?.title || fallbackPolicy?.title || "Policy"
   );
 
   const description = cleanPolicyText(
@@ -129,7 +122,7 @@ export default function PoliciesPages({ slugOverride }) {
       policy?.excerpt ||
       fallbackPolicy?.description ||
       fallbackPolicy?.excerpt ||
-      "",
+      ""
   );
 
   if (!config) {
@@ -162,7 +155,7 @@ export default function PoliciesPages({ slugOverride }) {
 
       <PageIntroBanner title={title} description={description} />
 
-      <section className="w-full  pt-3 pb-10 md:pb-3">
+      <section className="w-full min-w-0 pt-4 pb-8 sm:pt-5 sm:pb-10 md:pt-6 md:pb-8">
         <PageContainer>
           <ApiState
             loading={loading && !page && !fallbackPolicy}
@@ -173,16 +166,16 @@ export default function PoliciesPages({ slugOverride }) {
             skeletonLayout={SKELETON_PRESETS.POLICY_PAGE}
           >
             {policy && (
-              <div className="w-full">
+              <div className="w-full min-w-0">
                 {description && (
                   <p
-                    className="mb-8 text-base leading-relaxed text-muted md:text-base"
+                    className="mb-5 break-words text-[14px] leading-[1.75] text-muted sm:mb-6 sm:text-[15px] md:mb-8 md:text-[16px]"
                     dangerouslySetInnerHTML={{ __html: description }}
                   />
                 )}
 
                 {sections.length > 0 ? (
-                  <div className="space-y-7 md:space-y-8">
+                  <div className="space-y-5 sm:space-y-6 md:space-y-8">
                     {sections.map((section, index) => (
                       <PolicySection
                         key={
@@ -197,7 +190,7 @@ export default function PoliciesPages({ slugOverride }) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted">
+                  <p className="text-[14px] leading-relaxed text-muted sm:text-[15px]">
                     This policy is currently unavailable.
                   </p>
                 )}

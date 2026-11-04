@@ -134,7 +134,7 @@ function Footer({ data }) {
   const appDownload = footer?.appDownload || {};
   const appDownloadLinks = asArray(appDownload?.links);
   const extraPages = asArray(footer?.extrapages || footer?.extraPages);
-  const [openBenefit, setOpenBenefit] = useState(0);
+  const [openBenefit, setOpenBenefit] = useState(-1);
 
   return (
     <footer className="h-auto w-full bg-[#1C1C1C] text-white">
@@ -157,7 +157,7 @@ function Footer({ data }) {
                     onClick={() => setOpenBenefit(isOpen ? -1 : index)}
                     className="flex w-full items-center gap-3 py-2.5 text-left md:cursor-default md:gap-3.5 md:py-3.5"
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2 shadow-sm sm:h-12 sm:w-12 md:h-14 md:w-14">
+                    <div className="flex h-10 w-10 shrink-0  items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2 shadow-sm sm:h-12 sm:w-12 md:h-14 md:w-14">
                       {item?.icon ? (
                         <img
                           loading="lazy"

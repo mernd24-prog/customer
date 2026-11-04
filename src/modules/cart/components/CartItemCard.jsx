@@ -13,7 +13,6 @@ import { FaShoppingCart } from "react-icons/fa";
 import ProductPriceBlock from "../../products/components/ProductPriceBlock";
 import ProductStockStatus from "../../products/components/ProductStockStatus";
 import StarRating from "../../../components/ui/display/StarRating";
-import ShowMoreText from "../../../utils/showMore";
 
 export default function CartItemCard({
   item,
@@ -81,6 +80,7 @@ export default function CartItemCard({
     }
 
     setIsSaving(true);
+
     try {
       await onSaveForLater?.(item?.id);
     } finally {
@@ -95,23 +95,23 @@ export default function CartItemCard({
       }`}
     >
       {/* Product information */}
-      <div className="grid grid-cols-[76px_minmax(0,1fr)] items-start gap-2.5 p-2.5 min-[375px]:grid-cols-[88px_minmax(0,1fr)] min-[375px]:gap-3 min-[375px]:p-3 sm:grid-cols-[112px_minmax(0,1fr)] sm:gap-5 sm:p-5">
-        {/* Product image */}
+      <div className="grid grid-cols-[88px_minmax(0,1fr)] items-start gap-2.5 p-2.5 min-[375px]:grid-cols-[96px_minmax(0,1fr)] min-[375px]:gap-3 min-[375px]:p-3 sm:grid-cols-[112px_minmax(0,1fr)] sm:gap-5 sm:p-5">
+        {/* Product image and checkbox */}
         <div className="relative flex min-w-0 items-start justify-center">
           {showCheckbox && (
-            <label className="absolute left-0 top-1 z-10 flex h-6 w-6 cursor-pointer items-center justify-center rounded-md bg-white shadow-sm">
+            <label className="absolute left-1.5 top-1.5 z-10 flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border border-[#E5E7EB] bg-white shadow-sm transition-colors sm:left-1 sm:top-1 sm:h-6 sm:w-6">
               <input
                 type="checkbox"
                 checked={selected}
                 onChange={(event) => onSelect?.(item?.id, event.target.checked)}
-                className="m-0 h-4 w-4 cursor-pointer rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
+                className="m-0 h-3.5 w-3.5 cursor-pointer appearance-auto rounded-sm border border-gray-300 accent-[#3F4095] focus:ring-1 focus:ring-[#3F4095] sm:h-4 sm:w-4"
               />
               <span className="sr-only">Select {item?.title} For Checkout</span>
             </label>
           )}
 
           {item?.image && (
-            <div className="h-[92px] w-[76px] shrink-0 overflow-hidden rounded-lg bg-white min-[375px]:h-[104px] min-[375px]:w-[88px] sm:h-[138px] sm:w-[112px]">
+            <div className="h-[112px] w-[88px] shrink-0 overflow-hidden rounded-lg bg-white min-[375px]:h-[120px] min-[375px]:w-[96px] sm:h-[140px] sm:w-[115px]">
               {productPath ? (
                 <Link
                   to={productPath}
@@ -127,9 +127,9 @@ export default function CartItemCard({
                       item.image,
                       [200, 300, 400],
                     )}
-                    sizes="(max-width: 374px) 76px, (max-width: 640px) 88px, 112px"
+                    sizes="(max-width: 374px) 88px, (max-width: 640px) 96px, 112px"
                     alt={item?.title || ""}
-                    className="h-full w-full object-contain p-1.5"
+                    className="h-full w-full object-contain p-0 sm:p-1"
                     onError={(event) =>
                       applyImageFallback(event, item.title, "cart")
                     }
@@ -142,9 +142,9 @@ export default function CartItemCard({
                   height="400"
                   src={getOptimizedCloudinaryUrl(item.image, 300)}
                   srcSet={generateCloudinarySrcSet(item.image, [200, 300, 400])}
-                  sizes="(max-width: 374px) 76px, (max-width: 640px) 88px, 112px"
+                  sizes="(max-width: 374px) 88px, (max-width: 640px) 96px, 112px"
                   alt={item?.title || ""}
-                  className="h-full w-full object-contain p-1.5"
+                  className="h-full w-full object-contain p-0 sm:p-1"
                   onError={(event) =>
                     applyImageFallback(event, item.title, "cart")
                   }
@@ -155,135 +155,130 @@ export default function CartItemCard({
         </div>
 
         {/* Product details */}
-        <div className="min-w-0 self-start">
+        <div className="flex min-w-0 flex-col items-start gap-2 self-start">
           {/* Product title */}
           {productPath ? (
-            <Link
-              to={productPath}
-              className="mb-2 block break-words text-[13px] font-bold leading-[19px] text-[#2D2D2D] transition hover:text-[#1B1D60] min-[375px]:text-sm sm:text-base sm:leading-6"
-            >
-              <ShowMoreText
-                text={item?.title}
-                mode="characters"
-                limit={65}
-                moreLabel="more"
-                lessLabel="less"
-                textClassName="inline"
-                buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
-              />
+            <Link to={productPath} className="block w-full min-w-0">
+              <h3 className="w-full truncate whitespace-nowrap text-[13px] font-bold leading-[19px] text-[#2D2D2D] transition hover:text-[#1B1D60] sm:line-clamp-2 sm:whitespace-normal sm:break-words sm:text-base sm:leading-6">
+                {item?.title}
+              </h3>
             </Link>
           ) : (
-            <h3 className="mb-2 line-clamp-2 break-words text-[13px] font-bold leading-[19px] text-[#2D2D2D] min-[375px]:text-sm sm:text-base sm:leading-6">
+            <h3 className="w-full truncate whitespace-nowrap text-[13px] font-bold leading-[19px] text-[#2D2D2D] sm:line-clamp-2 sm:whitespace-normal sm:break-words sm:text-base sm:leading-6">
               {item?.title}
             </h3>
           )}
 
           {/* Rating and stock */}
-          <div className="flex min-w-0 flex-col items-start gap-1.5 sm:gap-2">
-            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-              {Number.isFinite(ratingValue) && ratingValue > 0 && (
-                <div className="shrink-0">
-                  <StarRating rating={ratingValue} count={reviewCount} />
-                </div>
-              )}
-
-              <div className="min-w-0 shrink-0">
-                <ProductStockStatus
-                  inStock={!isOutOfStock}
-                  selectedVariant={selectedVariant}
-                  product={item}
-                  availableStock={hasStockQuantity ? stockQuantity : undefined}
-                />
+          <div
+            className={`w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-1 ${
+              Number.isFinite(ratingValue) && ratingValue > 0
+                ? "flex"
+                : "hidden sm:flex"
+            }`}
+          >
+            {Number.isFinite(ratingValue) && ratingValue > 0 && (
+              <div className="flex min-w-0 shrink-0 items-center">
+                <StarRating rating={ratingValue} count={reviewCount} />
               </div>
-            </div>
+            )}
 
-            {/* Price */}
+            <div className="min-w-0">
+              <ProductStockStatus
+                inStock={!isOutOfStock}
+                selectedVariant={selectedVariant}
+                product={item}
+                availableStock={hasStockQuantity ? stockQuantity : undefined}
+                hideOnMobile={true}
+              />
+            </div>
+          </div>
+
+          {/* Product price */}
+          <div className="w-full min-w-0">
             <ProductPriceBlock
               price={price}
               mrp={oldPrice}
               currency={item?.currency ?? item?._raw?.currency}
               discount={discountPct}
-              priceClassName="text-base font-extrabold text-[#001F3F] sm:text-lg"
-              mrpClassName="text-xs font-semibold text-[#737373] sm:text-sm"
-              discountClassName="bg-emerald-50 text-emerald-700 text-[11px] font-semibold sm:text-xs"
+              hideTaxLabelOnMobile={true}
+              priceClassName="text-[15px] font-extrabold text-[#001F3F] min-[375px]:text-base sm:text-lg"
+              mrpClassName="text-[11px] font-semibold text-[#737373] min-[375px]:text-xs sm:text-sm"
+              discountClassName="bg-emerald-50 text-emerald-700 text-[10px] font-semibold min-[375px]:text-[11px] sm:text-xs"
             />
-
-            {/* Maximum quantity */}
-            {atMaxQty && !isOutOfStock && (
-              <p className="text-[11px] font-medium text-[var(--customer-muted)] sm:text-xs">
-                Max {maxQty} Per Order
-              </p>
-            )}
-
-            {/* Quantity selector */}
-            {showQuantitySelector && (
-              <div className="flex min-w-0 flex-col items-start gap-1 pt-0.5">
-                <QuantitySelector
-                  quantity={item.quantity}
-                  onIncrease={() => onIncrease(item.id)}
-                  onDecrease={() => onDecrease(item.id)}
-                  max={quantityMax}
-                  increaseDisabled={item.increaseDisabled}
-                  increaseDisabledLabel={item.stockMessage || undefined}
-                  variant="cart"
-                />
-
-                {item.stockMessage && (
-                  <p className="text-[11px] font-semibold leading-4 text-red-600">
-                    {item.stockMessage}
-                  </p>
-                )}
-              </div>
-            )}
           </div>
+
+          {/* Maximum quantity */}
+          {atMaxQty && !isOutOfStock && (
+            <p className="text-[10px] font-medium text-[var(--customer-muted)] sm:text-xs">
+              Max {maxQty} Per Order
+            </p>
+          )}
+
+          {/* Quantity selector */}
+          {showQuantitySelector && (
+            <div className="flex min-w-0 flex-col items-start gap-1">
+              <QuantitySelector
+                quantity={item.quantity}
+                onIncrease={() => onIncrease(item.id)}
+                onDecrease={() => onDecrease(item.id)}
+                max={quantityMax}
+                increaseDisabled={item.increaseDisabled}
+                increaseDisabledLabel={item.stockMessage || undefined}
+                variant="cart"
+              />
+
+              {item.stockMessage && (
+                <p className="text-[10px] font-semibold leading-4 text-red-600 sm:text-xs">
+                  {item.stockMessage}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Bottom actions */}
+      {/* Product actions */}
       <div className="grid grid-cols-3 divide-x divide-[#EAE6DC] border-t border-[#E9DFC8] bg-[#F8F5EE]">
         {/* Save for later */}
         <button
           type="button"
           onClick={handleSaveForLater}
           disabled={isWishlistAction && (isWishlisted || isSaving)}
-          className={`flex min-w-0 min-h-[46px] items-center justify-center gap-1 px-1 py-2 text-[10px] font-semibold text-[#51545A] transition-colors hover:text-[#1B1D60] min-[375px]:gap-1.5 min-[375px]:text-xs sm:min-h-[52px] sm:gap-2 sm:text-base ${
+          aria-label={isWishlisted ? "Wishlisted" : saveForLaterLabel}
+          className={`flex min-w-0 min-h-[52px] flex-col items-center justify-center gap-1 px-1 py-1.5 text-[10px] font-semibold text-[#51545A] transition-colors hover:bg-[#F5F0E7] hover:text-[#1B1D60] sm:min-h-[36px] sm:flex-row sm:gap-2 sm:px-2 sm:py-1 sm:text-xs ${
             isWishlisted ? "text-[#1B1D60]" : ""
           }`}
         >
-          {isWishlistAction ? (
-            <Heart
-              size={16}
-              className="shrink-0"
-              fill={isWishlisted ? "currentColor" : "none"}
-            />
-          ) : (
-            <FaShoppingCart size={14} className="shrink-0" />
-          )}
-
-          <span className="truncate">
-            {isWishlisted ? "Wishlisted" : saveForLaterLabel}
-          </span>
+          <Heart
+            size={15}
+            className="shrink-0"
+            fill={isWishlisted ? "currentColor" : "none"}
+          />
+          <span className="truncate">{isWishlisted ? "Saved" : "Save"}</span>
         </button>
 
         {/* Remove */}
         <button
           type="button"
           onClick={() => onRemove?.(item?.id)}
-          className="flex min-w-0 min-h-[46px] items-center justify-center gap-1 px-1 py-2 text-[10px] font-semibold text-[#51545A] transition-colors hover:text-[#1B1D60] min-[375px]:gap-1.5 min-[375px]:text-xs sm:min-h-[52px] sm:gap-2 sm:text-base"
+          aria-label={removeLabel}
+          className="flex min-w-0 min-h-[52px] flex-col items-center justify-center gap-1 px-1 py-1.5 text-[10px] font-semibold text-[#51545A] transition-colors hover:bg-[#F5F0E7] hover:text-[#1B1D60] sm:min-h-[36px] sm:flex-row sm:gap-2 sm:px-2 sm:py-1 sm:text-xs"
         >
-          <Trash2 size={16} className="shrink-0" />
-          <span className="truncate">{removeLabel}</span>
+          <Trash2 size={15} className="shrink-0" />
+          <span className="truncate">Remove</span>
         </button>
 
-        {/* Buy now */}
+        {/* Buy Now */}
         <button
           type="button"
           onClick={() => onBuyNow?.(item?.id)}
           disabled={!onBuyNow || isOutOfStock}
-          className="flex min-w-0 min-h-[46px] items-center justify-center gap-1 px-1 py-2 text-[10px] font-semibold text-[#51545A] transition-colors hover:text-[#1B1D60] disabled:cursor-not-allowed disabled:opacity-50 min-[375px]:gap-1.5 min-[375px]:text-xs sm:min-h-[52px] sm:gap-2 sm:text-base"
+          aria-label="Buy this now"
+          className="flex min-w-0 min-h-[52px] flex-col items-center justify-center gap-1 px-1 py-1.5 text-[10px] font-semibold text-[#51545A] transition-colors hover:bg-[#F5F0E7] hover:text-[#1B1D60] disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-[36px] sm:flex-row sm:gap-2 sm:px-2 sm:py-1 sm:text-xs"
         >
-          <Zap size={16} className="shrink-0" />
-          <span className="truncate">Buy this now</span>
+          <Zap size={15} className="shrink-0" />
+          <span className="truncate">Buy Now</span>
         </button>
       </div>
     </article>

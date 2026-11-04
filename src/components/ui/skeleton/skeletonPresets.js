@@ -545,130 +545,353 @@ export const SKELETON_PRESETS = {
   },
 ],
 
-  ORDER_DETAIL_PAGE: [
-    {
-      type: "col",
-      className: "w-full gap-6 py-4 sm:py-6",
-      children: [
-        {
-          type: "row",
-          className: "flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#EAEFF5] pb-6",
-          children: [
-            { type: "box", width: "240px", height: "20px", rounded: "rounded-md" },
-            {
-              type: "row",
-              className: "gap-3 w-full sm:w-auto justify-end",
-              children: [
-                { type: "box", width: "130px", height: "46px", rounded: "rounded-[10px]" },
-                { type: "box", width: "140px", height: "46px", rounded: "rounded-[10px]" },
-              ],
-            },
-          ],
-        },
-        {
-          type: "grid",
-          className: " grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ",
-          children: [
-            {
-              type: "col",
-              count: 4,
-              className: "p-4 rounded-2xl border border-[#E7D9B8]/60 bg-white gap-2.5 shadow-sm",
-              children: [
-                {
-                  type: "row",
-                  className: " items-center gap-3 mb-1",
-                  children: [
-                    { type: "box", width: "36px", height: "14px", rounded: "rounded-xl" },
-                    { type: "box", width: "100px", height: "14px", rounded: "rounded-md" },
-                  ],
-                },
-                { type: "box", width: "85%", height: "14px", rounded: "rounded-md" },
-                { type: "box", width: "65%", height: "12px", rounded: "rounded-md" },
-              ],
-            },
-          ],
-        },
-        {
-          type: "grid",
-          className: "grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-2",
-          children: [
-            // Left Column (2 cols)
-            {
-              type: "col",
-              className: "lg:col-span-2 gap-4",
-              children: [
-                {
-                  type: "col",
-                  count: 2,
-                  className: "p-5 rounded-2xl border border-[#EAEFF5] bg-white gap-4 shadow-sm",
-                  children: [
-                    {
-                      type: "row",
-                      className: "items-center gap-4",
-                      children: [
-                        { type: "box", width: "88px", height: "88px", rounded: "rounded-xl", className: "shrink-0" },
-                        {
-                          type: "col",
-                          className: "flex-1 gap-2 min-w-0",
-                          children: [
-                            { type: "box", width: "80%", height: "18px", rounded: "rounded-md" },
-                            { type: "box", width: "45%", height: "14px", rounded: "rounded-md" },
-                            { type: "box", width: "35%", height: "16px", rounded: "rounded-md" },
-                          ],
-                        },
-                        { type: "box", width: "90px", height: "32px", rounded: "rounded-full", className: "shrink-0" },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            // Right Column (1 col - Order Summary Sidebar)
-            {
-              type: "col",
-              className: "p-6 rounded-2xl border border-[#E7D9B8]/60 bg-white gap-4.5 shadow-sm h-fit",
-              children: [
-                { type: "box", width: "150px", height: "20px", rounded: "rounded-md", className: "mb-2" },
-                {
-                  type: "row",
-                  className: "justify-between items-center",
-                  children: [
-                    { type: "box", width: "80px", height: "14px", rounded: "rounded-md" },
-                    { type: "box", width: "60px", height: "14px", rounded: "rounded-md" },
-                  ],
-                },
-                {
-                  type: "row",
-                  className: "justify-between items-center",
-                  children: [
-                    { type: "box", width: "90px", height: "14px", rounded: "rounded-md" },
-                    { type: "box", width: "50px", height: "14px", rounded: "rounded-md" },
-                  ],
-                },
-                {
-                  type: "row",
-                  className: "justify-between items-center",
-                  children: [
-                    { type: "box", width: "70px", height: "14px", rounded: "rounded-md" },
-                    { type: "box", width: "40px", height: "14px", rounded: "rounded-md" },
-                  ],
-                },
-                { type: "box", width: "100%", height: "1px", className: "bg-[#EAEFF5] my-1" },
-                {
-                  type: "row",
-                  className: "justify-between items-center",
-                  children: [
-                    { type: "box", width: "100px", height: "20px", rounded: "rounded-md" },
-                    { type: "box", width: "80px", height: "22px", rounded: "rounded-md" },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ],
+ORDER_DETAIL_PAGE: [
+  {
+    type: "col",
+    className: "w-full min-w-0 gap-4 sm:gap-5 py-3 sm:py-4",
+
+    children: [
+      // Breadcrumb
+      {
+        type: "row",
+        className: "items-center gap-2 pb-2",
+        children: [
+          { type: "box", width: "55px", height: "12px", rounded: "rounded-md" },
+          { type: "box", width: "8px", height: "8px", rounded: "rounded-full" },
+          { type: "box", width: "75px", height: "12px", rounded: "rounded-md" },
+          { type: "box", width: "8px", height: "8px", rounded: "rounded-full" },
+          { type: "box", width: "110px", height: "12px", rounded: "rounded-md" },
+        ],
+      },
+
+      // Main content + payment sidebar
+      {
+        type: "grid",
+        className: "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_350px] 2xl:grid-cols-[minmax(0,1fr)_380px] gap-4 md:gap-5 lg:gap-6 items-start",
+
+        children: [
+          // LEFT: Order package cards
+          {
+            type: "col",
+            className: "w-full min-w-0 gap-4 sm:gap-5",
+
+            children: [
+              {
+                type: "col",
+                count: 2,
+                className: "w-full min-w-0 overflow-hidden rounded-lg border border-[#E9DFC8] bg-[#FFFEFB] !gap-0",
+
+                children: [
+                  // Package content
+                  {
+                    type: "col",
+                    className: "w-full min-w-0 gap-4 p-3 sm:p-4 md:p-5",
+
+                    children: [
+                      // Product item 1
+                      {
+                        type: "col",
+                        className: "w-full min-w-0 gap-3",
+
+                        children: [
+                          {
+                            type: "row",
+                            className: "w-full min-w-0 items-start gap-3 sm:gap-4",
+
+                            children: [
+                              {
+                                type: "box",
+                                width: "88px",
+                                height: "88px",
+                                rounded: "rounded-lg",
+                                className: "w-[76px] h-[76px] sm:w-[88px] sm:h-[88px] shrink-0 bg-[#F5F3EF]",
+                              },
+                              {
+                                type: "col",
+                                className: "flex-1 min-w-0 gap-2",
+
+                                children: [
+                                  { type: "box", width: "90%", height: "16px", rounded: "rounded-md" },
+                                  { type: "box", width: "65%", height: "13px", rounded: "rounded-md" },
+                                  {
+                                    type: "row",
+                                    className: "items-center gap-2 flex-wrap mt-1",
+                                    children: [
+                                      { type: "box", width: "65px", height: "18px", rounded: "rounded-md" },
+                                      { type: "box", width: "55px", height: "18px", rounded: "rounded-md" },
+                                    ],
+                                  },
+                                  { type: "box", width: "90px", height: "17px", rounded: "rounded-md", className: "mt-1" },
+                                ],
+                              },
+                            ],
+                          },
+
+                          // Product delivery timeline
+                          {
+                            type: "col",
+                            className: "w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-[#FAF6EE] p-3 sm:p-4 md:p-5 gap-4",
+
+                            children: [
+                              {
+                                type: "row",
+                                className: "justify-between items-center gap-3",
+                                children: [
+                                  { type: "box", width: "115px", height: "15px", rounded: "rounded-md" },
+                                  { type: "box", width: "85px", height: "13px", rounded: "rounded-md" },
+                                ],
+                              },
+                              {
+                                type: "row",
+                                className: "w-full items-center justify-between gap-1 py-2",
+                                children: [
+                                  {
+                                    type: "col",
+                                    className: "items-center gap-2 flex-1",
+                                    children: [
+                                      { type: "box", width: "22px", height: "22px", rounded: "rounded-full" },
+                                      { type: "box", width: "65px", height: "10px", rounded: "rounded-md" },
+                                    ],
+                                  },
+                                  { type: "box", height: "3px", className: "flex-1 rounded-full" },
+                                  {
+                                    type: "col",
+                                    className: "items-center gap-2 flex-1",
+                                    children: [
+                                      { type: "box", width: "22px", height: "22px", rounded: "rounded-full" },
+                                      { type: "box", width: "65px", height: "10px", rounded: "rounded-md" },
+                                    ],
+                                  },
+                                  { type: "box", height: "3px", className: "flex-1 rounded-full" },
+                                  {
+                                    type: "col",
+                                    className: "items-center gap-2 flex-1",
+                                    children: [
+                                      { type: "box", width: "22px", height: "22px", rounded: "rounded-full" },
+                                      { type: "box", width: "65px", height: "10px", rounded: "rounded-md" },
+                                    ],
+                                  },
+                                  { type: "box", height: "3px", className: "flex-1 rounded-full" },
+                                  {
+                                    type: "col",
+                                    className: "items-center gap-2 flex-1",
+                                    children: [
+                                      { type: "box", width: "22px", height: "22px", rounded: "rounded-full" },
+                                      { type: "box", width: "65px", height: "10px", rounded: "rounded-md" },
+                                    ],
+                                  },
+                                ],
+                              },
+                              { type: "box", width: "75%", height: "12px", rounded: "rounded-md" },
+                            ],
+                          },
+                        ],
+                      },
+
+                      // Product item 2
+                      {
+                        type: "col",
+                        className: "w-full min-w-0 gap-3 pt-4 border-t border-[#EAEFF5]",
+
+                        children: [
+                          {
+                            type: "row",
+                            className: "w-full min-w-0 items-start gap-3 sm:gap-4",
+
+                            children: [
+                              {
+                                type: "box",
+                                width: "88px",
+                                height: "88px",
+                                rounded: "rounded-lg",
+                                className: "w-[76px] h-[76px] sm:w-[88px] sm:h-[88px] shrink-0 bg-[#F5F3EF]",
+                              },
+                              {
+                                type: "col",
+                                className: "flex-1 min-w-0 gap-2",
+                                children: [
+                                  { type: "box", width: "82%", height: "16px", rounded: "rounded-md" },
+                                  { type: "box", width: "55%", height: "13px", rounded: "rounded-md" },
+                                  {
+                                    type: "row",
+                                    className: "items-center gap-2 flex-wrap mt-1",
+                                    children: [
+                                      { type: "box", width: "60px", height: "18px", rounded: "rounded-md" },
+                                      { type: "box", width: "55px", height: "18px", rounded: "rounded-md" },
+                                    ],
+                                  },
+                                  { type: "box", width: "85px", height: "17px", rounded: "rounded-md", className: "mt-1" },
+                                ],
+                              },
+                            ],
+                          },
+
+                          // Second product timeline
+                          {
+                            type: "col",
+                            className: "w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-[#FAF6EE] p-3 sm:p-4 md:p-5 gap-4",
+
+                            children: [
+                              { type: "box", width: "125px", height: "15px", rounded: "rounded-md" },
+                              {
+                                type: "row",
+                                className: "w-full items-center justify-between gap-1 py-2",
+                                children: [
+                                  { type: "box", width: "22px", height: "22px", rounded: "rounded-full" },
+                                  { type: "box", height: "3px", className: "flex-1 rounded-full" },
+                                  { type: "box", width: "22px", height: "22px", rounded: "rounded-full" },
+                                  { type: "box", height: "3px", className: "flex-1 rounded-full" },
+                                  { type: "box", width: "22px", height: "22px", rounded: "rounded-full" },
+                                  { type: "box", height: "3px", className: "flex-1 rounded-full" },
+                                  { type: "box", width: "22px", height: "22px", rounded: "rounded-full" },
+                                ],
+                              },
+                              { type: "box", width: "70%", height: "12px", rounded: "rounded-md" },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+
+                  // Package documents
+                  {
+                    type: "col",
+                    className: "w-full gap-3 px-3 sm:px-4 md:px-5 pb-3 sm:pb-4",
+                    children: [
+                      { type: "box", width: "125px", height: "15px", rounded: "rounded-md" },
+                      {
+                        type: "row",
+                        className: "items-center justify-between gap-3 rounded-lg border border-[#E7D9B8] p-3",
+                        children: [
+                          { type: "box", width: "55%", height: "13px", rounded: "rounded-md" },
+                          { type: "box", width: "85px", height: "28px", rounded: "rounded-md" },
+                        ],
+                      },
+                    ],
+                  },
+
+                  // Full-width package action bar
+                  {
+                    type: "row",
+                    className: "w-full flex-wrap items-center justify-end gap-2 border-t border-[#E9DFC8] bg-white p-3 sm:px-4 sm:py-3 md:px-5",
+
+                    children: [
+                      { type: "box", width: "105px", height: "36px", rounded: "rounded-lg" },
+                      { type: "box", width: "115px", height: "36px", rounded: "rounded-lg" },
+                      { type: "box", width: "105px", height: "36px", rounded: "rounded-lg" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+
+          // RIGHT: Payment summary and order documents
+          {
+            type: "col",
+            className: "w-full min-w-0 gap-4 lg:sticky lg:top-24 lg:self-start",
+
+            children: [
+              // Payment summary
+              {
+                type: "col",
+                className: "w-full min-w-0 rounded-xl border border-[#E7D9B8] bg-white p-4 sm:p-5 md:p-6 gap-4",
+
+                children: [
+                  { type: "box", width: "155px", height: "20px", rounded: "rounded-md", className: "mb-1" },
+
+                  {
+                    type: "col",
+                    className: "gap-3",
+                    children: [
+                      {
+                        type: "row",
+                        className: "items-center justify-between gap-3",
+                        children: [
+                          { type: "box", width: "105px", height: "13px", rounded: "rounded-md" },
+                          { type: "box", width: "75px", height: "14px", rounded: "rounded-md" },
+                        ],
+                      },
+                      {
+                        type: "row",
+                        className: "items-center justify-between gap-3",
+                        children: [
+                          { type: "box", width: "90px", height: "13px", rounded: "rounded-md" },
+                          { type: "box", width: "65px", height: "14px", rounded: "rounded-md" },
+                        ],
+                      },
+                      {
+                        type: "row",
+                        className: "items-center justify-between gap-3",
+                        children: [
+                          { type: "box", width: "115px", height: "13px", rounded: "rounded-md" },
+                          { type: "box", width: "70px", height: "14px", rounded: "rounded-md" },
+                        ],
+                      },
+                      {
+                        type: "row",
+                        className: "items-center justify-between gap-3",
+                        children: [
+                          { type: "box", width: "100px", height: "13px", rounded: "rounded-md" },
+                          { type: "box", width: "60px", height: "14px", rounded: "rounded-md" },
+                        ],
+                      },
+                    ],
+                  },
+
+                  { type: "box", width: "100%", height: "1px", className: "bg-[#EAEFF5] my-1" },
+
+                  {
+                    type: "row",
+                    className: "items-center justify-between gap-3",
+                    children: [
+                      { type: "box", width: "105px", height: "19px", rounded: "rounded-md" },
+                      { type: "box", width: "95px", height: "22px", rounded: "rounded-md" },
+                    ],
+                  },
+                ],
+              },
+
+              // Order documents sidebar
+              {
+                type: "col",
+                className: "w-full min-w-0 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4 sm:p-5 gap-3",
+
+                children: [
+                  {
+                    type: "row",
+                    className: "items-center gap-2",
+                    children: [
+                      { type: "box", width: "17px", height: "17px", rounded: "rounded-sm" },
+                      { type: "box", width: "125px", height: "16px", rounded: "rounded-md" },
+                    ],
+                  },
+                  {
+                    type: "row",
+                    className: "items-center justify-between gap-2 rounded-lg border border-[#CE9F2D40] bg-white p-3",
+                    children: [
+                      { type: "box", width: "50%", height: "13px", rounded: "rounded-md" },
+                      { type: "box", width: "80px", height: "28px", rounded: "rounded-md" },
+                    ],
+                  },
+                  {
+                    type: "row",
+                    className: "items-center justify-between gap-2 rounded-lg border border-[#CE9F2D40] bg-white p-3",
+                    children: [
+                      { type: "box", width: "45%", height: "13px", rounded: "rounded-md" },
+                      { type: "box", width: "80px", height: "28px", rounded: "rounded-md" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+],
 
 
   

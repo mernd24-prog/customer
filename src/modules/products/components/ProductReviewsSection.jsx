@@ -19,6 +19,7 @@ import ReviewMediaLightbox from "./ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 import EmptyState from "../../../components/ui/feedback/EmptyState";
+import StarRating from "../../../components/ui/display/StarRating";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -106,20 +107,15 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     : [];
 
   return (
-    <article className="py-3.5 border-b border-[#E7D9B8]/50 last:border-b-0">
+    <article className="py-1 border-b border-[#E7D9B8]/50 last:border-b-0">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-0.5 text-[#CE9F2D] text-[17px] sm:text-[19px]">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <IoIosStar
-              key={star}
-              className={
-                star <= roundedRating
-                  ? "fill-[#CE9F2D] text-[#CE9F2D]"
-                  : "fill-[#D1D5DB] text-[#D1D5DB]"
-              }
-            />
-          ))}
-        </span>
+        <StarRating
+          rating={Number(review.rating || 0)}
+          showValue={true}
+          showCountText={false}
+          showStars
+          variant="inline"
+        />
         {review.title && (
           <span className="text-sm sm:text-base font-bold text-[#1F2430]">
             {review.title}
@@ -596,40 +592,28 @@ export default function ProductReviewsSection({ productId, product }) {
         {/* Left Sidebar */}
         {hasReviewSummary && <aside className="w-full shrink-0 lg:w-[280px] xl:w-[300px]">
           <div className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
-            <div className="px-5 py-3.5 bg-white border-b border-[#E5E7EB]">
+            <div className="p-3 bg-white border-b border-[#E5E7EB]">
               <h2 className="text-base font-bold text-[#111827]">
                 Ratings &amp; Reviews
               </h2>
             </div>
 
-            <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 p-4 sm:p-5 lg:block">
+            <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 p-3 sm:p-4 lg:block">
               <div>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    {displayReviewCount > 0 && (
-                      <IoIosStar className="text-2xl text-[#CE9F2D]" />
-                    )}
-                    <span className="text-3xl font-extrabold text-[#1B1D60]">
-                      {displayReviewCount > 0
-                        ? Number(displayAvgRating).toFixed(1)
-                        : "—"}
-                    </span>
-                  </div>
-                  <span className="mb-1 self-end text-xs font-semibold text-[#6F7480]">
-                    / 5.0
-                  </span>
-                </div>
-                <p className="mt-1 text-xs font-semibold text-[#6F7480]">
-                  {displayReviewCount > 0 || displayTotal > 0 ? (
-                    <>
+                {displayReviewCount > 0 ? (
+                  <div className="flex flex-col items-start gap-1">
+                    <StarRating rating={displayAvgRating} count={displayReviewCount} />
+                    <p className="text-xs font-semibold text-[#6F7480]">
                       {displayReviewCount}{" "}
                       {displayReviewCount === 1 ? "Rating" : "Ratings"} &amp;{" "}
                       {displayTotal} {displayTotal === 1 ? "Review" : "Reviews"}
-                    </>
-                  ) : (
-                    "No ratings yet"
-                  )}
-                </p>
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm font-semibold text-[#6F7480]">
+                    No ratings yet
+                  </p>
+                )}
               </div>
 
               {/* Rating Bars */}
@@ -685,13 +669,13 @@ export default function ProductReviewsSection({ productId, product }) {
         {/* Right Section */}
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Top Bar: Heading + Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 pt-3.5 mb-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
               <h3 className="whitespace-nowrap text-sm font-bold text-[#1B1D60] sm:text-base">
                 Customer Reviews
               </h3>
               {displayTotal > 0 && (
-                <span className="rounded-full bg-[#FAF6EE] px-2.5 py-0.5 text-xs font-bold text-[#A96F14] border border-[#E7D9B8]">
+                <span className="rounded-md bg-[#FAF6EE] px-2  text-xs font-bold text-[#A96F14] border border-[#E7D9B8]">
                   {displayTotal}
                 </span>
               )}

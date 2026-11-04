@@ -39,98 +39,64 @@ export default function OrderActions({
     (Boolean(selectedOrderItem) && Boolean(selectedItemCanReturn)) ||
     (!selectedOrderItem && Boolean(canRequestReturn));
 
-  const hasAnyAction = hasRetryPayment || hasCancelAction || hasReturnAction;
-
+  // Match CartItemCard bottom action styling exactly
   const buttonClass =
-    "flex h-[52px] w-full min-w-0 cursor-pointer items-center justify-center gap-2 bg-transparent px-3 py-2 text-sm font-semibold text-[#1B1D60] transition-colors duration-200 hover:bg-[#F5F0E7] disabled:cursor-not-allowed disabled:opacity-60";
+    "flex min-w-0 min-h-[52px] w-full flex-col items-center justify-center gap-1 px-1 py-1.5 text-[10px] font-semibold text-[#51545A] transition-colors hover:bg-[#F5F0E7] hover:text-[#1B1D60] disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-[36px] sm:flex-row sm:gap-2 sm:px-2 sm:py-1 sm:text-xs";
 
-  const iconClass = "h-4 w-4 shrink-0 text-[#1B1D60]";
-  const dividerClass = "h-4 w-px shrink-0 bg-[#D8C9A1]";
-  const textClass =
-    "min-w-0 whitespace-normal break-words text-center text-sm font-semibold leading-5 text-[#1B1D60]";
+  const iconClass = "shrink-0";
+  const textClass = "min-w-0 truncate";
 
   const actionItems = [];
 
   if (hasRetryPayment) {
     actionItems.push(
-      <div
+      <button
         key="retry-payment"
-        className="w-full min-w-0 border-b border-[#D8C9A1] last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"
+        type="button"
+        className={buttonClass}
+        onClick={handleRetryPayment}
+        disabled={retrying}
       >
-        <button
-          type="button"
-          className={buttonClass}
-          onClick={handleRetryPayment}
-          disabled={retrying}
-        >
-          <RefreshCw className={iconClass} />
-          <span className={dividerClass} />
-          <span className={textClass}>Retry Payment</span>
-        </button>
-      </div>,
+        <RefreshCw size={15} className={iconClass} />
+        <span className={textClass}>Retry Payment</span>
+      </button>,
     );
   }
 
   if (hasCancelAction) {
     actionItems.push(
-      <div
+      <button
         key="cancel"
-        className="w-full min-w-0 border-b border-[#D8C9A1] last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"
+        type="button"
+        className={buttonClass}
+        onClick={openCancellation}
       >
-        <button
-          type="button"
-          className={buttonClass}
-          onClick={openCancellation}
-        >
-          <XCircle className={iconClass} />
-          <span className={dividerClass} />
-          <span className={textClass}>
-            {selectedOrderItem ? "Cancel Item" : "Cancel Order"}
-          </span>
-        </button>
-      </div>,
+        <XCircle size={15} className={iconClass} />
+        <span className={textClass}>
+          {selectedOrderItem ? "Cancel Item" : "Cancel Order"}
+        </span>
+      </button>,
     );
   }
 
   if (hasReturnAction) {
     actionItems.push(
-      <div
+      <Link
         key="return"
-        className="w-full min-w-0 border-b border-[#D8C9A1] last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"
+        to={
+          selectedOrderItem
+            ? `/returns/request/${orderId}?orderItemId=${encodeURIComponent(
+                getOrderItemId(selectedOrderItem),
+              )}`
+            : `/returns/request/${orderId}`
+        }
+        className={buttonClass}
       >
-        <Link
-          to={
-            selectedOrderItem
-              ? `/returns/request/${orderId}?orderItemId=${encodeURIComponent(
-                  getOrderItemId(selectedOrderItem),
-                )}`
-              : `/returns/request/${orderId}`
-          }
-          className={buttonClass}
-        >
-          <RotateCcw className={iconClass} />
-          <span className={dividerClass} />
-          <span className={textClass}>Request Return</span>
-        </Link>
-      </div>,
+        <RotateCcw size={15} className={iconClass} />
+        <span className={textClass}>Request Return</span>
+      </Link>,
     );
   }
-
-  // Make a single available action span the full action container.
-  const actionGridClass =
-    actionItems.length === 1
-      ? "grid-cols-1"
-      : actionItems.length === 2
-        ? "grid-cols-1 md:grid-cols-2"
-        : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3";
-
-  const actionButtons = (
-    <div className="grid w-full min-w-0 overflow-hidden rounded-lg border border-[#D8C9A1] bg-[#F6F0E5]">
-      <div className={`grid w-full min-w-0 ${actionGridClass}`}>
-        {actionItems}
-      </div>
-    </div>
-  );
 
   const handleTicketClick = () => {
     const subject = order?.orderNumber || order?.id || orderId || "Order Issue";
@@ -142,51 +108,40 @@ export default function OrderActions({
     });
   };
 
-  const chatButton = (
-    <button
-      type="button"
-      onClick={() => {
-        window.dispatchEvent(new CustomEvent("open-ai-chat"));
-      }}
-      className={buttonClass}
-    >
-      <MessageSquare className={iconClass} />
-      <span className={dividerClass} />
-      <span className={textClass}>Chat with us</span>
-    </button>
-  );
+  const handleChatClick = () => {
+    window.dispatchEvent(new CustomEvent("open-ai-chat"));
+  };
 
-  const ticketButton = (
+  const allActions = [
+    ...actionItems,
     <button
+      key="ticket"
       type="button"
       onClick={handleTicketClick}
       className={buttonClass}
     >
-      <Ticket className={iconClass} />
-      <span className={dividerClass} />
+      <Ticket size={15} className={iconClass} />
       <span className={textClass}>Raise Ticket</span>
-    </button>
-  );
-
-  const supportActions = (
-    <div className="grid w-full min-w-0 overflow-hidden rounded-lg border border-[#D8C9A1] bg-[#F6F0E5] md:grid-cols-2">
-      <div className="min-w-0 border-b border-[#D8C9A1] md:border-b-0 md:border-r">
-        {ticketButton}
-      </div>
-      <div className="min-w-0">{chatButton}</div>
-    </div>
-  );
+    </button>,
+    <button
+      key="chat"
+      type="button"
+      onClick={handleChatClick}
+      className={buttonClass}
+    >
+      <MessageSquare size={15} className={iconClass} />
+      <span className={textClass}>Chat with us</span>
+    </button>,
+  ];
 
   return (
-    <div className="w-full min-w-0">
-      {hasAnyAction ? (
-        <div className="grid w-full min-w-0 gap-3 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-          <div className="min-w-0">{actionButtons}</div>
-          <div className="min-w-0">{supportActions}</div>
-        </div>
-      ) : (
-        <div className="w-full min-w-0">{supportActions}</div>
-      )}
+    <div
+      className="grid w-full min-w-0 divide-x divide-[#EAE6DC] border-t border-[#E9DFC8] bg-[#F8F5EE]"
+      style={{
+        gridTemplateColumns: `repeat(${allActions.length}, minmax(0, 1fr))`,
+      }}
+    >
+      {allActions}
     </div>
   );
 }

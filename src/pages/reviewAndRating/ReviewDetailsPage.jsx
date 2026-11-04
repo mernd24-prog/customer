@@ -8,6 +8,7 @@ import Seo from "../../components/ui/Seo";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { useAuthModal } from "../../modules/auth/context/AuthModalContext";
 import ShowMoreText from "../../utils/showMore";
+import StarRating from "../../components/ui/display/StarRating";
 
 import {
   fetchProductReviews,
@@ -28,30 +29,30 @@ import {
 const LIMIT = 10;
 const STAR_VALUES = [5, 4, 3, 2, 1];
 
-function StarRow({ rating, size = 14 }) {
+function StarRow({ rating, size = 18 }) {
   const filled = Math.round(Number(rating || 0));
 
   return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((n) => (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
         <Star
-          key={n}
+          key={star}
           size={size}
           className={
-            n <= filled ? "fill-gold text-gold" : "fill-border text-border"
+            star <= filled ? "fill-gold text-gold" : "fill-border text-border"
           }
         />
       ))}
     </div>
   );
 }
-
 function RatingBar({ star, count, total }) {
   const pct = total ? Math.round((count / total) * 100) : 0;
 
   return (
-    <div className="grid grid-cols-[38px_1fr_30px] items-center gap-2 text-xs font-semibold text-muted">
-      <span>{star} ★</span>
+    <div className="grid min-h-5 grid-cols-[32px_minmax(0,1fr)_24px] items-center gap-2 text-xs font-semibold text-muted">
+      <span className="whitespace-nowrap leading-5">{star} ★</span>
+
       <div className="h-2 overflow-hidden rounded-full bg-cream">
         <span
           className="block h-full rounded-full bg-gold"
@@ -59,7 +60,7 @@ function RatingBar({ star, count, total }) {
         />
       </div>
 
-      <span className="text-right">{count}</span>
+      <span className="text-right leading-5 tabular-nums">{count}</span>
     </div>
   );
 }
@@ -138,7 +139,6 @@ function ProductReviewSidebar({ product, productId }) {
     </aside>
   );
 }
-
 function RatingSummary({
   avgRating,
   reviewCount,
@@ -148,36 +148,41 @@ function RatingSummary({
 }) {
   return (
     <div className="border-b border-border pb-6">
-      <h2 className="text-sm font-bold uppercase text-ink">
+      <h2 className="text-sm font-bold uppercase leading-5 text-ink">
         Ratings &amp; Reviews
       </h2>
 
       <div className="mt-5 grid max-w-[540px] grid-cols-[120px_1fr] gap-8">
-        <div>
-          <div className="text-4xl font-bold text-ink">
-            {Number(avgRating).toFixed(1)}
-          </div>
+        {/* Overall Rating */}
+        <div className="min-w-0">
+          {reviewCount > 0 ? (
+            <>
+              <div className="text-[32px] font-bold leading-none text-ink">
+                {Number(avgRating).toFixed(1)}
+              </div>
 
-          <div className="mt-1">
-            <StarRow rating={avgRating} size={16} />
-          </div>
+              <div className="mt-1">
+                <StarRow rating={avgRating} size={18} />
+              </div>
 
-          <p className="mt-2 text-xs font-semibold text-blue-600">
-            {reviewCount > 0
-              ? `${reviewCount.toLocaleString("en-IN")} verified buyer${
-                  reviewCount !== 1 ? "s" : ""
-                }`
-              : "No Reviews Yet"}
-          </p>
+              <p className="mt-2 whitespace-nowrap text-xs font-semibold leading-5 text-blue-600">
+                {reviewCount.toLocaleString("en-IN")} verified buyer
+                {reviewCount !== 1 ? "s" : ""}
+              </p>
+            </>
+          ) : (
+            <p className="text-sm font-semibold text-muted">No Reviews Yet</p>
+          )}
         </div>
 
-        <div className="space-y-2">
+        {/* Rating Distribution */}
+        <div className="min-w-0 space-y-1.5 pl-1">
           {STAR_VALUES.map((star) => (
             <button
               key={star}
               type="button"
               onClick={() => onFilter(star)}
-              className={`w-full transition ${
+              className={`block w-full text-left transition-opacity ${
                 ratingFilter === star
                   ? "opacity-100"
                   : "opacity-80 hover:opacity-100"
@@ -195,7 +200,6 @@ function RatingSummary({
     </div>
   );
 }
-
 function ReviewsHeader({ total, sort, onSort }) {
   const sortOptions = [
     { value: "newest", label: "Most Recent" },
@@ -271,42 +275,36 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     : review.date || "";
 
   return (
-    <article className="border-b border-border pb-4 pt-1 last:border-b-0">
-      <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-0.5 text-gold">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Star
-              key={star}
-              size={18}
-              className={
-                star <= Math.round(Number(review.rating || 0))
-                  ? "fill-gold text-gold"
-                  : "fill-border text-border"
-              }
-            />
-          ))}
-        </span>
+    <article className="py-2  border-b border-border last:border-b-0">
+      <div className=" flex flex-wrap items-center gap-2">
+        <StarRating
+          rating={Number(review.rating || 0)}
+          showValue={true}
+          showCountText={true}
+        />
 
         {review.title && (
           <span className="text-base sm:text-lg font-bold text-ink">
-            
             <ShowMoreText
-                  text={review.title}
-                  mode="lines"
-                  limit={1}
-                  buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
-                />
+              text={review.title}
+              mode="lines"
+              limit={1}
+              buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
+            />
           </span>
         )}
       </div>
 
-      {text && <p className="text-sm leading-relaxed text-ink">  
-         <ShowMoreText
-                  text={text}
-                  mode="lines"
-                  limit={3}
-                  buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
-                /></p>}
+      {text && (
+        <p className="text-sm leading-relaxed text-ink">
+          <ShowMoreText
+            text={text}
+            mode="lines"
+            limit={3}
+            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
+          />
+        </p>
+      )}
 
       {media.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">

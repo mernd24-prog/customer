@@ -193,48 +193,51 @@ export default function CartPage() {
               sidebarClass="w-full min-w-0 shrink-0 transition-[top] duration-300 ease-in-out lg:w-[350px] 2xl:w-[369px]"
               mainContent={
                 <div className="flex min-w-0 flex-col gap-3 sm:gap-4">
-                {checkoutBlockedByStock && (
-                  <section
-                    role="alert"
-                    aria-live="polite"
-                    className="rounded-lg border border-red-200 bg-red-50/70 px-3 py-3 sm:px-4"
-                  >
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex min-w-0 items-start gap-2.5">
-                        <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center text-red-600">
-                          <CircleAlert size={16} strokeWidth={2} />
-                        </div>
+                  {checkoutBlockedByStock && (
+                    <section
+                      role="alert"
+                      aria-live="polite"
+                      className="rounded-lg border border-red-200 bg-red-50/70 px-3 py-3 sm:px-4"
+                    >
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex min-w-0 items-start gap-2.5">
+                          <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center text-red-600">
+                            <CircleAlert size={16} strokeWidth={2} />
+                          </div>
 
-                        <div className="min-w-0">
-                          <h3 className="text-sm font-semibold leading-5 text-red-800">
-                            {stockBlockedItems.length === 1
-                              ? "1 item is unavailable"
-                              : `${stockBlockedItems.length} items are unavailable`}
-                          </h3>
-                          <p className="mt-0.5 text-xs leading-4 text-red-700">
-                            Remove unavailable items to continue to checkout.
-                          </p>
-
-                          {stockBlockedItems.length > 0 && (
-                            <p className="mt-1 max-w-[680px] truncate text-xs leading-4 text-red-600/90">
-                              {stockBlockedItems
-                                .map((item) => item.title || item.name || "Product")
-                                .join(" • ")}
+                          <div className="min-w-0">
+                            <h3 className="text-sm font-semibold leading-5 text-red-800">
+                              {stockBlockedItems.length === 1
+                                ? "1 item is unavailable"
+                                : `${stockBlockedItems.length} items are unavailable`}
+                            </h3>
+                            <p className="mt-0.5 text-xs leading-4 text-red-700">
+                              Remove unavailable items to continue to checkout.
                             </p>
-                          )}
-                        </div>
-                      </div>
 
-                      <button
-                        type="button"
-                        onClick={removeOutOfStockItems}
-                        className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium leading-4 text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300"
-                      >
-                        Remove unavailable items
-                      </button>
-                    </div>
-                  </section>
-                )}
+                            {stockBlockedItems.length > 0 && (
+                              <p className="mt-1 max-w-[680px] truncate text-xs leading-4 text-red-600/90">
+                                {stockBlockedItems
+                                  .map(
+                                    (item) =>
+                                      item.title || item.name || "Product",
+                                  )
+                                  .join(" • ")}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={removeOutOfStockItems}
+                          className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium leading-4 text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300"
+                        >
+                          Remove unavailable items
+                        </button>
+                      </div>
+                    </section>
+                  )}
 
                   {hasCartItems && (
                     <div className="overflow-hidden  bg-white">
@@ -261,7 +264,7 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4">
                       {items.map((item, index) => (
                         <div key={item.id}>
                           <CartItemCard

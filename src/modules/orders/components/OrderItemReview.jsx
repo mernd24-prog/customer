@@ -6,6 +6,7 @@ import ReviewImageUploader from "../../products/components/ReviewImageUploader";
 import ReviewMediaLightbox from "../../products/components/ReviewMediaLightbox";
 import BaseModal from "../../../components/ui/overlay/BaseModal";
 import ShowMoreText from "../../../utils/showMore";
+import StarRating from "../../../components/ui/display/StarRating";
 
 import {
   fetchMyProductReview,
@@ -88,13 +89,13 @@ function ExistingReviewCard({ review }) {
 
   return (
     <section
-      className="mt-3 pt-3 border-t border-[#E7D9B8] w-full flex flex-col gap-3"
+      className=" mt-3 pt-3 border-t border-[#E7D9B8] w-full flex flex-col gap-3"
       aria-label="Product review"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-[#E9F7ED] text-[#21812C]">
-            <BadgeCheck size={16} />
+          <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#E9F7ED] text-[#21812C]">
+            <BadgeCheck size={20} />
           </span>
           <div>
             <h3 className="text-sm font-bold text-[#1B1D60]">Product review</h3>
@@ -118,10 +119,7 @@ function ExistingReviewCard({ review }) {
       <div className="flex flex-col gap-3.5 w-full">
         {rating > 0 && (
           <div className="flex items-center gap-2.5">
-            <ReviewRating rating={rating} />
-            <span className="text-sm font-bold text-[#1B1D60]">
-              {rating}.0 out of 5
-            </span>
+            <StarRating rating={rating} showValue={true} showCountText={true} />
           </div>
         )}
 
@@ -147,7 +145,7 @@ function ExistingReviewCard({ review }) {
         {media.length > 0 && (
           <div>
             <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6B6B80]">
-              <Camera size={14} /> Photos from your review ({media.length})
+              <Camera size={16} /> Photos from your review ({media.length})
             </p>
             <div className="flex flex-wrap gap-2">
               {media.slice(0, 5).map((url, index) => (

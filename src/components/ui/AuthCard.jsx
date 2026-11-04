@@ -14,7 +14,7 @@ export default function AuthCard({
   return (
     <section className={`auth-card w-full ${topSpacing ? "py-6 sm:py-8" : ""}`}>
       <div
-        className={`mx-auto w-full ${maxWidth} overflow-hidden rounded-[16px] bg-[#F7F8FC] p-4 shadow-xl sm:rounded-[18px] sm:p-5 lg:rounded-[20px] lg:p-6 md:shadow-sm`}
+        className={`mx-auto w-full ${maxWidth} overflow-hidden rounded-lg bg-[#F7F8FC] p-4 shadow-xl sm:rounded-lg sm:p-5 lg:rounded-lg lg:p-6 `}
       >
         <div className="flex flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
           {/* Left image - visible on large screens */}

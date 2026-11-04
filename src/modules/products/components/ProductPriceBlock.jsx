@@ -1,3 +1,4 @@
+
 import { cn } from "../../../utils/common";
 import { formatMoney } from "../../../utils/ecommerce";
 
@@ -9,6 +10,7 @@ export default function ProductPriceBlock({
   safeDynamicPrice = null,
   dynamicState = {},
   dealBadge = "",
+  hideTaxLabelOnMobile = false,
 
   priceClassName = "",
   mrpClassName = "",
@@ -54,7 +56,12 @@ export default function ProductPriceBlock({
           </span>
         )}
 
-        <span className="text-xs font-medium text-[#878787]">
+        <span
+          className={cn(
+            "text-xs font-medium text-[#878787]",
+            hideTaxLabelOnMobile && "hidden sm:inline",
+          )}
+        >
           (Inclusive of all taxes)
         </span>
       </div>

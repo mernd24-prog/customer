@@ -1,3 +1,4 @@
+
 import { FALLBACK_ABOUT } from "../../../data/fallbackCmsData";
 import FallbackImage from "../../../components/ui/FallbackImage";
 import { BannerActionButton } from "../../../components/ui/button/static";
@@ -7,8 +8,8 @@ export default function AboutBanner({ image, data }) {
   const banner = data || FALLBACK_ABOUT.banner;
 
   return (
-    <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen overflow-hidden bg-[#eae0d5]">
-      <div className="relative h-[300px] w-full sm:h-[380px] md:h-[470px] lg:h-[560px] xl:h-[640px]">
+    <section className="relative left-1/2 -ml-[50vw] w-screen overflow-hidden bg-[#eae0d5]">
+      <div className="relative h-[280px] w-full sm:h-[360px] md:h-[440px] lg:h-[540px] xl:h-[620px]">
         <FallbackImage
           src={image || banner?.image}
           fallbackSrc={fallbackImage}
@@ -20,37 +21,37 @@ export default function AboutBanner({ image, data }) {
           className="h-full w-full object-cover saturate-[0.85] brightness-[0.8]"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-r from-[#00000030] via-[#00000010] to-[#00000020]" />
+        {/* Image Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-black/30" />
 
-        <div className="absolute inset-0 flex items-center justify-center px-4">
+        {/* Banner Content */}
+        <div className="absolute inset-0 flex items-center justify-center px-4 py-6 sm:px-6 md:px-8">
           <div className="customer-container flex w-full justify-center">
-            <div className="w-full max-w-[980px] rounded-lg  px-5 py-6 text-center shadow-[0_30px_80px_rgba(34,27,17,0.18)] backdrop-blur-[2px] sm:px-8 lg:px-12 lg:py-11">
-              {/* {banner?.badge && (
-                <span className="mb-4 inline-block rounded-lg border border-white/60 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white sm:text-xs">
-                  {banner.badge}
-                </span>
-              )} */}
+            <div className="w-full max-w-[850px] px-2 py-4 text-center sm:px-5 sm:py-6 md:px-8 md:py-8 lg:px-12 lg:py-10">
 
               {banner?.title && (
-                <h1 className="text-white text-6xl md:text-2xl lg:text-3xl xl:text-4xl font-extrabold">
+                <h1 className="mx-auto max-w-[750px] text-balance text-2xl leading-tight font-extrabold text-white sm:text-3xl sm:leading-tight md:text-4xl lg:text-5xl xl:text-6xl">
                   {banner.title}
                 </h1>
               )}
- 
+
               {banner?.description && (
-                <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/90 sm:text-base lg:text-lg">
+                <p className="mx-auto mt-3 max-w-[600px] text-pretty text-xs leading-relaxed font-normal text-white/90 sm:mt-4 sm:text-sm sm:leading-6 md:text-base md:leading-7 lg:mt-5 lg:text-lg lg:leading-8">
                   {banner.description}
                 </p>
               )}
-  
+
               {banner?.cta?.label && (
-                <BannerActionButton
-                  as="a"
-                  href={banner.cta.href || "#who-we-are"}
-                >
-                  {banner.cta.label}
-                </BannerActionButton>
+                <div className="mt-4 sm:mt-5 md:mt-7">
+                  <BannerActionButton
+                    as="a"
+                    href={banner.cta.href || "#who-we-are"}
+                  >
+                    {banner.cta.label}
+                  </BannerActionButton>
+                </div>
               )}
+
             </div>
           </div>
         </div>
