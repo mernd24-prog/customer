@@ -273,6 +273,7 @@ export default function OrderDetailPage({ orderId }) {
                                 <Button
                                   variant="secondary"
                                   size="sm"
+                                  disabled={document.pending || !document.downloadPath}
                                   loading={
                                     downloadingId === document.downloadPath
                                   }
@@ -284,7 +285,7 @@ export default function OrderDetailPage({ orderId }) {
                                   }
                                   className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
                                 >
-                                  <Download size={12} /> Download
+                                  <Download size={12} /> {document.pending ? "Pending" : "Download"}
                                 </Button>
                               </div>
                             ))}

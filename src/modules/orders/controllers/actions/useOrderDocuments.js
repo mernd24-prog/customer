@@ -287,6 +287,25 @@ export function useOrderDocuments({
           type: "order_receipt",
         }
       : null,
+    customerFeeInvoice && getDocumentId(customerFeeInvoice)
+      ? {
+          id: getDocumentId(customerFeeInvoice),
+          title: "Platform fee invoice",
+          subtitle: "Marketplace tax invoice for platform fee",
+          downloadPath: endpoints.tax.invoiceDownload(getDocumentId(customerFeeInvoice)),
+          filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
+          type: "platform_fee",
+        }
+      : null,
+    !customerFeeInvoice && customerPlatformFee > 0
+      ? {
+          id: `pending-platform-fee-${orderId}`,
+          title: "Platform fee invoice",
+          subtitle: "Will be available after payment document is generated.",
+          pending: true,
+          type: "platform_fee",
+        }
+      : null,
     ...cancellationReverseInvoices,
     ...returnReverseInvoices,
   ].filter(Boolean);
