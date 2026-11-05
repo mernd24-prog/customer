@@ -58,7 +58,7 @@ export default function SectionContainer({
                   </p>
                 )}
               </div>
-
+ 
               {/* Mobile Icon Button */}
               {hasAction &&
                 actionHref &&

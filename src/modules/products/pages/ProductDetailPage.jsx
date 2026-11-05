@@ -452,6 +452,7 @@ export default function ProductDetailPage() {
               >
                 <ProductRecommendationSection
                   title="You May Also Like"
+                  linkText="Explore more →"
                   products={categoryRelatedProducts}
                   limit={categoryRelatedProducts.length}
                   addToCart={addToCart}
