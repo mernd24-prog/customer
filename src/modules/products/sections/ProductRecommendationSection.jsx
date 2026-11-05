@@ -16,9 +16,11 @@ export default function ProductRecommendationSection({
   return (
     <SectionContainer
       title={title}
-      actionLabel="Explore more"
+      actionLabel="View All Products"
       actionHref="/products"
       actionStyle="icon"
+      mobileActionStyle="button"
+      mobileActionFullWidth
       className={`mb-8 sm:mb-10 ${className}`}
       disablePadding={true}
     >
