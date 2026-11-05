@@ -936,9 +936,9 @@ export default function ProductFilterSidebar({
   if (!loading && !topContent && visibleSections.length === 0) return null;
 
   return (
-    <aside
-      className={`flex h-auto w-full flex-col rounded-lg border border-[#EEDFB9] bg-[#FFFDF8] lg:max-h-[calc(100vh-var(--customer-header-height,95px)-80px)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
-    >
+   <aside
+  className={`relative flex h-auto max-h-none w-full min-w-0 flex-col rounded-lg border border-[#EEDFB9] bg-[#FFFDF8] lg:sticky lg:top-[calc(var(--customer-header-height,95px)+16px)] lg:max-h-[calc(100vh-var(--customer-header-height,95px)-80px)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+>
       <div className="w-full shrink-0 shadow-none">
         <div className="flex items-center justify-between gap-3 border-b border-[#EEDFB9] px-4 py-3 sm:px-4 sm:py-2.5">
           <h3 className="text-[15px] font-semibold normal-case tracking-[-0.01em] text-[#1B1D60]  sm:text-[20px]">Filters</h3>
@@ -955,9 +955,7 @@ export default function ProductFilterSidebar({
         </div>
       </div>
 
-      <div className="filter-panel-scrollbar min-h-0 flex-1 overscroll-contain overflow-y-auto">
-        {topContent}
-
+<div className="filter-panel-scrollbar min-w-0 min-h-0 flex-1 overflow-visible lg:overflow-y-auto lg:overscroll-contain">
         {loading ? (
           <FilterSkeleton />
         ) : (

@@ -694,7 +694,7 @@ export default function ProductCard({
             <button
               type="button"
               onClick={handleBrandClick}
-              className="max-w-full w-fit text-left truncate text-sm sm:text-sm font-bold uppercase tracking-wider text-[#CE9F2D] hover:text-[#B8860B] transition-colors"
+              className=" max-w-full w-fit text-left truncate text-xs sm:text-sm font-bold uppercase tracking-wider text-[#CE9F2D] hover:text-[#B8860B] transition-colors"
               title={brand}
             >
               {capitalizeFirst(brand)}

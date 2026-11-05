@@ -32,7 +32,7 @@ function normalizeObjectId(value) {
 }
 
 function getWritableProductId(value) {
-  if (!value) return "";
+    if (!value) return "";
   if (typeof value !== "object") return normalizeObjectId(value);
 
   const nestedProduct = value.productId || value.product;
@@ -50,15 +50,56 @@ function getWritableProductId(value) {
 export function normalizeWishlistItem(value) {
   const item =
     typeof value === "object" && value !== null ? value : { productId: value };
-  const productId = getWritableProductId(item.productId || item.product || item);
+  const wishlistEntry =
+    item.wishlistEntry || item.wishlist || item.entry || item.productEntry || {};
+
+  const productRef =
+    wishlistEntry.productId ||
+    item.productId ||
+    item.product ||
+    wishlistEntry.product ||
+    item;
+  const productId = getWritableProductId(productRef);
+
+  const savedVariantId = normalizeObjectId(
+    wishlistEntry.variantId || item.variantId || "",
+  );
+  const savedVariantSku = wishlistEntry.variantSku || item.variantSku || "";
+  const savedVariantTitle =
+    wishlistEntry.variantTitle || item.variantTitle || "";
+
+  const candidateVariant =
+    item.selectedVariant ||
+    item.variant ||
+    wishlistEntry.selectedVariant ||
+    wishlistEntry.variant ||
+    null;
+
+  const matchingVariant =
+    candidateVariant &&
+    (String(candidateVariant?._id || candidateVariant?.id || "") ===
+      String(savedVariantId) ||
+      candidateVariant?.sku === savedVariantSku)
+      ? candidateVariant
+      : null;
+
   const variant =
-    item.selectedVariant || item.variant || getDefaultVariant(item) || null;
+    matchingVariant ||
+    candidateVariant ||
+    getDefaultVariant(item) ||
+    getDefaultVariant(wishlistEntry) ||
+    null;
+
   return {
     productId,
-    variantId: normalizeObjectId(item.variantId || variant?._id || variant?.id),
-    variantSku: item.variantSku || variant?.sku || "",
-    variantTitle: item.variantTitle || variant?.title || "",
-    attributes: item.attributes || variant?.attributes || {},
+    variantId: savedVariantId,
+    variantSku: savedVariantSku,
+    variantTitle: savedVariantTitle || variant?.title || "",
+    attributes:
+      item.attributes ||
+      wishlistEntry.attributes ||
+      variant?.attributes ||
+      {},
   };
 }
 
@@ -234,14 +275,16 @@ export function wishlistPayload(cart, product, remove = false, includeItems = tr
     .map(normalizeWishlistItem)
     .filter((item) => item.productId);
 
+  const nextWishlist =
+    remove || !entry.productId
+      ? current.filter((item) => wishlistItemKey(item) !== key)
+      : [entry, ...current.filter((item) => wishlistItemKey(item) !== key)];
+
   return {
     ...(includeItems
       ? { items: mergeCartItems(cart?.items || []) }
       : {}),
-    wishlist:
-      remove || !entry.productId
-        ? current.filter((item) => wishlistItemKey(item) !== key)
-        : [entry, ...current.filter((item) => wishlistItemKey(item) !== key)],
+    wishlist: nextWishlist,
   };
 }
 

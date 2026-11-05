@@ -83,7 +83,7 @@ export function useWishlistActions() {
     (product) => {
       if (!user) {
         openGuestOtpModal(() => {
-          const currentCart = store.getState().cart.current;
+          const currentCart = store.getState().cart.current || cart || {};
           run(dispatch, updateCart(wishlistPayload(currentCart, product, true)), {
             title: "Removed from wishlist",
             message: "The item has been removed from your wishlist.",
