@@ -295,7 +295,7 @@ export default function BecomeASeller() {
                 Seller Login
                 <ArrowRight
                   size={18}
-                  className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-0.5"
+                  className="ml-2 inline-block transition-transform duration-300 "
                 />
               </SolidLargeButton>
             }
@@ -543,7 +543,7 @@ export default function BecomeASeller() {
                     Get Started
                     <ChevronRight
                       size={18}
-                      className="transition-transform duration-300 ease-in-out group-hover:translate-x-0.5"
+                      className="transition-transform duration-300 ease-in-out "
                     />
                   </SolidLargeButton>
                 </div>

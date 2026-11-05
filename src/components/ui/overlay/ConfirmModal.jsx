@@ -1,3 +1,4 @@
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import BaseModal from "./BaseModal";
 import Button from "../buttons/Button";
 export default function ConfirmModal({
@@ -16,13 +17,14 @@ export default function ConfirmModal({
   maxWidth = "max-w-md",
   modalClassName = "",
 }) {
-  if (!open) return null;
+  const { present, exiting } = useAnimatedPresence(open);
+  if (!present) return null;
 
   const imageUrl =
     typeof image === "string" ? image : image?.url || image?.src || "";
 
   return (
-    <BaseModal onClose={onCancel} maxWidth={maxWidth} className={modalClassName}>
+    <BaseModal exiting={exiting} onClose={onCancel} maxWidth={maxWidth} className={modalClassName}>
       <div className="px-5 pb-6 pt-6 sm:px-6">
         <div className="flex items-start gap-4">
           {Boolean(imageUrl) && (

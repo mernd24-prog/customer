@@ -1,3 +1,4 @@
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
@@ -231,7 +232,8 @@ export default function GuestOtpAuthModal({
     }
   };
 
-  if (!open || typeof document === "undefined" || !document.body) {
+  const { present, exiting } = useAnimatedPresence(open);
+  if (!present || typeof document === "undefined" || !document.body) {
     return null;
   }
 
@@ -247,7 +249,9 @@ export default function GuestOtpAuthModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-black/55 p-3 backdrop-blur-sm sm:p-4"
+      data-exiting={exiting}
+      inert={exiting ? "" : undefined}
+      className="customer-overlay fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-black/55 p-3 backdrop-blur-sm sm:p-4"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
@@ -255,7 +259,7 @@ export default function GuestOtpAuthModal({
     >
       <div
         className={cn(
-          "relative max-h-[calc(100vh-24px)] w-full max-w-[820px] overflow-y-auto",
+          "customer-overlay-panel relative max-h-[calc(100vh-24px)] w-full max-w-[820px] overflow-y-auto",
           "rounded-[16px] sm:max-h-[calc(100vh-32px)] sm:rounded-[18px] lg:rounded-[20px]",
         )}
         onClick={(event) => event.stopPropagation()}

@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 
 export default function Drawer({
   open,
@@ -8,8 +9,9 @@ export default function Drawer({
   width = "w-full",
   children,
 }) {
+  const { present, exiting } = useAnimatedPresence(open);
   useEffect(() => {
-    if (!open) return;
+    if (!present) return;
 
     const scrollY = window.scrollY;
 
@@ -32,20 +34,21 @@ export default function Drawer({
 
       window.scrollTo(0, scrollY);
     };
-  }, [open]);
+  }, [present]);
 
-  if (!open) return null;
+  if (!present) return null;
 
   const sideClass = side === "left" ? "left-0" : "right-0";
 
   return (
-    <div className="fixed inset-0  z-50 lg:hidden">
+    <div className="customer-overlay fixed inset-0 z-50 lg:hidden" data-exiting={exiting} inert={exiting ? "" : undefined}>
       <div
         className="absolute inset-0 bg-black/45 backdrop-blur-sm"
         onClick={onClose}
       />
       <div
-        className={`absolute top-0 ${sideClass} h-full ${width} overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}
+        data-side={side}
+        className={`customer-drawer-panel absolute top-0 ${sideClass} h-full ${width} overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}
       >
         <div className=" flex items-center justify-end  pb-3">
           <button

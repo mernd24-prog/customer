@@ -1,3 +1,4 @@
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { CheckCircle2, BellRing } from "lucide-react";
@@ -78,7 +79,8 @@ export default function NotifyMeModal({
     }
   }, [open, user]);
 
-  if (!open) return null;
+  const { present, exiting } = useAnimatedPresence(open);
+  if (!present) return null;
 
   const productTitle =
     getProductTitle({ ...product, selectedVariant }) ||
@@ -153,7 +155,7 @@ export default function NotifyMeModal({
   };
 
   return (
-    <BaseModal
+    <BaseModal exiting={exiting}
       maxWidth="max-w-md"
       onClose={onClose}
       className="rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] p-6 shadow-xl"

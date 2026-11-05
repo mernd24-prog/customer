@@ -117,7 +117,7 @@ export default function ReturnItemCard({
         <ImageWithFallback
           src={image}
           alt={title}
-          className="max-h-full max-w-full object-contain transition-transform group-hover:scale-105"
+          className="max-h-full max-w-full object-contain transition-transform "
           imgClassName="object-contain max-h-full max-w-full mix-blend-multiply"
         />
       </Link>

@@ -1,3 +1,4 @@
+import { useAnimatedPresence } from "../../../../hooks/useAnimatedPresence";
 import { MapPin, SquarePen } from "lucide-react";
 import BaseModal from "../../../../components/ui/overlay/BaseModal";
 import Button from "../../../../components/ui/buttons/Button";
@@ -25,10 +26,11 @@ export default function AddressEditModal({
   icon: Icon = SquarePen,
   iconClassName = "text-gold",
 }) {
-  if (!isOpen) return null;
+  const { present, exiting } = useAnimatedPresence(isOpen);
+  if (!present) return null;
 
   return (
-    <BaseModal onClose={onClose} maxWidth="max-w-2xl">
+    <BaseModal exiting={exiting} onClose={onClose} maxWidth="max-w-2xl">
       <div className="flex max-h-[90vh] flex-col overflow-hidden rounded-2xl bg-white p-2">
         <header className="flex shrink-0 items-center gap-3 border-b border-[#E8ECF3] px-5 py-4 sm:px-7">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#FFF7E6] text-[#CE9F2D]">

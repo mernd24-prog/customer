@@ -83,7 +83,7 @@ export default function CustomSwiper({
               text-gray-800
               transition-all
               hover:bg-white
-              hover:scale-105
+
               active:scale-95
               focus:outline-none
             `,
@@ -172,7 +172,7 @@ export default function CustomSwiper({
               text-gray-800
               transition-all
               hover:bg-white
-              hover:scale-105
+
               active:scale-95
               focus:outline-none
             `,

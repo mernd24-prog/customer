@@ -61,6 +61,7 @@ export default function Button({
       type={type}
       onClick={onClick}
       disabled={isDisabled}
+      aria-busy={loading || undefined}
       style={customStyle}
       className={cn(
         "inline-flex cursor-pointer items-center justify-center gap-2  font-semibold tracking-normal transition-all duration-300 ease-in-out",
@@ -75,7 +76,7 @@ export default function Button({
       {...rest}
     >
       {loading ? (
-        <span className="flex items-center gap-2">
+        <span className="customer-content-enter flex items-center gap-2" role="status">
           <SpinnerIcon className="h-4 w-4 animate-spin" />
           Please Wait…
         </span>

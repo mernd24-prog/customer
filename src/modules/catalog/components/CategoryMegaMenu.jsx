@@ -262,7 +262,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.categoryKey}
                 to={itemHref}
-                className={`group flex items-center gap-2 rounded-xl px-3 py-1.5 text-left text-sm font-medium transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark hover:translate-x-0.5 ${
+                className={`group flex items-center gap-2 rounded-xl px-3 py-1.5 text-left text-sm font-medium transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark  ${
                   isCurrentLink ? "bg-cream text-gold-dark" : "text-ink/70"
                 }`}
               >
@@ -283,7 +283,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.name}
                 to={getQuickLinkHref(item)}
-                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm font-medium text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark hover:translate-x-0.5"
+                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm font-medium text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark "
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-gold-dark/30 group-hover:bg-gold-dark transition-all duration-300 ease-in-out" />
                 <span className="flex-1 truncate">{item.name}</span>
@@ -331,7 +331,7 @@ const PromotionBanner = memo(function PromotionBanner({
           <img loading="lazy" width="400" height="400"
             src={image}
             alt={title}
-            className="h-full w-full object-cover object-right transition-all duration-300 ease-in-out group-hover:scale-105"
+            className="h-full w-full object-cover object-right transition-all duration-300 ease-in-out "
             onError={(event) => onImageError(event, title, imageFallbackType)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />

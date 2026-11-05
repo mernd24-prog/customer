@@ -1,3 +1,4 @@
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ShoppingBag, X } from "lucide-react";
@@ -151,7 +152,8 @@ export default function AddedToCartModal({
   addedProduct,
   cartItems = [],
 }) {
-  if (!open) return null;
+  const { present, exiting } = useAnimatedPresence(open);
+  if (!present) return null;
 
   const addedTitle = getProductTitle(addedProduct, "Item");
 
@@ -172,7 +174,7 @@ export default function AddedToCartModal({
   }, 0);
 
   return (
-    <ModalOverlay onClose={onClose} showCloseButton={false}>
+    <ModalOverlay exiting={exiting} onClose={onClose} showCloseButton={false}>
       <div className="relative grid max-h-[92vh] w-full grid-cols-1 overflow-y-auto rounded-lg  bg-white shadow-2xl lg:max-h-[80vh] lg:grid-cols-[minmax(0,1fr)_360px] lg:overflow-hidden">
         <button
           type="button"

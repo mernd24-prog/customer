@@ -27,7 +27,7 @@ function StarInput({ value, onChange }) {
         <button
           key={rating}
           type="button"
-          className="transition-transform hover:scale-110"
+          className="transition-transform "
           onClick={() => onChange(rating)}
           onMouseEnter={() => setHovered(rating)}
           onMouseLeave={() => setHovered(0)}
@@ -162,7 +162,7 @@ function ExistingReviewCard({ review }) {
                     height="400"
                     src={url}
                     alt={`Review image ${index + 1}`}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    className="h-full w-full object-cover transition duration-300 "
                   />
                 </button>
               ))}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export default function FAQAccordion({ faqs = [] }) {
   const [openIndex, setOpenIndex] = useState(null);
@@ -21,15 +21,17 @@ export default function FAQAccordion({ faqs = [] }) {
                 className="overflow-hidden rounded-md bg-navy-soft mb-4"
               >
                 {/* Question */}
-                <div
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
                   onClick={() => toggleFAQ(index)}
-                  className="flex cursor-pointer items-center justify-between px-5 py-4 transition-all duration-300 ease-in-out"
+                  className="flex w-full cursor-pointer items-center justify-between px-5 py-4 text-left transition-colors duration-300 ease-in-out"
                 >
-                  <h3 className=" text-[15px] font-medium text-ink md:text-[16px]">
+                  <span className=" text-[15px] font-medium text-ink md:text-[16px]">
                     {faq.question}
-                  </h3>
+                  </span>
 
-                  <button
+                  <span
                     className={`
                       flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ease-in-out
                       ${
@@ -39,25 +41,24 @@ export default function FAQAccordion({ faqs = [] }) {
                       }
                     `}
                   >
-                    {isOpen ? (
-                      <ChevronUp size={16} />
-                    ) : (
-                      <ChevronDown size={16} />
-                    )}
-                  </button>
-                </div>
+                    <ChevronDown size={16} className={`transition-transform duration-300 motion-reduce:transition-none ${isOpen ? "rotate-180" : ""}`} />
+                  </span>
+                </button>
 
                 {/* Answer */}
                 <div
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  aria-hidden={!isOpen}
+                  className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out motion-reduce:transition-none ${
                     isOpen
-                      ? "max-h-40 px-5 pb-5 pt-0 opacity-100"
-                      : "max-h-0 px-5 py-0 opacity-0"
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
                   }`}
                 >
-                  <p className=" text-base leading-6 text-muted">
+                  <div className="min-h-0 overflow-hidden">
+                  <p className="px-5 pb-5 text-base leading-6 text-muted">
                     {faq.answer}
                   </p>
+                  </div>
                 </div>
               </div>
             );

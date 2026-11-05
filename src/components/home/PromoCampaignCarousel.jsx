@@ -179,7 +179,7 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
                       decoding="async"
                       width="371"
                       height="480"
-                      className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 ease-out "
                     />
                   )}
 

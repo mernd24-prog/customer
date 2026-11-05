@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/common";
 import { createPortal } from "react-dom";
+import { useAnimatedPresence } from "../../hooks/useAnimatedPresence";
 
 const THUMB_HEIGHT = 32; // Fixed compact short pill thumb
 const TRACK_PADDING = 6; // Padding from top/bottom borders
@@ -31,6 +32,7 @@ export default function CustomDropdown({
   isLoading = false,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const { present, exiting } = useAnimatedPresence(isOpen);
   const [search, setSearch] = useState("");
   const searchRef = useRef(null);
   const filteredOptions = searchable || typeahead
@@ -278,12 +280,14 @@ export default function CustomDropdown({
         />
       </button>
 
-      {isOpen && renderPanel(
+      {present && renderPanel(
         <div
           ref={panelRef}
+          data-exiting={exiting}
+          inert={exiting ? "" : undefined}
           style={portal ? panelStyle : undefined}
           className={cn(
-            "absolute left-0 top-[calc(100%+6px)]",
+            "customer-dropdown-panel absolute left-0 top-[calc(100%+6px)]",
             "z-30 w-full overflow-hidden",
             "rounded-lg",
             "border border-[#CE9F2D]",

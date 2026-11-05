@@ -1,3 +1,4 @@
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import { CheckCircle2 } from "lucide-react";
 import BaseModal from "../../../components/ui/overlay/BaseModal";
 import { useSupportController } from "../controllers/useSupportController";
@@ -5,10 +6,11 @@ import { useSupportController } from "../controllers/useSupportController";
 export function TicketSuccessModal() {
   const { ticketSuccessModalOpen, ticketSuccessModalData, handleCloseSuccessModal } = useSupportController();
 
-  if (!ticketSuccessModalOpen) return null;
+  const { present, exiting } = useAnimatedPresence(ticketSuccessModalOpen);
+  if (!present) return null;
 
   return (
-    <BaseModal onClose={handleCloseSuccessModal} maxWidth="max-w-md">
+    <BaseModal exiting={exiting} onClose={handleCloseSuccessModal} maxWidth="max-w-md">
       <div className="flex flex-col items-center px-6 py-10 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F8F5] text-[#117A65] mb-5">
           <CheckCircle2 size={40} strokeWidth={2.5} />

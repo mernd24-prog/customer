@@ -1,3 +1,4 @@
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
@@ -55,11 +56,14 @@ export default function AuthModal({ open, onClose }) {
     if (e.target === e.currentTarget) onClose();
   };
 
-  if (!open) return null;
+  const { present, exiting } = useAnimatedPresence(open);
+  if (!present) return null;
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4 animate-overlay-in"
+      data-exiting={exiting}
+      inert={exiting ? "" : undefined}
+      className="customer-overlay fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4"
       style={{
         backgroundColor: "rgba(0,0,0,0.55)",
         backdropFilter: "blur(6px)",
@@ -73,11 +77,10 @@ export default function AuthModal({ open, onClose }) {
       {/* Card — bottom sheet on mobile, centered card on sm+ */}
       <div
         className={cn(
-          "relative w-full bg-white overflow-hidden",
+          "customer-overlay-panel relative w-full bg-white overflow-hidden",
           "rounded-t-[20px] sm:rounded-[var(--customer-radius-lg)]",
           "sm:max-w-[400px]",
           "shadow-2xl",
-          "sm:animate-modal-in animate-sheet-in",
         )}
         onClick={(e) => e.stopPropagation()}
       >

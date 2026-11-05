@@ -1177,7 +1177,6 @@ select:not([multiple]):disabled {
 
 @media (hover: hover) and (pointer: fine) {
   .wishlist-product-card:hover {
-    transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(27, 29, 96, 0.08);
   }
   .wishlist-product-card:hover > :first-child {
@@ -1239,4 +1238,77 @@ body { font-size: var(--ui-body); line-height: var(--ui-leading); }
 .rich-text-content table { display: block; max-width: 100%; overflow-x: auto; }
 @media (max-width: 767px) {
   .auth-card .customer-input { height: auto; min-height: var(--ui-control-height); }
+}
+
+/* Shared motion: animate surfaces and state changes, keeping hover targets steady. */
+:root {
+  --customer-motion-duration: 240ms;
+  --customer-motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.customer-content-enter {
+  animation: customer-content-in var(--customer-motion-duration) ease-out both;
+}
+
+.customer-overlay {
+  animation: customer-overlay-in var(--customer-motion-duration) ease-out both;
+}
+.customer-overlay-panel {
+  animation: customer-panel-in var(--customer-motion-duration) var(--customer-motion-ease) both;
+}
+.customer-drawer-panel {
+  --drawer-offset: 100%;
+  animation: customer-drawer-in 280ms var(--customer-motion-ease) both;
+}
+.customer-drawer-panel[data-side="left"] { --drawer-offset: -100%; }
+.customer-overlay[data-exiting="true"] {
+  pointer-events: none;
+  animation: customer-overlay-out 200ms ease-in both;
+}
+.customer-overlay[data-exiting="true"] .customer-overlay-panel {
+  animation: customer-panel-out 200ms ease-in both;
+}
+.customer-overlay[data-exiting="true"] .customer-drawer-panel {
+  animation: customer-drawer-out 200ms ease-in both;
+}
+
+@keyframes customer-content-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes customer-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes customer-overlay-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes customer-panel-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes customer-panel-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(8px); }
+}
+@keyframes customer-drawer-in {
+  from { transform: translateX(var(--drawer-offset)); }
+  to { transform: translateX(0); }
+}
+@keyframes customer-drawer-out {
+  from { transform: translateX(0); }
+  to { transform: translateX(var(--drawer-offset)); }
+}
+
+/* Keep this after motion rules so reduced motion also covers future additions. */
+@media (prefers-reduced-motion: reduce) {
+  .customer-content-enter,
+  .customer-overlay,
+  .customer-overlay-panel,
+  .customer-drawer-panel {
+    animation: none !important;
+  }
+}
+
+.customer-dropdown-panel {
+  animation: customer-panel-in 180ms var(--customer-motion-ease) both;
+}
+.customer-dropdown-panel[data-exiting="true"] {
+  pointer-events: none;
+  animation: customer-panel-out 200ms ease-in both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .customer-dropdown-panel { animation: none !important; }
 }

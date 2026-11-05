@@ -231,7 +231,7 @@ export default function SupportHelpCenter() {
                     )}
                   </span>
 
-                  <ChevronDown className="size-4 shrink-0 -rotate-90 text-[#8A8FA3] transition-transform group-hover:-translate-x-0.5 group-hover:text-[#D4A12F]" />
+                  <ChevronDown className="size-4 shrink-0 -rotate-90 text-[#8A8FA3] transition-transform  group-hover:text-[#D4A12F]" />
                 </Link>
               ))}
             </nav>
@@ -260,7 +260,7 @@ export default function SupportHelpCenter() {
                         to={topic.path || "/contact-us"}
                         className="group flex min-w-0 flex-col items-center text-center"
                       >
-                        <div className="flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#F5C72E] transition-transform duration-200 group-hover:scale-105">
+                        <div className="flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#F5C72E] transition-transform duration-200 ">
                           <img
                             loading="lazy"
                             width="400"

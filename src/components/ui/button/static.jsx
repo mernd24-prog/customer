@@ -188,7 +188,7 @@ export const CategoryMoreButton = ({
         {...props}
       >
         {/* ICON */}
-        <span className="flex h-[28px] w-[32px] sm:h-[42px] sm:w-[46px] lg:h-[46px] lg:w-[52px] items-center justify-center transition-transform duration-200 group-hover:scale-105">
+        <span className="flex h-[28px] w-[32px] sm:h-[42px] sm:w-[46px] lg:h-[46px] lg:w-[52px] items-center justify-center transition-transform duration-200 ">
           <img
             loading="lazy"
             width="400"

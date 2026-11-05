@@ -150,7 +150,9 @@ export default function AppLayout() {
       >
         {showCategoryBar && <CategoryBar compact />}
 
-        <Outlet />
+        <div key={location.pathname} className="customer-content-enter">
+          <Outlet />
+        </div>
       </main>
 
       <Suspense fallback={<div className="h-[400px] w-full" />}>
@@ -161,7 +163,6 @@ export default function AppLayout() {
         <ScrollTopButton />
         <DeliveryChecker standalone />
 
-        {addedModalOpen && (
           <AddedToCartModal
             open={addedModalOpen}
             onClose={handleCloseAddedToCartModal}
@@ -169,15 +170,12 @@ export default function AppLayout() {
             addedProduct={addedProduct}
             cartItems={cartItems}
           />
-        )}
 
-        {showGuestOtpModal && (
           <GuestOtpAuthModal
             open={showGuestOtpModal}
             onClose={() => setShowGuestOtpModal(false)}
             onSuccess={handleGuestLoginSuccess}
           />
-        )}
       </Suspense>
     </div>
   );

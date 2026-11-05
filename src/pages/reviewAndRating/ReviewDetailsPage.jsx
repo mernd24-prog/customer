@@ -91,7 +91,7 @@ function ProductReviewSidebar({ product, productId }) {
       >
         <ChevronLeft
           size={16}
-          className="transition-transform group-hover:-translate-x-1"
+          className="transition-transform "
         />
         Back to Product
       </Link>

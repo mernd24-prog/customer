@@ -34,7 +34,7 @@ function StarInput({ value, onChange, size = 24 }) {
           onClick={() => onChange(n)}
           onMouseEnter={() => setHovered(n)}
           onMouseLeave={() => setHovered(0)}
-          className="transition-transform hover:scale-110"
+          className="transition-transform "
         >
           <IoIosStar
             size={size}

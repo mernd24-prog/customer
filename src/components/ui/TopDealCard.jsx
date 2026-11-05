@@ -10,7 +10,7 @@ export default function TopDealCard({
 }) {
   return (
     <Link to={link} className="block h-full">
-      <article className="customer-card flex h-full flex-col p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]">
+      <article className="customer-card flex h-full flex-col p-3 transition-all duration-300 ease-in-out  hover:shadow-[var(--customer-shadow)]">
         {/* Product Image */}
         <div className="overflow-hidden rounded-[var(--customer-radius)]">
           <img loading="lazy"
@@ -18,7 +18,7 @@ export default function TopDealCard({
             alt={title}
             width="292"
             height="310"
-            className="aspect-[292/310] w-full object-cover transition-all duration-300 ease-in-out hover:scale-105"
+            className="aspect-[292/310] w-full object-cover transition-all duration-300 ease-in-out "
           />
         </div>
 

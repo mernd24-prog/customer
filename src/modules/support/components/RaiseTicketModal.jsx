@@ -1,3 +1,4 @@
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Ticket, Sparkles, Loader2, Info, LifeBuoy } from "lucide-react";
@@ -81,10 +82,11 @@ export function RaiseTicketModal() {
     }
   };
 
-  if (!raiseTicketModalOpen) return null;
+  const { present, exiting } = useAnimatedPresence(raiseTicketModalOpen);
+  if (!present) return null;
 
   return (
-    <BaseModal onClose={handleCloseRaiseTicketModal} maxWidth="max-w-lg">
+    <BaseModal exiting={exiting} onClose={handleCloseRaiseTicketModal} maxWidth="max-w-lg">
       <div className="p-6 sm:p-7">
         {/* Header */}
         <div className="border-b border-slate-100 pb-4 mb-5">

@@ -378,7 +378,7 @@ export default function ProductCard({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          "customer-card p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]",
+          "customer-card p-3 transition-all duration-300 ease-in-out  hover:shadow-[var(--customer-shadow)]",
           className,
         )}
       >
@@ -403,7 +403,7 @@ export default function ProductCard({
                   alt=""
                   width="300"
                   height="300"
-                  className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="h-full w-full object-contain transition-transform duration-300 "
                   loading="lazy"
                   decoding="async"
                   onError={handleImageError}
@@ -541,7 +541,7 @@ export default function ProductCard({
           }
           onClick={handleWishlist}
           className={cn(
-            "absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-xs border border-black/5 transition-all duration-300 ease-out hover:scale-[1.03] active:scale-95 hover:bg-white",
+            "absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-xs border border-black/5 transition-all duration-300 ease-out  active:scale-95 hover:bg-white",
             isWishlisted
               ? "text-rose-500 bg-rose-50/90 border-rose-200"
               : "text-[#1B1D60] hover:text-rose-500",
@@ -613,7 +613,7 @@ export default function ProductCard({
                       alt=""
                       width="350"
                       height="350"
-                      className="h-full w-full object-cover object-top transition-transform duration-700 ease-in-out group-hover:scale-[1.02] will-change-transform"
+                      className="h-full w-full object-cover object-top transition-transform duration-700 ease-in-out  will-change-transform"
                       loading={idx === 0 ? "eager" : "lazy"}
                       decoding="async"
                       onError={handleImageError}

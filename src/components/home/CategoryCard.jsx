@@ -28,7 +28,7 @@ export default function CategoryCard({
         <img
           src={cardImage}
           alt={title || "Category"}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out "
           loading="lazy"
           decoding="async"
           onError={(event) => applyImageFallback(event, title, "category")}

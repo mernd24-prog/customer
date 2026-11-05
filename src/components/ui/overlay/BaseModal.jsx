@@ -9,6 +9,7 @@ export default function BaseModal({
   maxWidth = "max-w-4xl",
   className = "",
   showCloseButton = true,
+  exiting = false,
 }) {
   const [mounted, setMounted] = useState(false);
 
@@ -23,14 +24,18 @@ export default function BaseModal({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-4 py-4 backdrop-blur-sm"
+      className="customer-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-4 py-4 backdrop-blur-sm"
+      data-exiting={exiting}
+      role="dialog"
+      aria-modal="true"
+      inert={exiting ? "" : undefined}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose?.();
       }}
     >
       <div
         className={cn(
-          "customer-card relative max-h-[calc(100dvh-2rem)] min-w-0 w-full overflow-y-auto shadow-[var(--customer-shadow-strong)]",
+          "customer-overlay-panel customer-card relative max-h-[calc(100dvh-2rem)] min-w-0 w-full overflow-y-auto shadow-[var(--customer-shadow-strong)]",
           maxWidth,
           className,
         )}

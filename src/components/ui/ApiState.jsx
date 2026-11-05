@@ -37,24 +37,23 @@ export default function ApiState({
   emptyActionLabel,
   onEmptyAction,
 }) {
+  let content;
+  const state = loading ? "loading" : error ? "error" : empty ? "empty" : "ready";
   if (loading) {
-    return (
+    content = (
       <SkeletonLoader
         layout={skeletonLayout}
         containerClass={skeletonContainerClass}
       />
     );
-  }
-
-  if (error) {
+  } else if (error) {
     if (isNotFoundApiError(error)) {
-      return <NotFoundPage />;
+      content = <NotFoundPage />;
+    } else {
+      content = <ErrorState message={error} />;
     }
-    return <ErrorState message={error} />;
-  }
-
-  if (empty) {
-    return (
+  } else if (empty) {
+    content = (
       <EmptyState
         title={emptyTitle}
         description={emptyText}
@@ -62,6 +61,12 @@ export default function ApiState({
         onAction={onEmptyAction}
       />
     );
+  } else {
+    content = children;
   }
-  return children;
+  return (
+    <div aria-busy={Boolean(loading)} className="min-w-0 w-full">
+      <div key={state} className="customer-content-enter">{content}</div>
+    </div>
+  );
 }

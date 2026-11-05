@@ -467,7 +467,6 @@ export default function ProductDetailPage() {
       </PageContainer>
 
       <Suspense fallback={null}>
-        {showGuestOtpModal && (
           <GuestOtpAuthModal
             open={showGuestOtpModal}
             onClose={() => setShowGuestOtpModal(false)}
@@ -476,8 +475,7 @@ export default function ProductDetailPage() {
               navigate("/checkout");
             }}
           />
-        )}
-        {product && isSizeChartOpen && (
+        {product && (
           <SizeChartSidebar
             isOpen={isSizeChartOpen}
             onClose={() => setIsSizeChartOpen(false)}

@@ -1,9 +1,11 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 
 export default function SizeChartSidebar({ isOpen, onClose, productName }) {
+  const { present, exiting } = useAnimatedPresence(isOpen);
   useEffect(() => {
-    if (isOpen) {
+    if (present) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -11,12 +13,12 @@ export default function SizeChartSidebar({ isOpen, onClose, productName }) {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isOpen]);
+  }, [present]);
 
-  if (!isOpen) return null;
+  if (!present) return null;
 
   return (
-    <>
+    <div className="customer-overlay fixed inset-0 z-[9998]" data-exiting={exiting} inert={exiting ? "" : undefined}>
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/50 z-[9998] transition-opacity"
@@ -24,7 +26,7 @@ export default function SizeChartSidebar({ isOpen, onClose, productName }) {
       />
       
       {/* Sidebar */}
-      <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] md:w-[450px] max-w-full bg-[#F5F8FB] z-[9999] shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out">
+      <div className="customer-drawer-panel fixed top-0 right-0 h-full w-full sm:w-[400px] md:w-[450px] max-w-full bg-[#F5F8FB] z-[9999] shadow-2xl flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-5 bg-white border-b border-border">
           <h2 className="text-lg sm:text-xl font-bold text-ink text-center w-full px-8">{productName || "Size Chart"}</h2>
@@ -111,6 +113,6 @@ export default function SizeChartSidebar({ isOpen, onClose, productName }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

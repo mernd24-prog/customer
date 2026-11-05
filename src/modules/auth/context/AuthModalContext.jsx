@@ -67,7 +67,6 @@ export function AuthModalProvider({ children }) {
       {children}
 
       <Suspense fallback={null}>
-        {isOpen && (
           <AuthModal
             open={isOpen}
             onClose={closeAuthModal}
@@ -77,9 +76,7 @@ export function AuthModalProvider({ children }) {
               setIsOtpOpen(true);
             }}
           />
-        )}
 
-        {isOtpOpen && (
           <GuestOtpAuthModal
             open={isOtpOpen}
             onClose={closeAuthModal}
@@ -89,7 +86,6 @@ export function AuthModalProvider({ children }) {
               setIsOpen(true);
             }}
           />
-        )}
       </Suspense>
     </AuthModalContext.Provider>
   );

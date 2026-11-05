@@ -32,7 +32,7 @@ const ProductGridPage = memo(function ProductGridPage({
           {sourceLink && (
             <Link to={sourceLink} className="group inline-flex items-center gap-1.5 text-sm leading-[20px] tracking-[0.5px] font-medium text-gold hover:text-gold-dark transition-colors">
               <span>{sourceText || "Explore more"}</span>
-              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+              <ArrowRight className="w-3.5 h-3.5 transition-transform " strokeWidth={2.5} />
             </Link>
           )}
         </div>

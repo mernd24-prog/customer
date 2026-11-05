@@ -86,7 +86,7 @@ function CategoryTile({ category }) {
           p-1.5
           shadow-[0_2px_8px_rgba(0,0,0,0.04)]
           transition-all duration-300
-          hover:-translate-y-0.5
+
           hover:border-[#E5D6B5]
           hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]
         "
@@ -121,7 +121,7 @@ function CategoryTile({ category }) {
                 transition-transform duration-300
                 sm:h-[60px] sm:w-[60px]
                 lg:h-[76px] lg:w-[76px]
-                group-hover:scale-[1.04]
+
               "
             />
           ) : (
