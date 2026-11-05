@@ -240,9 +240,9 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="overflow-hidden  bg-white">
-                      <div className="flex min-h-12 items-center justify-between gap-3 ">
-                        <label className="flex min-w-0 cursor-pointer items-center gap-3 text-base font-semibold text-[#2D2D2D]">
+                    <div className="flex min-h-[58px] w-full items-center justify-between gap-3 rounded-lg border border-[#D5D9E2] bg-white px-3.5 py-2 sm:min-h-[50px] sm:px-5">
+                      <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                        <label className="flex min-w-0 cursor-pointer items-center gap-2.5 text-sm font-semibold text-[#252936] sm:gap-3 sm:text-base">
                           <input
                             type="checkbox"
                             checked={
@@ -252,14 +252,16 @@ export default function CartPage() {
                             onChange={(event) =>
                               handleSelectAll(event.target.checked)
                             }
-                            className="m-0 h-4 w-4 shrink-0 cursor-pointer rounded accent-[#3F4095]"
+                            aria-label="Select all cart items"
+                            className="m-0 h-3 w-3 shrink-0 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095]  sm:h-[15px] sm:w-[15px]"
                           />
-                          <span className="leading-5">Select All</span>
+                          <span className="whitespace-nowrap leading-5">Select All</span>
                         </label>
-                        <span className="shrink-0 whitespace-nowrap text-sm font-medium text-[#555555]">
-                          {selectedItems.length} of {items.length} Selected
-                        </span>
+                        <span className="hidden h-6 w-px bg-[#D9DCE4] sm:block" />
                       </div>
+                      <span className="shrink-0 whitespace-nowrap text-xs font-medium text-[#555B68] sm:text-sm">
+                        {selectedItems.length} of {items.length} Selected
+                      </span>
                     </div>
                   )}
 

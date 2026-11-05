@@ -8,6 +8,7 @@ export default function Drawer({
   side = "right",
   width = "w-full",
   children,
+  topOffset = "0px",
 }) {
   const { present, exiting } = useAnimatedPresence(open);
   useEffect(() => {
@@ -48,7 +49,11 @@ export default function Drawer({
       />
       <div
         data-side={side}
-        className={`customer-drawer-panel absolute top-0 ${sideClass} h-full ${width} overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}
+        className={`customer-drawer-panel absolute ${sideClass} ${width} overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}
+        style={{
+          top: topOffset,
+          height: `calc(100vh - ${topOffset})`,
+        }}
       >
         <div className=" flex items-center justify-end  pb-3">
           <button

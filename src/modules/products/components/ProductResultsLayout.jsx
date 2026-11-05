@@ -118,7 +118,11 @@ export default function ProductResultsLayout({
         )}{" "}
         {/* Hide mobile filter drawer completely on empty state */}{" "}
         {shouldShowFilters && (
-          <FilterDrawer open={sidebarOpen} onClose={onCloseSidebar}>
+          <FilterDrawer
+            open={sidebarOpen}
+            onClose={onCloseSidebar}
+            topOffset="calc(var(--customer-header-height, 0px) + 44px)"
+          >
             {" "}
             <ProductFilterSidebar
               key={`mobile-filters-${filterStructureKey}`}

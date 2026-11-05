@@ -95,21 +95,28 @@ export default function CartItemCard({
       }`}
     >
       {/* Product information */}
-      <div className="grid grid-cols-[88px_minmax(0,1fr)] items-start gap-2.5 p-2.5 min-[375px]:grid-cols-[96px_minmax(0,1fr)] min-[375px]:gap-3 min-[375px]:p-3 sm:grid-cols-[112px_minmax(0,1fr)] sm:gap-5 sm:p-5">
-        {/* Product image and checkbox */}
-        <div className="relative flex min-w-0 items-start justify-center">
-          {showCheckbox && (
-            <label className="absolute left-1.5 top-1.5 z-10 flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border border-[#E5E7EB] bg-white shadow-sm transition-colors sm:left-1 sm:top-1 sm:h-6 sm:w-6">
-              <input
-                type="checkbox"
-                checked={selected}
-                onChange={(event) => onSelect?.(item?.id, event.target.checked)}
-                className="m-0 h-3.5 w-3.5 cursor-pointer appearance-auto rounded-sm border border-gray-300 accent-[#3F4095] focus:ring-1 focus:ring-[#3F4095] sm:h-4 sm:w-4"
-              />
-              <span className="sr-only">Select {item?.title} For Checkout</span>
-            </label>
-          )}
+      <div
+        className={`grid items-start gap-2.5 p-2.5 min-[375px]:gap-3 min-[375px]:p-3 sm:gap-5 sm:p-5 ${
+          showCheckbox
+            ? "grid-cols-[20px_88px_minmax(0,1fr)] min-[375px]:grid-cols-[20px_96px_minmax(0,1fr)] sm:grid-cols-[24px_112px_minmax(0,1fr)]"
+            : "grid-cols-[88px_minmax(0,1fr)] min-[375px]:grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[112px_minmax(0,1fr)]"
+        }`}
+      >
+        {/* Selection checkbox */}
+        {showCheckbox && (
+          <label className="flex cursor-pointer items-start justify-center pt-1">
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={(event) => onSelect?.(item?.id, event.target.checked)}
+              aria-label={`Select ${item?.title} for checkout`}
+              className="m-0 h-5 w-5 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095] focus:outline-none sm:h-[15px] sm:w-[15px]"
+            />
+          </label>
+        )}
 
+        {/* Product image */}
+        <div className="flex min-w-0 items-start justify-center">
           {item?.image && (
             <div className="h-[112px] w-[88px] shrink-0 overflow-hidden rounded-lg bg-white min-[375px]:h-[120px] min-[375px]:w-[96px] sm:h-[140px] sm:w-[115px]">
               {productPath ? (
