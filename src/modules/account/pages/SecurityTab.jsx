@@ -117,7 +117,7 @@ export default function SecurityTab() {
 
         <FormField
           id="currentPassword"
-          label="Current Password"
+          label="Current Password (if already set)"
           type="password"
           registration={register("currentPassword")}
           error={errors.currentPassword}
@@ -126,6 +126,10 @@ export default function SecurityTab() {
           readOnly={otpRequired}
           disabled={loading}
         />
+
+        <p className="text-xs text-[#64708A]">
+          If you signed up using OTP and have not set a password, leave the current password empty.
+        </p>
 
         <FormField
           id="newPassword"

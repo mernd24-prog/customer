@@ -5,6 +5,16 @@ import { store } from "./app/store";
 import App from "./App";
 import LazyToast from "./components/ui/LazyToast";
 import "./styles.css";
+
+// Remove passwords retained by older versions; never persist credentials here.
+for (const storageName of ["localStorage", "sessionStorage"]) {
+  try {
+    window[storageName].removeItem("sam_global_previous_password");
+  } catch {
+    // Storage may be disabled by the browser.
+  }
+}
+
 // Defer SW registration to after the page is fully loaded
 if (import.meta.env.PROD) {
   window.addEventListener("load", () => {

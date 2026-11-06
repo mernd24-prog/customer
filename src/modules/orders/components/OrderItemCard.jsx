@@ -1,3 +1,4 @@
+import { cancellationRequesterLabel } from "../../../utils/cancellationRequester";
 import { Link } from "react-router-dom";
 import { Package, ExternalLink } from "lucide-react";
 import {
@@ -290,6 +291,13 @@ export function OrderItemCard({
               </span>
             </p>
           )}
+
+          <p className="break-words">
+            <span>Cancellation requested by:</span>{" "}
+            <span className="font-semibold text-[#1B1D60]">
+              {cancellationRequesterLabel(cancellationDetails || {})}
+            </span>
+          </p>
 
           {cancellationStatus && (
             <p className="break-words">

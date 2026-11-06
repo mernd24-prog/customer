@@ -76,7 +76,7 @@ export { profileSchema } from "./profileSchemas";
 export const securitySchema = withMatchingFields(
   z
     .object({
-      currentPassword: passwordField,
+      currentPassword: passwordField.or(z.literal("")).optional(),
       newPassword: strongPasswordField,
       confirmPassword: confirmPasswordField,
     })

@@ -1,3 +1,4 @@
+import { cancellationRequesterLabel } from "../../../utils/cancellationRequester";
 import { formatMoney } from "../../../utils/ecommerce";
 import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 
@@ -49,6 +50,7 @@ export default function OrderCancellations({ cancellations, currency, isCodOrder
                   {String(cancellation.status || "requested").replace(/_/g, " ")}
                 </span>
               </div>
+              <p className="mt-1 text-muted">Requested by: {cancellationRequesterLabel(cancellation)}</p>
               <p className="mt-1 text-muted">{cancellation.reason}</p>
               {isSellerOrRtoCancellation && (
                 <p className="mt-2 rounded-[6px] bg-blue-50 px-3 py-2 text-xs text-blue-700">
