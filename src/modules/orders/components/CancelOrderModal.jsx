@@ -73,7 +73,7 @@ export default function CancelOrderModal({
       <div className="grid min-h-0 gap-4">
         {/* Scrollable content keeps the modal actions accessible. */}
         <div className="grid min-h-0 max-h-[45dvh] gap-3 overflow-y-auto overscroll-contain pr-1 sm:max-h-[42dvh]">
-          <div className="grid gap-2 rounded-xl border border-[#E7D9B8] bg-[#FFFDF9] p-2.5 sm:p-3">
+          <div className="grid gap-2 rounded-lg border border-[#E7D9B8] bg-[#FFFDF9] p-2.5 sm:p-3">
             {selectedItems.map((item) => {
               const itemId = String(getOrderItemId(item));
 
@@ -117,7 +117,7 @@ export default function CancelOrderModal({
               return (
                 <div
                   key={itemId}
-                  className="flex min-w-0 items-center gap-2.5 rounded-xl bg-white p-1.5 sm:gap-3"
+                  className="flex min-w-0 items-center gap-2.5 rounded-lg bg-white p-1.5 sm:gap-3"
                 >
                   {!selectedOrderItem && (
                     <input

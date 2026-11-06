@@ -203,7 +203,6 @@ export default function StarRating({
     </div>
   ) : null;
 
-  // Cart rating - Flipkart-style layout
   if (variant === "cart") {
     const indianCount = formatIndianRatingCount(count);
 

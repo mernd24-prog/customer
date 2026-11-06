@@ -249,7 +249,7 @@ export default function OrderItemSummaryCard({
                 moreLabel="more"
                 lessLabel="less"
                 textClassName="inline"
-                buttonClassName="ml-1 text-xs font-semibold text-[#201B78] hover:underline"
+                buttonClassName="ml-1 text-xs font-semibold text-[#201B78] "
               />
             </h3>
 

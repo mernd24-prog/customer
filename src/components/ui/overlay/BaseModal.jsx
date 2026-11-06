@@ -46,10 +46,10 @@ export default function BaseModal({
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-2 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white p-0 text-[var(--customer-navy)] transition-colors duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)]"
+            className="absolute right-4 top-4  z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white p-0 text-[var(--customer-navy)] transition-colors duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)]"
             aria-label="Close"
           >
-            <X size={13} strokeWidth={3} className="block shrink-0" />
+            <X size={17} strokeWidth={3} className="block shrink-0" />
           </button>
         ) : null}
       </div>

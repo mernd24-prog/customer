@@ -26,7 +26,7 @@ function SummaryRow({
             moreLabel="more"
             lessLabel="less"
             textClassName="inline"
-            buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+            buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] "
           />
         ) : (
           label
@@ -189,7 +189,7 @@ function OrderPaymentSummary({
                   moreLabel="more"
                   lessLabel="less"
                   textClassName="inline"
-                  buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline whitespace-nowrap"
+                  buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60]  whitespace-nowrap"
                 />
               </div>
 

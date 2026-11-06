@@ -107,111 +107,133 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     : [];
 
   return (
-    <article className="py-1 border-b border-[#E7D9B8]/50 last:border-b-0">
-      <div className="flex min-w-0 flex-wrap items-center gap-2">
-        <StarRating
-          rating={Number(review.rating || 0)}
-          showValue={true}
-          showCountText={false}
-          showStars
-          variant="inline"
-        />
-        {review.title && (
-          <span className="min-w-0 break-words text-sm sm:text-base font-bold text-[#1F2430]">
-            {review.title}
-          </span>
-        )}
-      </div>
+   
+<article className="py-1 border-b border-[#E7D9B8]/50 last:border-b-0">
+  {/* Rating */}
+  <div className="flex min-w-0 items-center gap-2">
+    <StarRating
+      rating={Number(review.rating || 0)}
+      showValue={true}
+      showCountText={false}
+      showStars
+      variant="inline"
+    />
+  </div>
 
-      {text && (
-        <div className="mt-1.5 text-xs sm:text-sm leading-relaxed text-[#4E4E4E]">
-          <ShowMoreText
-            text={text}
-            mode="lines"
-            limit={3}
-            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
-          />
-        </div>
-      )}
+  {/* Review Title */}
+  {review.title && (
+    <div className="mt-1 min-w-0 w-full text-sm sm:text-base font-bold text-[#1F2430]">
+      <ShowMoreText
+        text={review.title}
+        mode="lines"
+        limit={1}
+        buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] ml-1"
+      />
+    </div>
+  )}
 
-      {media.length > 0 && (
-        <div className="mt-2.5 flex flex-wrap gap-2">
-          {media.slice(0, 5).map((url, index) => (
-            <button
-              type="button"
-              key={`${url}-${index}`}
-              onClick={() => setLightboxIndex(index)}
-              aria-label={`Open review photo ${index + 1}${index === 4 && media.length > 5 ? `, and ${media.length - 5} more` : ""}`}
-              className="relative block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-opacity hover:opacity-90"
-            >
-              <img
-                loading="lazy"
-                width="400"
-                height="400"
-                src={url}
-                alt={`Review media ${index + 1}`}
-                className="h-full w-full object-cover"
-              />
-              {index === 4 && media.length > 5 && (
-                <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-xs font-bold text-white">
-                  +{media.length - 5}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      )}
+  {/* Review Description - Single More/Less */}
+  {text && (
+    <div className="mt-1.5 min-w-0 w-full text-xs sm:text-sm leading-relaxed text-[#4E4E4E]">
+      <ShowMoreText
+        text={text}
+        mode="lines"
+        limit={3}
+        moreLabel="more"
+        lessLabel="less"
+        buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] ml-1"
+      />
+    </div>
+  )}
 
-      {review.adminReply?.text && (
-        <div className="mt-2.5 rounded-lg border-l-3 border-[#CE9F2D] bg-[#FAF6EE] p-2.5 text-xs">
-          <p className="font-bold text-[#A96F14] mb-0.5">Seller Response</p>
-          <p className="font-medium text-[#6F7480]">{review.adminReply.text}</p>
-        </div>
-      )}
-
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="break-words text-xs sm:text-sm font-medium text-[#1F2430]/80">
-            {name}
-            {(dateStr || review.date) && (
-              <span className="font-normal text-[#737373]">
-                {" "}| {dateStr || review.date}
-              </span>
-            )}
-          </p>
-        </div>
-
+  {/* Review Images */}
+  {media.length > 0 && (
+    <div className="mt-2.5 flex flex-wrap gap-2">
+      {media.slice(0, 5).map((url, index) => (
         <button
           type="button"
-          onClick={() => onHelpful?.(reviewId)}
-          disabled={!reviewId || isOwn}
-          className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
-            alreadyVoted
-              ? "border-[#CE9F2D] bg-[#CE9F2D]/15 text-[#1B1D60]"
-              : "border-[#E7D9B8] text-[#6F7480] hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#1B1D60]"
-          }`}
+          key={`${url}-${index}`}
+          onClick={() => setLightboxIndex(index)}
+          aria-label={`Open review photo ${index + 1}${index === 4 && media.length > 5 ? `, and ${media.length - 5} more` : ""}`}
+          className="relative block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-opacity hover:opacity-90"
         >
-          <ThumbsUp
-            size={14}
-            className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
+          <img
+            loading="lazy"
+            width="400"
+            height="400"
+            src={url}
+            alt={`Review media ${index + 1}`}
+            className="h-full w-full object-cover"
           />
-          <span>{helpfulVotes}</span>
-        </button>
-      </div>
 
-      {lightboxIndex !== null && (
-        <ReviewMediaLightbox
-          images={media}
-          index={lightboxIndex}
-          review={review}
-          currentUser={currentUser}
-          currentUserId={currentUserId}
-          onHelpful={onHelpful}
-          onClose={() => setLightboxIndex(null)}
-          onIndexChange={setLightboxIndex}
-        />
-      )}
-    </article>
+          {index === 4 && media.length > 5 && (
+            <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-xs font-bold text-white">
+              +{media.length - 5}
+            </span>
+          )}
+        </button>
+      ))}
+    </div>
+  )}
+
+  {/* Seller Response */}
+  {review.adminReply?.text && (
+    <div className="mt-2.5 rounded-lg border-l-3 border-[#CE9F2D] bg-[#FAF6EE] p-2.5 text-xs">
+      <p className="mb-0.5 font-bold text-[#A96F14]">
+        Seller Response
+      </p>
+      <p className="font-medium text-[#6F7480]">
+        {review.adminReply.text}
+      </p>
+    </div>
+  )}
+
+  {/* Reviewer Details and Helpful Button */}
+  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+    <div className="min-w-0 flex-1">
+      <p className="break-words text-xs sm:text-sm font-medium text-[#1F2430]/80">
+        {name}
+        {(dateStr || review.date) && (
+          <span className="font-normal text-[#737373]">
+            {" "}| {dateStr || review.date}
+          </span>
+        )}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      onClick={() => onHelpful?.(reviewId)}
+      disabled={!reviewId || isOwn}
+      className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+        alreadyVoted
+          ? "border-[#CE9F2D] bg-[#CE9F2D]/15 text-[#1B1D60]"
+          : "border-[#E7D9B8] text-[#6F7480] hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#1B1D60]"
+      }`}
+    >
+      <ThumbsUp
+        size={14}
+        className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
+      />
+      <span>{helpfulVotes}</span>
+    </button>
+  </div>
+
+  {/* Review Image Lightbox */}
+  {lightboxIndex !== null && (
+    <ReviewMediaLightbox
+      images={media}
+      index={lightboxIndex}
+      review={review}
+      currentUser={currentUser}
+      currentUserId={currentUserId}
+      onHelpful={onHelpful}
+      onClose={() => setLightboxIndex(null)}
+      onIndexChange={setLightboxIndex}
+    />
+  )}
+</article>
+
   );
 }
 
@@ -477,7 +499,9 @@ export default function ProductReviewsSection({ productId, product }) {
       order.status,
       order.deliveryStatus,
       order.delivery_status,
-    ].some((status) => deliveredStatuses.has(String(status || "").toLowerCase()));
+    ].some((status) =>
+      deliveredStatuses.has(String(status || "").toLowerCase()),
+    );
     const itemIsDelivered = productItems.some(
       (item) =>
         item.deliveredAt ||
@@ -597,23 +621,27 @@ export default function ProductReviewsSection({ productId, product }) {
         {hasReviewSummary && (
           <aside className="w-full min-w-0 shrink-0 lg:w-[280px] xl:w-[300px]">
             <div className="w-full min-w-0 overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
-              <div className="border-b border-[#E5E7EB] bg-white px-3 py-3 sm:px-4">
+              <div className="border-b border-[#E5E7EB] bg-white p-3">
                 <h2 className="text-sm font-bold text-[#111827] sm:text-base">
                   Ratings &amp; Reviews
                 </h2>
               </div>
 
-              <div className="flex flex-col gap-4 p-3 sm:p-4">
+              <div className="flex flex-col gap-4 p-3">
                 {/* Overall Rating */}
                 <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 lg:flex-col lg:items-start">
                   <div className="min-w-0">
                     {displayReviewCount > 0 ? (
                       <div className="flex flex-col items-start gap-1.5">
-                        <StarRating rating={displayAvgRating} count={displayReviewCount} />
+                        <StarRating
+                          rating={displayAvgRating}
+                          count={displayReviewCount}
+                        />
                         <p className="text-xs font-semibold leading-relaxed text-[#6F7480]">
                           {displayReviewCount}{" "}
-                          {displayReviewCount === 1 ? "Rating" : "Ratings"} &amp;{" "}
-                          {displayTotal} {displayTotal === 1 ? "Review" : "Reviews"}
+                          {displayReviewCount === 1 ? "Rating" : "Ratings"}{" "}
+                          &amp; {displayTotal}{" "}
+                          {displayTotal === 1 ? "Review" : "Reviews"}
                         </p>
                       </div>
                     ) : (
@@ -674,7 +702,7 @@ export default function ProductReviewsSection({ productId, product }) {
         )}
 
         {/* Right Section */}
-        <div className="flex w-full min-w-0 flex-1 flex-col gap-3 sm:gap-4">
+        <div className="flex w-full min-w-0 flex-1 flex-col gap-1">
           {/* Top Bar: Heading + Actions */}
           <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -763,9 +791,11 @@ export default function ProductReviewsSection({ productId, product }) {
             <EmptyState
               illustration="reviews"
               title="Be the First to Review"
-              description={canWriteReview
-                    ? "Your feedback can help other shoppers choose with confidence."
-                    : "Verified customer reviews will appear here. Check back after shoppers share their experience."}
+              description={
+                canWriteReview
+                  ? "Your feedback can help other shoppers choose with confidence."
+                  : "Verified customer reviews will appear here. Check back after shoppers share their experience."
+              }
               className="!border-solid lg:!min-h-[350px] [&_p]:!max-w-[400px]"
             />
           )}

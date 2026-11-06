@@ -38,11 +38,8 @@ export default function OrderActions({
   const hasReturnAction =
     (Boolean(selectedOrderItem) && Boolean(selectedItemCanReturn)) ||
     (!selectedOrderItem && Boolean(canRequestReturn));
-
-  // Match CartItemCard bottom action styling exactly
-  const buttonClass =
-    "flex min-w-0 min-h-[52px] w-full flex-col items-center justify-center gap-1 px-1 py-1.5 text-[10px] font-semibold text-[#51545A] transition-colors hover:bg-[#F5F0E7] hover:text-[#1B1D60] disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-[36px] sm:flex-row sm:gap-2 sm:px-2 sm:py-1 sm:text-xs";
-
+const buttonClass =
+  "flex min-h-11 w-full min-w-0 flex-row items-center justify-center gap-2 rounded-lg border border-[#E9DFC8] bg-white px-3 py-2 text-xs font-semibold !text-[#51545A] transition-all duration-200 hover:bg-[#F5F0E7] hover:!text-[#1B1D60] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-10 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2 sm:py-1"; 
   const iconClass = "shrink-0";
   const textClass = "min-w-0 truncate";
 
@@ -134,14 +131,12 @@ export default function OrderActions({
     </button>,
   ];
 
-  return (
-    <div
-      className="grid w-full min-w-0 divide-x divide-[#EAE6DC] border-t border-[#E9DFC8] bg-[#F8F5EE]"
-      style={{
-        gridTemplateColumns: `repeat(${allActions.length}, minmax(0, 1fr))`,
-      }}
-    >
-      {allActions}
-    </div>
-  );
+ return (
+  <div
+  className="grid w-full min-w-0 grid-cols-1 gap-2 border-t border-[#E9DFC8] bg-white p-3 sm:grid-cols-[repeat(var(--action-count),minmax(0,1fr))] sm:gap-0 sm:bg-white sm:p-0 sm:divide-x sm:divide-[#EAE6DC]"
+  style={{ "--action-count": allActions.length }}
+>
+  {allActions}
+</div>
+);
 }

@@ -256,8 +256,7 @@ export function OrderItemCard({
     item?.returnReason;
 
   const renderShipmentAndRequestDetails = () => (
-    <div className="mt-2 min-w-0 space-y-1.5 text-xs text-[#6F7480]">
-      {!isCancelled && !isReturned && (
+<div className="mt-2 min-w-0 space-y-1.5 text-xs leading-relaxed text-[#6F7480] sm:mt-2 sm:space-y-1.5">      {!isCancelled && !isReturned && (
         <>
           {/* <p className="flex min-w-0 flex-wrap items-center gap-x-1">
             <span>Courier:</span>
@@ -352,10 +351,10 @@ export function OrderItemCard({
 
   const renderProductActions = () => {
     const buttonStyle =
-      "inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm";
+      "inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] lg:text-sm";
 
     return (
-      <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
+      <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 lg:w-auto lg:justify-end">
         {!isCancelled && !isReturned && shipment?.tracking_url && (
           <a
             href={shipment.tracking_url}
@@ -377,33 +376,17 @@ export function OrderItemCard({
       </div>
     );
   };
- const renderProductImage = () => (
-  <div className="h-[112px] w-[88px] shrink-0 overflow-hidden rounded-lg bg-white min-[375px]:h-[120px] min-[375px]:w-[96px] sm:h-[140px] sm:w-[115px]">
+const renderProductImage = () => (
+  <div className="hidden sm:block h-[140px] w-[115px] shrink-0 overflow-hidden rounded-lg bg-white">
     {getItemImage(item) ? (
-      productPath ? (
-        <Link
-          to={productPath}
-          className="block h-full w-full"
-        >
-          <img
-            loading="lazy"
-            width="400"
-            height="400"
-            src={getItemImage(item)}
-            alt={getProductTitle(item)}
-            className="h-full w-full object-contain p-0 sm:p-1"
-          />
-        </Link>
-      ) : (
-        <img
-          loading="lazy"
-          width="400"
-          height="400"
-          src={getItemImage(item)}
-          alt={getProductTitle(item)}
-          className="h-full w-full object-contain p-0 sm:p-1"
-        />
-      )
+      <img
+        loading="lazy"
+        width="400"
+        height="400"
+        src={getItemImage(item)}
+        alt={getProductTitle(item)}
+        className="h-full w-full object-contain p-1"
+      />
     ) : (
       <div className="flex h-full w-full items-center justify-center">
         <Package size={28} className="text-[#9E886A]/50" />
@@ -411,7 +394,6 @@ export function OrderItemCard({
     )}
   </div>
 );
-
   const renderProductTitle = (titleClassName = "") => {
     const productTitle = getProductTitle(item) || "";
 
@@ -420,24 +402,33 @@ export function OrderItemCard({
         className={`w-full min-w-0 basis-full flex-1 truncate whitespace-nowrap text-sm font-bold leading-snug text-[#1F2430] sm:basis-[180px] sm:whitespace-normal sm:break-words sm:text-base sm:leading-6 sm:line-clamp-2 ${titleClassName}`}
         title={productTitle}
       >
-        {productTitle}
+        {productPath ? (
+          <Link
+            to={productPath}
+            className="rounded-sm transition-colors hover:text-[#CE9F2D] hover:underline hover:underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]"
+          >
+            {productTitle}
+          </Link>
+        ) : (
+          productTitle
+        )}
       </h3>
     );
   };
 
   if (compact) {
     return (
-      <div className="w-full min-w-0">
+      <div className="w-full min-w-0 px-2 py-2 sm:px-0 sm:py-0">
         <div className="flex w-full min-w-0 items-start gap-3 sm:gap-4">
-         {renderProductImage()}
+          {renderProductImage()}
 
-          <div className="flex min-w-0 flex-1 flex-col">
-            <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-0 sm:gap-y-2">
+<div className="flex min-w-0 flex-1 flex-col gap-2 sm:gap-0">
+              <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-0 sm:gap-y-2">
               {renderProductTitle()}
 
               {((!isCancelled && !isReturned && shipment?.tracking_url) ||
                 (canReview && !hasExistingReview)) && (
-                <div className="hidden w-full min-w-0 sm:ml-auto sm:block sm:w-auto">
+                <div className="hidden w-full min-w-0 lg:ml-auto lg:block lg:w-auto">
                   {renderProductActions()}
                 </div>
               )}
@@ -449,8 +440,7 @@ export function OrderItemCard({
             )}
 
             {deliveryDateStr ? (
-              <p className="mt-2 break-words text-xs font-medium text-[#6F7480]">
-                Estimated Delivery:{" "}
+<p className="mt-2.5 break-words text-xs leading-5 font-medium text-[#6F7480] sm:mt-2">                Estimated Delivery:{" "}
                 <span className="font-semibold text-[#1F2430]">
                   {deliveryDateStr}
                 </span>
@@ -464,8 +454,7 @@ export function OrderItemCard({
               </p>
             ) : null}
 
-            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-xs font-semibold text-[#1F2430]">
-              <p className="text-lg font-bold text-[#1F2430]">
+<div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-2 text-xs font-semibold text-[#1F2430] sm:mt-2">              <p className="text-lg font-bold text-[#1F2430]">
                 {formatMoney(getItemLineTotal(item), currency)}
               </p>
 
@@ -477,7 +466,7 @@ export function OrderItemCard({
 
             {((!isCancelled && !isReturned && shipment?.tracking_url) ||
               (canReview && !hasExistingReview)) && (
-              <div className="mt-3 w-full min-w-0 sm:hidden">
+              <div className="mt-3 w-full min-w-0 lg:hidden">
                 {renderProductActions()}
               </div>
             )}
@@ -498,7 +487,7 @@ export function OrderItemCard({
 
             {((!isCancelled && !isReturned && shipment?.tracking_url) ||
               (canReview && !hasExistingReview)) && (
-              <div className="hidden w-full min-w-0 sm:ml-auto sm:block sm:w-auto">
+              <div className="hidden w-full min-w-0 lg:ml-auto lg:block lg:w-auto">
                 {renderProductActions()}
               </div>
             )}
@@ -528,8 +517,7 @@ export function OrderItemCard({
           {quantityBreakdown && <div className="mt-2">{quantityBreakdown}</div>}
 
           {deliveryDateStr && (
-            <p className="mt-2 break-words text-xs font-medium text-[#6F7480]">
-              Estimated Delivery:{" "}
+<p className="mt-2.5 break-words text-xs leading-5 font-medium text-[#6F7480] sm:mt-2">              Estimated Delivery:{" "}
               <span className="font-semibold text-[#1F2430]">
                 {deliveryDateStr}
               </span>
@@ -547,7 +535,7 @@ export function OrderItemCard({
 
           {((!isCancelled && !isReturned && shipment?.tracking_url) ||
             (canReview && !hasExistingReview)) && (
-            <div className="mt-3 w-full min-w-0 sm:hidden">
+            <div className="mt-3 w-full min-w-0 lg:hidden">
               {renderProductActions()}
             </div>
           )}

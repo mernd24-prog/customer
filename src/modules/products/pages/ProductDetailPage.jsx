@@ -272,7 +272,7 @@ export default function ProductDetailPage() {
                         text={productTitle}
                         mode="lines"
                         limit={1}
-                        buttonClassName="ml-1 border-0 bg-transparent p-0 text-xs font-semibold text-[#CE9F2D] shadow-none outline-none hover:underline"
+                        buttonClassName="ml-1 border-0 bg-transparent p-0 text-xs font-semibold text-[#CE9F2D] shadow-none outline-none"
                       />
                     </h1>
 

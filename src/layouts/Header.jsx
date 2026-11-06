@@ -408,14 +408,8 @@ export const Navbar = ({ icons: propIcons }) => {
               )}
               <HeaderIconButton
                 to="/cart"
-                aria-current={
-                  location.pathname === "/cart" ? "page" : undefined
-                }
-                className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
-                  location.pathname === "/cart"
-                    ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
-                    : ""
-                }`}
+                outlined
+                className="relative overflow-visible"
                 aria-label={`Cart with ${cartItemCount} ${
                   cartItemCount === 1 ? "item" : "items"
                 }`}
@@ -431,14 +425,9 @@ export const Navbar = ({ icons: propIcons }) => {
 
               <HeaderIconButton
                 to="/wishlist"
-                aria-current={
-                  location.pathname === "/wishlist" ? "page" : undefined
-                }
-                className={`relative h-8 w-8 overflow-visible border border-transparent bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-colors duration-300 hover:bg-[#CE9F2D]/15 ${
-                  location.pathname === "/wishlist"
-                    ? "border-[#1B1D6099] bg-[#CE9F2D]/15"
-                    : ""
-                }`}
+                onClick={handleWishlistClick}
+                outlined
+                className="relative overflow-visible"
                 aria-label={`Watchlist with ${wishlistCount} ${
                   wishlistCount === 1 ? "item" : "items"
                 }`}
@@ -503,16 +492,20 @@ export const Navbar = ({ icons: propIcons }) => {
       </header>
 
       <ConfirmModal
-        open={showLogoutModal}
-        title="Sign Out"
-        description="Are you sure you want to sign out of your account?"
-        confirmLabel="Sign Out"
-        cancelLabel="Cancel"
-        onConfirm={handleLogout}
-        onCancel={() => setShowLogoutModal(false)}
-        maxWidth="max-w-md"
-        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
-      />
+  open={showLogoutModal}
+  title="Sign Out"
+  icon={LogOut}
+  iconBgClassName="bg-red-50"
+  iconClassName="text-red-600"
+  iconSize={22}
+  description="Are you sure you want to sign out of your account?"
+  confirmLabel="Sign Out"
+  cancelLabel="Cancel"
+  onConfirm={handleLogout}
+  onCancel={() => setShowLogoutModal(false)}
+  maxWidth="max-w-md"
+  confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+/>
     </>
   );
 };

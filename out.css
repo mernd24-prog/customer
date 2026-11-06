@@ -7733,7 +7733,10 @@ h1,
 /* LAYOUT & UTILITIES            */
 
 /* ============================= */
-
+.seller-experience-swiper .swiper-pagination {
+  bottom: 0 !important;
+  padding-bottom: 12px;
+}
 .swiper-slide img {
   backface-visibility: hidden;
   transform-style: preserve-3d;

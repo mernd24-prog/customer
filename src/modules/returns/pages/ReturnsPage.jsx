@@ -55,33 +55,41 @@ function ReturnRequestPage({ orderId }) {
   return (
     <>
       <Seo title="Request Return | Sam Global" />
-      <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <div className="mx-auto w-full min-w-0 max-w-3xl px-0 pt-3 pb-0 sm:pt-4 lg:pt-0">
         <Link
           to="/orders"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#5E6472] hover:text-[#1B1D60] transition-colors duration-200"
+          className=" mt-2 mb-2 inline-flex min-h-8 items-center gap-2 text-xs font-semibold text-[#5E6472] transition-colors duration-200 hover:text-[#1B1D60] sm:mb-4 sm:text-sm lg:mb-6"
         >
           <ArrowLeft size={16} className="text-[#CE9F2D]" /> Back to Orders
         </Link>
 
-        <div className="overflow-hidden rounded-2xl border border-[#E7D9B8] bg-white p-5 shadow-[0_4px_20px_rgba(27,29,96,0.05)] sm:p-7 lg:p-6">
-          <div className="mb-6 border-b border-[#EFE5D2] pb-5">
-            <h1 className="text-2xl font-extrabold text-[#1B1D60]">
-              Request a Return
-            </h1>
-            <p className="mt-1 text-sm font-medium text-[#5E6472]">
-              Select the item you want to return from this order and specify the
-              return reason.
-            </p>
-            <p className="mt-2 text-xs font-medium text-[#5E6472]">
-              Before return, please read our{" "}
-              <Link
-                to="/refund-policy"
-                className="font-bold text-[#CE9F2D] hover:underline"
-              >
-                Return & Refund Policy
-              </Link>
-              .
-            </p>
+        <div className="min-w-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white p-3 shadow-[0_4px_20px_rgba(27,29,96,0.05)] sm:p-5 lg:p-6">
+          <div className="mb-3 border-b border-[#EFE5D2] pb-3 sm:mb-5 sm:pb-4 lg:mb-6 lg:pb-5">
+            <div className="flex min-w-0 items-start gap-2.5 sm:gap-3">
+              <div className="mt-0 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#E7D9B8] bg-[#FFF8E7] text-[#CE9F2D] sm:h-11 sm:w-11">
+                <RotateCcw size={18} className="sm:h-5 sm:w-5" />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base font-extrabold leading-tight text-[#1B1D60] sm:text-xl">
+                  Request a Return
+                </h1>
+
+                <p className="mt-1 text-xs leading-relaxed text-[#5E6472] sm:text-sm">
+                  Select an item and tell us why you're returning it.
+                </p>
+                <p className="mt-2 text-[11px] leading-snug text-[#5E6472] sm:mt-2.5 sm:text-xs">
+                  Please review our{" "}
+                  <Link
+                    to="/refund-policy"
+                    className="font-bold text-[#CE9F2D] hover:underline"
+                  >
+                    Return & Refund Policy
+                  </Link>{" "}
+                  before submitting.
+                </p>
+              </div>
+            </div>
           </div>
 
           {orderLoading && !order ? (
@@ -90,12 +98,12 @@ function ReturnRequestPage({ orderId }) {
               Loading Order Details…
             </div>
           ) : !orderItems.length ? (
-            <div className="rounded-xl border border-dashed border-[#E7D9B8] bg-[#FFFCF6] p-8 text-center text-sm font-semibold text-[#5E6472]">
+            <div className="rounded-lg border border-dashed border-[#E7D9B8] bg-[#FFFCF6] p-8 text-center text-sm font-semibold text-[#5E6472]">
               No items found for this order.
             </div>
           ) : (
             <form
-              className="grid gap-6"
+              className="grid min-w-0 gap-4 sm:gap-5"
               onSubmit={handleSubmit(submit)}
               noValidate
             >
@@ -104,11 +112,11 @@ function ReturnRequestPage({ orderId }) {
               <input type="hidden" {...register("orderItemId")} />
 
               {/* Item selector */}
-              <div className="grid gap-2">
+              <div className="grid min-w-0 gap-2">
                 <span className="text-sm font-bold text-[#1B1D60]">
                   Select Item to Return
                 </span>
-                <div className="grid gap-3">
+                <div className="grid min-w-0 gap-2.5 sm:gap-3">
                   {orderItems.map((item) => {
                     const pid = getItemProductId(item);
                     const title = getItemTitle(item);
@@ -148,7 +156,7 @@ function ReturnRequestPage({ orderId }) {
                         type="button"
                         onClick={() => handleItemSelect(item)}
                         disabled={disabled}
-                        className={`flex w-full min-w-0 items-center gap-3.5 rounded-xl border p-4 text-left transition-all duration-200 ${
+                        className={`grid w-full min-w-0 grid-cols-[52px_minmax(0,1fr)_20px] items-start gap-2.5 rounded-lg border p-2.5 text-left transition-all duration-200 sm:grid-cols-[80px_minmax(0,1fr)_20px] sm:items-center sm:gap-3.5 sm:p-3.5 ${
                           isSelected
                             ? "border-1 border-[#CE9F2D] "
                             : disabled
@@ -163,16 +171,16 @@ function ReturnRequestPage({ orderId }) {
                             height="400"
                             src={img}
                             alt={title}
-                            className="h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 rounded-xl border border-[#EFE5D2] object-contain p-1.5 bg-white shadow-xs"
+                            className="h-[52px] w-[52px] shrink-0 rounded-lg border border-[#EFE5D2] bg-white object-contain p-1 sm:h-20 sm:w-20"
                           />
                         ) : (
-                          <span className="flex h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 items-center justify-center rounded-xl border border-[#EFE5D2] bg-[#FFF8E7] text-[#CE9F2D]">
+                          <span className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg border border-[#EFE5D2] bg-[#FFF8E7] text-[#CE9F2D] sm:h-20 sm:w-20">
                             <Package size={30} />
                           </span>
                         )}
 
-                        <div className="min-w-0 flex-1 overflow-hidden">
-                          <h2 className="break-words text-sm font-bold text-[#1B1D60] sm:text-base">
+                        <div className="min-w-0 overflow-hidden">
+                          <h2 className="break-words text-xs font-bold leading-snug text-[#1B1D60] sm:text-sm">
                             <ShowMoreText
                               text={title}
                               mode="lines"
@@ -180,16 +188,16 @@ function ReturnRequestPage({ orderId }) {
                               moreLabel="more"
                               lessLabel="less"
                               textClassName="inline"
-                              buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+                              buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
                             />
                           </h2>
 
                           {price > 0 && (
-                            <p className="mt-1 text-xs font-semibold text-[#2E2E2E] sm:text-sm">
+                            <p className="mt-1 text-xs font-semibold text-[#2E2E2E]">
                               ₹{Number(price).toLocaleString("en-IN")}
                             </p>
                           )}
-                          <p className="mt-1 text-xs text-[#5E6472]">
+                          <p className="mt-1 break-words text-[11px] leading-relaxed text-[#5E6472] sm:text-xs">
                             Ordered: {getItemQuantity(item)}
                             {cancelledQuantity > 0
                               ? ` · Cancelled: ${cancelledQuantity}`
@@ -202,7 +210,7 @@ function ReturnRequestPage({ orderId }) {
                               : " · Checking return history…"}
                           </p>
                           <p
-                            className={`mt-1 text-xs font-bold ${!disabled ? "text-[#10B981]" : "text-rose-600"}`}
+                            className={`mt-1 break-words text-[11px] leading-snug font-semibold sm:text-xs ${!disabled ? "text-[#10B981]" : "text-rose-600"}`}
                           >
                             {!returnsChecked
                               ? "Checking existing return requests…"
@@ -221,7 +229,7 @@ function ReturnRequestPage({ orderId }) {
                         </div>
 
                         <span
-                          className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors sm:mt-0 ${
                             isSelected
                               ? "border-[#CE9F2D] bg-[#CE9F2D]"
                               : "border-[#D6B45B] bg-white"
@@ -261,7 +269,7 @@ function ReturnRequestPage({ orderId }) {
                   />
 
                   {/* Quantity Input */}
-                  <div className="grid gap-1.5">
+                  <div className="grid min-w-0 gap-1.5">
                     <label
                       htmlFor="quantity"
                       className="text-sm font-bold text-[#1B1D60]"
@@ -278,7 +286,7 @@ function ReturnRequestPage({ orderId }) {
                         99
                       }
                       {...register("quantity", { valueAsNumber: true })}
-                      className="min-h-11 rounded-lg border border-[#E7D9B8] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2E2E2E] outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none"
+                      className="min-h-11 w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2E2E2E] outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none"
                     />
                     <p className="text-xs text-[#5E6472]">
                       You can return up to {selectedReturnableQuantity} unit
@@ -321,7 +329,7 @@ function ReturnRequestPage({ orderId }) {
                   />
 
                   {/* Description */}
-                  <div className="grid gap-1.5">
+                  <div className="grid min-w-0 gap-1.5">
                     <label
                       htmlFor="description"
                       className="text-sm font-bold text-[#1B1D60]"
@@ -333,7 +341,7 @@ function ReturnRequestPage({ orderId }) {
                       {...register("description")}
                       rows={4}
                       placeholder="Describe the issue in detail…"
-                      className="rounded-lg border border-[#E7D9B8] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2E2E2E] outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none placeholder:text-stone-400 resize-none"
+                      className="min-h-28 w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2E2E2E] outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none placeholder:text-stone-400 resize-none"
                     />
                     {errors.description && (
                       <span className="text-xs font-medium text-rose-600">
@@ -344,12 +352,12 @@ function ReturnRequestPage({ orderId }) {
 
                   {/* Re-themed Estimated Refund Card */}
                   {estimatedRefund.total > 0 && (
-                    <div className="rounded-xl border border-[#E7D9B8] bg-[#FFFBF0] p-4 sm:p-5 shadow-xs">
+                    <div className="min-w-0 rounded-lg border border-[#E7D9B8] bg-[#FFFBF0] p-3 sm:p-4 shadow-xs">
                       <div className="flex items-center justify-between">
                         <p className="text-xs font-bold uppercase tracking-wider text-[#9A7A27]">
                           Estimated Refund
                         </p>
-                        <span className="inline-flex items-center rounded-full bg-[#FFF8E7] border border-[#E7D9B8] px-2.5 py-0.5 text-xs font-bold text-[#855B14]">
+                        <span className="inline-flex items-center rounded-lg bg-[#FFF8E7] border border-[#E7D9B8] px-2.5 py-0.5 text-xs font-bold text-[#855B14]">
                           Summary
                         </span>
                       </div>
@@ -360,11 +368,11 @@ function ReturnRequestPage({ orderId }) {
                           maximumFractionDigits: 2,
                         })}
                       </p>
-                      <div className="mt-3 space-y-2 rounded-lg border border-[#EFE5D2] bg-white p-3 text-xs">
+                      <div className="mt-3 min-w-0 space-y-2 rounded-lg border border-[#EFE5D2] bg-white p-2.5 text-xs sm:p-3">
                         {estimatedRefund.rows.map((row) => (
                           <div
                             key={row.label}
-                            className="flex items-center justify-between gap-3"
+                            className="flex min-w-0 items-start justify-between gap-2 sm:gap-3"
                           >
                             <span
                               className={
@@ -400,7 +408,7 @@ function ReturnRequestPage({ orderId }) {
                           </div>
                         ))}
                       </div>
-                      <p className="mt-3 text-xs leading-relaxed text-[#5E6472]">
+                      <p className="mt-2 text-[11px] leading-snug text-[#5E6472] sm:mt-2.5 sm:text-xs">
                         {estimatedRefund.note}
                       </p>
                       {estimatedRefund.cod && (
