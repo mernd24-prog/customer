@@ -180,8 +180,8 @@ export default function ProductDetailPage() {
           empty={!product && !productState.loading}
           skeletonLayout={PRODUCT_DETAIL_SKELETON}
           skeletonContainerClass="bg-transparent px-4 sm:px-6 lg:px-8 py-6"
-          emptyTitle="Product coming soon"
-          emptyText="This product page is being prepared or is temporarily unavailable."
+          // emptyTitle="Product coming soon"
+          // emptyText="This product page is being prepared or is temporarily unavailable."
         >
           {product && (
             <>
