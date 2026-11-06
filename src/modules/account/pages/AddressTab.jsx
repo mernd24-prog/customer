@@ -6,7 +6,7 @@ import AddressEditModal from "../../common/components/address/AddressEditModal";
 import SharedAddressCard from "../../common/components/address/SharedAddressCard";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useAddressBook } from "../controllers/useAddressBook";
-
+import { ChevronDown, ChevronUp, MapPin, Plus, Trash2 } from "lucide-react";
 export default function AddressTab({ user }) {
   const {
     loading,
@@ -246,14 +246,20 @@ export default function AddressTab({ user }) {
 
       {/* Delete Confirmation */}
       <ConfirmModal
-        open={Boolean(deleteAddressId)}
-        title="Delete This Address?"
-        description="This saved address will be removed from your account. You can add it again later if needed."
-        confirmLabel={loading ? "Deleting..." : "Delete Address"}
-        cancelLabel="Keep Address"
-        onCancel={() => setDeleteAddressId(null)}
-        onConfirm={confirmDelete}
-      />
+  open={Boolean(deleteAddressId)}
+  title="Delete This Address?"
+  icon={Trash2}
+  iconBgClassName="bg-red-50"
+  iconClassName="text-red-600"
+  iconSize={22}
+  description="This saved address will be removed from your account. You can add it again later if needed."
+  confirmLabel={loading ? "Deleting..." : "Delete Address"}
+  cancelLabel="Keep Address"
+  onCancel={() => setDeleteAddressId(null)}
+  onConfirm={confirmDelete}
+  maxWidth="max-w-md"
+  confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+/>
     </>
   );
 }

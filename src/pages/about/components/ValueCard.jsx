@@ -9,7 +9,7 @@ export default function ValueCard({ data }) {
 
   return (
     <article className="flex w-full md:w-[26rem] xl:w-[30rem] flex-col">
-      <div className="bg-band flex h-full w-full flex-col items-center justify-start gap-2 rounded-t-lg p-4 text-center md:p-8 xl:p-10">
+      <div className="bg-band flex h-full w-full flex-col items-center justify-start gap-2 rounded-lg p-4 text-center md:p-8 xl:p-10">
         <FallbackImage
           loading="lazy"
           width="400"

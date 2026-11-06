@@ -5,6 +5,7 @@ import HeroSwiper from "./HeroSwiper";
 
 function mapCmsToSlides(cmsPage) {
   if (!cmsPage) return null;
+
   const sections = cmsPage?.sections?.length
     ? cmsPage.sections
     : cmsPage?.metadata?.data?.sections?.length
@@ -50,11 +51,12 @@ function mapCmsToSlides(cmsPage) {
         secondaryLink,
       };
     })
-    .filter((s) => s.image || s.title);
+    .filter((slide) => slide.image || slide.title);
 }
 
 const HeroBanner = memo(() => {
   const { page: heroBannerPage } = useCmsRecord("Hero Banner");
+
   const cmsSlides = useMemo(
     () => mapCmsToSlides(heroBannerPage),
     [heroBannerPage],
@@ -65,11 +67,14 @@ const HeroBanner = memo(() => {
   return (
     <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[460px] w-screen items-center overflow-hidden bg-[#1B1D60] sm:h-[500px] md:h-[540px] lg:h-[600px] xl:h-[650px]">
       <HeroSwiper slides={slides} />
-      <div className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-black/20 to-transparent z-20" />
-      <div className="pointer-events-none absolute -bottom-48 -left-48 h-[400px] w-[400px] rounded-full bg-[var(--customer-gold)]/10 blur-[80px] z-20" />
+
+      <div className="pointer-events-none absolute right-0 top-0 z-20 h-full w-1/2 bg-gradient-to-l from-black/20 to-transparent" />
+
+      <div className="pointer-events-none absolute -bottom-48 -left-48 z-20 h-[400px] w-[400px] rounded-full bg-[var(--customer-gold)]/10 blur-[80px]" />
     </section>
   );
 });
 
 HeroBanner.displayName = "HeroBanner";
+
 export default HeroBanner;

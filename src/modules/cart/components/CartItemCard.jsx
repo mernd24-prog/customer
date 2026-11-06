@@ -110,7 +110,7 @@ export default function CartItemCard({
               checked={selected}
               onChange={(event) => onSelect?.(item?.id, event.target.checked)}
               aria-label={`Select ${item?.title} for checkout`}
-              className="m-0 h-5 w-5 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095] focus:outline-none sm:h-[15px] sm:w-[15px]"
+              className="m-0 h-3 w-3 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095]  sm:h-[15px] sm:w-[15px]"
             />
           </label>
         )}

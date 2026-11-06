@@ -5,7 +5,6 @@ import { IoIosArrowForward } from "react-icons/io";
 import { Copy, Check } from "lucide-react";
 
 import { cn } from "../../../utils/common";
-import { getShowMoreText } from "../../../utils/showMore";
 import { notify } from "../../../utils/notify";
 import { HomeIcon } from "../../../components/ui/icons";
 
@@ -29,12 +28,7 @@ export default function Breadcrumbs({
 }) {
   const [copied, setCopied] = useState(false);
 
-  const isCompact =
-    linkClassName.includes("text-xs") ||
-    linkClassName.includes("text-xs") ||
-    linkClassName.includes("text-xs") ||
-    linkClassName.includes("text-xs");
-
+  const isCompact = linkClassName.includes("text-xs");
   const resolvedHomeSize = homeIconSize || (isCompact ? 13 : 16);
 
   const isDarkBg =
@@ -67,10 +61,8 @@ export default function Breadcrumbs({
 
     try {
       await navigator.clipboard.writeText(value);
-
       setCopied(true);
       notify.success("Order ID copied to clipboard!");
-
       setTimeout(() => setCopied(false), 2000);
     } catch {
       notify.error("Failed to copy Order ID.");
@@ -80,7 +72,7 @@ export default function Breadcrumbs({
   return (
     <nav
       className={cn(
-        "mb-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 pl-0 pr-2 py-1 sm:pr-3 sm:py-1.5",
+        "mb-2 flex w-full min-w-0 flex-nowrap items-center gap-x-1.5 overflow-hidden whitespace-nowrap pl-0 pr-2 py-1 sm:pr-3 sm:py-1.5",
         className,
       )}
       aria-label="Breadcrumb"
@@ -94,51 +86,16 @@ export default function Breadcrumbs({
               item?.href === "/")) ||
           item?.isHome;
 
-        const { preview, isTruncated } = getShowMoreText(
-          item.label,
-          {
-            mode: truncateMode,
-            limit: truncateLimit,
-          },
-        );
-
-        const displayLabel =
-          isLast && isTruncated
-            ? `${preview}...`
-            : item.label;
-
-        const labelContent = (
-          <>
-            <span className="min-w-0">{displayLabel}</span>
-
-            {isLast && copyLastItem && copyValue && (
-              <button
-                type="button"
-                onClick={handleCopy}
-                title="Copy Order ID"
-                aria-label="Copy Order ID"
-                className="inline-flex shrink-0 items-center justify-center rounded p-1 text-[#2E2E2E]"
-              >
-                {copied ? (
-                  <Check
-                    size={13}
-                    className="text-emerald-600"
-                  />
-                ) : (
-                  <Copy size={13} />
-                )}
-              </button>
-            )}
-          </>
-        );
+        const label = String(item?.label || "");
 
         return (
           <span
-            key={`${item.label}-${index}`}
+            key={`${label}-${index}`}
             className={cn(
-              "inline-flex min-w-0 items-center gap-1.5",
-              isLast && lastItemOnNewLineMobile &&
-                "basis-full mt-1 sm:basis-auto sm:mt-0",
+              "inline-flex items-center gap-1.5",
+              isLast
+                ? "min-w-0 flex-1 overflow-hidden"
+                : "min-w-0 shrink-0",
             )}
           >
             {index > 0 && (
@@ -151,12 +108,13 @@ export default function Breadcrumbs({
                 aria-hidden="true"
               />
             )}
+
             {item.href && !isLast ? (
               <Link
                 to={item.href}
-                title={item.label}
+                title={label}
                 className={cn(
-                  "group inline-flex items-center gap-1.5 font-medium text-xs leading-tight text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D] sm:text-sm lg:text-base",
+                  "group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-medium text-xs leading-tight text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D] sm:text-sm lg:text-base",
                   linkClassName,
                 )}
               >
@@ -171,13 +129,15 @@ export default function Breadcrumbs({
                   <span className="shrink-0">{item.icon}</span>
                 )}
 
-                <span>{item.label}</span>
+                <span className={isHome ? "hidden sm:inline" : "inline"}>
+                  {label}
+                </span>
               </Link>
             ) : (
               <span
-                title={item.label}
+                title={label}
                 className={cn(
-                  "inline-flex min-w-0 items-center gap-1.5 font-medium text-xs leading-tight text-[#8A6500] sm:text-sm lg:text-base",
+                  "inline-flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden font-medium text-xs leading-tight text-[#8A6500] sm:text-sm lg:text-base",
                   currentClassName,
                 )}
               >
@@ -185,9 +145,7 @@ export default function Breadcrumbs({
                   <HomeIcon
                     className={cn(
                       "shrink-0",
-                      isDarkBg
-                        ? "text-white"
-                        : "text-[#201B78]",
+                      isDarkBg ? "text-white" : "text-[#201B78]",
                       homeIconClassName,
                     )}
                     size={resolvedHomeSize}
@@ -198,16 +156,39 @@ export default function Breadcrumbs({
                   <span className="shrink-0">{item.icon}</span>
                 )}
 
-                {labelContent}
+                <span className="min-w-0 flex-1 truncate">
+                  {label}
+                </span>
+
+                {isLast && copyLastItem && copyValue && (
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    title="Copy Order ID"
+                    aria-label="Copy Order ID"
+                    className="inline-flex shrink-0 items-center justify-center rounded p-1 text-[#2E2E2E] transition-colors hover:text-[#CE9F2D]"
+                  >
+                    {copied ? (
+                      <Check
+                        size={13}
+                        className="text-emerald-600"
+                      />
+                    ) : (
+                      <Copy size={13} />
+                    )}
+                  </button>
+                )}
               </span>
             )}
-
           </span>
         );
       })}
 
-      {rightContent}
+      {rightContent && (
+        <span className="ml-auto inline-flex shrink-0 items-center">
+          {rightContent}
+        </span>
+      )}
     </nav>
   );
 }
-

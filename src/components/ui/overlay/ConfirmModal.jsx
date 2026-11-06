@@ -1,6 +1,8 @@
+
 import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import BaseModal from "./BaseModal";
 import Button from "../buttons/Button";
+
 export default function ConfirmModal({
   open,
   title = "Are you sure?",
@@ -12,23 +14,33 @@ export default function ConfirmModal({
   onCancel,
   variant = "navy",
   image,
+  icon: Icon,
+  iconBgClassName = "bg-[#F5E9C9]",
+  iconClassName = "text-[#1B1D60]",
+  iconSize = 22,
   children,
   confirmClassName = "",
   maxWidth = "max-w-md",
   modalClassName = "",
 }) {
   const { present, exiting } = useAnimatedPresence(open);
+
   if (!present) return null;
 
   const imageUrl =
     typeof image === "string" ? image : image?.url || image?.src || "";
 
   return (
-    <BaseModal exiting={exiting} onClose={onCancel} maxWidth={maxWidth} className={modalClassName}>
-      <div className="px-5 pb-6 pt-6 sm:px-6">
-        <div className="flex items-start gap-4">
+    <BaseModal
+      exiting={exiting}
+      onClose={onCancel}
+      maxWidth={`w-[calc(100vw-24px)] ${maxWidth}`}
+      className={`max-h-[calc(100dvh-24px)] overflow-y-auto ${modalClassName}`}
+    >
+      <div className="px-4 py-5 sm:px-6 sm:py-6">
+        <div className="flex min-w-0 items-start gap-3 sm:gap-4">
           {Boolean(imageUrl) && (
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[14px] border border-[#E7E7E7] bg-[#F8F9FA] p-2 shadow-sm">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E7E7E7] bg-[#F8F9FA] p-1.5 shadow-sm sm:h-20 sm:w-20 sm:p-2">
               <img
                 src={imageUrl}
                 alt=""
@@ -40,28 +52,47 @@ export default function ConfirmModal({
             </div>
           )}
 
-          <div className="min-w-0 flex-1 pt-0.5">
-            <h2 className="text-[24px] font-bold leading-[1.2] text-[#1B1D60] sm:text-[20px]">
-              {title}
-            </h2>
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+              {Icon && (
+                <span
+                  className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${iconBgClassName}`}
+                >
+                  <Icon
+                    size={iconSize}
+                    strokeWidth={2}
+                    className={iconClassName}
+                    aria-hidden="true"
+                  />
+                </span>
+              )}
+
+              <h2 className="min-w-0 break-words text-[16px] font-bold leading-tight text-[#1B1D60] sm:text-[20px]">
+                {title}
+              </h2>
+            </div>
 
             {description && (
-              <p className="mt-4 whitespace-pre-line text-[15px] leading-[1.5] text-[#1B1D60]">
+              <div className="mt-2.5 whitespace-pre-line break-words text-[13px] leading-[1.5] text-[#1B1D60] sm:mt-3 sm:text-[15px]">
                 {description}
-              </p>
+              </div>
             )}
           </div>
         </div>
 
-        {children && <div className="mt-4">{children}</div>}
+        {children && (
+          <div className="mt-4 min-w-0">
+            {children}
+          </div>
+        )}
 
-        <div className="mt-6 flex items-center justify-end gap-3">
+        <div className="mt-5 flex flex-col-reverse gap-2.5 sm:mt-6 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           {cancelLabel && (
             <Button
               variant="outline"
               size="sm"
               onClick={onCancel}
-              className="h-[40px] min-w-[96px] rounded-lg border-[#1B1D60] bg-white px-4 text-[15px] font-semibold text-[#1B1D60] transition-colors hover:bg-[#f4f6ff]"
+              className="h-10 w-full rounded-lg border-[#1B1D60] bg-white px-4 text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#f4f6ff] sm:w-auto sm:min-w-[96px] sm:text-[15px]"
             >
               {cancelLabel}
             </Button>
@@ -73,7 +104,7 @@ export default function ConfirmModal({
             onClick={onConfirm}
             disabled={confirmDisabled}
             iconPosition="left"
-            className={`h-[40px] min-w-[96px] rounded-lg bg-[#D93C3C] px-4 font-semibold  text-[15px] text-white hover:bg-[#B88200] transition-colors hover:bg-[#c52f2f]${confirmClassName}`}
+            className={`h-10 w-full rounded-lg bg-[#D93C3C] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#c52f2f] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:min-w-[96px] sm:text-[15px] ${confirmClassName}`}
           >
             {confirmLabel}
           </Button>
@@ -82,4 +113,3 @@ export default function ConfirmModal({
     </BaseModal>
   );
 }
-

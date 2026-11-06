@@ -89,16 +89,13 @@ function ProductReviewSidebar({ product, productId }) {
         onClick={handleBack}
         className="mb-3.5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#CE9F2D] hover:text-[#1B1D60] transition-colors group cursor-pointer"
       >
-        <ChevronLeft
-          size={16}
-          className="transition-transform "
-        />
+        <ChevronLeft size={16} className="transition-transform " />
         Back to Product
       </Link>
 
       <Link
         to={productPath}
-        className="block overflow-hidden rounded-[8px] border border-border bg-white transition hover:border-gold/70"
+        className="block overflow-hidden rounded-[8px] border border-border bg-white transition hover:border-gold/70 "
         aria-label={`Back to ${product.title}`}
       >
         <img
@@ -275,37 +272,43 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     : review.date || "";
 
   return (
-    <article className="py-2  border-b border-border last:border-b-0">
-      <div className=" flex flex-wrap items-center gap-2">
+    <article className="py-2 border-b border-border last:border-b-0">
+      {/* Rating */}
+      <div className="flex min-w-0 items-center gap-2">
         <StarRating
           rating={Number(review.rating || 0)}
           showValue={true}
           showCountText={true}
         />
-
-        {review.title && (
-          <span className="text-base sm:text-lg font-bold text-ink">
-            <ShowMoreText
-              text={review.title}
-              mode="lines"
-              limit={1}
-              buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
-            />
-          </span>
-        )}
       </div>
 
+      {/* Review Title */}
+      {review.title && (
+        <div className="mt-1 min-w-0 w-full text-base sm:text-lg font-bold text-ink">
+          <ShowMoreText
+            text={review.title}
+            mode="lines"
+            limit={1}
+            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] ml-1"
+          />
+        </div>
+      )}
+
+      {/* Review Description - Single More/Less */}
       {text && (
-        <p className="text-sm leading-relaxed text-ink">
+        <div className="mt-1.5 min-w-0 w-full text-sm leading-relaxed text-ink">
           <ShowMoreText
             text={text}
             mode="lines"
             limit={3}
-            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
+            moreLabel="more"
+            lessLabel="less"
+            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] ml-1"
           />
-        </p>
+        </div>
       )}
 
+      {/* Review Images */}
       {media.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {media.slice(0, 5).map((url, index) => (
@@ -313,7 +316,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               type="button"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
-              className="block h-20 w-20  overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
+              className="block h-20 w-20 overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
             >
               <img
                 loading="lazy"
@@ -328,6 +331,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </div>
       )}
 
+      {/* Reviewer Details and Helpful Button */}
       <div className="mt-4 flex items-center justify-between gap-4">
         <p className="text-sm sm:text-base font-medium text-black/70">
           {name}
@@ -354,6 +358,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </button>
       </div>
 
+      {/* Review Image Lightbox */}
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
           images={media}

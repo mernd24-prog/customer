@@ -211,6 +211,7 @@
 
 .seller-experience-swiper .swiper-pagination {
   bottom: 0 !important;
+  padding-bottom: 12px;
 }
 
 .seller-experience-swiper .swiper-pagination-bullet {
@@ -1117,6 +1118,7 @@ select:not([multiple]):disabled {
   display: flex !important;
   justify-content: center;
   align-items: center;
+  padding-bottom: 12px;
 }
 
 /* Shared readability scale. Rem units respect browser text-size preferences. */

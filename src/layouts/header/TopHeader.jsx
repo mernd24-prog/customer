@@ -109,17 +109,21 @@ export const TopHeader = () => {
         </div>
       </div>
 
-      <ConfirmModal
-        open={showLogoutModal}
-        title="Sign Out"
-        description="Are you sure you want to sign out of your account?"
-        confirmLabel="Sign Out"
-        cancelLabel="Cancel"
-        onConfirm={handleLogout}
-        onCancel={() => setShowLogoutModal(false)}
-        maxWidth="max-w-md"
-        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
-      />
+     <ConfirmModal
+  open={showLogoutModal}
+  title="Sign Out"
+  icon={LogOut}
+  iconBgClassName="bg-red-50"
+  iconClassName="text-red-600"
+  iconSize={22}
+  description="Are you sure you want to sign out of your account?"
+  confirmLabel="Sign Out"
+  cancelLabel="Cancel"
+  onConfirm={handleLogout}
+  onCancel={() => setShowLogoutModal(false)}
+  maxWidth="max-w-md"
+  confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+/>
     </>
   );
 };

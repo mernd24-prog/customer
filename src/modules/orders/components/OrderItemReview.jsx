@@ -130,7 +130,7 @@ function ExistingReviewCard({ review }) {
           moreLabel="more"
           lessLabel="less"
           textClassName="inline text-sm sm:text-base font-semibold text-[#22232B] break-words"
-          buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+          buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60]"
         />
 
         <ShowMoreText
@@ -140,7 +140,7 @@ function ExistingReviewCard({ review }) {
           moreLabel="more"
           lessLabel="less"
           textClassName="inline max-w-full break-words text-sm leading-relaxed text-[#4E505C]"
-          buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+          buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60]"
         />
         {media.length > 0 && (
           <div>

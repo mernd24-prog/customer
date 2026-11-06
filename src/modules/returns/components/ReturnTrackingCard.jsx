@@ -79,7 +79,7 @@ export default function ReturnTrackingCard({ steps: customSteps, title }) {
                         text={cleanDesc}
                         mode="characters"
                         limit={120}
-                        buttonClassName="ml-1 text-xs font-semibold text-[#3E4093] hover:underline"
+                        buttonClassName="ml-1 text-xs font-semibold text-[#3E4093] "
                       />
                     </div>
                   )}

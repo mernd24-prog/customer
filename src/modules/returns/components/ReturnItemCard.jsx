@@ -146,7 +146,7 @@ export default function ReturnItemCard({
               moreLabel="more"
               lessLabel="less"
               textClassName="inline"
-              buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
+              buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
             />
             <ArrowUpRight
               size={13}
@@ -161,7 +161,7 @@ export default function ReturnItemCard({
             moreLabel="more"
             lessLabel="less"
             textClassName="inline"
-            buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
+            buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
           />
         )}
       </h2>
@@ -194,7 +194,7 @@ export default function ReturnItemCard({
               text={capitalizeFirst(reason) || "Not specified"}
               mode="lines"
               limit={1}
-              buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
+              buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
             />
           </div>
         </div>

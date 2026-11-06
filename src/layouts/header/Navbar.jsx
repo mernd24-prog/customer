@@ -3,8 +3,7 @@ import useProfileImage from "../../hooks/useProfileImage";
 import { Fragment, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Heart, ShoppingCart } from "lucide-react";
-
+import { Heart, ShoppingCart, LogOut } from "lucide-react";
 import SearchBar from "../../components/ui/SearchBar";
 import {
   HeaderGoldButton,
@@ -56,14 +55,13 @@ export const Navbar = ({ icons: propIcons }) => {
     ? `${profileUser.profile.firstName} ${
         profileUser.profile.lastName || ""
       }`.trim()
-    : profileUser?.firstName ||
-      profileUser?.email?.split("@")[0] ||
-      "My Sam";
+    : profileUser?.firstName || profileUser?.email?.split("@")[0] || "My Sam";
 
   const profileAvatar = useProfileImage(
     profileUser?.profile?.avatarUrl ||
-    profileUser?.profile?.avatar ||
-    "/image/png/person.png", profileUser?.updatedAt
+      profileUser?.profile?.avatar ||
+      "/image/png/person.png",
+    profileUser?.updatedAt,
   );
 
   const handleLogout = () => {
@@ -93,10 +91,7 @@ export const Navbar = ({ icons: propIcons }) => {
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
 
-  const cartItemsLength = useMemo(
-    () => cart.items?.length || 0,
-    [cart.items],
-  );
+  const cartItemsLength = useMemo(() => cart.items?.length || 0, [cart.items]);
 
   const wishlistCount = useMemo(
     () => (Array.isArray(cart.wishlist) ? cart.wishlist.length : 0),
@@ -253,10 +248,10 @@ export const Navbar = ({ icons: propIcons }) => {
                 <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
               )}
 
-              {/* Cart */}
               <HeaderIconButton
                 to="/cart"
-                className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+                outlined
+                className="relative overflow-visible"
                 aria-label={`Cart with ${cartItemCount} ${
                   cartItemCount === 1 ? "item" : "items"
                 }`}
@@ -340,15 +335,20 @@ export const Navbar = ({ icons: propIcons }) => {
       </header>
 
       <ConfirmModal
-        open={showLogoutModal}
-        title="Sign Out"
-        description="Are you sure you want to sign out of your account?"
-        confirmLabel="Sign Out"
-        cancelLabel="Cancel"
-        onConfirm={handleLogout}
-        onCancel={() => setShowLogoutModal(false)}
-        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
-      />
+  open={showLogoutModal}
+  title="Sign Out"
+  icon={LogOut}
+  iconBgClassName="bg-red-50"
+  iconClassName="text-red-600"
+  iconSize={22}
+  description="Are you sure you want to sign out of your account?"
+  confirmLabel="Sign Out"
+  cancelLabel="Cancel"
+  onConfirm={handleLogout}
+  onCancel={() => setShowLogoutModal(false)}
+  maxWidth="max-w-md"
+  confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+/>
     </>
   );
 };
