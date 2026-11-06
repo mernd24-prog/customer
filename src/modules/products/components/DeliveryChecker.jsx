@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
-import { Download, XCircle } from "lucide-react";
+import { Download } from "lucide-react";
 export default function DeliveryChecker({
   productId: initialProductId,
   onResultChange,
