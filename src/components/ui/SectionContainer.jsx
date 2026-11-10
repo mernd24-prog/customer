@@ -20,6 +20,7 @@ export default function SectionContainer({
   mobileActionFullWidth = false,
   style = {},
   disablePadding = false,
+  headerSpacingClassName = "my-3 sm:my-4",
 }) {
   const finalMobileActionStyle = mobileActionStyle || actionStyle;
   const hasHeader = Boolean(title || subtitle || actionLabel);
@@ -29,10 +30,10 @@ export default function SectionContainer({
     Boolean(actionStyle === "icon" && actionHref);
 
   const iconButtonClass =
-    "group inline-flex h-8 w-[52px] shrink-0 items-center justify-center rounded-lg !bg-[#3E4093] !text-white shadow-none outline-none transition-none hover:!bg-[#3E4093] hover:shadow-none focus:!bg-[#3E4093] focus:shadow-none focus:outline-none focus-visible:!bg-[#3E4093] focus-visible:outline-none active:!bg-[#3E4093] active:shadow-none";
+    "group inline-flex h-7 w-9 sm:h-8 sm:w-10 md:h-8 md:w-[52px] shrink-0 items-center justify-center rounded-lg !bg-[#3E4093] !text-white shadow-none outline-none transition-none hover:!bg-[#3E4093] hover:shadow-none focus:!bg-[#3E4093] focus:shadow-none focus:outline-none focus-visible:!bg-[#3E4093] focus-visible:outline-none active:!bg-[#3E4093] active:shadow-none";
 
   const arrowIconClass =
-    "h-5 w-5 !text-white transition-none group-hover:!text-white group-focus:!text-white group-active:!text-white";
+    "h-4 w-4 sm:h-4 sm:w-4 md:h-5 md:w-5 !text-white transition-none group-hover:!text-white group-focus:!text-white group-active:!text-white";
 
   return (
     <section className={className || "bg-white"} style={style}>
@@ -40,7 +41,7 @@ export default function SectionContainer({
         <header
           className={`text-[var(--customer-ink)] ${
             headerbgColor || "bg-transparent"
-          } my-3 sm:my-4`}
+          } ${headerSpacingClassName}`}
         >
           <div
             className={`mt-0 flex w-full items-center justify-between gap-3 ${
@@ -52,12 +53,6 @@ export default function SectionContainer({
                 <h2 className="text-[20px] font-bold leading-tight text-[#3E4093] sm:text-[22px] md:text-[24px]">
                   {title}
                 </h2>
-              )}
-
-              {subtitle && (
-                <p className="mb-4 text-p font-medium text-[var(--customer-muted,#5E626D)] md:text-small lg:pt-1.5">
-                  {subtitle}
-                </p>
               )}
             </div>
 
@@ -80,7 +75,7 @@ export default function SectionContainer({
               actionStyle === "icon" && actionHref ? (
                 <Link
                   to={actionHref}
-                  className={`${iconButtonClass} hidden sm:inline-flex`}
+                  className={`${iconButtonClass} inline-flex`}
                   aria-label={`Go to ${title}`}
                 >
                   <ArrowRight className={arrowIconClass} strokeWidth={2} />

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
@@ -93,9 +92,7 @@ export default function Breadcrumbs({
             key={`${label}-${index}`}
             className={cn(
               "inline-flex items-center gap-1.5",
-              isLast
-                ? "min-w-0 flex-1 overflow-hidden"
-                : "min-w-0 shrink-0",
+              isLast ? "min-w-0 flex-1 overflow-hidden" : "min-w-0 shrink-0",
             )}
           >
             {index > 0 && (
@@ -156,10 +153,10 @@ export default function Breadcrumbs({
                   <span className="shrink-0">{item.icon}</span>
                 )}
 
-                <span className="min-w-0 flex-1 truncate">
-                  {label}
-                </span>
+                {/* Order ID - Do not use flex-1 here */}
+                <span className="min-w-0 truncate">{label}</span>
 
+                {/* Copy icon immediately after Order ID */}
                 {isLast && copyLastItem && copyValue && (
                   <button
                     type="button"
@@ -169,10 +166,7 @@ export default function Breadcrumbs({
                     className="inline-flex shrink-0 items-center justify-center rounded p-1 text-[#2E2E2E] transition-colors hover:text-[#CE9F2D]"
                   >
                     {copied ? (
-                      <Check
-                        size={13}
-                        className="text-emerald-600"
-                      />
+                      <Check size={13} className="text-emerald-600" />
                     ) : (
                       <Copy size={13} />
                     )}

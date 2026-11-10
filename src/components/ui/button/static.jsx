@@ -13,7 +13,7 @@ outlineSmall:
     "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-6 font-bold text-[#18156D] backdrop-blur transition-all duration-200 hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-sm sm:px-7",
 
   outlineLight:
-    "border border-white/50 bg-transparent text-white hover:bg-white/10",
+    "border border-white/50 bg-transparent text-white hover:bg-[#CE9F2D]/10 hover:text-[#CE9F2D] hover:border-[#CE9F2D] active:bg-[#CE9F2D]/20 active:text-[#CE9F2D] active:border-[#CE9F2D] focus:outline-none focus:ring-0 [&]:[-webkit-tap-highlight-color:transparent]",
   solidLarge:
   "h-[48px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[22px] py-[10px] text-[15px] leading-[20px] tracking-[0.5px] font-bold !text-[#18156D] hover:bg-[linear-gradient(#B88419,#B88419)] hover:!text-[#18156D] transition-colors duration-200",headerGold:
     "h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-xs leading-[16px] tracking-[0.5px] font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-w-[153px] sm:px-4 sm:text-sm sm:leading-[20px] sm:tracking-[0.5px]",

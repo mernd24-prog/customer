@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
-import { Tag } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import Label from "../components/ui/label/Label";
 import {
   OutlineLightButton,
@@ -42,7 +42,7 @@ const HeroSwiper = memo(({ slides }) => {
               alt={slide.title || "Banner Background"}
               width="1664"
               height="650"
-              className="absolute right-0 top-0 z-0 h-full w-auto object-cover object-right"
+              className="absolute right-0 top-0 z-0 h-full w-full object-cover object-right sm:w-auto"
               fetchPriority={index === 0 ? "high" : "auto"}
               loading={index === 0 ? "eager" : "lazy"}
             />
@@ -56,9 +56,9 @@ const HeroSwiper = memo(({ slides }) => {
                 {slide.badge && (
                   <Label
                     variant="seasonSale"
-                    className="inline-flex w-fit max-w-[calc(100vw-2rem)] items-center justify-center whitespace-normal break-words rounded-full border border-[#CE9F2D]/50 bg-[#FFF8E7] px-2 py-1 text-center text-[9px] font-semibold leading-3 text-[#18156D] shadow-sm min-[375px]:px-2.5 min-[375px]:text-[10px] sm:max-w-[330px] sm:px-4 sm:py-1.5 sm:text-xs sm:leading-4 lg:max-w-fit lg:text-base lg:leading-5"
+                    className="inline-flex w-fit max-w-[calc(100vw-2rem)] items-start justify-center whitespace-normal break-words rounded-full border border-[#CE9F2D]/50 bg-[#FFF8E7] px-2 py-1 text-center text-[9px] font-semibold leading-3 text-[#18156D] shadow-sm min-[375px]:px-2.5 min-[375px]:text-[10px] sm:max-w-[330px] sm:items-center sm:px-4 sm:py-1.5 sm:text-xs sm:leading-4 lg:max-w-fit lg:text-base lg:leading-5"
                     leftIcon={
-                      <Tag
+                      <Sparkles
                         size={11}
                         className="h-[11px] w-[11px] shrink-0 text-[#A8790A] sm:h-3 sm:w-3 lg:h-[14px] lg:w-[14px]"
                       />
@@ -95,7 +95,7 @@ const HeroSwiper = memo(({ slides }) => {
                 {slide.secondaryButton && (
                   <OutlineLightButton
                     to={slide.secondaryLink || "/categories"}
-                    className="h-[40px] min-w-[145px] rounded-lg px-3 text-xs min-[375px]:min-w-[155px] min-[375px]:text-sm sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0"
+                    className="hero-outline-btn h-[40px] min-w-[145px] rounded-lg px-3 text-xs min-[375px]:min-w-[155px] min-[375px]:text-sm sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0"
                   >
                     {slide.secondaryButton}
                   </OutlineLightButton>

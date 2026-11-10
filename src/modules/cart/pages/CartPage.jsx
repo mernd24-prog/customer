@@ -240,9 +240,9 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="flex min-h-[58px] w-full items-center justify-between gap-3 rounded-lg border border-[#D5D9E2] bg-white px-3.5 py-2 sm:min-h-[50px] sm:px-5">
+                    <div className="flex min-h-[46px] w-full items-center justify-between gap-3 rounded-lg border border-[#D5D9E2] bg-white px-3 py-1.5 sm:min-h-[44px] sm:px-5 sm:py-1">
                       <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                        <label className="flex min-w-0 cursor-pointer items-center gap-2.5 text-sm font-semibold text-[#252936] sm:gap-3 sm:text-base">
+                        <label className="flex min-w-0 cursor-pointer items-center gap-2 text-sm font-semibold text-[#252936] sm:gap-3 sm:text-base">
                           <input
                             type="checkbox"
                             checked={
@@ -253,12 +253,15 @@ export default function CartPage() {
                               handleSelectAll(event.target.checked)
                             }
                             aria-label="Select all cart items"
-                            className="m-0 h-3 w-3 shrink-0 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095]  sm:h-[15px] sm:w-[15px]"
+                            className="m-0 h-3 w-3 shrink-0 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095] sm:h-[15px] sm:w-[15px]"
                           />
-                          <span className="whitespace-nowrap leading-5">Select All</span>
+                          <span className="whitespace-nowrap leading-5">
+                            Select All
+                          </span>
                         </label>
                         <span className="hidden h-6 w-px bg-[#D9DCE4] sm:block" />
                       </div>
+
                       <span className="shrink-0 whitespace-nowrap text-xs font-medium text-[#555B68] sm:text-sm">
                         {selectedItems.length} of {items.length} Selected
                       </span>

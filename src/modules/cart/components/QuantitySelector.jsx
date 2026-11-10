@@ -1,4 +1,6 @@
 
+import { Plus, Minus } from "lucide-react";
+
 export default function QuantitySelector({
   quantity,
   onIncrease,
@@ -13,6 +15,7 @@ export default function QuantitySelector({
 }) {
   const isCart = variant === "cart";
   const atMax = max != null && quantity >= max;
+
   const disableIncrease =
     disabled || increaseDisabled || atMax;
 
@@ -42,21 +45,23 @@ export default function QuantitySelector({
           type="button"
           onClick={onDecrease}
           disabled={disabled || quantity <= 1}
-          className={`flex shrink-0 items-center justify-center font-medium transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 ${
+          className={`inline-flex shrink-0 items-center justify-center transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 ${
             isCart
-              ? "h-8 w-8 rounded-md bg-[#F1F0EB] text-lg text-[#1B1D60] hover:bg-[#F0E4C6]"
-              : "h-8 w-8 rounded-full bg-white text-xl text-[#1B1D60] hover:bg-[#E8E8F3]"
+              ? "h-8 w-8 rounded-md bg-[#F1F0EB] text-[#1B1D60] hover:bg-[#F0E4C6]"
+              : "h-8 w-8 rounded-full bg-white text-[#1B1D60] hover:bg-[#E8E8F3]"
           }`}
           aria-label="Decrease Quantity"
         >
-          −
+          <Minus
+            size={16}
+            strokeWidth={2.5}
+            className="block shrink-0"
+          />
         </button>
 
         {/* Quantity */}
         <span
-          className={`min-w-[32px] text-center font-dm-sans font-bold tabular-nums text-[#1B1D60] ${
-            isCart ? "text-sm" : "text-sm"
-          }`}
+          className="min-w-[32px] text-center font-dm-sans text-sm font-bold tabular-nums text-[#1B1D60]"
           aria-live="polite"
         >
           {String(quantity).padStart(2, "0")}
@@ -69,10 +74,10 @@ export default function QuantitySelector({
             if (!disableIncrease) onIncrease?.();
           }}
           disabled={disableIncrease}
-          className={`flex shrink-0 items-center justify-center font-medium text-white transition-all duration-200 hover:bg-[#2F346F] disabled:cursor-not-allowed disabled:opacity-40 ${
+          className={`inline-flex shrink-0 items-center justify-center text-white transition-colors duration-200 hover:bg-[#2F346F] disabled:cursor-not-allowed disabled:opacity-40 ${
             isCart
-              ? "h-8 w-8 rounded-md bg-[#1B1D60] text-lg"
-              : "h-8 w-8 rounded-full bg-[#1B1D60] text-xl"
+              ? "h-8 w-8 rounded-md bg-[#1B1D60]"
+              : "h-8 w-8 rounded-full bg-[#1B1D60]"
           }`}
           aria-label={
             increaseDisabledLabel ||
@@ -85,7 +90,11 @@ export default function QuantitySelector({
             (disableIncrease ? `Max ${max} items per order` : undefined)
           }
         >
-          +
+          <Plus
+            size={16}
+            strokeWidth={2.5}
+            className="block shrink-0"
+          />
         </button>
       </div>
     </div>

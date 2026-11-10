@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Mail, Phone, UserRound, Pencil, X } from "lucide-react";
+import { Camera, Mail, Phone, UserRound, Pencil, X ,SquarePen} from "lucide-react";
 
 import Button from "../../../components/ui/buttons/Button";
 import OtpInput from "../../../components/ui/OtpInput";
@@ -454,7 +454,7 @@ export default function ProfileTab({ user }) {
             onClick={handleEdit}
             className="inline-flex min-h-10 w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-md bg-gold px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none"
           >
-            <Pencil size={15} />
+            <SquarePen size={15} />
             <span>Edit Profile</span>
           </button>
         )}

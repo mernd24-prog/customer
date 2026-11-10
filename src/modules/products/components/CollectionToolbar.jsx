@@ -20,6 +20,8 @@ export default function CollectionToolbar({
     label: `${size} per page`,
   }));
 
+  const mobileEqualWidthClass = "basis-0 flex-1 min-w-0";
+
   return (
     <div className={shellClassName}>
       {countText && (
@@ -32,7 +34,7 @@ export default function CollectionToolbar({
         {/* Sort Trigger */}
         {!!sortOptions.length && (
           <CustomDropdown
-            className="flex-1 min-w-0 w-full sm:flex-none sm:w-[180px]"
+            className={`${mobileEqualWidthClass} w-full sm:w-[180px] sm:flex-none`}
             buttonClassName="h-[44px] min-h-[44px] w-full sm:w-[180px] rounded-lg text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
             options={sortOptions}
             value={sortValue}
@@ -44,7 +46,7 @@ export default function CollectionToolbar({
         {/* Page Size Trigger */}
         {!!pageSizes.length && (
           <CustomDropdown
-            className="flex-1 min-w-0 w-full sm:flex-none sm:w-[180px]"
+            className={`${mobileEqualWidthClass} w-full sm:w-[180px] sm:flex-none`}
             buttonClassName="h-[44px] min-h-[44px] w-full sm:w-[180px] rounded-lg text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
             options={pageSizeOptions}
             value={pageSizeValue}
@@ -61,7 +63,7 @@ export default function CollectionToolbar({
           <button
             type="button"
             onClick={onOpenFilters}
-            className="flex h-[44px] min-h-[44px] w-full flex-1 items-center justify-start gap-1.5 rounded-lg border border-[#E7D9B8] bg-white px-3 text-xs font-semibold text-[#03014D] shadow-xs transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] focus:outline-none sm:h-11 sm:w-[180px] sm:flex-none sm:gap-2 sm:px-4 sm:text-sm lg:hidden"
+            className={`flex h-[44px] min-h-[44px] ${mobileEqualWidthClass} items-center justify-start gap-1.5 rounded-lg border border-[#E7D9B8] bg-white px-3 text-xs font-semibold text-[#03014D] shadow-xs transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] focus:outline-none sm:h-11 sm:w-[180px] sm:flex-none sm:gap-2 sm:px-4 sm:text-sm lg:hidden`}
           >
             <SlidersHorizontal size={16} className="shrink-0 text-[#CE9F2D]" />
             <span>Filters</span>

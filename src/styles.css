@@ -416,6 +416,20 @@ button.product-variant-option:active {
   outline-offset: 0 !important;
   box-shadow: none !important;
 }
+.hero-outline-btn,
+.hero-outline-btn:focus,
+.hero-outline-btn:active,
+.hero-outline-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.hero-outline-btn:active {
+  color: #CE9F2D !important;
+  border-color: #CE9F2D !important;
+  background-color: rgba(206, 159, 45, 0.15) !important;
+}
+
 .customer-shell {
   display: flex;
   flex-direction: column;

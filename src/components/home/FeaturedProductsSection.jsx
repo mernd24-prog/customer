@@ -1,3 +1,4 @@
+
 import ProductCard from "../../modules/products/components/ProductCard";
 
 import {
@@ -27,6 +28,7 @@ export default function FeaturedProductsSection({
     rounded-none
     px-0
     py-0
+
     md:my-0
     md:rounded-none
     md:px-0
@@ -48,35 +50,38 @@ export default function FeaturedProductsSection({
     md:px-0
     md:pb-0
     lg:px-1
-    lg:pb-1
+    lg:pb-0
   `;
 
   const headerClassName = `
-    px-0
-    md:px-0
-    lg:px-1
-  `;
-
+  px-0
+  pb-2
+  md:px-0
+  lg:px-2
+`;
   const sectionStyle = {
     "--featured-gradient":
       "linear-gradient(180deg, #FAF8F5 0%, #F5EEE2 100%)",
   };
 
+  const sectionProps = {
+    title,
+    actionLabel,
+    actionHref,
+    actionStyle: "icon",
+    mobileActionStyle: "button",
+    mobileActionFullWidth: true,
+    className: sectionClassName,
+    style: sectionStyle,
+    disablePadding: true,
+    contentClassName,
+    headerClassName,
+    headerSpacingClassName: "my-3 sm:my-4 lg:my-0",
+  };
+
   if (loading) {
     return (
-      <SectionContainer
-        title={title}
-        actionLabel={actionLabel}
-        actionHref={actionHref}
-        actionStyle="icon"
-        mobileActionStyle="button"
-        mobileActionFullWidth
-        className={sectionClassName}
-        style={sectionStyle}
-        disablePadding={true}
-        contentClassName={contentClassName}
-        headerClassName={headerClassName}
-      >
+      <SectionContainer {...sectionProps}>
         <SkeletonLoader
           preset="PRODUCT_CARD"
           count={5}
@@ -92,19 +97,7 @@ export default function FeaturedProductsSection({
   }
 
   return (
-    <SectionContainer
-      title={title}
-      actionLabel={actionLabel}
-      actionHref={actionHref}
-      actionStyle="icon"
-      mobileActionStyle="button"
-      mobileActionFullWidth
-      className={sectionClassName}
-      style={sectionStyle}
-      disablePadding={true}
-      contentClassName={contentClassName}
-      headerClassName={headerClassName}
-    >
+    <SectionContainer {...sectionProps}>
       <div className="grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-5">
         {displayProducts.map((product, index) => (
           <ProductCard

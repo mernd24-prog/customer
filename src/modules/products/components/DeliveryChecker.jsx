@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { checkServiceability } from "../../../features/delivery/deliverySlice";
@@ -105,17 +104,14 @@ export default function DeliveryChecker({
       onResultChange?.(null);
 
       setError(
-        typeof err === "string"
-          ? err
-          : "Could not check delivery. Try again.",
+        typeof err === "string" ? err : "Could not check delivery. Try again.",
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const sellerDelivery =
-    result?.deliveryChargeBreakup?.sellers?.[0] || {};
+  const sellerDelivery = result?.deliveryChargeBreakup?.sellers?.[0] || {};
 
   const eta =
     sellerDelivery.estimatedDeliveryDays ||
@@ -129,9 +125,7 @@ export default function DeliveryChecker({
     : "";
 
   const deliveryCharge = Number(
-    result?.sellerDeliveryChargeAmount ??
-      sellerDelivery.chargeAmount ??
-      0,
+    result?.sellerDeliveryChargeAmount ?? sellerDelivery.chargeAmount ?? 0,
   );
 
   const resultCodAvailable = result?.codAvailable;
@@ -178,18 +172,19 @@ export default function DeliveryChecker({
                     className="shrink-0 animate-spin text-gold-dark"
                   />
                 ) : (
-                  <MapPin
-                    size={16}
-                    className="shrink-0 text-gold-dark"
-                  />
+                  <MapPin size={16} className="shrink-0 text-gold-dark" />
                 )}
 
                 <span className="min-w-0 flex-1 truncate text-left">
                   {lastCheckedPincode || "Enter pincode"}
                 </span>
 
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white">
-                  <ArrowRight size={15} aria-hidden="true" />
+                <span className="group flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white hover:bg-[#2F346F]">
+                  <ArrowRight
+                    size={16}
+                    aria-hidden="true"
+                  
+                  />
                 </span>
               </button>
             </div>
@@ -226,9 +221,7 @@ export default function DeliveryChecker({
               </div>
 
               <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 self-stretch rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold text-navy sm:self-center">
-                {lastCheckedPincode
-                  ? "Change pincode"
-                  : "Enter pincode"}
+                {lastCheckedPincode ? "Change pincode" : "Enter pincode"}
                 <ArrowRight size={14} aria-hidden="true" />
               </span>
             </button>
@@ -238,10 +231,7 @@ export default function DeliveryChecker({
           {result &&
             (result.serviceable ? (
               <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-emerald-700">
-                <CheckCircle2
-                  size={14}
-                  className="shrink-0 text-emerald-600"
-                />
+                <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
 
                 <span>
                   Deliverable to <strong>{lastCheckedPincode}</strong>
@@ -250,10 +240,7 @@ export default function DeliveryChecker({
               </div>
             ) : (
               <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-red-600">
-                <XCircle
-                  size={14}
-                  className="shrink-0 text-red-500"
-                />
+                <XCircle size={14} className="shrink-0 text-red-500" />
 
                 <span>
                   Sorry, we do not ship to this pincode. Try another one.
@@ -264,25 +251,24 @@ export default function DeliveryChecker({
       )}
 
       {/* Reusable Confirm Modal */}
-     <ConfirmModal
-  open={isModalOpen}
-  title="Check Delivery"
-  icon={Truck}
-  iconBgClassName="bg-[#F5E9C9]"
-  iconClassName="text-[#A96F14]"
-  description="Enter your 6-digit delivery pincode to check estimated arrival times, shipping costs, and COD availability for your location."
-  confirmLabel={loading ? "Checking..." : "Check Availability"}
-  confirmDisabled={loading || pincode.length !== 6}
-  cancelLabel="Close"
-  onConfirm={check}
-  onCancel={closeModal}
-  maxWidth="max-w-[420px]"
-  modalClassName="rounded-xl"
-  confirmClassName="bg-gradient-to-r from-[#CE9F2D] to-[#A96F14] hover:brightness-105"
->
+      <ConfirmModal
+        open={isModalOpen}
+        title="Check Delivery"
+        icon={Truck}
+        iconBgClassName="bg-[#F5E9C9]"
+        iconClassName="text-[#A96F14]"
+        description="Enter your 6-digit delivery pincode to check estimated arrival times, shipping costs, and COD availability for your location."
+        confirmLabel={loading ? "Checking..." : "Check Availability"}
+        confirmDisabled={loading || pincode.length !== 6}
+        cancelLabel="Close"
+        onConfirm={check}
+        onCancel={closeModal}
+        maxWidth="max-w-[420px]"
+        modalClassName="rounded-xl"
+        confirmClassName="bg-gradient-to-r from-[#CE9F2D] to-[#A96F14] hover:brightness-105"
+      >
         <div className="grid min-w-0 gap-4">
           <div className="grid min-w-0 gap-2">
-           
             <input
               id="delivery-pincode"
               type="text"
@@ -293,9 +279,7 @@ export default function DeliveryChecker({
               disabled={loading}
               onChange={(e) => {
                 setError("");
-                setPincode(
-                  e.target.value.replace(/\D/g, "").slice(0, 6),
-                );
+                setPincode(e.target.value.replace(/\D/g, "").slice(0, 6));
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && pincode.length === 6 && !loading) {
@@ -308,9 +292,7 @@ export default function DeliveryChecker({
             />
 
             {error && (
-              <p className="text-xs font-semibold text-red-600">
-                {error}
-              </p>
+              <p className="text-xs font-semibold text-red-600">{error}</p>
             )}
           </div>
 
@@ -318,9 +300,7 @@ export default function DeliveryChecker({
           {result && (
             <div
               className={`rounded-lg p-3 ${
-                result.serviceable
-                  ? "bg-emerald-50"
-                  : "bg-red-50"
+                result.serviceable ? "bg-emerald-50" : "bg-red-50"
               }`}
             >
               {result.serviceable ? (
@@ -331,30 +311,21 @@ export default function DeliveryChecker({
                   />
 
                   <div className="min-w-0 text-xs leading-relaxed text-emerald-800">
-                    <p className="font-bold">
-                      Delivery available!
-                    </p>
+                    <p className="font-bold">Delivery available!</p>
 
                     <p className="mt-1">
                       Deliverable to <strong>{lastCheckedPincode}</strong>
                     </p>
 
-                    {etaText && (
-                      <p>
-                        Estimated delivery: {etaText} days
-                      </p>
-                    )}
+                    {etaText && <p>Estimated delivery: {etaText} days</p>}
 
                     <p>
                       {deliveryCharge > 0
-                        ? `Delivery Charge: ${new Intl.NumberFormat(
-                            "en-IN",
-                            {
-                              style: "currency",
-                              currency: "INR",
-                              maximumFractionDigits: 0,
-                            },
-                          ).format(deliveryCharge)}`
+                        ? `Delivery Charge: ${new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(deliveryCharge)}`
                         : "Free Shipping"}
                     </p>
 
@@ -369,10 +340,7 @@ export default function DeliveryChecker({
                 </div>
               ) : (
                 <div className="flex items-start gap-2">
-                  <XCircle
-                    size={18}
-                    className="mt-0.5 shrink-0 text-red-600"
-                  />
+                  <XCircle size={18} className="mt-0.5 shrink-0 text-red-600" />
 
                   <p className="text-xs font-semibold leading-relaxed text-red-700">
                     Sorry, we do not ship to this pincode. Try another one.

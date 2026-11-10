@@ -151,73 +151,75 @@ export default function OrderItemSummaryCard({
   return (
      <article className="group relative overflow-hidden border-b border-[#E5E1DA] bg-white lg:rounded-lg lg:border lg:border-[#E4CA8E]"> 
 
-      <div className="lg:hidden">
-        <Link
-          to={itemDetailPath}
-          className="flex min-h-[100px] items-center gap-3 transition-colors hover:bg-[#FCFBF8] sm:gap-4"
-          aria-label={`${productTitle}, ${statusLabel} on ${orderDate}`}
-        >
-          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-lg  p-1.5 sm:h-[76px] sm:w-[76px]">
-            {itemImage ? (
-              <img
-                loading="lazy"
-                width="400"
-                height="400"
-                src={itemImage}
-                alt={productTitle}
-                className="h-full w-full object-contain"
-              />
-            ) : (
-              <Package
-                size={28}
-                strokeWidth={1.5}
-                className="text-[#9E886A]/60"
-              />
-            )}
-          </div>
+     
+<div className="lg:hidden">
+  <Link
+    to={itemDetailPath}
+    className="flex min-h-[100px] items-center gap-3 transition-colors hover:bg-[#FCFBF8] sm:gap-4"
+    aria-label={`${productTitle}, ${statusLabel} on ${orderDate}`}
+  >
+    <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-lg p-1.5 sm:h-[76px] sm:w-[76px]">
+      {itemImage ? (
+        <img
+          loading="lazy"
+          width="400"
+          height="400"
+          src={itemImage}
+          alt={productTitle}
+          className="h-full w-full object-contain"
+        />
+      ) : (
+        <Package
+          size={28}
+          strokeWidth={1.5}
+          className="text-[#9E886A]/60"
+        />
+      )}
+    </div>
 
-          <div className="min-w-0 flex-1 py-0.5">
-            <h3 className="line-clamp-2 text-[12px] font-semibold leading-[1.4] text-[#292929] sm:text-xs">
-              {statusLabel} on {orderDate}
-            </h3>
+    <div className="min-w-0 flex-1 py-0.5">
+      <h3 className="line-clamp-2 text-[13px] font-semibold leading-[1.4] text-[#292929] sm:text-sm">
+        {statusLabel} on {orderDate}
+      </h3>
 
-            <p className="mt-1 line-clamp-2 text-[11px] leading-[1.5] text-[#707070] sm:text-xs">
-              {statusDescription}
-            </p>
+      <p className="mt-1 line-clamp-2 text-xs leading-[1.5] text-[#707070] sm:text-[13px]">
+        {statusDescription}
+      </p>
 
-            {/* Mobile: show quantity only, never show color */}
-            <div className="mt-1.5 flex items-center gap-x-2 text-[11px] text-[#777777]">
-              {orderedQuantity > 1 && (
-                <span>Qty: {orderedQuantity}</span>
-              )}
-            </div>
-          </div>
-
-          <ChevronRight
-            size={20}
-            strokeWidth={2}
-            className="shrink-0 text-[#202020]"
-            aria-hidden="true"
-          />
-        </Link>
-
-        {canReview && (
-          <div
-            className="mx-4 border-t border-[#EDE8DE] px-1 py-2 sm:mx-5"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <StarRatingUI
-              item={item}
-              order={order}
-              isUnreviewed={isUnreviewed}
-              myReview={myReview}
-              onReviewClick={onReviewClick}
-              hoverStar={hoverStar}
-              setHoverStar={setHoverStar}
-            />
-          </div>
+      {/* Mobile: show quantity only, never show color */}
+      <div className="mt-1.5 flex items-center gap-x-2 text-xs text-[#777777]">
+        {orderedQuantity > 1 && (
+          <span>Qty: {orderedQuantity}</span>
         )}
       </div>
+    </div>
+
+    <ChevronRight
+      size={20}
+      strokeWidth={2}
+      className="shrink-0 text-[#202020]"
+      aria-hidden="true"
+    />
+  </Link>
+
+  {canReview && (
+    <div
+      className="mx-4 border-t border-[#EDE8DE] px-1 py-2 sm:mx-5"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <StarRatingUI
+        item={item}
+        order={order}
+        isUnreviewed={isUnreviewed}
+        myReview={myReview}
+        onReviewClick={onReviewClick}
+        hoverStar={hoverStar}
+        setHoverStar={setHoverStar}
+      />
+    </div>
+  )}
+</div>
+
 
       {/* Desktop layout: keep color and quantity */}
       <Link
