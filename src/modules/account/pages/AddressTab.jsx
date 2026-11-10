@@ -6,7 +6,7 @@ import AddressEditModal from "../../common/components/address/AddressEditModal";
 import SharedAddressCard from "../../common/components/address/SharedAddressCard";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useAddressBook } from "../controllers/useAddressBook";
-import { ChevronDown, ChevronUp, MapPin, Plus, Trash2 } from "lucide-react";
+import {  Trash2 } from "lucide-react";
 export default function AddressTab({ user }) {
   const {
     loading,

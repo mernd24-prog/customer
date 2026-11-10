@@ -225,7 +225,7 @@ export function WatchlistItemCard({
           e.stopPropagation();
           onRemove?.(product);
         }}
-        className="wishlist-remove-button absolute right-2 top-2 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-black/5 bg-white/90 text-[#1B1D60] shadow-xs backdrop-blur-sm transition-all duration-200  hover:bg-white hover:text-red-500 active:scale-95 sm:h-8 sm:w-8"
+        className="wishlist-remove-button absolute right-2 top-2 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-black/5 bg-white/90 text-[#1B1D60] shadow-xs backdrop-blur-sm transition-[color,background-color,border-color,box-shadow] duration-200  hover:bg-white hover:text-red-500 sm:h-8 sm:w-8"
         aria-label={`Remove ${title} from wishlist`}
         title={`Remove ${title} from wishlist`}
       >

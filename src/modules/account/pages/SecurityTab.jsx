@@ -11,7 +11,7 @@ import FormField from "../../../components/ui/FormField";
 import Button from "../../../components/ui/buttons/Button";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useToastThunk } from "../../../hooks/useToastThunk";
-import { Mail, UserRound, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import {
   changePassword,
   logout,
@@ -62,11 +62,10 @@ export default function SecurityTab() {
     if (data?.otpRequired) {
       const message =
         data.deliveryMode === "static"
-          ? `Testing mode: ${
-              data.otp
-                ? `enter OTP ${data.otp}`
-                : "enter the configured test OTP"
-            } to update your password.`
+          ? `Testing mode: ${data.otp
+            ? `enter OTP ${data.otp}`
+            : "enter the configured test OTP"
+          } to update your password.`
           : data.deliveryMode === "fallback_email"
             ? "Mobile OTP delivery failed. Enter the OTP sent to your email to update your password."
             : data.deliveryMode === "third_party_sms"
@@ -171,52 +170,20 @@ export default function SecurityTab() {
       </form>
 
       <ConfirmModal
-  open={otpRequired}
-  title="Verify Password"
-  icon={ShieldCheck}
-  iconBgClassName="bg-blue-50"
-  iconClassName="text-blue-600"
-  iconSize={22}
-  description={deliveryMessage}
-  confirmLabel="Verify"
-  cancelLabel="Edit"
-  confirmDisabled={loading || !/^\d{6}$/.test(otp)}
-  onConfirm={handleSubmit((values) => submit(values))}
-  onCancel={closeOtpModal}
-  maxWidth="max-w-[440px]"
->
-  <div className="space-y-4">
-    <div className="text-center">
-      <p className="mb-3 text-sm font-semibold text-[#2D2D2D]">
-        Enter the 6-digit verification code
-      </p>
-
-      <div className="mx-auto w-full max-w-[320px]">
-        <OtpInput value={otp} onChange={setOtp} />
-      </div>
-    </div>
-
-    <div className="flex items-center justify-between gap-3 border-t border-[#F0E6D2] pt-3">
-      <button
-        type="button"
-        disabled={loading}
-        onClick={closeOtpModal}
-        className="text-sm font-medium text-[#64708A] underline-offset-4 hover:text-[#1B1D60] hover:underline disabled:opacity-50"
+        open={otpRequired}
+        title="Verify Password"
+        icon={ShieldCheck}
+        iconBgClassName="bg-blue-50"
+        iconClassName="text-blue-600"
+        iconSize={22}
+        description={deliveryMessage}
+        confirmLabel="Verify"
+        cancelLabel="Edit"
+        confirmDisabled={loading || !/^\d{6}$/.test(otp)}
+        onConfirm={handleSubmit((values) => submit(values))}
+        onCancel={closeOtpModal}
+        maxWidth="max-w-[440px]"
       >
-        Edit password details
-      </button>
-
-      <button
-        type="button"
-        disabled={loading}
-        onClick={handleSubmit((values) => submit(values, true))}
-        className="text-sm font-semibold text-[#1B1D60] underline-offset-4 hover:underline disabled:opacity-50"
-      >
-        Resend OTP
-      </button>
-    </div>
-  </div>
-</ConfirmModal>
         <div className="space-y-4">
           <div className="text-center">
             <p className="mb-3 text-sm font-semibold text-[#2D2D2D]">
@@ -249,6 +216,38 @@ export default function SecurityTab() {
           </div>
         </div>
       </ConfirmModal>
+      <div className="space-y-4">
+        <div className="text-center">
+          <p className="mb-3 text-sm font-semibold text-[#2D2D2D]">
+            Enter the 6-digit verification code
+          </p>
+
+          <div className="mx-auto w-full max-w-[320px]">
+            <OtpInput value={otp} onChange={setOtp} />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-[#F0E6D2] pt-3">
+          <button
+            type="button"
+            disabled={loading}
+            onClick={closeOtpModal}
+            className="text-sm font-medium text-[#64708A] underline-offset-4 hover:text-[#1B1D60] hover:underline disabled:opacity-50"
+          >
+            Edit password details
+          </button>
+
+          <button
+            type="button"
+            disabled={loading}
+            onClick={handleSubmit((values) => submit(values, true))}
+            className="text-sm font-semibold text-[#1B1D60] underline-offset-4 hover:underline disabled:opacity-50"
+          >
+            Resend OTP
+          </button>
+        </div>
+      </div>
+    
     </>
   );
 }

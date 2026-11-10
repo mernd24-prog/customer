@@ -541,7 +541,7 @@ export default function ProductCard({
           }
           onClick={handleWishlist}
           className={cn(
-            "absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-xs border border-black/5 transition-all duration-300 ease-out  active:scale-95 hover:bg-white",
+            "absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-xs border border-black/5 transition-[color,background-color,border-color,box-shadow] duration-300 ease-out  hover:bg-white",
             isWishlisted
               ? "text-rose-500 bg-rose-50/90 border-rose-200"
               : "text-[#1B1D60] hover:text-rose-500",

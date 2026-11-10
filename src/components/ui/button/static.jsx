@@ -19,7 +19,7 @@ outlineSmall:
     "h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-xs leading-[16px] tracking-[0.5px] font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-w-[153px] sm:px-4 sm:text-sm sm:leading-[20px] sm:tracking-[0.5px]",
   
    headerIcon:
-  "group relative inline-flex h-8 w-8 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 shrink-0 items-center justify-center rounded-full bg-transparent p-0 text-[#1B1D60] shadow-none transition-all duration-200 ease-in-out hover:bg-[#CE9F2D]/15 hover:text-[#CE9F2D] hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/40 active:scale-95",
+  "group relative inline-flex h-8 w-8 min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 shrink-0 items-center justify-center rounded-full bg-transparent p-0 text-[#1B1D60] shadow-none transition-[color,background-color,border-color,box-shadow] duration-200 ease-in-out hover:bg-[#CE9F2D]/15 hover:text-[#CE9F2D] hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/40",
 
 headerIconOutlined:
   "border border-[#1B1D60]/20 bg-[#1B1D60]/5",
