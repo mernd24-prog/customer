@@ -1,21 +1,23 @@
 
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, UserRound } from "lucide-react";
-import { useState } from "react";
+import { Mail, UserRound, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 import OtpInput from "../../../components/ui/OtpInput";
 import { notify } from "../../../utils/notify";
 import FormField from "../../../components/ui/FormField";
 import Button from "../../../components/ui/buttons/Button";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useToastThunk } from "../../../hooks/useToastThunk";
-import { ShieldCheck } from "lucide-react";
+
 import {
   changePassword,
   logout,
 } from "../../../modules/auth/slices/authSlice";
+
 import { AUTH_ROUTES } from "../../../modules/auth/routes/apiRoutes";
 import { securitySchema } from "../../../validations/validationSchemas";
 
@@ -27,6 +29,7 @@ export default function SecurityTab() {
   const [otpRequired, setOtpRequired] = useState(false);
   const [otp, setOtp] = useState("");
   const [deliveryMessage, setDeliveryMessage] = useState("");
+
   const { loading } = useSelector((s) => s.auth);
 
   const {
@@ -42,6 +45,7 @@ export default function SecurityTab() {
 
   const closeOtpModal = () => {
     if (loading) return;
+
     setOtpRequired(false);
     setOtp("");
     setDeliveryMessage("");
@@ -62,10 +66,11 @@ export default function SecurityTab() {
     if (data?.otpRequired) {
       const message =
         data.deliveryMode === "static"
-          ? `Testing mode: ${data.otp
-            ? `enter OTP ${data.otp}`
-            : "enter the configured test OTP"
-          } to update your password.`
+          ? `Testing mode: ${
+              data.otp
+                ? `enter OTP ${data.otp}`
+                : "enter the configured test OTP"
+            } to update your password.`
           : data.deliveryMode === "fallback_email"
             ? "Mobile OTP delivery failed. Enter the OTP sent to your email to update your password."
             : data.deliveryMode === "third_party_sms"
@@ -75,6 +80,7 @@ export default function SecurityTab() {
       setOtpRequired(true);
       setOtp("");
       setDeliveryMessage(message);
+
       notify.success(message);
       return;
     }
@@ -86,13 +92,16 @@ export default function SecurityTab() {
     setOtpRequired(false);
     setOtp("");
     setDeliveryMessage("");
+
     reset();
     dispatch(logout());
+
     navigate(AUTH_ROUTES.login, { replace: true });
   };
 
   return (
     <>
+      {/* Password Form */}
       <form
         className="security-password-form grid gap-4"
         onSubmit={handleSubmit((values) => submit(values))}
@@ -100,15 +109,16 @@ export default function SecurityTab() {
       >
         <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
-            <span className="flex size-10 sm:size-11 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60] sm:size-11">
               <UserRound size={21} />
             </span>
 
             <div className="min-w-0">
-              <h2 className="text-base sm:text-lg lg:text-xl font-bold leading-6 text-[#171A3A]">
+              <h2 className="text-base font-bold leading-6 text-[#171A3A] sm:text-lg lg:text-xl">
                 Security
               </h2>
-              <p className="mt-0.5 text-xs sm:text-sm font-normal leading-snug text-[#64708A]">
+
+              <p className="mt-0.5 text-xs font-normal leading-snug text-[#64708A] sm:text-sm">
                 Manage your password and security settings.
               </p>
             </div>
@@ -128,7 +138,8 @@ export default function SecurityTab() {
         />
 
         <p className="text-xs text-[#64708A]">
-          If you signed up using OTP and have not set a password, leave the current password empty.
+          If you signed up using OTP and have not set a password, leave the
+          current password empty.
         </p>
 
         <FormField
@@ -159,7 +170,7 @@ export default function SecurityTab() {
           <Button
             type="submit"
             loading={loading}
-            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-gold hover:bg-gold-dark rounded-lg shadow-2xs"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-xs font-semibold text-white shadow-2xs hover:bg-gold-dark sm:w-auto sm:text-sm"
             size="md"
             disabled={loading || otpRequired}
           >
@@ -169,6 +180,7 @@ export default function SecurityTab() {
         </div>
       </form>
 
+      {/* OTP Verification Modal */}
       <ConfirmModal
         open={otpRequired}
         title="Verify Password"
@@ -216,38 +228,6 @@ export default function SecurityTab() {
           </div>
         </div>
       </ConfirmModal>
-      <div className="space-y-4">
-        <div className="text-center">
-          <p className="mb-3 text-sm font-semibold text-[#2D2D2D]">
-            Enter the 6-digit verification code
-          </p>
-
-          <div className="mx-auto w-full max-w-[320px]">
-            <OtpInput value={otp} onChange={setOtp} />
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between gap-3 border-t border-[#F0E6D2] pt-3">
-          <button
-            type="button"
-            disabled={loading}
-            onClick={closeOtpModal}
-            className="text-sm font-medium text-[#64708A] underline-offset-4 hover:text-[#1B1D60] hover:underline disabled:opacity-50"
-          >
-            Edit password details
-          </button>
-
-          <button
-            type="button"
-            disabled={loading}
-            onClick={handleSubmit((values) => submit(values, true))}
-            className="text-sm font-semibold text-[#1B1D60] underline-offset-4 hover:underline disabled:opacity-50"
-          >
-            Resend OTP
-          </button>
-        </div>
-      </div>
-    
     </>
   );
 }

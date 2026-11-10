@@ -118,7 +118,7 @@ export default function CartItemCard({
         {/* Product image */}
         <div className="flex min-w-0 items-start justify-center">
           {item?.image && (
-            <div className="h-[112px] w-[88px] shrink-0 overflow-hidden rounded-lg bg-white min-[375px]:h-[120px] min-[375px]:w-[96px] sm:h-[140px] sm:w-[115px]">
+            <div className="h-[112px] w-[88px] shrink-0 overflow-hidden bg-white min-[375px]:h-[120px] min-[375px]:w-[96px] sm:h-[140px] sm:w-[115px]">
               {productPath ? (
                 <Link
                   to={productPath}

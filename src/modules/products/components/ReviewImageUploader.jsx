@@ -206,7 +206,7 @@ export default function ReviewImageUploader({
 
       <p className="text-xs font-medium text-[#777890]">
         Add Up to 5 Clear Product Photos. JPG, PNG, WEBP or GIF, Max 10 MB Each.
-      Add Up to 5 Clear Product Photos. Jpg, Png, Webp or Gif, Max 10 Mb Each.
+     
       </p>
 
       <input

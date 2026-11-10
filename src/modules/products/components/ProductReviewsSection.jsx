@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { ArrowRight, ThumbsUp } from "lucide-react";
-import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
   submitProductReview,
@@ -19,33 +18,29 @@ import ReviewMediaLightbox from "./ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 import EmptyState from "../../../components/ui/feedback/EmptyState";
-import StarRating from "../../../components/ui/display/StarRating";
+import StarRating, {
+  RatingStars,
+} from "../../../components/ui/display/StarRating";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function StarInput({ value, onChange, size = 24 }) {
   const [hovered, setHovered] = useState(0);
+
   return (
-    <div className="flex gap-1">
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button
-          key={n}
-          type="button"
-          onClick={() => onChange(n)}
-          onMouseEnter={() => setHovered(n)}
-          onMouseLeave={() => setHovered(0)}
-          className="transition-transform "
-        >
-          <IoIosStar
-            size={size}
-            className={
-              n <= (hovered || value)
-                ? "fill-[#CE9F2D] text-[#CE9F2D]"
-                : "fill-border text-border"
-            }
-          />
-        </button>
-      ))}
+    <div className="inline-flex" onMouseLeave={() => setHovered(0)}>
+      <RatingStars
+        rating={value}
+        hoverStar={hovered || value}
+        interactive
+        size={size}
+        filledClassName="text-[#CE9F2D]"
+        emptyClassName="text-[#D1D5DB]"
+        onSelect={onChange}
+        onHover={setHovered}
+        ariaLabelPrefix="Rate"
+        className="gap-1"
+      />
     </div>
   );
 }

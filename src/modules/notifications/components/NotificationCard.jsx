@@ -1,3 +1,4 @@
+
 import React from "react";
 import { formatRelativeTime, getTypeConfig } from "../utils/notificationUtils";
 
@@ -37,6 +38,7 @@ export function NotificationCard({ notif, onClick }) {
       firstItem.product?.title ||
       firstItem.product?.name;
   }
+
   if (!productName && payload.cancellation?.items?.length > 0) {
     productName =
       payload.cancellation.items[0].productTitle ||
@@ -48,6 +50,7 @@ export function NotificationCard({ notif, onClick }) {
     payload.totalItems ||
     payload.products?.length ||
     payload.items?.length;
+
   const count = countRaw ? parseInt(countRaw, 10) : null;
 
   return (
@@ -66,6 +69,7 @@ export function NotificationCard({ notif, onClick }) {
         >
           <TypeIcon size={20} strokeWidth={2} />
         </div>
+
         {!isRead && (
           <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-[#1597D4] ring-2 ring-white" />
         )}
@@ -76,7 +80,11 @@ export function NotificationCard({ notif, onClick }) {
           {/* Title and Time Row */}
           <div className="flex flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
             <h3
-              className={`text-[15px] sm:text-[16px] leading-tight pr-2 sm:pr-4 ${isRead ? "font-semibold text-[#2E2E2E]" : "font-bold text-[#1B1D60]"}`}
+              className={`text-[13px] sm:text-sm leading-[1.4] pr-2 sm:pr-4 ${
+                isRead
+                  ? "font-semibold text-[#2E2E2E]"
+                  : "font-bold text-[#1B1D60]"
+              }`}
             >
               {notif.title || notif.subject || "Notification"}
             </h3>
@@ -87,6 +95,7 @@ export function NotificationCard({ notif, onClick }) {
                   {count} {count === 1 ? "Product" : "Products"}
                 </span>
               ) : null}
+
               <span className="text-xs text-[#8E8E8E] font-medium shrink-0">
                 {formatRelativeTime(notif.createdAt)}
               </span>
@@ -95,7 +104,9 @@ export function NotificationCard({ notif, onClick }) {
 
           {/* Message */}
           <p
-            className={`mt-0.5 text-sm sm:text-base leading-snug break-words ${isRead ? "text-[#6E6E6E]" : "text-[#4E4E4E]"}`}
+            className={`mt-0.5 text-xs leading-[1.5] break-words ${
+              isRead ? "text-[#6E6E6E]" : "text-[#4E4E4E]"
+            }`}
           >
             {displayMessage}
           </p>

@@ -1,5 +1,5 @@
 
-import { Clock, Truck, Banknote } from "lucide-react";
+import { Clock, Truck, Banknote,  IndianRupee, PackageCheck,} from "lucide-react";
 
 export default function ProductServiceBadges({
   shippingEtaText,
@@ -24,7 +24,7 @@ export default function ProductServiceBadges({
   if (shippingEtaText) {
     services.push({
       key: "dispatch",
-      icon: Clock,
+      icon: PackageCheck,
       label: "Dispatch",
       value: `Ships in ${shippingEtaText} ${
         shippingEtaText === "1" ? "Day" : "Days"
@@ -39,7 +39,7 @@ export default function ProductServiceBadges({
   if (productCodAvailable) {
     services.push({
       key: "payment",
-      icon: Banknote,
+      icon: IndianRupee,
       label: "Payment",
       value: "Cash on Delivery",
       cardBg: "bg-[#FFF8EC]",
@@ -50,7 +50,7 @@ export default function ProductServiceBadges({
   } else if (productCodDisabled) {
     services.push({
       key: "payment",
-      icon: Banknote,
+      icon: IndianRupee,
       label: "Payment",
       value: "Prepaid Only",
       disabled: true,
@@ -126,7 +126,7 @@ export default function ProductServiceBadges({
               `}
             >
               <Icon
-                size={18}
+                size={19}
                 strokeWidth={2}
               />
             </div>

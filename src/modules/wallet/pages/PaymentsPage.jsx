@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  CreditCard,
+  Receipt,
   CheckCircle2,
   XCircle,
   Clock,
@@ -101,7 +101,7 @@ export function PaymentsPage() {
                   >
                     <div className="flex min-w-0 items-start gap-3.5 sm:items-center">
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FFF8E7] text-[#CE9F2D] shadow-xs">
-                        <CreditCard size={20} />
+                        <Receipt size={20} />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
