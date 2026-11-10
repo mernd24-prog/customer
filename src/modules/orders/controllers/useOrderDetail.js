@@ -373,10 +373,12 @@ export function useOrderDetail({ orderId, track }) {
     ? returns.filter(returnCoversSelectedItem)
     : returns;
 
+  const orderNumber = order?.order_number || order?.orderNumber || "";
+
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "My Order", href: "/orders" },
-    { label: `#${orderId}` },
+    { label: orderNumber || "Order details" },
   ];
 
   useEffect(() => {
@@ -478,6 +480,7 @@ export function useOrderDetail({ orderId, track }) {
     state,
     notificationState,
     order,
+    orderNumber,
     items,
     cancellations,
     visibleCancellations,

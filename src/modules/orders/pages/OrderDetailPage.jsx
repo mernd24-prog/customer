@@ -22,7 +22,6 @@ import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
 import { useOrderDetail } from "../controllers/useOrderDetail";
 
 import {
-  getOrderNumber,
   getItemImage,
   getProductTitle,
   getItemProductPath,
@@ -40,6 +39,7 @@ export default function OrderDetailPage({ orderId }) {
   const {
     state,
     order,
+    orderNumber,
     items,
     cancellations,
     visibleCancellations,
@@ -91,7 +91,7 @@ export default function OrderDetailPage({ orderId }) {
   } = useOrderDetail({ orderId });
   return (
     <>
-      <Seo title={`Order ${getOrderNumber(order) || "Details"} | Sam Global`} />
+      <Seo title={`Order ${orderNumber || "Details"} | Sam Global`} />
       <PageContainer>
         <ApiState
           loading={state.loading && !order}
@@ -104,7 +104,7 @@ export default function OrderDetailPage({ orderId }) {
               <Breadcrumbs
                 items={breadcrumbItems}
                 copyLastItem
-                copyValue={orderId}
+                copyValue={orderNumber}
               />
               {/* <OrderDetailInfoGrid
                 items={[

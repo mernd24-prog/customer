@@ -62,10 +62,10 @@ export default function Breadcrumbs({
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
-      notify.success("Order ID copied to clipboard!");
+      notify.success("Order number copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      notify.error("Failed to copy Order ID.");
+      notify.error("Failed to copy Order number.");
     }
   };
 
@@ -164,8 +164,8 @@ export default function Breadcrumbs({
                   <button
                     type="button"
                     onClick={handleCopy}
-                    title="Copy Order ID"
-                    aria-label="Copy Order ID"
+                    title="Copy Order number"
+                    aria-label="Copy Order number"
                     className="inline-flex shrink-0 items-center justify-center rounded p-1 text-[#2E2E2E] transition-colors hover:text-[#CE9F2D]"
                   >
                     {copied ? (
