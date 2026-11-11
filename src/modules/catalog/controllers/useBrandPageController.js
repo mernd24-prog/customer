@@ -107,57 +107,89 @@ export default function useBrandPageController() {
   }, [productFacets?.price, items, currentContextKey, facetsContextKey]);
 
   useEffect(() => {
+    let cancelled = false;
+    const pageSize = 200;
+
     setBrandLoading(true);
     setBrandError(null);
     setBrand(null);
     setItems([]);
     setFirstLoadDone(false);
 
-    dispatch(fetchBrands({ limit: 200, cache: true }))
-      .then((action) => {
-        const data = action?.payload?.data;
-        const list = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : Array.isArray(data?.list)
-              ? data.list
-              : [];
+    const loadBrandPages = async () => {
+      try {
+        const brands = [];
+        let page = 1;
+        let total = null;
 
-        const matched = list.find((b) => {
-          const name = b?.name || b?.brandName || b?.title || "";
-          return (
-            brandToSlug(name) === brandToSlug(decodedBrandSlug) ||
-            name.toLowerCase() === decodedBrandSlug.toLowerCase()
+        while (true) {
+          const response = await dispatch(
+            fetchBrands({ page, limit: pageSize, cache: true }),
+          ).unwrap();
+          const data = response?.data;
+          const list = Array.isArray(data)
+            ? data
+            : Array.isArray(data?.items)
+              ? data.items
+              : Array.isArray(data?.list)
+                ? data.list
+                : [];
+
+          brands.push(...list);
+          total = Number(
+            data?.total ?? data?.pagination?.total ?? response?.meta?.total,
           );
-        });
 
-        if (matched) {
-          setBrand(matched);
-        } else {
-          // Fallback: fuzzy match by approximate name
-          const nameGuess = slugToBrandName(decodedBrandSlug);
-          const fuzzy = list.find(
+          const exactMatch = list.find((b) => {
+            const name = b?.name || b?.brandName || b?.title || "";
+            return (
+              brandToSlug(name) === brandToSlug(decodedBrandSlug) ||
+              name.toLowerCase() === decodedBrandSlug.toLowerCase()
+            );
+          });
+          if (exactMatch) break;
+
+          if (list.length < pageSize || (total > 0 && page * pageSize >= total)) {
+            break;
+          }
+          page += 1;
+        }
+
+        if (cancelled) return;
+
+        const nameGuess = slugToBrandName(decodedBrandSlug);
+        const matched =
+          brands.find((b) => {
+            const name = b?.name || b?.brandName || b?.title || "";
+            return (
+              brandToSlug(name) === brandToSlug(decodedBrandSlug) ||
+              name.toLowerCase() === decodedBrandSlug.toLowerCase()
+            );
+          }) ||
+          brands.find(
             (b) =>
               (b?.name || b?.brandName || b?.title || "").toLowerCase() ===
               nameGuess.toLowerCase(),
           );
-          if (fuzzy) {
-            setBrand(fuzzy);
-          } else {
-            // Do not set an error here — allow product listing to load using the
-            // slug-derived brand name. Showing a "Brand Coming Soon" page
-            // prevents products from rendering even if the product search
-            // returns results for the slug.
-            setBrand(null);
-          }
+
+        if (matched) {
+          setBrand(matched);
+        } else {
+          // Let the product listing use the slug-derived name if no brand record matches.
+          setBrand(null);
         }
         setBrandLoading(false);
-      })
-      .catch(() => {
+      } catch {
+        if (cancelled) return;
         setBrandError("Failed to load brand");
         setBrandLoading(false);
-      });
+      }
+    };
+
+    loadBrandPages();
+    return () => {
+      cancelled = true;
+    };
   }, [decodedBrandSlug, dispatch]);
 
   const brandName = getBrandName(brand) || slugToBrandName(brandSlug);
