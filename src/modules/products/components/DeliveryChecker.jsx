@@ -264,7 +264,7 @@ export default function DeliveryChecker({
         onConfirm={check}
         onCancel={closeModal}
         maxWidth="max-w-[420px]"
-        modalClassName="rounded-xl"
+        modalClassName="rounded-lg"
         confirmClassName="bg-gradient-to-r from-[#CE9F2D] to-[#A96F14] hover:brightness-105"
       >
         <div className="grid min-w-0 gap-4">

@@ -1,4 +1,3 @@
-
 import { Download, FileText } from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
 
@@ -35,10 +34,7 @@ export default function OrderDocuments({
                 className="flex min-w-0 items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-colors hover:border-[#CE9F2D80] sm:flex-1"
               >
                 <div className="flex min-w-0 flex-1 items-center gap-1.5">
-                  <FileText
-                    size={15}
-                    className="shrink-0 text-[#3E4093]"
-                  />
+                  <FileText size={15} className="shrink-0 text-[#3E4093]" />
 
                   <span className="min-w-0 truncate text-sm font-semibold text-[#2E2E2E]">
                     {document.title}
@@ -55,14 +51,11 @@ export default function OrderDocuments({
                     size="sm"
                     loading={downloadingId === document.downloadPath}
                     onClick={() =>
-                      handleDownload?.(
-                        document.downloadPath,
-                        document.filename,
-                      )
+                      handleDownload?.(document.downloadPath, document.filename)
                     }
-                    className="h-7 shrink-0 gap-1.5 border-[#CE9F2D] px-3 text-xs font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
+                    className="!min-h-9 !h-9 max-w-full shrink-0 gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:!bg-[#F8EDCF] sm:text-sm"
                   >
-                    <Download size={12} />
+                    <Download size={14} />
                     Download
                   </Button>
                 )}

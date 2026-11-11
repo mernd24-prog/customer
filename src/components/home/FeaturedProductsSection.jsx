@@ -1,4 +1,3 @@
-
 import ProductCard from "../../modules/products/components/ProductCard";
 
 import {
@@ -19,9 +18,7 @@ export default function FeaturedProductsSection({
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
 
-  const displayProducts = Array.isArray(products)
-    ? products.slice(0, 5)
-    : [];
+  const displayProducts = Array.isArray(products) ? products.slice(0, 5) : [];
 
   const sectionClassName = `
     my-0
@@ -60,8 +57,7 @@ export default function FeaturedProductsSection({
   lg:px-2
 `;
   const sectionStyle = {
-    "--featured-gradient":
-      "linear-gradient(180deg, #FAF8F5 0%, #F5EEE2 100%)",
+    "--featured-gradient": "linear-gradient(180deg, #FAF8F5 0%, #F5EEE2 100%)",
   };
 
   const sectionProps = {

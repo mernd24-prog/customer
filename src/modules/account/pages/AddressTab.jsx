@@ -1,4 +1,3 @@
-
 import { ChevronDown, ChevronUp, MapPin, Plus } from "lucide-react";
 
 import AddressFormFields from "../../common/components/address/AddressFormFields";
@@ -6,7 +5,7 @@ import AddressEditModal from "../../common/components/address/AddressEditModal";
 import SharedAddressCard from "../../common/components/address/SharedAddressCard";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useAddressBook } from "../controllers/useAddressBook";
-import {  Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 export default function AddressTab({ user }) {
   const {
     loading,
@@ -49,15 +48,13 @@ export default function AddressTab({ user }) {
     handleShowAllAddresses,
   } = useAddressBook(user);
 
-  const visibleAddresses = showAllAddresses
-    ? addresses
-    : addresses.slice(0, 4);
+  const visibleAddresses = showAllAddresses ? addresses : addresses.slice(0, 4);
 
   if ((loading || !user) && !showAddForm) {
     return (
       <section className="mx-auto w-full min-w-0 space-y-5">
         <header className="flex items-center gap-3 border-b border-[#E7D9B8] pb-4">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#F5E9C9] text-[#1B1D60]">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
             <MapPin size={22} />
           </span>
 
@@ -71,7 +68,7 @@ export default function AddressTab({ user }) {
           </div>
         </header>
 
-        <div className="animate-pulse rounded-xl border border-[#E7D9B8] bg-white p-6">
+        <div className="animate-pulse rounded-lg border border-[#E7D9B8] bg-white p-6">
           <div className="h-5 w-40 rounded bg-[#F5E9C9]" />
           <div className="mt-4 h-4 w-3/4 rounded bg-[#F5E9C9]" />
           <div className="mt-5 h-10 w-full rounded-lg bg-[#F5E9C9]" />
@@ -108,14 +105,8 @@ export default function AddressTab({ user }) {
               onClick={handleToggleAddForm}
               className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none sm:w-auto sm:text-sm"
             >
-              {showAddForm ? (
-                <ChevronUp size={16} />
-              ) : (
-                <Plus size={16} />
-              )}
-              <span>
-                {showAddForm ? "Close Form" : "Add New Address"}
-              </span>
+              {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
+              <span>{showAddForm ? "Close Form" : "Add New Address"}</span>
             </button>
           )}
         </header>
@@ -173,7 +164,7 @@ export default function AddressTab({ user }) {
                       onClose={cancelEdit}
                       onSave={editForm.handleSubmit(
                         handleUpdate,
-                        handleInvalidEdit
+                        handleInvalidEdit,
                       )}
                       form={editForm}
                       idPrefix={`edit-${addrId}`}
@@ -219,7 +210,7 @@ export default function AddressTab({ user }) {
           </div>
         ) : (
           /* Empty State */
-          <div className="rounded-xl border border-dashed border-[#CE9F2D] bg-[#FFFCF5] px-5 py-10 text-center">
+          <div className="rounded-lg border border-dashed border-[#CE9F2D] bg-[#FFFCF5] px-5 py-10 text-center">
             <span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60]">
               <MapPin size={23} />
             </span>
@@ -246,20 +237,20 @@ export default function AddressTab({ user }) {
 
       {/* Delete Confirmation */}
       <ConfirmModal
-  open={Boolean(deleteAddressId)}
-  title="Delete This Address?"
-  icon={Trash2}
-  iconBgClassName="bg-red-50"
-  iconClassName="text-red-600"
-  iconSize={22}
-  description="This saved address will be removed from your account. You can add it again later if needed."
-  confirmLabel={loading ? "Deleting..." : "Delete Address"}
-  cancelLabel="Keep Address"
-  onCancel={() => setDeleteAddressId(null)}
-  onConfirm={confirmDelete}
-  maxWidth="max-w-md"
-  confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
-/>
+        open={Boolean(deleteAddressId)}
+        title="Delete This Address?"
+        icon={Trash2}
+        iconBgClassName="bg-red-50"
+        iconClassName="text-red-600"
+        iconSize={22}
+        description="This saved address will be removed from your account. You can add it again later if needed."
+        confirmLabel={loading ? "Deleting..." : "Delete Address"}
+        cancelLabel="Keep Address"
+        onCancel={() => setDeleteAddressId(null)}
+        onConfirm={confirmDelete}
+        maxWidth="max-w-md"
+        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+      />
     </>
   );
 }

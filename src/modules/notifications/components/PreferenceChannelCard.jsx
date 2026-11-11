@@ -9,7 +9,7 @@ export function PreferenceChannelCard({ channel, isChecked, onToggle }) {
     <div
       onClick={onToggle}
       className={cn(
-        "group relative flex items-center justify-between gap-3.5 p-4 rounded-xl border transition-all duration-200 cursor-pointer select-none",
+        "group relative flex items-center justify-between gap-3.5 p-4 rounded-lg border transition-all duration-200 cursor-pointer select-none",
         isChecked
           ? "border-[#E2D2B2] bg-[#FAF6EE]/80 shadow-xs"
           : "border-[#ECE2D0] bg-white hover:border-[#CE9F2D]/60 hover:bg-[#FAF6EE]/40",
@@ -18,7 +18,7 @@ export function PreferenceChannelCard({ channel, isChecked, onToggle }) {
       <div className="flex items-center gap-3.5 min-w-0">
         <div
           className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200",
+            "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-200",
             isChecked
               ? "bg-[#FAF4E6] text-[#9A751E] border border-[#EADBBD]"
               : "bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0] group-hover:bg-[#F1F5F9] group-hover:text-[#1B1D60]",

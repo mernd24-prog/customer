@@ -8,13 +8,17 @@ export default function WhyChooseCard({ data }) {
   const imageAlt =
     typeof card?.image === "object" ? card.image?.alt : card?.title;
   const fallbackImage =
-    FALLBACK_ABOUT.whyChoose.points?.find((point) => point.title === card?.title)?.image?.url ||
-    FALLBACK_ABOUT.whyChoose.points?.[0]?.image?.url || "";
+    FALLBACK_ABOUT.whyChoose.points?.find(
+      (point) => point.title === card?.title,
+    )?.image?.url ||
+    FALLBACK_ABOUT.whyChoose.points?.[0]?.image?.url ||
+    "";
 
   return (
     <article className="group w-full max-w-[500px]">
-      <div className="relative h-full rounded-xl bg-white p-4 shadow-md transition-all duration-300 ease-in-out group-hover:bg-primary md:shadow-lg lg:p-5">
-<div className="absolute left-1/2 top-0 h-[5px] w-[6rem] -translate-x-1/2 rounded-full bg-[#d9b15a] transition-colors duration-300 group-hover:bg-white" />        <div className="flex items-start gap-4 pt-5">
+      <div className="relative h-full rounded-lg bg-white p-4 shadow-md transition-all duration-300 ease-in-out group-hover:bg-primary md:shadow-lg lg:p-5">
+        <div className="absolute left-1/2 top-0 h-[5px] w-[6rem] -translate-x-1/2 rounded-full bg-[#d9b15a] transition-colors duration-300 group-hover:bg-white" />{" "}
+        <div className="flex items-start gap-4 pt-5">
           {imageUrl || fallbackImage ? (
             <div className="flex-shrink-0">
               <FallbackImage

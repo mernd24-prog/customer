@@ -10,7 +10,7 @@ import {
   getOrderItemId,
   getItemLineTotal,
 } from "../../../utils/pages/orderUtils";
-
+import { Ban } from "lucide-react";
 import { formatMoney } from "../../../utils/ecommerce";
 
 export default function CancelOrderModal({
@@ -42,6 +42,10 @@ export default function CancelOrderModal({
     <ConfirmModal
       open={open}
       title="Cancel order?"
+      icon={Ban}
+      iconBgClassName="bg-red-50"
+      iconClassName="text-red-600"
+      iconSize={22}
       description={
         <span>
           {selectedOrderItem
@@ -87,14 +91,10 @@ export default function CancelOrderModal({
                 .flatMap((request) => request.items || [])
                 .filter(
                   (entry) =>
-                    String(
-                      entry.orderItemId || entry.order_item_id || "",
-                    ) === itemId,
+                    String(entry.orderItemId || entry.order_item_id || "") ===
+                    itemId,
                 )
-                .reduce(
-                  (sum, entry) => sum + Number(entry.quantity || 0),
-                  0,
-                );
+                .reduce((sum, entry) => sum + Number(entry.quantity || 0), 0);
 
               const remaining = Math.max(
                 Number(item.quantity || 0) -
@@ -223,9 +223,7 @@ export default function CancelOrderModal({
           <textarea
             id="cancel-additional-details"
             className={`min-h-20 w-full resize-y rounded-lg border p-3 text-sm font-medium text-[#1B1D60] transition placeholder:text-[#8C8E9E] focus:outline-none ${
-              cancelReasonError
-                ? "border-red-600"
-                : "border-[#DCDDE5]"
+              cancelReasonError ? "border-red-600" : "border-[#DCDDE5]"
             }`}
             value={cancelReason}
             onChange={(event) => {

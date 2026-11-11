@@ -54,7 +54,7 @@ export function WalletPage() {
 
               <div className="relative z-10 mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2.5 text-[#CE9F2D]">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#CE9F2D]/15 text-[#CE9F2D] border border-[#CE9F2D]/30">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#CE9F2D]/15 text-[#CE9F2D] border border-[#CE9F2D]/30">
                     <Wallet size={18} />
                   </div>
 

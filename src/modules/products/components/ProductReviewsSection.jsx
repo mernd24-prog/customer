@@ -276,7 +276,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full min-w-0 rounded-xl border border-[#E7D9B8] bg-white p-3 sm:p-5 lg:p-6 flex flex-col gap-3 sm:gap-4 shadow-xs"
+      className="w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-white p-3 sm:p-5 lg:p-6 flex flex-col gap-3 sm:gap-4 shadow-xs"
     >
       <h3 className="text-sm sm:text-base font-bold text-[#1B1D60]">
         Write a Review

@@ -184,7 +184,7 @@ export default function BrandOutletPage() {
         />
 
         <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7 lg:mt-4">
-          <section className="min-w-0 rounded-xl bg-white">
+          <section className="min-w-0 rounded-lg bg-white">
             <div className="mb-6 flex flex-col gap-3">
               <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
                 <label className="relative block w-full sm:max-w-[640px]">

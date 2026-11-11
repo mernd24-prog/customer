@@ -1,7 +1,6 @@
+
 import { Check, X } from "lucide-react";
 import { useMemo } from "react";
-
-import { ShowMoreText } from "../../../utils/showMore";
 
 import {
   dateTime,
@@ -10,6 +9,8 @@ import {
   getCancellationSteps,
   getReturnSteps,
 } from "../utils/orderTimelineUtils";
+
+import { formatDate } from "../utils/orderItems";
 
 export function OrderTimeline({
   isCancelled,
@@ -64,6 +65,7 @@ export function OrderTimeline({
       <div className="flex min-w-0 flex-col md:flex-row md:items-start md:justify-center">
         {stepsToRender.map((step, stepIndex) => {
           const isCompleted = step.completed;
+
           const isCancelledStep =
             step.status === "cancelled" ||
             step.status === "cancellation_requested";
@@ -71,6 +73,7 @@ export function OrderTimeline({
           const isLast = stepIndex === stepsToRender.length - 1;
           const lineDelay = `${stepIndex * 0.35}s`;
           const ballDelay = `${stepIndex * 0.35}s`;
+
           const displayTime = step.time ? dateTime(step.time) : null;
 
           const isNextStepCompleted =
@@ -141,25 +144,8 @@ export function OrderTimeline({
                   {step.label}
                 </p>
 
-                {/* {step.note && (
-                  <ShowMoreText
-                    text={
-                      typeof step.note === "string"
-                        ? step.note.replace(/_/g, " ")
-                        : step.note
-                    }
-                    mode="lines"
-                    limit={1}
-                    className="mt-1 block"
-                    textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                    buttonClassName="ml-1 text-xs font-semibold text-[#26A541] "
-                    moreLabel="Show more"
-                    lessLabel="Show less"
-                  />
-                )} */}
-
                 {isCompleted && displayTime && (
-                  <p className="mt-1 text-xs font-medium text-[#6F7480] md:text-center">
+                  <p className="mt-1 text-[11px] font-medium text-[#6F7480] md:text-center">
                     {displayTime}
                   </p>
                 )}
@@ -213,7 +199,11 @@ export function OrderTimeline({
           : null;
 
         const displayTime = matchingEvent
-          ? dateTime(matchingEvent.event_time || matchingEvent.created_at)
+          ? dateTime(
+              matchingEvent.event_time ||
+                matchingEvent.created_at ||
+                matchingEvent.createdAt,
+            )
           : null;
 
         const isExpectedDelivery =
@@ -231,14 +221,21 @@ export function OrderTimeline({
         const isLast = stepIndex === TIMELINE_STEPS.length - 1;
         const lineDelay = `${stepIndex * 0.35}s`;
         const ballDelay = `${stepIndex * 0.35}s`;
+
         const isCurrentActive =
           isCompleted && (!isNextStepCompleted || isLast);
 
-        let fallbackTime = shipment?.updated_at || group?.expectedDeliveryAt;
+        let fallbackTime = shipment?.updated_at;
 
         if (step.status === "confirmed") {
-          fallbackTime = group?.items?.[0]?.created_at || fallbackTime;
+          fallbackTime =
+            group?.items?.[0]?.created_at ||
+            group?.items?.[0]?.createdAt ||
+            fallbackTime;
         }
+
+        const finalDisplayTime =
+          displayTime || (fallbackTime ? dateTime(fallbackTime) : null);
 
         return (
           <div
@@ -280,64 +277,15 @@ export function OrderTimeline({
                 {step.label}
               </p>
 
-              {/*
-              {matchingEvent?.note ? (
-                <ShowMoreText
-                  text={
-                    typeof matchingEvent.note === "string"
-                      ? matchingEvent.note.replace(/_/g, " ")
-                      : matchingEvent.note
-                  }
-                  mode="lines"
-                  limit={1}
-                  className="mt-1 block"
-                  textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
-                  moreLabel="Show more"
-                  lessLabel="Show less"
-                />
-              ) : isCompleted && step.status === "confirmed" ? (
-                <ShowMoreText
-                  text="Your order has been placed."
-                  mode="lines"
-                  limit={1}
-                  className="mt-1 block"
-                  textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
-                  moreLabel="Show more"
-                  lessLabel="Show less"
-                />
-              ) : isCompleted && step.status === "in_transit" ? (
-                <ShowMoreText
-                  text="Your package is on the way to the delivery address."
-                  mode="lines"
-                  limit={1}
-                  className="mt-1 block"
-                  textClassName="text-xs text-[#2E2E2E] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
-                  moreLabel="Show more"
-                  lessLabel="Show less"
-                />
-              ) : !isCompleted && step.status === "in_transit" ? (
-                <ShowMoreText
-                  text="Will be updated as soon as the item is shipped."
-                  mode="lines"
-                  limit={1}
-                  className="mt-1 block"
-                  textClassName="text-xs text-[#6F7480] whitespace-pre-wrap"
-                  buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
-                  moreLabel="Show more"
-                  lessLabel="Show less"
-                />
-              ) : null} */}
-
               {isCompleted ? (
-                <p className="mt-1 text-xs font-medium text-[#1B1D60] md:text-center">
-                  {displayTime || dateTime(fallbackTime)}
-                </p>
+                finalDisplayTime ? (
+                  <p className="mt-1 text-xs font-medium text-[#1B1D60] md:text-center">
+                    {finalDisplayTime}
+                  </p>
+                ) : null
               ) : showExpected ? (
                 <p className="mt-1 text-xs font-medium text-[#1B1D60] md:text-center">
-                  Expected by {expectedDelivery}
+                  Expected by {formatDate(expectedDelivery)}
                 </p>
               ) : null}
             </div>

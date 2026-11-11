@@ -24,8 +24,8 @@ export default function EmptyState({
   const resolvedAction = onAction || onButtonClick;
 
   const containerClasses = bordered
-    ? "rounded-xl border border-dashed border-[#E7D9B8] bg-[#FFFDF6] px-5 py-10 text-center"
-    : "rounded-xl bg-[#FFFDF6] px-4 py-8 text-center";
+    ? "rounded-lg border border-dashed border-[#E7D9B8] bg-[#FFFDF6] px-5 py-10 text-center"
+    : "rounded-lg bg-[#FFFDF6] px-4 py-8 text-center";
 
   return (
     <div

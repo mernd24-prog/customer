@@ -390,7 +390,7 @@ export default function ProductDetailPage() {
                   {/* Product Information */}
                   <Suspense
                     fallback={
-                      <div className="mt-4 h-32 animate-pulse rounded-xl bg-gray-100" />
+                      <div className="mt-4 h-32 animate-pulse rounded-lg bg-gray-100" />
                     }
                   >
                     <ProductInfoSection
@@ -433,7 +433,7 @@ export default function ProductDetailPage() {
               <div className="mt-10 w-full">
                 <Suspense
                   fallback={
-                    <div className="h-40 animate-pulse rounded-xl bg-gray-100" />
+                    <div className="h-40 animate-pulse rounded-lg bg-gray-100" />
                   }
                 >
                   <ProductReviewsSection
@@ -447,7 +447,7 @@ export default function ProductDetailPage() {
               {/* Recommendations */}
               <Suspense
                 fallback={
-                  <div className="mt-8 h-40 animate-pulse rounded-xl bg-gray-100" />
+                  <div className="mt-8 h-40 animate-pulse rounded-lg bg-gray-100" />
                 }
               >
                 <ProductRecommendationSection

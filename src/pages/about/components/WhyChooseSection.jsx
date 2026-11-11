@@ -22,7 +22,7 @@ export default function WhyChooseSection({ data }) {
           preset="WHY_CHOOSE_CARD"
           count={8}
           containerClass="my-4 md:my-8 grid grid-cols-1 justify-items-center md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6"
-          wrapperClass="bg-white rounded-xl shadow-sm md:shadow-lg"
+          wrapperClass="bg-white rounded-lg shadow-sm md:shadow-lg"
         />
       ) : (
         <div className="my-4 md:my-8 grid grid-cols-1 justify-items-center md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">

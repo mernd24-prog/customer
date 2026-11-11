@@ -49,7 +49,7 @@ export function PreferencesPage() {
           >
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-[#F4F6FB] border border-[#E2E8F0] flex items-center justify-center text-[#3E4093] shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-[#F4F6FB] border border-[#E2E8F0] flex items-center justify-center text-[#3E4093] shrink-0">
                   <SlidersHorizontal size={18} strokeWidth={1.8} />
                 </div>
                 <div>
@@ -100,7 +100,7 @@ export function PreferencesPage() {
                 type="submit"
                 disabled={isSubmitting}
                 className={cn(
-                  "flex items-center gap-2.5 px-6 py-3 rounded-xl",
+                  "flex items-center gap-2.5 px-6 py-3 rounded-lg",
                   "bg-gradient-to-r from-[#D6A323] via-[#CE9F2D] to-[#B8871B]",
                   "text-white font-bold text-base",
                   "shadow-[0_4px_16px_rgba(206,159,45,0.35)]",

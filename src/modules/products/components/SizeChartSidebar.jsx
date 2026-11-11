@@ -42,7 +42,7 @@ export default function SizeChartSidebar({ isOpen, onClose, productName }) {
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6 sm:space-y-8">
           {/* Table */}
-          <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
+          <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm sm:text-base text-center">
                 <thead className="bg-gold-soft">
@@ -73,7 +73,7 @@ export default function SizeChartSidebar({ isOpen, onClose, productName }) {
           </div>
 
           {/* Guidelines */}
-          <div className="space-y-5 bg-white p-4 sm:p-5 rounded-xl border border-border shadow-sm">
+          <div className="space-y-5 bg-white p-4 sm:p-5 rounded-lg border border-border shadow-sm">
             <h3 className="font-bold text-ink text-base sm:text-lg">Measurement Guidelines</h3>
             
             <div className="text-sm sm:text-sm text-[#4E4E4E] leading-relaxed">

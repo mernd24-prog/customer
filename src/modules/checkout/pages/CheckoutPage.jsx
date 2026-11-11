@@ -203,7 +203,7 @@ export default function CheckoutPage() {
                   )}
 
                   {addresses.length === 0 && !useNewAddress && (
-                    <div className="rounded-xl border border-dashed border-[#D9B86D] bg-[#FFFDF8] px-4 py-8 text-center sm:px-6">
+                    <div className="rounded-lg border border-dashed border-[#D9B86D] bg-[#FFFDF8] px-4 py-8 text-center sm:px-6">
                       <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60] sm:size-14">
                         <MapPin size={22} />
                       </div>
@@ -274,7 +274,7 @@ export default function CheckoutPage() {
               </div>
 
               <OrderDetailAside>
-                <div className="lg:mt-12">
+                <div className="lg:mt-16">
                   <CheckoutSummary
                     items={items}
                     subtotal={subtotal}

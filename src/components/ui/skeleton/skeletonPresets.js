@@ -297,7 +297,7 @@ export const SKELETON_PRESETS = {
         { type: "box", width: "80px", height: "32px" }, // Filter dropdown
       ],
     },
-    { type: "box", height: "300px", rounded: "rounded-xl" }, // Chart area
+    { type: "box", height: "300px", rounded: "rounded-lg" }, // Chart area
   ],
 
   // 7. Navbar
@@ -796,7 +796,7 @@ ORDER_DETAIL_PAGE: [
               // Payment summary
               {
                 type: "col",
-                className: "w-full min-w-0 rounded-xl border border-[#E7D9B8] bg-white p-4 sm:p-5 md:p-6 gap-4",
+                className: "w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-white p-4 sm:p-5 md:p-6 gap-4",
 
                 children: [
                   { type: "box", width: "155px", height: "20px", rounded: "rounded-md", className: "mb-1" },
@@ -856,7 +856,7 @@ ORDER_DETAIL_PAGE: [
               // Order documents sidebar
               {
                 type: "col",
-                className: "w-full min-w-0 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4 sm:p-5 gap-3",
+                className: "w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-[#FFFDF8] p-4 sm:p-5 gap-3",
 
                 children: [
                   {

@@ -65,38 +65,28 @@ function RatingBar({ star, count, total }) {
   );
 }
 
-function ProductReviewSidebar({ product, productId }) {
-  const navigate = useNavigate();
-  const targetProduct = product?.rawProduct || product || { id: productId };
-  const rawId = targetProduct?.id || targetProduct?._id || productId;
-  const productPath = getProductPublicPath(
-    targetProduct?.slug || rawId ? targetProduct : { id: productId },
-  );
-
-  const handleBack = (e) => {
-    e.preventDefault();
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate(productPath);
-    }
-  };
+function ProductReviewSidebar({ product }) {
+  const productPath =
+    product?.rawProduct?.slug || product?.slug || product?.id || product?._id
+      ? getProductPublicPath(product?.rawProduct || product)
+      : "/products";
 
   return (
-    <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+24px)] lg:self-start">
+    <aside className="min-w-0 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+64px)] lg:self-start">
+      {/* Back to Product - stays with the sticky product sidebar */}
       <Link
         to={productPath}
-        onClick={handleBack}
-        className="mb-3.5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#CE9F2D] hover:text-[#1B1D60] transition-colors group cursor-pointer"
+        className="mb-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#CE9F2D] transition-colors hover:text-[#1B1D60]"
       >
-        <ChevronLeft size={16} className="transition-transform " />
+        <ChevronLeft size={16} />
         Back to Product
       </Link>
 
+      {/* Product Image */}
       <Link
         to={productPath}
-        className="block overflow-hidden rounded-[8px] border border-border bg-white transition hover:border-gold/70 "
-        aria-label={`Back to ${product.title}`}
+        className="block overflow-hidden rounded-[8px] border border-border bg-white transition hover:border-gold/70"
+        aria-label={`View ${product.title}`}
       >
         <img
           loading="lazy"
@@ -108,6 +98,7 @@ function ProductReviewSidebar({ product, productId }) {
         />
       </Link>
 
+      {/* Product Information */}
       <div className="mt-5 space-y-2">
         {getProductBrandName(product) && (
           <p className="text-xs font-extrabold uppercase text-[var(--customer-gold-dark)]">
@@ -121,11 +112,13 @@ function ProductReviewSidebar({ product, productId }) {
 
         <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 pt-2 text-sm font-bold text-[var(--customer-ink)]">
           <span>Rs. {product.price}</span>
+
           {product.mrp && (
             <span className="font-medium text-[var(--customer-muted)] line-through">
               Rs. {product.mrp}
             </span>
           )}
+
           {product.discount && (
             <span className="font-bold text-[var(--customer-gold-dark)]">
               ({product.discount})
@@ -136,6 +129,7 @@ function ProductReviewSidebar({ product, productId }) {
     </aside>
   );
 }
+
 function RatingSummary({
   avgRating,
   reviewCount,
@@ -144,7 +138,7 @@ function RatingSummary({
   onFilter,
 }) {
   return (
-    <div className="border-b border-border pb-6">
+    <div className="py-1 border-b border-border pb-6">
       <h2 className="text-sm font-bold uppercase leading-5 text-ink">
         Ratings &amp; Reviews
       </h2>
@@ -635,8 +629,9 @@ export default function ReviewDetailsPage() {
           }
           metaDescription={`Read customer reviews and ratings for ${product?.title || "this product"}.`}
         />
-        <div className="mx-auto grid max-w-[1240px] gap-8 px-4 py-8 lg:grid-cols-[340px_1fr] xl:grid-cols-[360px_1fr]">
-          <ProductReviewSidebar product={product} productId={productId} />
+
+        <div className="mx-auto grid max-w-[1240px] items-start gap-8 px-4 py-8 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(0,1fr)]">
+          <ProductReviewSidebar product={product} />
 
           <section className="min-w-0">
             <RatingSummary

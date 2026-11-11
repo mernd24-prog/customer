@@ -54,7 +54,7 @@ export default function OrderAddressCard({ shippingAddress, billingAddress }) {
   if (!shippingAddress && !billingAddress) return null;
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 md:gap-8 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-5 md:p-6">
+    <div className="flex flex-col md:flex-row gap-6 md:gap-8 rounded-lg border border-[#E7D9B8] bg-[#FFFDF8] p-5 md:p-6">
       {shippingAddress && (
         <div className="min-w-0 flex-1 break-words">
           <AddressBlock address={shippingAddress} title="Shipping Address" icon={MapPin} />

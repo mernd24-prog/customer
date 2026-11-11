@@ -254,7 +254,7 @@ export default function OrderDetailPage({ orderId }) {
                       if (globalDocuments.length === 0) return null;
 
                       return (
-                        <div className="flex flex-col gap-3 p-4 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]">
+                        <div className="flex flex-col gap-3 p-4 rounded-lg border border-[#E7D9B8] bg-[#FFFDF8]">
                           <h4 className="font-bold text-[#1B1D60] mb-1 flex items-center gap-2 text-sm">
                             <FileText size={16} className="text-[#3E4093]" />{" "}
                             Order Documents

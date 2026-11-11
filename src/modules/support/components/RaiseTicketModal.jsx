@@ -104,7 +104,7 @@ export function RaiseTicketModal() {
 
         {/* AI Chat Pre-fill Alert */}
         {isFromAiChat && (
-          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-xs text-amber-900">
+          <div className="mb-4 flex items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50/80 p-3 text-xs text-amber-900">
             <Sparkles size={16} className="text-[#CE9F2D] shrink-0" />
             <span className="leading-relaxed">
               Details have been pre-filled from your AI chat. You can review or

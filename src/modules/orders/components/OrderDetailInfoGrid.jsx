@@ -2,7 +2,7 @@ import { INFO_TILE_TONES } from "../../../data/orderPage";
 
 function OrderDetailInfoTile({ icon, label, value, tone = "yellow" }) {
   return (
-    <div className="flex items-center gap-3.5 sm:gap-4 rounded-xl border border-[#CE9F2D66] bg-[#FFFDF8] p-3.5 sm:p-4 transition hover:border-[#CE9F2D]">
+    <div className="flex items-center gap-3.5 sm:gap-4 rounded-lg border border-[#CE9F2D66] bg-[#FFFDF8] p-3.5 sm:p-4 transition hover:border-[#CE9F2D]">
       <div
         className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
           INFO_TILE_TONES[tone] || INFO_TILE_TONES.yellow

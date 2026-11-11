@@ -23,7 +23,7 @@ export default function ShipmentTrackingPanel({
 }) {
   if (!shipments.length) {
     return (
-      <section className="rounded-xl border border-[#CE9F2D66] bg-white p-5">
+      <section className="rounded-lg border border-[#CE9F2D66] bg-white p-5">
         <div className="flex items-center gap-3 text-[#1B1D60]">
           <Package size={22} />
           <h2 className="font-bold ">Shipment Tracking</h2>

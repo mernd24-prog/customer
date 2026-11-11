@@ -100,7 +100,7 @@ export function PaymentsPage() {
                     className="flex flex-col justify-between gap-4 px-5 py-4 transition-colors duration-150 hover:bg-[#FFFCF6] sm:flex-row sm:items-center sm:px-7 sm:py-5"
                   >
                     <div className="flex min-w-0 items-start gap-3.5 sm:items-center">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FFF8E7] text-[#CE9F2D] shadow-xs">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#E7D9B8] bg-[#FFF8E7] text-[#CE9F2D] shadow-xs">
                         <Receipt size={20} />
                       </div>
                       <div className="min-w-0 flex-1">

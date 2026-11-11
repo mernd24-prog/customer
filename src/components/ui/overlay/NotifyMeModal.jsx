@@ -204,12 +204,12 @@ export default function NotifyMeModal({
           </div>
 
           {/* Product Preview Box */}
-          <div className="mb-5 flex items-center gap-3 rounded-xl border border-[#EEDFB9] bg-white p-3 shadow-sm">
+          <div className="mb-5 flex items-center gap-3 rounded-lg border border-[#EEDFB9] bg-white p-3 shadow-sm">
             {productImage ? (
               <img
                 src={productImage}
                 alt={productTitle}
-                className="h-14 w-14 shrink-0 rounded-lg border border-[#EEDFB9]/60 bg-[#FFFDF8] object-contain p-1"
+                className="h-16 w-16 shrink-0  object-contain "
               />
             ) : (
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-xs text-gray-400">

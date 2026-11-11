@@ -40,7 +40,7 @@ export default function ConfirmModal({
       <div className="px-4 py-5 sm:px-6 sm:py-6">
         <div className="flex min-w-0 items-start gap-3 sm:gap-4">
           {Boolean(imageUrl) && (
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E7E7E7] bg-[#F8F9FA] p-1.5 shadow-sm sm:h-20 sm:w-20 sm:p-2">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden shadow-sm sm:h-16 sm:w-16">
               <img
                 src={imageUrl}
                 alt=""
@@ -56,7 +56,7 @@ export default function ConfirmModal({
             <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
               {Icon && (
                 <span
-                  className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${iconBgClassName}`}
+                  className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${iconBgClassName}`}
                 >
                   <Icon
                     size={iconSize}

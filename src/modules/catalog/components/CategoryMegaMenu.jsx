@@ -262,7 +262,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.categoryKey}
                 to={itemHref}
-                className={`group flex items-center gap-2 rounded-xl px-3 py-1.5 text-left text-sm font-medium transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark  ${
+                className={`group flex items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm font-medium transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark  ${
                   isCurrentLink ? "bg-cream text-gold-dark" : "text-ink/70"
                 }`}
               >
@@ -283,7 +283,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.name}
                 to={getQuickLinkHref(item)}
-                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm font-medium text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark "
+                className="group flex items-center gap-2 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark "
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-gold-dark/30 group-hover:bg-gold-dark transition-all duration-300 ease-in-out" />
                 <span className="flex-1 truncate">{item.name}</span>
@@ -399,7 +399,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
           return (
             <div
               key={sub.categoryKey}
-              className="border border-border/60 rounded-xl overflow-hidden bg-cream/10"
+              className="border border-border/60 rounded-lg overflow-hidden bg-cream/10"
             >
               <button
                 type="button"

@@ -106,7 +106,7 @@ export default function ReviewMediaLightbox({
       <div
         className={`relative flex flex-col md:flex-row w-full ${
           hasReviewDetails ? "max-w-4xl h-[85vh] max-h-[640px]" : "max-w-3xl max-h-[80vh]"
-        } overflow-hidden rounded-xl bg-white shadow-2xl`}
+        } overflow-hidden rounded-lg bg-white shadow-2xl`}
         onClick={(event) => event.stopPropagation()}
       >
         {/* Left Side: Warm Light Golden Media Viewer */}

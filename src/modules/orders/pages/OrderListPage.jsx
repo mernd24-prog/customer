@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -43,7 +42,10 @@ const RETURN_BREADCRUMBS = [
 import { ORDER_LIST_SKELETON } from "../../../components/ui/skeleton/layouts";
 
 import { fetchMyOrders } from "../slices/orderSlice";
-import { fetchMyProductReview, orderReviewKey } from "../../../features/review/reviewSlice";
+import {
+  fetchMyProductReview,
+  orderReviewKey,
+} from "../../../features/review/reviewSlice";
 
 import {
   getOrderId,
@@ -107,8 +109,7 @@ const orderHelpItems = items.map((item) => ({
 export default function OrderListPage({ returnOnly = false }) {
   const location = useLocation();
   const isReturnOnly = Boolean(
-    returnOnly ||
-    location.pathname === "/returns-refunds",
+    returnOnly || location.pathname === "/returns-refunds",
   );
 
   const {
@@ -167,9 +168,18 @@ export default function OrderListPage({ returnOnly = false }) {
         if (canReview && isUnreviewed) {
           const productId = getReviewProductId(item);
 
-          const scope = { productId, orderId: getOrderId(order), orderItemId: getReviewOrderItemId(item) };
+          const scope = {
+            productId,
+            orderId: getOrderId(order),
+            orderItemId: getReviewOrderItemId(item),
+          };
           const key = orderReviewKey(scope);
-          if (productId && scope.orderId && scope.orderItemId && !locallyReviewedProducts.has(key)) {
+          if (
+            productId &&
+            scope.orderId &&
+            scope.orderItemId &&
+            !locallyReviewedProducts.has(key)
+          ) {
             reviewsToFetch.set(key, scope);
           }
         }
@@ -196,16 +206,21 @@ export default function OrderListPage({ returnOnly = false }) {
 
   return (
     <>
-      <Seo title={isReturnOnly ? "Return & Refund | Sam Global" : "My Orders | Sam Global"} />
+      <Seo
+        title={
+          isReturnOnly
+            ? "Return & Refund | Sam Global"
+            : "My Orders | Sam Global"
+        }
+      />
 
       <PageContainer>
         <Breadcrumbs
           items={isReturnOnly ? RETURN_BREADCRUMBS : ORDER_BREADCRUMBS}
-          
         />
 
         <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
-          <div className="min-w-0 rounded-xl bg-white">
+          <div className="min-w-0 rounded-lg bg-white">
             {hasAnyOrders && (
               <div className="mb-4 flex flex-col gap-3">
                 <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
@@ -238,7 +253,9 @@ export default function OrderListPage({ returnOnly = false }) {
                     )}
                   </label>
 
-<div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:gap-3">                    <FilterDropdown
+                  <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:gap-3">
+                    {" "}
+                    <FilterDropdown
                       options={[
                         {
                           value: 10,
@@ -263,9 +280,8 @@ export default function OrderListPage({ returnOnly = false }) {
                         setCurrentPage(1);
                       }}
                       placeholder="Per page"
-                     className="w-full min-w-0 sm:w-[150px]"
+                      className="w-full min-w-0 sm:w-[150px]"
                     />
-
                     <FilterDropdown
                       options={[
                         {
@@ -307,20 +323,26 @@ export default function OrderListPage({ returnOnly = false }) {
               skeletonContainerClass=""
               emptyTitle={
                 isFilteredOrSearched
-                  ? (isReturnOnly ? "No returns found" : "No orders found")
-                  : (isReturnOnly ? "No returns yet" : "No orders yet")
+                  ? isReturnOnly
+                    ? "No returns found"
+                    : "No orders found"
+                  : isReturnOnly
+                    ? "No returns yet"
+                    : "No orders yet"
               }
               emptyText={
                 isFilteredOrSearched
                   ? "Try adjusting your filters."
-                  : (isReturnOnly
-                      ? "You haven't requested any returns or refunds yet."
-                      : "Once you place an order, it will appear here.")
+                  : isReturnOnly
+                    ? "You haven't requested any returns or refunds yet."
+                    : "Once you place an order, it will appear here."
               }
               emptyActionLabel={
                 isFilteredOrSearched
                   ? "Clear Filters"
-                  : (isReturnOnly ? "View My Orders" : "Continue Shopping")
+                  : isReturnOnly
+                    ? "View My Orders"
+                    : "Continue Shopping"
               }
               onEmptyAction={() => {
                 if (isFilteredOrSearched) {
@@ -400,11 +422,17 @@ export default function OrderListPage({ returnOnly = false }) {
 
             if (productId) {
               setLocallyReviewedProducts(
-                (previous) => new Set([...previous, orderReviewKey({
-                  productId,
-                  orderId: getOrderId(reviewModalState.order),
-                  orderItemId: res?.orderItemId || getReviewOrderItemId(reviewModalState.item),
-                })]),
+                (previous) =>
+                  new Set([
+                    ...previous,
+                    orderReviewKey({
+                      productId,
+                      orderId: getOrderId(reviewModalState.order),
+                      orderItemId:
+                        res?.orderItemId ||
+                        getReviewOrderItemId(reviewModalState.item),
+                    }),
+                  ]),
               );
             }
           }}

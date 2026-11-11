@@ -41,7 +41,10 @@ export const TopHeader = () => {
 
               return (
                 <Link
-                  key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
+                  key={keyOr(
+                    link?.name,
+                    keyOr(link?.path, `top-link-${index}`),
+                  )}
                   to={path}
                   aria-current={isActive ? "page" : undefined}
                   className="text-[#FFFFFF] transition-colors duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D]"
@@ -109,21 +112,21 @@ export const TopHeader = () => {
         </div>
       </div>
 
-     <ConfirmModal
-  open={showLogoutModal}
-  title="Sign Out"
-  icon={LogOut}
-  iconBgClassName="bg-red-50"
-  iconClassName="text-red-600"
-  iconSize={22}
-  description="Are you sure you want to sign out of your account?"
-  confirmLabel="Sign Out"
-  cancelLabel="Cancel"
-  onConfirm={handleLogout}
-  onCancel={() => setShowLogoutModal(false)}
-  maxWidth="max-w-md"
-  confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
-/>
+      <ConfirmModal
+        open={showLogoutModal}
+        title="Sign Out"
+        icon={LogOut}
+        iconBgClassName="bg-red-50"
+        iconClassName="text-red-600"
+        iconSize={22}
+        description="Are you sure you want to sign out of your account?"
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+        maxWidth="max-w-md"
+        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+      />
     </>
   );
 };

@@ -440,7 +440,7 @@ export default function AiSupportChatWidget() {
                   {msg.role ===
                     "assistant" &&
                     msg.found === false && (
-                      <div className="mt-2 w-full rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+                      <div className="mt-2 w-full rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
                         <p className="text-xs font-semibold text-slate-900">
                           Need more help?
                         </p>

@@ -559,7 +559,7 @@ function ReturnsRefundsPage() {
                   <button
                     type="button"
                     onClick={() => setVisibleCount((prev) => prev + 3)}
-                    className="flex items-center gap-2 rounded-xl border border-[#CE9F2D] bg-white px-6 py-3 font-sans text-base font-semibold text-[#3E4093] shadow-sm transition-all hover:bg-[#FFEFC8]/40 focus:outline-none"
+                    className="flex items-center gap-2 rounded-lg border border-[#CE9F2D] bg-white px-6 py-3 font-sans text-base font-semibold text-[#3E4093] shadow-sm transition-all hover:bg-[#FFEFC8]/40 focus:outline-none"
                   >
                     Load More
                     <ChevronDown size={16} className="text-[#CE9F2D]" />

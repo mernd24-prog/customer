@@ -9,6 +9,22 @@ import {
 } from "../utils/orderItems";
 import { OrderItemReviewAction } from "./OrderItemReview";
 
+const formatDeliveryDateTime = (value) => {
+  if (!value) return null;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+};
+
 export function OrderItemCard({
   item,
   order,
@@ -162,7 +178,7 @@ export function OrderItemCard({
       order?.relations?.shipments?.[0]?.expectedDeliveryAt;
 
     if (explicit) {
-      const formatted = formatDate(explicit);
+      const formatted = formatDeliveryDateTime(explicit);
       if (formatted) return formatted;
     }
 
@@ -257,7 +273,9 @@ export function OrderItemCard({
     item?.returnReason;
 
   const renderShipmentAndRequestDetails = () => (
-<div className="mt-2 min-w-0 space-y-1.5 text-xs leading-relaxed text-[#6F7480] sm:mt-2 sm:space-y-1.5">      {!isCancelled && !isReturned && (
+    <div className="mt-2 min-w-0 space-y-1.5 text-xs leading-relaxed text-[#6F7480] sm:mt-2 sm:space-y-1.5">
+      {" "}
+      {!isCancelled && !isReturned && (
         <>
           {/* <p className="flex min-w-0 flex-wrap items-center gap-x-1">
             <span>Courier:</span>
@@ -279,7 +297,6 @@ export function OrderItemCard({
           </p>
         </>
       )}
-
       {isCancelled && (
         <>
           {cancellationId && (
@@ -291,14 +308,14 @@ export function OrderItemCard({
             </p>
           )}
 
-          <p className="break-words">
+          {/* <p className="break-words">
             <span>Cancellation requested by:</span>{" "}
             <span className="font-semibold text-[#1B1D60]">
               {cancellationRequesterLabel(cancellationDetails || {})}
             </span>
-          </p>
+          </p> */}
 
-          {cancellationStatus && (
+          {/* {cancellationStatus && (
             <p className="break-words">
               <span>Cancellation Status:</span>{" "}
               <span className="font-semibold text-[#1B1D60]">
@@ -307,19 +324,18 @@ export function OrderItemCard({
                   .replace(/\b\w/g, (letter) => letter.toUpperCase())}
               </span>
             </p>
-          )}
+          )} */}
 
-          {cancellationReason && (
+          {/* {cancellationReason && (
             <p className="break-words">
               <span>Reason:</span>{" "}
               <span className="font-medium text-[#1F2430]">
                 {cancellationReason}
               </span>
             </p>
-          )}
+          )} */}
         </>
       )}
-
       {isReturned && (
         <>
           {(returnId || refundAmount != null) && (
@@ -346,12 +362,12 @@ export function OrderItemCard({
             </div>
           )}
 
-          {returnReason && (
+          {/* {returnReason && (
             <p className="break-words">
               <span>Reason:</span>{" "}
               <span className="font-medium text-[#1F2430]">{returnReason}</span>
             </p>
-          )}
+          )} */}
         </>
       )}
     </div>
@@ -384,24 +400,24 @@ export function OrderItemCard({
       </div>
     );
   };
-const renderProductImage = () => (
-  <div className="hidden sm:block h-[140px] w-[115px] shrink-0 overflow-hidden rounded-lg bg-white">
-    {getItemImage(item) ? (
-      <img
-        loading="lazy"
-        width="400"
-        height="400"
-        src={getItemImage(item)}
-        alt={getProductTitle(item)}
-        className="h-full w-full object-contain p-1"
-      />
-    ) : (
-      <div className="flex h-full w-full items-center justify-center">
-        <Package size={28} className="text-[#9E886A]/50" />
-      </div>
-    )}
-  </div>
-);
+  const renderProductImage = () => (
+    <div className="hidden sm:block h-[140px] w-[115px] shrink-0 overflow-hidden rounded-lg bg-white">
+      {getItemImage(item) ? (
+        <img
+          loading="lazy"
+          width="400"
+          height="400"
+          src={getItemImage(item)}
+          alt={getProductTitle(item)}
+          className="h-full w-full object-contain p-1"
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center">
+          <Package size={28} className="text-[#9E886A]/50" />
+        </div>
+      )}
+    </div>
+  );
   const renderProductTitle = (titleClassName = "") => {
     const productTitle = getProductTitle(item) || "";
 
@@ -413,7 +429,7 @@ const renderProductImage = () => (
         {productPath ? (
           <Link
             to={productPath}
-            className="rounded-sm transition-colors hover:text-[#CE9F2D] hover:underline hover:underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]"
+            className="rounded-sm transition-colors hover:text-[#CE9F2D]  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]"
           >
             {productTitle}
           </Link>
@@ -430,8 +446,8 @@ const renderProductImage = () => (
         <div className="flex w-full min-w-0 items-start gap-3 sm:gap-4">
           {renderProductImage()}
 
-<div className="flex min-w-0 flex-1 flex-col gap-2 sm:gap-0">
-              <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-0 sm:gap-y-2">
+          <div className="flex min-w-0 flex-1 flex-col gap-2 sm:gap-0">
+            <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-0 sm:gap-y-2">
               {renderProductTitle()}
 
               {((!isCancelled && !isReturned && shipment?.tracking_url) ||
@@ -448,24 +464,27 @@ const renderProductImage = () => (
             )}
 
             {deliveryDateStr ? (
-<p className="mt-2.5 break-words text-xs leading-5 font-medium text-[#6F7480] sm:mt-2">                Estimated Delivery:{" "}
+              <p className="mt-2.5 break-words text-xs leading-5 font-medium text-[#6F7480] sm:mt-2">
+                {" "}
+                Expected by{" "}
                 <span className="font-semibold text-[#1F2430]">
                   {deliveryDateStr}
                 </span>
               </p>
             ) : eta !== undefined && eta !== null && eta !== "" ? (
               <p className="mt-2 text-xs font-medium text-[#6F7480]">
-                Estimated Delivery:{" "}
+                Expected by{" "}
                 <span className="font-semibold text-[#1F2430]">
                   {eta} {Number(eta) === 1 ? "day" : "days"}
                 </span>
               </p>
             ) : null}
 
-<div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-2 text-xs font-semibold text-[#1F2430] sm:mt-2">              <p className="text-lg font-bold text-[#1F2430]">
+            <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-2 text-xs font-semibold text-[#1F2430] sm:mt-2">
+              {" "}
+              <p className="text-lg font-bold text-[#1F2430]">
                 {formatMoney(getItemLineTotal(item), currency)}
               </p>
-
               <span className="inline-flex items-center gap-1 rounded-full border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5">
                 <span className="font-normal text-[#6F7480]">Qty:</span>{" "}
                 {String(item?.quantity || 1).padStart(2, "0")}
@@ -487,7 +506,7 @@ const renderProductImage = () => (
   return (
     <div className="w-full min-w-0">
       <div className="flex w-full min-w-0 items-start gap-3 sm:gap-4 lg:gap-6">
-       {renderProductImage()}
+        {renderProductImage()}
 
         <div className="flex min-w-0 flex-1 flex-col pt-1 sm:pt-2">
           <div className="flex w-full min-w-0 flex-wrap items-start gap-x-3 gap-y-0 sm:gap-y-2">
@@ -525,7 +544,9 @@ const renderProductImage = () => (
           {quantityBreakdown && <div className="mt-2">{quantityBreakdown}</div>}
 
           {deliveryDateStr && (
-<p className="mt-2.5 break-words text-xs leading-5 font-medium text-[#6F7480] sm:mt-2">              Estimated Delivery:{" "}
+            <p className="mt-2.5 break-words text-xs leading-5 font-medium text-[#6F7480] sm:mt-2">
+              {" "}
+              Expected by{" "}
               <span className="font-semibold text-[#1F2430]">
                 {deliveryDateStr}
               </span>

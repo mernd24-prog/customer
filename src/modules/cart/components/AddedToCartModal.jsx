@@ -278,7 +278,7 @@ export default function AddedToCartModal({
             ))}
 
             {cartItems.length === 0 && (
-              <div className="rounded-xl border border-dashed border-[var(--customer-border)] bg-white p-6 text-center">
+              <div className="rounded-lg border border-dashed border-[var(--customer-border)] bg-white p-6 text-center">
                 <ShoppingBag
                   className="mx-auto mb-2 text-[var(--customer-muted)]"
                   size={24}

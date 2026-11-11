@@ -46,7 +46,7 @@ export function NotificationsPage() {
         />
 
         <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7 lg:mt-4">
-          <div className="min-w-0 rounded-xl bg-white">
+          <div className="min-w-0 rounded-lg bg-white ">
             <NotificationFilterBar
               query={query}
               setQuery={setQuery}
