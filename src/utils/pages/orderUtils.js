@@ -58,15 +58,16 @@ export const getOrderStatus = (order) =>
 export const getDeliveryStatus = (order) =>
   order?.delivery_status || order?.deliveryStatus || null;
 export const getProgressStatus = (order) => {
-  const status = getOrderStatus(order);
+  const status = order?.display_status || order?.displayStatus || getOrderStatus(order);
   const deliveryStatus = getDeliveryStatus(order);
+  if (["fulfilled", "cancelled", "pending_payment", "payment_failed", "on_hold", "return_requested", "return_approved", "partially_returned", "returned", "refunded"].includes(status)) return status;
   if (
     deliveryStatus === "delivered" &&
     !["fulfilled", "cancelled"].includes(status)
   ) {
     return "delivered";
   }
-  if (deliveryStatus === "partially_delivered") return "out_for_delivery";
+  if (deliveryStatus === "partially_delivered") return "partially_delivered";
   if (
     deliveryStatus === "out_for_delivery" &&
     ["confirmed", "packed", "shipped", "in_transit"].includes(status)
@@ -480,26 +481,27 @@ export const getOrderItemSellerGroupKey = (item = {}) =>
       null,
   );
 
+const shipmentJson = (value) => {
+  if (value && typeof value === "object") return value;
+  try { return JSON.parse(value || "{}"); } catch { return {}; }
+};
 export const findShipmentForOrderItem = (shipments = [], item = {}) => {
-  const itemId = getOrderItemId(item);
+  const itemId = String(getOrderItemId(item));
   const groupKey = getOrderItemSellerGroupKey(item);
-  return shipments.find((shipment) => {
-    if (String(shipment.direction || "forward") === "reverse") return false;
-    const ids =
-      shipment.orderItemIds ||
-      shipment.order_item_ids ||
-      shipment.metadata?.orderItemIds ||
-      [];
-    if (ids.length) return ids.map(String).includes(itemId);
-    return (
-      getSellerGroupKey(
-        shipment.seller_id || shipment.sellerId,
-        shipment.organization_id ||
-          shipment.organizationId ||
-          shipment.metadata?.organizationId,
-      ) === groupKey
-    );
+  const matching = shipments.filter((shipment) => {
+    if (String(shipment.direction || "forward").toLowerCase() === "reverse" ||
+      ["return", "reverse", "rto"].includes(String(shipment.shipment_type || shipment.shipmentType || "").toLowerCase())) return false;
+    const metadata = shipmentJson(shipment.metadata);
+    if (getSellerGroupKey(shipment.seller_id || shipment.sellerId,
+      shipment.organization_id || shipment.organizationId || metadata.organizationId) !== groupKey) return false;
+    const lines = metadata.fulfillmentItems?.length ? metadata.fulfillmentItems : shipmentJson(shipment.package_snapshot || shipment.packageSnapshot).items || [];
+    if (lines.length) return lines.some(line => String(line.orderItemId || line.order_item_id || "") === itemId && Number(line.quantity || 0) > 0);
+    const ids = [shipment.orderItemIds, shipment.order_item_ids, metadata.orderItemIds].find(value => Array.isArray(value) && value.length) || [];
+    return !ids.length || ids.map(String).includes(itemId);
   });
+  const active = matching.filter(shipment => shipment.status !== "cancelled");
+  // Prefer an outstanding package over an older delivered/cancelled package.
+  return active.find(shipment => shipment.status !== "delivered") || active[0] || matching[0];
 };
 
 export const getCancellationForItem = (cancellations = [], item = {}) => {
@@ -528,6 +530,9 @@ const FORWARD_ITEM_STATUS_RANK = {
 };
 
 const mostAdvancedForwardItemStatus = (item = {}, shipment = null) => {
+  const effective = item.effective_status || item.effectiveStatus;
+  if (effective) return String(effective).toLowerCase();
+  if (["failed", "rto", "lost", "damaged", "cancelled"].includes(shipment?.status)) return shipment.status === "cancelled" ? "shipment_cancelled" : shipment.status;
   const timelineStatuses = (Array.isArray(item.timeline) ? item.timeline : [])
     .map((entry) => entry?.to_status || entry?.status)
     .filter(Boolean);
@@ -573,6 +578,8 @@ export const resolveOrderItemDisplayStatus = (
   if (["pending_payment", "payment_failed"].includes(fallback)) {
     return fallback;
   }
+  const effective = item.effective_status || item.effectiveStatus;
+  if (effective && effective !== "initiated") return String(effective).toLowerCase();
 
   let actualFulfillmentGroups = Array.isArray(fulfillmentGroups) ? fulfillmentGroups : [];
   let actualReturns = Array.isArray(returns) ? returns : [];
@@ -646,7 +653,9 @@ export const resolveOrderItemDisplayStatus = (
         "",
     ).toLowerCase();
 
-    if (refundStatus === "completed" || retStatus === "refunded") {
+    if (["rejected", "qc_failure_upheld", "replaced"].includes(retStatus) || (retStatus === "closed" && refundStatus !== "completed")) {
+      resolvedReturnStatus = "";
+    } else if (refundStatus === "completed" || retStatus === "refunded") {
       resolvedReturnStatus = "refunded";
     } else if (retStatus === "partially_refunded") {
       resolvedReturnStatus = "partially_refunded";

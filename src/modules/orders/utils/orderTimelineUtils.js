@@ -26,6 +26,7 @@ export const STATUS_RANK = {
   shipped: 3,
   in_transit: 3,
   out_for_delivery: 4,
+  partially_delivered: 4,
   delivered: 5,
   fulfilled: 5,
   completed: 5,
