@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "../../../utils/common";
 import { sanitizeSearchQuery } from "../../../validations";
 
+
+import DynamicButton from "../button/button.jsx";
 export default function SearchInput({
   placeholder = "Search Products…",
   value,
@@ -89,24 +91,25 @@ export default function SearchInput({
             )}
           />
           {query && (
-            <button
+            <DynamicButton
               type="button"
+              variant="unstyled"
               onClick={handleClear}
-              className="mr-1 shrink-0 rounded-full p-1 text-[var(--customer-muted)] hover:text-[var(--customer-ink)]"
+              className="mr-1 h-5 w-5 shrink-0 rounded-sm p-0 text-[var(--customer-muted)] transition-colors hover:bg-[#F8F3E7] hover:text-[var(--customer-ink)]"
               aria-label="Clear Search"
             >
-              <X size={14} />
-            </button>
+              <X size={13} />
+            </DynamicButton>
           )}
           {showButton && (
-            <button
+            <DynamicButton
               type="button"
               onClick={handleSearch}
               className="ml-1 shrink-0 rounded-full bg-[var(--customer-gold)] px-4 py-1.5  text-sm font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-dark)]"
               aria-label="Search"
             >
               {buttonLabel}
-            </button>
+            </DynamicButton>
           )}
         </div>
       </div>

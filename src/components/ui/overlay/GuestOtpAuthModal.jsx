@@ -15,6 +15,8 @@ import { fetchCart, updateCart } from "../../../modules/cart/slices/cartSlice";
 import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
 
+
+import DynamicButton from "../button/button.jsx";
 const FIXED_INDIAN_DIAL_CODE = "+91";
 const GENERIC_OTP_AUTH_ERROR =
   "We couldn’t continue with this mobile number. Check the number or try another mobile number.";
@@ -264,7 +266,7 @@ export default function GuestOtpAuthModal({
         )}
         onClick={(event) => event.stopPropagation()}
       >
-        <button
+        <DynamicButton
           type="button"
           onClick={() => onClose?.()}
           disabled={isSubmitting}
@@ -278,7 +280,7 @@ export default function GuestOtpAuthModal({
           aria-label="Close"
         >
           <X size={14} strokeWidth={1.8} />
-        </button>
+        </DynamicButton>
 
         <div className="overflow-hidden rounded-[16px] bg-[#F7F8FC] sm:rounded-[18px] lg:rounded-[20px]">
           <AuthCard
@@ -401,14 +403,14 @@ export default function GuestOtpAuthModal({
                       Mobile OTP
                     </label>
 
-                    <button
+                    <DynamicButton
                       type="button"
                       onClick={handleChangeMobile}
                       disabled={isSubmitting}
                       className="text-sm font-semibold text-gold transition hover:underline disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Change number
-                    </button>
+                    </DynamicButton>
                   </div>
 
                   <OtpInput
@@ -436,14 +438,14 @@ export default function GuestOtpAuthModal({
                       Resend in {resendTimer}s
                     </span>
                   ) : (
-                    <button
+                    <DynamicButton
                       type="button"
                       onClick={handleSendOtp}
                       disabled={isSubmitting}
                       className="font-semibold text-gold transition hover:underline disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Resend OTP
-                    </button>
+                    </DynamicButton>
                   )}
                 </div>
 

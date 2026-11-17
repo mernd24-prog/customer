@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, ChevronDown } from "lucide-react";
+import DynamicButton from "../../../components/ui/button/button";
 
 export default function NeedHelpPanel({
   title = "Need Help ?",
@@ -137,23 +138,27 @@ export default function NeedHelpPanel({
           return (
             <div key={`${item.title}-${index}`} className="flex flex-col">
               {item.onClick ? (
-                <button
+                <DynamicButton
                   type="button"
+                  variant="unstyled"
+                  size="none"
                   onClick={item.onClick}
                   className="flex min-w-0 items-center gap-3 py-5 focus:outline-none w-full"
                 >
                   {content}
-                </button>
+                </DynamicButton>
               ) : item.expandableContent ? (
-                <button
+                <DynamicButton
                   type="button"
+                  variant="unstyled"
+                  size="none"
                   onClick={() =>
                     setExpandedIndex(expandedIndex === index ? null : index)
                   }
                   className="flex min-w-0 items-center gap-3 py-5 focus:outline-none w-full"
                 >
                   {content}
-                </button>
+                </DynamicButton>
               ) : (
                 <Link
                   to={item.path || "/contact-us"}

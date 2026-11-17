@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import ReviewImageUploader from "../../products/components/ReviewImageUploader";
 import ReviewMediaLightbox from "../../products/components/ReviewMediaLightbox";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
+import { OrderActionButton } from "../../../components/ui/button/buttonSpecialized";
 import ShowMoreText from "../../../utils/showMore";
 import StarRating, {
   RatingStars,
@@ -14,6 +15,8 @@ import { submitProductReview } from "../../../features/review/reviewSlice";
 import { notify } from "../../../utils/notify";
 import { getReviewProductId, getReviewOrderItemId } from "../utils/orderItems";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 function StarInput({ value, onChange }) {
   const [hoverStar, setHoverStar] = useState(0);
 
@@ -146,7 +149,7 @@ function ExistingReviewCard({ review }) {
 
             <div className="flex flex-wrap gap-2">
               {media.slice(0, 5).map((url, index) => (
-                <button
+                <DynamicButton
                   type="button"
                   key={`${url}-${index}`}
                   onClick={() => setLightboxIndex(index)}
@@ -161,7 +164,7 @@ function ExistingReviewCard({ review }) {
                     alt={`Review image ${index + 1}`}
                     className="size-full object-cover transition duration-300"
                   />
-                </button>
+                </DynamicButton>
               ))}
             </div>
           </div>
@@ -359,21 +362,23 @@ function OrderItemReviewAction({
 
   if (!reviewChecked) {
     return (
-      <span className="inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm">
+      <OrderActionButton
+        as="span"
+        className="pointer-events-none opacity-80"
+      >
         Checking review...
-      </span>
+      </OrderActionButton>
     );
   }
 
   return (
-    <button
+    <OrderActionButton
       type="button"
-      className="inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] sm:text-sm"
       onClick={() => onReviewClick(item)}
       disabled={!orderId}
     >
       Write Review
-    </button>
+    </OrderActionButton>
   );
 }
 

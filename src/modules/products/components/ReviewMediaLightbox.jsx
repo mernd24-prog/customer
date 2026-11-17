@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X, ThumbsUp, ThumbsDown } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
+import DynamicButton from "../../../components/ui/button/button";
+import { CloseButton } from "../../../components/ui/buttons";
 
 function getUserDisplayName(user = {}) {
   if (typeof user === "string") return user;
@@ -114,28 +116,27 @@ export default function ReviewMediaLightbox({
           {/* Top Control Bar (Only shown in image-only mode) */}
           {!hasReviewDetails && (
             <div className="absolute top-3 right-3 z-30 pointer-events-none">
-              <button
-                type="button"
+              <CloseButton
                 onClick={onClose}
                 className="pointer-events-auto flex items-center justify-center h-8 w-8 rounded-full bg-white/90 text-[#1B1D60] hover:bg-white transition-all border border-[#EAD9B6] shadow-md focus:outline-none"
                 aria-label="Close Preview"
-              >
-                <X size={18} strokeWidth={2} />
-              </button>
+              />
             </div>
           )}
 
           {/* Main Image Container with Fixed Frame Bounds */}
           <div className="relative flex-1 flex items-center justify-center w-full min-h-0 px-12 py-5">
             {showNavigation && safeIndex > 0 && (
-              <button
+              <DynamicButton
                 type="button"
+                variant="unstyled"
+                size="none"
                 onClick={() => onIndexChange(safeIndex - 1)}
                 className="absolute left-3 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-[#1B1D60] hover:bg-white border border-[#EAD9B6] shadow-md transition-all focus:outline-none"
                 aria-label="Previous Image"
               >
                 <ChevronLeft size={22} strokeWidth={2.5} />
-              </button>
+              </DynamicButton>
             )}
 
             {/* Fixed Aspect/Dimensions Image Viewport */}
@@ -149,14 +150,16 @@ export default function ReviewMediaLightbox({
             </div>
 
             {showNavigation && safeIndex < images.length - 1 && (
-              <button
+              <DynamicButton
                 type="button"
+                variant="unstyled"
+                size="none"
                 onClick={() => onIndexChange(safeIndex + 1)}
                 className="absolute right-3 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#1B1D60] hover:bg-white border border-[#EAD9B6] shadow-md transition-all focus:outline-none"
                 aria-label="Next Image"
               >
                 <ChevronRight size={22} strokeWidth={2.5} />
-              </button>
+              </DynamicButton>
             )}
           </div>
 
@@ -164,8 +167,10 @@ export default function ReviewMediaLightbox({
           {showNavigation && (
             <div className="flex items-center justify-center gap-2 px-4 py-3 shrink-0 overflow-x-auto border-t border-[#E8DAAF] bg-[#FAF4E8]/80">
               {images.map((img, thumbIndex) => (
-                <button
+                <DynamicButton
                   type="button"
+                  variant="unstyled"
+                  size="none"
                   key={`${img}-${thumbIndex}`}
                   onClick={() => onIndexChange(thumbIndex)}
                   style={{ outline: "none", boxShadow: "none" }}
@@ -181,7 +186,7 @@ export default function ReviewMediaLightbox({
                     alt=""
                     className="h-full w-full object-cover rounded-xs"
                   />
-                </button>
+                </DynamicButton>
               ))}
             </div>
           )}
@@ -191,14 +196,11 @@ export default function ReviewMediaLightbox({
         {hasReviewDetails && (
           <div className="relative w-full md:w-[360px] lg:w-[400px] shrink-0 bg-white flex flex-col justify-between p-6 overflow-y-auto">
             {/* Top Right Close Button on Details Pane */}
-            <button
-              type="button"
+            <CloseButton
               onClick={onClose}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer z-10"
               aria-label="Close Preview"
-            >
-              <X size={20} strokeWidth={2} />
-            </button>
+            />
 
             <div className="flex flex-col gap-3 pr-6">
               {/* Rating + Title Row */}
@@ -239,29 +241,6 @@ export default function ReviewMediaLightbox({
                   </>
                 )}
               </div>
-
-              {/* <div className="flex items-center gap-3 shrink-0 text-gray-500">
-                <button
-                  type="button"
-                  onClick={() => onHelpful && reviewId && onHelpful(reviewId)}
-                  disabled={!reviewId || isOwn || !onHelpful}
-                  className={`flex items-center gap-1.5 transition-colors ${
-                    alreadyVoted ? "text-[#CE9F2D] font-bold" : "hover:text-gray-900"
-                  }`}
-                  title="Helpful"
-                >
-                  <ThumbsUp size={14} className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""} />
-                  <span>{helpfulVotes}</span>
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center gap-1 hover:text-gray-900 transition-colors opacity-60"
-                  title="Not helpful"
-                >
-                  <ThumbsDown size={14} />
-                  <span>0</span>
-                </button>
-              </div> */}
             </div>
           </div>
         )}

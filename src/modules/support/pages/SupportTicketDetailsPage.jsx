@@ -22,6 +22,8 @@ import {
 } from "../utils/supportUtils";
 import useProfileImage from "../../../hooks/useProfileImage";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const SUPPORT_BREADCRUMBS = [
   { label: "Home", href: "/" },
   { label: "Help & Support", href: "/support" },
@@ -397,13 +399,13 @@ export default function SupportTicketDetailsPage() {
                         {ticket.categoryLabel || ticket.category}
                       </p>
                     </div>
-                    <button
+                    <DynamicButton
                       type="button"
                       onClick={() => navigate("/support")}
                       className="hidden h-9 rounded-[10px] border border-white/25 bg-white/10 px-3.5 text-xs font-semibold text-white transition hover:bg-white/20 active:scale-95 sm:block"
                     >
                       Support Center
-                    </button>
+                    </DynamicButton>
                   </div>
 
                   <div
@@ -440,7 +442,7 @@ export default function SupportTicketDetailsPage() {
                         disabled={sendingReply}
                         className="min-w-0 flex-1 border-none bg-transparent px-1.5 text-xs text-[#1E2338] placeholder-[#8A8F9C] outline-none shadow-none focus:border-none focus:outline-none focus:ring-0 sm:text-sm disabled:opacity-60"
                       />
-                      <button
+                      <DynamicButton
                         type="submit"
                         disabled={!replyText.trim() || sendingReply}
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all sm:h-9 sm:w-9 ${
@@ -451,7 +453,7 @@ export default function SupportTicketDetailsPage() {
                         title="Send reply"
                       >
                         <Send size={15} />
-                      </button>
+                      </DynamicButton>
                     </div>
                   </form>
                 </section>

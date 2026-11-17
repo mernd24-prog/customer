@@ -21,6 +21,8 @@ import {
   invalidateProfileImageCache,
 } from "../../../hooks/useProfileImage";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const FALLBACK_AVATAR = "/image/png/person.png";
 const isSyntheticMobileEmail = (value = "") =>
   String(value).toLowerCase().endsWith("@mobile.samglobal.local");
@@ -408,7 +410,7 @@ export default function ProfileTab({ user }) {
             )}
             {isEditing && (
               <>
-                <button
+                <DynamicButton
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isAvatarUploading || isAvatarFetching || loading}
@@ -416,7 +418,7 @@ export default function ProfileTab({ user }) {
                   className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border-2 border-white bg-[#1B1D60] text-white transition hover:bg-[#343B91] disabled:opacity-60"
                 >
                   <Camera size={14} />
-                </button>
+                </DynamicButton>
 
                 <input
                   ref={fileInputRef}
@@ -449,14 +451,14 @@ export default function ProfileTab({ user }) {
 
         {/* Edit Profile button */}
         {!isEditing && (
-          <button
+          <DynamicButton
             type="button"
             onClick={handleEdit}
             className="inline-flex min-h-10 w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-md bg-gold px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none"
           >
             <SquarePen size={15} />
             <span>Edit Profile</span>
-          </button>
+          </DynamicButton>
         )}
       </section>
 
@@ -569,14 +571,14 @@ export default function ProfileTab({ user }) {
                     className="h-11 min-h-[44px] w-full rounded-md border border-[#04258633] bg-white py-2 pl-10 pr-3 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold"
                   />
                 </div>
-                <button
+                <DynamicButton
                   type="button"
                   onClick={handleSendEmailOtp}
                   disabled={emailBusy || !isEmailFormatValid}
                   className="min-h-11 shrink-0 rounded-md bg-[#1B1D60] px-3.5 text-xs font-semibold text-white transition hover:bg-[#2C3080] disabled:opacity-50"
                 >
                   {emailOtpSent ? "Resend OTP" : "Verify email"}
-                </button>
+                </DynamicButton>
               </div>
 
               <p
@@ -609,14 +611,14 @@ export default function ProfileTab({ user }) {
       {/* Editing Action Buttons */}
       {isEditing && (
         <div className="flex flex-row justify-end gap-2 border-t border-[#E7D9B8]/60 pt-4 sm:gap-3">
-          <button
+          <DynamicButton
             type="button"
             onClick={handleCancel}
             disabled={loading || isAvatarUploading}
             className="min-h-10 min-w-0 flex-1 sm:flex-none sm:w-auto rounded-md border border-[#D9DCE5] px-3 sm:px-5 text-xs sm:text-sm font-semibold text-[#171A3A] transition hover:bg-[#F7F7F9] disabled:opacity-60"
           >
             Cancel
-          </button>
+          </DynamicButton>
 
           <Button
             type="submit"
@@ -647,7 +649,7 @@ export default function ProfileTab({ user }) {
                   Enter the 6-digit code sent to <strong className="break-all">{email}</strong>.
                 </p>
               </div>
-              <button
+              <DynamicButton
                 type="button"
                 onClick={() => {
                   setEmailOtpSent(false);
@@ -657,7 +659,7 @@ export default function ProfileTab({ user }) {
                 className="rounded-full p-2 text-[#64708A] transition hover:bg-[#F2F4F8]"
               >
                 <X size={18} />
-              </button>
+              </DynamicButton>
             </div>
             <OtpInput
               value={emailOtp}

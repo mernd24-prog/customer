@@ -12,6 +12,8 @@ import { supportService } from "../services/supportService";
 import { useSupportController } from "../controllers/useSupportController";
 import { useAuthModal } from "../../auth/context/AuthModalContext";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const QUICK_PROMPTS = [
   "Where is my recent order?",
   "Return or refund",
@@ -299,7 +301,7 @@ export default function AiSupportChatWidget() {
   return (
     <>
       {/* Floating Chat Button */}
-      <button
+      <DynamicButton
         type="button"
         onClick={() =>
           setIsOpen((prev) => !prev)
@@ -316,7 +318,7 @@ export default function AiSupportChatWidget() {
         ) : (
           <MessageCircle size={21} />
         )}
-      </button>
+      </DynamicButton>
 
       {/* Chat Window */}
       {isOpen && (
@@ -357,7 +359,7 @@ export default function AiSupportChatWidget() {
             </div>
 
             {/* Only necessary header icon */}
-            <button
+            <DynamicButton
               type="button"
               onClick={() =>
                 setIsOpen(false)
@@ -367,7 +369,7 @@ export default function AiSupportChatWidget() {
               className="rounded-lg p-1.5 text-blue-100 transition hover:bg-white/10 hover:text-white"
             >
               <X size={18} />
-            </button>
+            </DynamicButton>
           </div>
 
           {/* Messages */}
@@ -450,7 +452,7 @@ export default function AiSupportChatWidget() {
                           help you directly.
                         </p>
 
-                        <button
+                        <DynamicButton
                           type="button"
                           onClick={() =>
                             handleRaiseTicketFromChat(
@@ -460,7 +462,7 @@ export default function AiSupportChatWidget() {
                           className="mt-2.5 w-full rounded-lg bg-[#1B1D60] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#252877] active:scale-[0.98]"
                         >
                           Contact support team
-                        </button>
+                        </DynamicButton>
                       </div>
                     )}
                 </div>
@@ -504,7 +506,7 @@ export default function AiSupportChatWidget() {
                 <div className="grid grid-cols-2 gap-1.5">
                   {QUICK_PROMPTS.map(
                     (prompt) => (
-                      <button
+                      <DynamicButton
                         key={prompt}
                         type="button"
                         onClick={() =>
@@ -515,7 +517,7 @@ export default function AiSupportChatWidget() {
                         className="min-h-8 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-left text-xs font-medium leading-tight text-slate-600 transition hover:border-[#1B1D60]/30 hover:bg-[#1B1D60]/5 hover:text-[#1B1D60] active:scale-[0.98]"
                       >
                         {prompt}
-                      </button>
+                      </DynamicButton>
                     ),
                   )}
                 </div>
@@ -544,7 +546,7 @@ export default function AiSupportChatWidget() {
                 className="h-full w-full min-w-0 flex-1 !border-0 !border-none !bg-transparent !p-0 text-sm text-slate-800 placeholder:text-slate-400 !outline-none !ring-0 !shadow-none focus:!border-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 disabled:opacity-50"
               />
 
-              <button
+              <DynamicButton
                 type="button"
                 onClick={() =>
                   handleSendMessage()
@@ -567,7 +569,7 @@ export default function AiSupportChatWidget() {
                     className="ml-0.5"
                   />
                 )}
-              </button>
+              </DynamicButton>
             </div>
           </div>
         </div>

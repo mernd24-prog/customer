@@ -21,6 +21,8 @@ import {
 import { AUTH_ROUTES } from "../../../modules/auth/routes/apiRoutes";
 import { securitySchema } from "../../../validations/validationSchemas";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function SecurityTab() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -208,23 +210,23 @@ export default function SecurityTab() {
           </div>
 
           <div className="flex items-center justify-between gap-3 border-t border-[#F0E6D2] pt-3">
-            <button
+            <DynamicButton
               type="button"
               disabled={loading}
               onClick={closeOtpModal}
               className="text-sm font-medium text-[#64708A] underline-offset-4 hover:text-[#1B1D60] hover:underline disabled:opacity-50"
             >
               Edit password details
-            </button>
+            </DynamicButton>
 
-            <button
+            <DynamicButton
               type="button"
               disabled={loading}
               onClick={handleSubmit((values) => submit(values, true))}
               className="text-sm font-semibold text-[#1B1D60] underline-offset-4 hover:underline disabled:opacity-50"
             >
               Resend OTP
-            </button>
+            </DynamicButton>
           </div>
         </div>
       </ConfirmModal>

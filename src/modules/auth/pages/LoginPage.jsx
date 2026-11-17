@@ -1,7 +1,6 @@
-
 import { Link } from "react-router-dom";
 import { LogIn, Smartphone } from "lucide-react";
-
+import { SolidLargeButton } from "../../../components/ui/button/static";
 import AuthCard from "../../../components/ui/AuthCard";
 import Button from "../../../components/ui/buttons/Button";
 import FormField from "../../../components/ui/FormField";
@@ -84,16 +83,15 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button
+          <SolidLargeButton
             type="submit"
             loading={loading}
             disabled={!isValid || isDisabled}
-            className={`${buttonBase} bg-gradient-to-r from-gold to-gold-dark text-white hover:brightness-105 active:brightness-95`}
+            className="h-10 w-full gap-2 px-3 text-xs sm:h-11 sm:px-4 sm:text-sm md:h-12 lg:text-base"
           >
-            <LogIn className="h-4 w-4 sm:h-[18px] sm:w-[18px] shrink-0" />
+            <LogIn className="h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]" />
             <span>Sign In</span>
-          </Button>
-
+          </SolidLargeButton>
           <div className="flex items-center gap-2 sm:gap-3 py-1">
             <hr className="flex-1 border-border" />
             <span className="whitespace-nowrap text-[11px] sm:text-xs text-gray">

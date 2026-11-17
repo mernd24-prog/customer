@@ -1,5 +1,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import DynamicButton from "../components/ui/button/button";
 
 const DEFAULT_LIMITS = {
   words: 24,
@@ -343,8 +344,10 @@ export function ShowMoreText({
       )}
 
       {isTruncated && (
-        <button
+        <DynamicButton
+          as="button"
           type="button"
+          variant="unstyled"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -353,7 +356,7 @@ export function ShowMoreText({
           className={finalButtonClass}
         >
           {expanded ? lessLabel : moreLabel}
-        </button>
+        </DynamicButton>
       )}
     </span>
   );

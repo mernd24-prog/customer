@@ -12,6 +12,8 @@ import ProfileTab from "./ProfileTab";
 import AddressTab from "./AddressTab";
 import SecurityTab from "./SecurityTab";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const MENU_ITEMS = [
   {
     id: "profile",
@@ -126,7 +128,7 @@ function AccountMobileMenu({
 }) {
   return (
     <div className="min-w-0 lg:hidden">
-      <button
+      <DynamicButton
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
@@ -142,7 +144,7 @@ function AccountMobileMenu({
             isOpen ? "rotate-180" : ""
           }`}
         />
-      </button>
+      </DynamicButton>
 
       {isOpen && (
         <nav

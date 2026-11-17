@@ -12,6 +12,8 @@ import {
 
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { Download } from "lucide-react";
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function DeliveryChecker({
   productId: initialProductId,
   onResultChange,
@@ -159,7 +161,7 @@ export default function DeliveryChecker({
                 Pincode
               </label>
 
-              <button
+              <DynamicButton
                 id="product-delivery-pincode"
                 type="button"
                 onClick={() => setIsModalOpen(true)}
@@ -186,10 +188,10 @@ export default function DeliveryChecker({
                   
                   />
                 </span>
-              </button>
+              </DynamicButton>
             </div>
           ) : (
-            <button
+            <DynamicButton
               type="button"
               onClick={() => setIsModalOpen(true)}
               disabled={loading}
@@ -224,7 +226,7 @@ export default function DeliveryChecker({
                 {lastCheckedPincode ? "Change pincode" : "Enter pincode"}
                 <ArrowRight size={14} aria-hidden="true" />
               </span>
-            </button>
+            </DynamicButton>
           )}
 
           {/* Inline Delivery Status */}

@@ -4,11 +4,13 @@ import { useDelayedLoading } from "../../../hooks/useDelayedLoading";
 import FallbackImage from "../../../components/ui/FallbackImage";
 import { FALLBACK_ABOUT } from "../../../data/fallbackCmsData";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 function PrimaryCta({ children }) {
   return (
-    <button className="text-white bg-blue px-6 py-3 font-semibold rounded-full">
+    <DynamicButton className="text-white bg-blue px-6 py-3 font-semibold rounded-full">
       {children}
-    </button>
+    </DynamicButton>
   );
 }
 

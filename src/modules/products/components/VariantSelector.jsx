@@ -6,6 +6,9 @@ import {
 import { getColorSwatchImage } from "../../../utils/pages/productUtils";
 import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
+import { LinkButton } from "../../../components/ui/button/static";
 export default function VariantSelector({
   variantOptions,
   selectedAttributes,
@@ -60,13 +63,13 @@ export default function VariantSelector({
             {option.name?.toLowerCase() === "size" &&
               (product?.category?.toLowerCase().includes("fashion") ||
                 product?.parentCategory?.toLowerCase().includes("fashion")) && (
-                <button
+                <LinkButton
                   type="button"
                   onClick={onSizeChartClick}
                   className="text-sm font-bold text-gold transition-colors hover:text-gold-dark hover:underline"
                 >
                   Size Chart
-                </button>
+                </LinkButton>
               )}
           </div>
 
@@ -140,7 +143,7 @@ export default function VariantSelector({
               const swatchColor = option?.valueCodes?.[value] || value;
               if (option.displayType === "color_swatch") {
                 return (
-                  <button
+                  <DynamicButton
                     key={value}
                     type="button"
                     data-scroll-selected={isSelected ? "true" : undefined}
@@ -200,7 +203,7 @@ export default function VariantSelector({
                         Out Of Stock
                       </span>
                     )}
-                  </button>
+                  </DynamicButton>
                 );
               }
 
@@ -213,7 +216,7 @@ export default function VariantSelector({
                       : "contents"
                   }
                 >
-                  <button
+                  <DynamicButton
                     type="button"
                     data-scroll-selected={isSelected ? "true" : undefined}
                     aria-pressed={isSelected}
@@ -266,7 +269,7 @@ export default function VariantSelector({
                         Out of stock
                       </span>
                     )}
-                  </button>
+                  </DynamicButton>
                   {isAgeGroupOption && (
                     <span
                       aria-hidden={!isUnavailable}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 
+import DynamicButton from "../components/ui/button/button";
 import { asArray, hrefOr } from "../utils/content";
 import { SocialIcons } from "../components/ui";
 import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
@@ -151,8 +152,10 @@ function Footer({ data }) {
                   key={item?.title || `benefit-${index}`}
                   className="border-b border-[#D2E2F4] last:border-b-0 md:border-0 md:!border-none"
                 >
-                  <button
+                  <DynamicButton
                     type="button"
+                    variant="unstyled"
+                    size="none"
                     aria-expanded={isOpen}
                     onClick={() => setOpenBenefit(isOpen ? -1 : index)}
                     className="flex w-full items-center gap-3 py-2.5 text-left md:cursor-default md:gap-3.5 md:py-3.5"
@@ -199,7 +202,7 @@ function Footer({ data }) {
                         </svg>
                       </span>
                     </div>
-                  </button>
+                  </DynamicButton>
 
                   <div
                     className={`overflow-hidden transition-all duration-300 md:block ${

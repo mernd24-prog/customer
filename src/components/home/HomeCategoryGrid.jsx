@@ -13,6 +13,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+
+import DynamicButton from "../ui/button/button.jsx";
 const NAV_BUTTON_CLASS = `
   hidden sm:flex
   absolute top-1/2 z-30
@@ -159,7 +161,7 @@ export default function HomeCategoryGrid({
       className="mt-5"
     >
       <div className="group/carousel relative my-3 sm:my-4">
-        <button
+        <DynamicButton
           ref={prevRef}
           type="button"
           aria-label="Previous categories"
@@ -170,7 +172,7 @@ export default function HomeCategoryGrid({
           )}
         >
           <ChevronLeft className="h-5 w-5 stroke-[2]" />
-        </button>
+        </DynamicButton>
 
         <Swiper
           ref={swiperRef}
@@ -248,7 +250,7 @@ export default function HomeCategoryGrid({
           })}
         </Swiper>
 
-        <button
+        <DynamicButton
           ref={nextRef}
           type="button"
           aria-label="Next categories"
@@ -259,7 +261,7 @@ export default function HomeCategoryGrid({
           )}
         >
           <ChevronRight className="h-5 w-5 stroke-[2]" />
-        </button>
+        </DynamicButton>
 
         <div
           className="

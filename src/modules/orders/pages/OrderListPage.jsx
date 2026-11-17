@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Search,
-  X,
   Truck,
   CheckCircle2,
   XCircle,
@@ -13,6 +11,7 @@ import { useDispatch } from "react-redux";
 
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
+import SearchBar from "../../../components/ui/inputs/SearchBar";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
 import { AllOrdersIcon } from "../../../components/ui/icons";
 import { PageContainer } from "../../../components/ui/layout";
@@ -55,6 +54,8 @@ import {
   getOrderItemId,
 } from "../../../utils/pages/orderUtils";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const getStatusIcon = (value) => {
   const iconClass = "shrink-0 text-[var(--customer-gold-dark)]";
 
@@ -224,34 +225,17 @@ export default function OrderListPage({ returnOnly = false }) {
             {hasAnyOrders && (
               <div className="mb-4 flex flex-col gap-3">
                 <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-                  <label className="relative block w-full sm:max-w-[640px]">
-                    <Search
-                      size={16}
-                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9E886A]"
-                    />
-
-                    <input
-                      value={query}
-                      onChange={(event) => setQuery(event.target.value)}
-                      placeholder={
-                        isReturnOnly
-                          ? "Search returns by order ID, product name or tracking number"
-                          : "Search by order ID, product name or tracking number"
-                      }
-                      className=" h-11 w-full rounded-lg border border-[#e4ca8e] bg-white pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-shadow duration-200 focus:bg-white focus:outline-none focus:shadow-[0_4px_14px_rgba(31,36,48,0.08)]"
-                    />
-
-                    {Boolean(query) && (
-                      <button
-                        type="button"
-                        onClick={() => setQuery("")}
-                        aria-label="Clear search"
-                        className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#6F7480] transition hover:text-[#1F2430]"
-                      >
-                        <X size={16} />
-                      </button>
-                    )}
-                  </label>
+                  <SearchBar
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder={
+                      isReturnOnly
+                        ? "Search returns by order ID, product name or tracking number"
+                        : "Search by order ID, product name or tracking number"
+                    }
+                    className="w-full sm:max-w-[640px]"
+                    showButton={false}
+                  />
 
                   <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:gap-3">
                     {" "}

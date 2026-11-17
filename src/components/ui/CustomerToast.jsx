@@ -11,6 +11,8 @@ import {
   Truck,
 } from "lucide-react";
 
+
+import DynamicButton from "./button/button.jsx";
 const TYPE_CONFIG = {
   success: {
     title: "Success",
@@ -64,13 +66,13 @@ export default function CustomerToast({
         </p>
         <p className="customer-toast-card__message">{message}</p>
         {actionLabel ? (
-          <button
+          <DynamicButton
             type="button"
             className="customer-toast-card__action"
             onClick={onAction}
           >
             {actionLabel}
-          </button>
+          </DynamicButton>
         ) : null}
       </div>
     </div>

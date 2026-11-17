@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/common";
 import { createPortal } from "react-dom";
+import DynamicButton from "./button/button";
 import { useAnimatedPresence } from "../../hooks/useAnimatedPresence";
 
 const THUMB_HEIGHT = 32; // Fixed compact short pill thumb
@@ -35,12 +36,15 @@ export default function CustomDropdown({
   const { present, exiting } = useAnimatedPresence(isOpen);
   const [search, setSearch] = useState("");
   const searchRef = useRef(null);
-  const filteredOptions = searchable || typeahead
-    ? options.filter((option) =>
-        String(option?.label ?? option?.value ?? option)
-          .trim().toLowerCase().startsWith(search.trim().toLowerCase()),
-      )
-    : options;
+  const filteredOptions =
+    searchable || typeahead
+      ? options.filter((option) =>
+          String(option?.label ?? option?.value ?? option)
+            .trim()
+            .toLowerCase()
+            .startsWith(search.trim().toLowerCase()),
+        )
+      : options;
   useEffect(() => {
     if (isOpen && searchable) searchRef.current?.focus();
     if (!isOpen) {
@@ -57,20 +61,25 @@ export default function CustomDropdown({
   const [panelStyle, setPanelStyle] = useState({});
   useEffect(() => {
     if (!isOpen || !portal) return;
-    const rect = dropdownRef.current?.querySelector("button")?.getBoundingClientRect();
+    const rect = dropdownRef.current
+      ?.querySelector("button")
+      ?.getBoundingClientRect();
     if (!rect) return;
     const below = window.innerHeight - rect.bottom - 12;
     const above = rect.top - 12;
     const upwards = below < 220 && above > below;
     setPanelStyle({
-      position: "fixed", left: rect.left, width: rect.width,
+      position: "fixed",
+      left: rect.left,
+      width: rect.width,
       top: upwards ? "auto" : rect.bottom + 6,
       bottom: upwards ? window.innerHeight - rect.top + 6 : "auto",
       zIndex: 11000,
       maxHeight: Math.max(80, Math.min(220, upwards ? above : below)),
     });
   }, [isOpen, portal]);
-  const renderPanel = (panel) => portal ? createPortal(panel, document.body) : panel;
+  const renderPanel = (panel) =>
+    portal ? createPortal(panel, document.body) : panel;
   const scrollContainerRef = useRef(null);
   const [hasScroll, setHasScroll] = useState(false);
   const [thumbTop, setThumbTop] = useState(0);
@@ -181,13 +190,21 @@ export default function CustomDropdown({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && !panelRef.current?.contains(event.target)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        !panelRef.current?.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     };
 
     const handleScroll = (event) => {
-      if (dropdownRef.current?.contains(event.target) || panelRef.current?.contains(event.target)) return;
+      if (
+        dropdownRef.current?.contains(event.target) ||
+        panelRef.current?.contains(event.target)
+      )
+        return;
       setIsOpen(false);
     };
 
@@ -210,20 +227,31 @@ export default function CustomDropdown({
   return (
     <div ref={dropdownRef} className={cn("relative", className)}>
       {label && (
-        <span className={cn("block text-sm font-semibold text-[#2E2E2E]", labelGapClassName, labelClassName)}>
+        <span
+          className={cn(
+            "block text-sm font-semibold text-[#2E2E2E]",
+            labelGapClassName,
+            labelClassName,
+          )}
+        >
           {label}
 
           {required && <span className="text-red-500"> *</span>}
         </span>
       )}
 
-      <button
+      <DynamicButton
+        as="button"
         type="button"
+        variant="unstyled"
         disabled={disabled}
         onClick={() => setIsOpen((previousState) => !previousState)}
         onKeyDown={(event) => {
           if (!typeahead) return;
-          if (event.key === "Escape") { setIsOpen(false); return; }
+          if (event.key === "Escape") {
+            setIsOpen(false);
+            return;
+          }
           if (event.key === "Backspace") {
             event.preventDefault();
             const text = typedRef.current.text.slice(0, -1);
@@ -231,17 +259,24 @@ export default function CustomDropdown({
             setSearch(text);
             return;
           }
-          if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey || event.key === " ") return;
+          if (
+            event.key.length !== 1 ||
+            event.ctrlKey ||
+            event.metaKey ||
+            event.altKey ||
+            event.key === " "
+          )
+            return;
           event.preventDefault();
           const now = Date.now();
-          const previous = now - typedRef.current.time < 700 ? typedRef.current.text : "";
+          const previous =
+            now - typedRef.current.time < 700 ? typedRef.current.text : "";
           const text = previous + event.key.toLowerCase();
           typedRef.current = { text, time: now };
           setSearch(text);
           setIsOpen(true);
         }}
-        className={cn( 
-          
+        className={cn(
           "custom-dropdown-trigger",
           "customer-dropdown-button",
           "flex h-11 w-full items-center justify-between",
@@ -249,7 +284,7 @@ export default function CustomDropdown({
           "bg-white px-3.5 sm:px-4 text-left",
           "text-sm font-semibold text-[#1B1D60]",
           "shadow-2xs transition-all duration-200",
-          "hover:border-[#CE9F2D] hover:shadow-xs",
+          "hover:border-[#CE9F2D] hover:bg-[#F8F1E2] hover:text-[#1B1D60] hover:shadow-xs",
           "outline-none focus:outline-none focus:ring-0 focus:border-[#CE9F2D]",
           "focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CE9F2D]",
           "active:outline-none active:ring-0 active:border-[#CE9F2D]",
@@ -278,135 +313,136 @@ export default function CustomDropdown({
             isOpen && "rotate-180",
           )}
         />
-      </button>
+      </DynamicButton>
 
-      {present && renderPanel(
-        <div
-          ref={panelRef}
-          data-exiting={exiting}
-          inert={exiting ? "" : undefined}
-          style={portal ? panelStyle : undefined}
-          className={cn(
-            "customer-dropdown-panel absolute left-0 top-[calc(100%+6px)]",
-            "z-30 w-full overflow-hidden",
-            "rounded-lg",
-            "border border-[#CE9F2D]",
-            "bg-white shadow-lg",
-            optionsClassName,
-          )}
-        >
-          {searchable && (
-            <div className="border-b border-[#E7D9B8] p-2">
-              <input
-                ref={searchRef}
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") event.preventDefault();
-                  if (event.key === "Escape") {
-                    event.stopPropagation();
-                    setIsOpen(false);
-                    dropdownRef.current?.querySelector("button")?.focus();
-                  }
-                }}
-                placeholder="Search..."
-                aria-label={`Search ${label || placeholder}`}
-                className="h-9 w-full min-w-0 rounded-md border border-[#E7D9B8] bg-white px-2 text-sm outline-none focus:border-[#CE9F2D]"
-              />
-            </div>
-          )}
+      {present &&
+        renderPanel(
           <div
-            role="listbox"
-            ref={scrollContainerRef}
-            onScroll={updateScrollState}
-            className="max-h-[220px] overflow-y-auto no-scrollbar"
-            style={portal ? { maxHeight: panelStyle.maxHeight } : undefined}
-          >
-            {isLoading ? (
-              <>
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="px-4 py-3">
-                    <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
-                  </div>
-                ))}
-              </>
-            ) : filteredOptions.length > 0 ? (
-              filteredOptions.map((option, index) => {
-                const optionValue = option?.value ?? option;
-
-                const optionLabel = option?.label ?? option;
-
-                const isSelected = value === optionValue;
-
-                return (
-                  <button
-                    key={`${optionValue}-${index}`}
-                    type="button"
-                    role="option"
-                    aria-selected={isSelected}
-                    onClick={() => handleSelect(optionValue)}
-                    className={cn(
-                      "block w-full",
-                      "px-3.5 pr-4 py-2.5",
-                      "text-left text-sm",
-                      "font-semibold",
-                      "transition-all",
-                      "border-y border-transparent",
-                      "hover:border-[#E5DAB5] hover:bg-[#F8F1E2]",
-                      "first:hover:border-t-transparent last:hover:border-b-transparent",
-                      isSelected
-                        ? "bg-[#F8F1E2] text-[#1B1D60]"
-                        : "text-[#2E2E2E] hover:text-[#1B1D60]",
-                      optionClassName,
-                    )}
-                  >
-                    {renderOption ? (
-                      renderOption(option, {
-                        isSelected,
-                      })
-                    ) : (
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        {option?.icon && (
-                          <span className="shrink-0 flex items-center text-[var(--customer-gold-dark)]">
-                            {option.icon}
-                          </span>
-                        )}
-                        <span className="truncate">{optionLabel}</span>
-                      </div>
-                    )}
-                  </button>
-                );
-              })
-            ) : (
-              <p className="px-4 py-3 text-sm text-gray-500">
-                {search ? "No matching options" : "No Options Available"}
-              </p>
+            ref={panelRef}
+            data-exiting={exiting}
+            inert={exiting ? "" : undefined}
+            style={portal ? panelStyle : undefined}
+            className={cn(
+              "customer-dropdown-panel absolute left-0 top-[calc(100%+6px)]",
+              "z-30 w-full overflow-hidden",
+              "rounded-lg",
+              "border border-[#CE9F2D]",
+              "bg-white shadow-lg",
+              optionsClassName,
             )}
-          </div>
-
-          {hasScroll && (
+          >
+            {searchable && (
+              <div className="border-b border-[#E7D9B8] p-2">
+                <input
+                  ref={searchRef}
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") event.preventDefault();
+                    if (event.key === "Escape") {
+                      event.stopPropagation();
+                      setIsOpen(false);
+                      dropdownRef.current?.querySelector("button")?.focus();
+                    }
+                  }}
+                  placeholder="Search..."
+                  aria-label={`Search ${label || placeholder}`}
+                  className="h-9 w-full min-w-0 rounded-md border border-[#E7D9B8] bg-white px-2 text-sm outline-none focus:border-[#CE9F2D]"
+                />
+              </div>
+            )}
             <div
-              onPointerDown={handleTrackPointerDown}
-              className="absolute right-0.5 bottom-0 w-[14px] z-20 flex justify-center cursor-pointer select-none"
-              style={{
-                top: searchable ? "53px" : 0,
-                paddingTop: `${TRACK_PADDING}px`,
-                paddingBottom: `${TRACK_PADDING}px`,
-              }}
+              role="listbox"
+              ref={scrollContainerRef}
+              onScroll={updateScrollState}
+              className="max-h-[220px] overflow-y-auto no-scrollbar"
+              style={portal ? { maxHeight: panelStyle.maxHeight } : undefined}
             >
-              <div
-                onPointerDown={handleThumbPointerDown}
-                className="w-[4.5px] rounded-full bg-[#CE9F2D] hover:bg-[#A96F14] transition-colors cursor-grab active:cursor-grabbing"
-                style={{
-                  height: `${THUMB_HEIGHT}px`,
-                  transform: `translateY(${thumbTop}px)`,
-                }}
-              />
+              {isLoading ? (
+                <>
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="px-4 py-3">
+                      <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
+                    </div>
+                  ))}
+                </>
+              ) : filteredOptions.length > 0 ? (
+                filteredOptions.map((option, index) => {
+                  const optionValue = option?.value ?? option;
+
+                  const optionLabel = option?.label ?? option;
+
+                  const isSelected = value === optionValue;
+
+                  return (
+                    <DynamicButton
+                      as="button"
+                      key={`${optionValue}-${index}`}
+                      type="button"
+                      role="option"
+                      aria-selected={isSelected}
+                      onClick={() => handleSelect(optionValue)}
+                      variant="unstyled"
+                      className={cn(
+  "block w-full",
+  "px-3.5 pr-4 py-[11px]",
+  "text-left text-sm font-semibold",
+  "transition-all duration-200",
+  "border border-transparent rounded-none",
+  "hover:border-[#E5DAB5] hover:bg-[#F8F1E2]",
+  isSelected
+    ? "bg-[#F8F1E2] text-[#1B1D60]"
+    : "text-[#2E2E2E] hover:text-[#1B1D60]",
+  optionClassName,
+)}
+                    >
+                      {renderOption ? (
+                        renderOption(option, {
+                          isSelected,
+                        })
+                      ) : (
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          {option?.icon && (
+                            <span className="shrink-0 flex items-center text-[var(--customer-gold-dark)]">
+                              {option.icon}
+                            </span>
+                          )}
+                          <span className="truncate">{optionLabel}</span>
+                        </div>
+                      )}
+                    </DynamicButton>
+                  );
+                })
+              ) : (
+                <p className="px-4 py-3 text-sm text-gray-500">
+                  {search ? "No matching options" : "No Options Available"}
+                </p>
+              )}
             </div>
-          )}
-        </div>
-      )}
+
+            {hasScroll && (
+              <div
+                onPointerDown={handleTrackPointerDown}
+                className="absolute right-0.5 bottom-0 w-[14px] z-20 flex justify-center cursor-pointer select-none"
+                style={{
+                  top: searchable ? "53px" : 0,
+                  paddingTop: `${TRACK_PADDING}px`,
+                  paddingBottom: `${TRACK_PADDING}px`,
+                }}
+              >
+                <div
+                  onPointerDown={handleThumbPointerDown}
+                  className="w-[4.5px] rounded-full bg-[#CE9F2D] hover:bg-[#A96F14] transition-colors cursor-grab active:cursor-grabbing"
+                  style={{
+                    height: `${THUMB_HEIGHT}px`,
+                    transform: `translateY(${thumbTop}px)`,
+                  }}
+                />
+              </div>
+            )}
+          </div>,
+        )}
 
       {error && (
         <span className="mt-1 block text-xs text-red-600">

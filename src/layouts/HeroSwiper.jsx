@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Sparkles } from "lucide-react";
+
 import Label from "../components/ui/label/Label";
 import {
   OutlineLightButton,

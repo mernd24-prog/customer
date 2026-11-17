@@ -10,6 +10,8 @@ import { applyImageFallback } from "../../../utils/ecommerce";
 import IconActionButton from "./IconActionButton";
 import ShareProductPopover from "./socialMediaShare";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 function ProductGallery({
   images = [],
   video,
@@ -153,7 +155,7 @@ function ProductGallery({
                   activeIndex === i || (isLastVisible && activeIndex >= i);
 
                 return (
-                  <button
+                  <DynamicButton
                     key={`${item.type}-${item.src}-${i}`}
                     type="button"
                     onClick={() => {
@@ -229,7 +231,7 @@ function ProductGallery({
                         +{hiddenThumbnailCount}
                       </span>
                     )}
-                  </button>
+                  </DynamicButton>
                 );
               })}
             </div>
@@ -264,7 +266,7 @@ function ProductGallery({
             {mediaItems.map((item, i) => (
               <SwiperSlide key={i} className="!h-full bg-transparent">
                 {item.type === "video" ? (
-                  <button
+                  <DynamicButton
                     type="button"
                     className="relative flex h-full w-full items-center justify-center overflow-hidden bg-black"
                     onClick={() => handleVideoToggle(i)}
@@ -292,7 +294,7 @@ function ProductGallery({
                         <Play size={34} fill="currentColor" />
                       </span>
                     </div>
-                  </button>
+                  </DynamicButton>
                 ) : (
                   <div
                     className={`relative h-full w-full overflow-hidden bg-transparent ${
@@ -430,7 +432,7 @@ export default function ImageGallery({
       {isModalOpen &&
         createPortal(
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
-            <button
+            <DynamicButton
               type="button"
               onClick={() => {
                 setIsModalOpen(false);
@@ -439,7 +441,7 @@ export default function ImageGallery({
               className="absolute top-6 right-6 z-[10000] w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
             >
               <X size={28} />
-            </button>
+            </DynamicButton>
 
             <div className="flex h-[90vh]  w-full max-w-[1200px] items-center justify-center bg-white">
               <ProductGallery

@@ -25,6 +25,7 @@ import {
   CategoryMoreButton,
   HeaderGoldButton,
   HeaderIconButton,
+  SolidLargeButton,
 } from "../components/ui/button/static";
 import ConfirmModal from "../components/ui/overlay/ConfirmModal";
 import HeaderDropdown from "./header/HeaderDropdown";
@@ -480,32 +481,32 @@ export const Navbar = ({ icons: propIcons }) => {
                 <MenuDropdown title="My Account" items={accountMenuItems} />
               </HeaderDropdown>
             ) : (
-              <HeaderGoldButton
+              <SolidLargeButton
                 className="ml-1 flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-base font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-sm sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-base lg:text-[16px]"
                 onClick={() => navigate("/login")}
               >
                 Login
-              </HeaderGoldButton>
+              </SolidLargeButton>
             )}
           </div>
         </div>
       </header>
 
       <ConfirmModal
-  open={showLogoutModal}
-  title="Sign Out"
-  icon={LogOut}
-  iconBgClassName="bg-red-50"
-  iconClassName="text-red-600"
-  iconSize={22}
-  description="Are you sure you want to sign out of your account?"
-  confirmLabel="Sign Out"
-  cancelLabel="Cancel"
-  onConfirm={handleLogout}
-  onCancel={() => setShowLogoutModal(false)}
-  maxWidth="max-w-md"
-  confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
-/>
+        open={showLogoutModal}
+        title="Sign Out"
+        icon={LogOut}
+        iconBgClassName="bg-red-50"
+        iconClassName="text-red-600"
+        iconSize={22}
+        description="Are you sure you want to sign out of your account?"
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+        maxWidth="max-w-md"
+        confirmClassName="bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+      />
     </>
   );
 };

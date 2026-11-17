@@ -1,6 +1,8 @@
 import { cn } from "../../../utils/common";
 import { SpinnerIcon } from "../icons";
 
+
+import DynamicButton from "../button/button.jsx";
 const sizeMap = {
   xs: "text-sm leading-[22px] tracking-[0.5px] min-h-[36px] px-2.5 py-1",
   sm: "text-sm leading-[22px] tracking-[0.5px] min-h-[40px] px-3 py-1.5",
@@ -57,7 +59,7 @@ export default function Button({
       : style;
 
   return (
-    <button
+    <DynamicButton
       type={type}
       onClick={onClick}
       disabled={isDisabled}
@@ -91,6 +93,6 @@ export default function Button({
           )}
         </>
       )}
-    </button>
+    </DynamicButton>
   );
 }

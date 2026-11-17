@@ -38,7 +38,7 @@ headerIconOutlined:
   categoryMore:
     "group flex h-auto min-h-0 min-w-[80px] flex-col items-center rounded-md bg-transparent px-0 py-0 text-inherit shadow-none outline-none transition-all duration-300 ease-in-out hover:bg-transparent focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2 sm:min-w-[100px] lg:min-w-[140px]",
   continueShopping:
-    "inline-flex h-[42px] sm:h-[44px] w-auto whitespace-nowrap items-center justify-center rounded-full border border-[#18156D]/20 bg-white/70 px-6 sm:px-7 text-sm sm:text-base font-semibold text-[#3E4093] shadow-xs transition-all duration-200 ease-in-out hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3E4093]/40 active:bg-[#2A2B66] active:!text-white disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer",
+    "inline-flex h-[42px] sm:h-[44px] w-auto whitespace-nowrap items-center justify-center rounded-lg border border-[#18156D]/20 bg-white/70 px-6 sm:px-7 text-sm sm:text-base font-semibold text-[#3E4093] shadow-xs transition-all duration-200 ease-in-out hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3E4093]/40 active:bg-[#2A2B66] active:!text-white disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer",
 };
 
 export const PrimaryGradientButton = ({ children, ...props }) => (
@@ -158,6 +158,19 @@ export const TextGoldButton = ({ children, className = "", ...props }) => (
   </DynamicButton>
 );
 
+export const ProductBrandButton = ({ children, className = "", ...props }) => (
+  <DynamicButton
+    variant="unstyled"
+    className={cn(
+      "inline-flex h-auto min-h-0 w-fit max-w-full items-center justify-start truncate rounded-none bg-transparent p-0 text-left text-xs font-bold uppercase leading-none tracking-wider text-[#CE9F2D] transition-colors duration-200 hover:text-[#B8860B] sm:text-sm",
+      className,
+    )}
+    {...props}
+  >
+    {children}
+  </DynamicButton>
+);
+
 export const TextWhiteButton = ({ children, className = "", ...props }) => (
   <DynamicButton
     variant="unstyled"
@@ -228,6 +241,33 @@ export const CategoryMoreButton = ({
     </div>
   );
 };
+
+export const LinkButton = ({
+  children,
+  className = "",
+  rightIcon,
+  ...props
+}) => (
+  <DynamicButton
+    variant="unstyled"
+    className={cn(
+      "group inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-white drop-shadow-lg transition-colors duration-200",
+      className,
+    )}
+    rightIcon={
+      rightIcon ?? (
+        <ArrowRight
+          size={16}
+          strokeWidth={2.5}
+          className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        />
+      )
+    }
+    {...props}
+  >
+    {children}
+  </DynamicButton>
+);
 
 export const ContinueShoppingButton = ({
   children = "Continue Shopping",

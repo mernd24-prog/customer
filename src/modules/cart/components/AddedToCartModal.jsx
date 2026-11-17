@@ -15,6 +15,8 @@ import {
   composeProductVariantTitle,
 } from "../../../utils/ecommerce";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 function getCartLineDisplayPrice(item, product) {
   if (typeof item?.salePrice === "number" && item.salePrice > 0) {
     return item.salePrice;
@@ -176,14 +178,14 @@ export default function AddedToCartModal({
   return (
     <ModalOverlay exiting={exiting} onClose={onClose} showCloseButton={false}>
       <div className="relative grid max-h-[92vh] w-full grid-cols-1 overflow-y-auto rounded-lg  bg-white shadow-2xl lg:max-h-[80vh] lg:grid-cols-[minmax(0,1fr)_360px] lg:overflow-hidden">
-        <button
+        <DynamicButton
           type="button"
           onClick={onClose}
           className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[var(--customer-navy)] shadow-sm backdrop-blur transition-colors hover:bg-[var(--customer-gold-soft)] sm:right-4 sm:top-4"
           aria-label="Close"
         >
           <X size={18} aria-hidden="true" />
-        </button>
+        </DynamicButton>
 
         <div className="relative overflow-hidden border-b border-[var(--customer-border)] bg-gradient-to-br from-white via-white to-[var(--customer-cream)] p-4 sm:p-7 md:border-b-0 md:border-r">
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-[var(--customer-gold-soft)]/60 blur-3xl" />
@@ -240,7 +242,7 @@ export default function AddedToCartModal({
               View Cart
             </Link>
 
-            <button
+            <DynamicButton
               type="button"
               onClick={() => {
                 onClose?.();
@@ -249,7 +251,7 @@ export default function AddedToCartModal({
               className="inline-flex h-[44px] w-full items-center justify-center rounded-lg bg-[#CE9F2D] px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
               Checkout
-            </button>
+            </DynamicButton>
           </div>
         </div>
 

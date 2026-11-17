@@ -8,6 +8,8 @@ import { X } from "lucide-react";
 
 import { LockIcon } from "../../../components/ui/icons";
 
+
+import DynamicButton from "../button/button.jsx";
 export default function AuthModal({ open, onClose }) {
   const navigate = useNavigate();
   const loginBtnRef = useRef(null);
@@ -93,7 +95,7 @@ export default function AuthModal({ open, onClose }) {
         </div>
 
         {/* Close button */}
-        <button
+        <DynamicButton
           ref={firstFocusableRef}
           onClick={onClose}
           className={cn(
@@ -105,7 +107,7 @@ export default function AuthModal({ open, onClose }) {
           aria-label="Close Login Prompt"
         >
           <X size={14} strokeWidth={1.8} />
-        </button>
+        </DynamicButton>
 
         {/* Body */}
         <div className="px-7 pb-8 pt-5 sm:pt-6">
@@ -146,7 +148,7 @@ export default function AuthModal({ open, onClose }) {
 
           {/* CTA buttons */}
           <div className="flex flex-col gap-3">
-            <button
+            <DynamicButton
               ref={loginBtnRef}
               onClick={handleGoToLogin}
               className={cn(
@@ -159,9 +161,9 @@ export default function AuthModal({ open, onClose }) {
               )}
             >
               Go to Login
-            </button>
+            </DynamicButton>
 
-            <button
+            <DynamicButton
               onClick={onClose}
               className={cn(
                 "w-full rounded-[8px] py-3 px-6",
@@ -173,13 +175,13 @@ export default function AuthModal({ open, onClose }) {
               )}
             >
               Cancel
-            </button>
+            </DynamicButton>
           </div>
 
           {/* Register nudge */}
           <p className="mt-5 text-center  text-[0.75rem] text-muted">
             New Here?{" "}
-            <button
+            <DynamicButton
               onClick={handleGoToRegister}
               className={cn(
                 "font-semibold text-gold",
@@ -188,7 +190,7 @@ export default function AuthModal({ open, onClose }) {
               )}
             >
               Create a Free Account
-            </button>
+            </DynamicButton>
           </p>
         </div>
       </div>

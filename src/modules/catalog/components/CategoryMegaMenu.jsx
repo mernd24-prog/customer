@@ -16,6 +16,8 @@ import {
 } from "../../../utils/ecommerce";
 import CUSTOMER_ROUTES from "../../../constants/routes";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const slugifyKey = (value = "") =>
   String(value).trim().toLowerCase().replace(/\s+/g, "-");
 const sortByOrder = (a, b) =>
@@ -401,7 +403,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
               key={sub.categoryKey}
               className="border border-border/60 rounded-lg overflow-hidden bg-cream/10"
             >
-              <button
+              <DynamicButton
                 type="button"
                 onClick={() => handleToggleSub(sub.categoryKey)}
                 className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold transition-all duration-300 ease-in-out ${
@@ -413,7 +415,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
                   size={16}
                   className={`transition-all duration-300 ease-in-out ${isSubExpanded ? "rotate-180 text-gold" : "text-gray-400"}`}
                 />
-              </button>
+              </DynamicButton>
 
               {isSubExpanded && (
                 <div className="px-4 pb-3 pt-2 bg-white flex flex-col gap-1.5">
@@ -437,7 +439,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
                               {child.title}
                             </Link>
                             {hasInner && (
-                              <button
+                              <DynamicButton
                                 type="button"
                                 onClick={() =>
                                   handleToggleChild(child.categoryKey)
@@ -448,7 +450,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
                                   size={14}
                                   className={`transition-all duration-300 ease-in-out text-gray-400 ${isChildExpanded ? "rotate-180" : ""}`}
                                 />
-                              </button>
+                              </DynamicButton>
                             )}
                           </div>
 

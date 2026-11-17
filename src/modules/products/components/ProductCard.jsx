@@ -10,6 +10,7 @@ import "swiper/css";
 import {
   IconCircleButton,
   PillButton,
+  ProductBrandButton,
 } from "../../../components/ui/button/static";
 
 import Price from "./Price";
@@ -38,6 +39,8 @@ import {
 import { cn } from "../../../utils/common";
 import StarRating from "../../../components/ui/display/StarRating";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const getDealEndDateValue = (product = {}) =>
   product?.deal?.endAt ||
   product?.deal?.end_at ||
@@ -442,13 +445,13 @@ export default function ProductCard({
             className="min-w-0"
           >
             {brand && (
-              <button
+              <DynamicButton
                 type="button"
                 onClick={handleBrandClick}
                 className="text-left text-xs font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
                 {capitalizeFirst(brand)}
-              </button>
+              </DynamicButton>
             )}
 
             {isDealProduct && dealBadge && (
@@ -531,7 +534,7 @@ export default function ProductCard({
     >
       {/* WISHLIST BUTTON (Top-Right: Minimal, elegant, The Bear House style) */}
       {showActions && (
-        <button
+        <DynamicButton
           type="button"
           title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           aria-label={
@@ -554,7 +557,7 @@ export default function ProductCard({
             stroke={isWishlisted ? "#e11d48" : "currentColor"}
             className="transition-colors duration-200"
           />
-        </button>
+        </DynamicButton>
       )}
 
       {/* BADGES (Top-Left: Subtle geometric tag) */}
@@ -691,14 +694,13 @@ export default function ProductCard({
         <div className="flex min-w-0 flex-1 flex-col p-2 sm:p-2 ">
           {/* BRAND */}
           {brand ? (
-            <button
+            <ProductBrandButton
               type="button"
               onClick={handleBrandClick}
-              className=" max-w-full w-fit text-left truncate text-xs sm:text-sm font-bold uppercase tracking-wider text-[#CE9F2D] hover:text-[#B8860B] transition-colors"
               title={brand}
             >
               {capitalizeFirst(brand)}
-            </button>
+            </ProductBrandButton>
           ) : (
             <div className="h-[15px]" />
           )}

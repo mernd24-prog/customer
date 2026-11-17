@@ -6,6 +6,8 @@ import { IoChevronForward, IoChevronBack } from "react-icons/io5";
 
 import { FALLBACK_PROMO_CARDS } from "../../data/fallbackCmsData";
 
+
+import DynamicButton from "../ui/button/button.jsx";
 function normalizeCards(data) {
   let rawList = [];
 
@@ -134,25 +136,25 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
       <div className="relative z-10 customer-container py-6 sm:py-8 lg:py-10">
         <div className="relative group/carousel">
           {canScrollLeft && (
-            <button
+            <DynamicButton
               type="button"
               onClick={() => handleScroll("left")}
               aria-label="Scroll left"
               className="absolute -left-2 sm:left-1 lg:-left-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white hover:shadow-lg focus:outline-none"
             >
               <IoChevronBack className="text-lg sm:text-xl text-[#333]" />
-            </button>
+            </DynamicButton>
           )}
 
           {canScrollRight && (
-            <button
+            <DynamicButton
               type="button"
               onClick={() => handleScroll("right")}
               aria-label="Scroll right"
               className="absolute -right-2 sm:right-1 lg:-right-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white hover:shadow-lg focus:outline-none"
             >
               <IoChevronForward className="text-lg sm:text-xl text-[#333]" />
-            </button>
+            </DynamicButton>
           )}
 
           <div

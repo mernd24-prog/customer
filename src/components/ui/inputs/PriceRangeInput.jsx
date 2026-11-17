@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Button from "../buttons/Button";
 
+
+import DynamicButton from "../button/button.jsx";
 export default function PriceRangeInput({
   min: initialMin,
   max: initialMax,
@@ -62,13 +64,13 @@ export default function PriceRangeInput({
         Apply
       </Button>
       {(initialMin || initialMax) && (
-        <button
+        <DynamicButton
           type="button"
           onClick={clear}
           className=" text-xs text-red-500 underline-offset-2 hover:underline"
         >
           Clear Price Filter
-        </button>
+        </DynamicButton>
       )}
     </div>
   );

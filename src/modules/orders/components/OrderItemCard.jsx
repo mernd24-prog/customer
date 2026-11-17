@@ -7,6 +7,7 @@ import {
   getReviewProductId,
   reviewKeyForItem,
 } from "../utils/orderItems";
+import { OrderActionButton } from "../../../components/ui/button/buttonSpecialized";
 import { OrderItemReviewAction } from "./OrderItemReview";
 
 const formatDeliveryDateTime = (value) => {
@@ -374,22 +375,19 @@ export function OrderItemCard({
   );
 
   const renderProductActions = () => {
-    const buttonStyle =
-      "inline-flex min-h-9 max-w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:bg-[#F8EDCF] lg:text-sm";
-
     return (
       <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 lg:w-auto lg:justify-end">
         {!isCancelled && !isReturned && shipment?.tracking_url && (
-          <a
+          <OrderActionButton
+            as="a"
             href={shipment.tracking_url}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Track order on courier website"
-            className={buttonStyle}
+            rightIcon={<ExternalLink size={14} className="shrink-0" />}
           >
-            <span>Track Order</span>
-            <ExternalLink size={14} className="shrink-0" />
-          </a>
+            Track Order
+          </OrderActionButton>
         )}
 
         {canReview && !hasExistingReview && (

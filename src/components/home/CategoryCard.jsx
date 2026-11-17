@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
 import { applyImageFallback, getImageFallbackSrc } from "../../utils/ecommerce";
 import { cn } from "../../utils/common";
+import { LinkButton } from "../ui/button/static";
 
+
+import DynamicButton from "../ui/button/button.jsx";
 export default function CategoryCard({
   image,
   title,
@@ -45,14 +47,9 @@ export default function CategoryCard({
           </h3>
 
           {/* Shop Now CTA */}
-          <div className="flex items-center gap-2 text-sm font-semibold tracking-wide text-white drop-shadow-lg">
-            <span>{ctaLabel}</span>
-            <ArrowRight
-              size={16}
-              strokeWidth={2.5}
-              className="opacity-0 group-hover:opacity-100"
-            />
-          </div>
+          <LinkButton className="text-white">
+            {ctaLabel}
+          </LinkButton>
         </div>
       </div>
     </article>
@@ -67,12 +64,12 @@ export default function CategoryCard({
   }
 
   return (
-    <button
+    <DynamicButton
       type="button"
       onClick={onClick}
       className="block h-full w-full text-left focus:outline-none group"
     >
       {cardContent}
-    </button>
+    </DynamicButton>
   );
 }

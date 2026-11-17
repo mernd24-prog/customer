@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { MapPin, MoreVertical, Pencil, Phone, Trash2 } from "lucide-react";
 import { ADDRESS_LABEL_OPTIONS } from "./AddressFormFields";
 
+
+import DynamicButton from "../../../../components/ui/button/button.jsx";
 function resolveLabel(value) {
   if (!value) return "Home";
   const match = ADDRESS_LABEL_OPTIONS.find(
@@ -58,22 +60,22 @@ export default function SharedAddressCard({
             onMouseEnter={() => setMenuOpen(true)}
             onMouseLeave={() => setMenuOpen(false)}
           >
-            <button ref={triggerRef} type="button" aria-label="Address actions" aria-expanded={menuOpen}
+            <DynamicButton ref={triggerRef} type="button" aria-label="Address actions" aria-expanded={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}
               className="flex size-8 items-center justify-center rounded-sm text-muted hover:bg-[#FFF8E8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold">
               <MoreVertical className="size-4" />
-            </button>
+            </DynamicButton>
             {menuOpen && (
               <div className="absolute right-0 top-full z-30 w-36 pt-1">
               <div className="space-y-1 rounded-sm bg-white p-1.5 shadow-lg">
-                <button type="button" onClick={() => { setMenuOpen(false); startEdit(addr); }}
+                <DynamicButton type="button" onClick={() => { setMenuOpen(false); startEdit(addr); }}
                   className="flex w-full items-center gap-2 rounded-sm border-0 bg-[#FFF8E8] px-3 py-2 text-xs font-semibold text-gold-dark hover:bg-[#FDEEC6]">
                   <Pencil className="size-3.5" /> Edit
-                </button>
-                <button type="button" onClick={() => { setMenuOpen(false); handleDelete(addrId); }}
+                </DynamicButton>
+                <DynamicButton type="button" onClick={() => { setMenuOpen(false); handleDelete(addrId); }}
                   className="flex w-full items-center gap-2 rounded-sm border-0 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100">
                   <Trash2 className="size-3.5" /> Remove
-                </button>
+                </DynamicButton>
               </div>
               </div>
             )}

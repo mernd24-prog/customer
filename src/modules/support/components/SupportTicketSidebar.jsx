@@ -1,6 +1,8 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const statusLabel = (status = "") =>
   String(status || "pending")
     .replace(/_/g, " ")
@@ -46,13 +48,13 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
           <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] text-center w-full px-8">
             Ticket Details
           </h2>
-          <button
+          <DynamicButton
             type="button"
             onClick={onClose}
             className="absolute right-4 top-4 p-1.5 rounded-full hover:bg-[#FFF9EA] transition-colors"
           >
             <X size={20} className="text-[#CE9F2D]" />
-          </button>
+          </DynamicButton>
         </div>
 
         {/* Content */}

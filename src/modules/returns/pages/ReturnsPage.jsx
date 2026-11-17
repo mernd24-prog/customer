@@ -27,6 +27,8 @@ import {
   getOpaqueReturnRequestPath,
 } from "../../../utils/routeTokens";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 function ReturnRequestPage({ orderId }) {
   const {
     loading,
@@ -151,7 +153,7 @@ function ReturnRequestPage({ orderId }) {
                       Boolean(expired) ||
                       returnableQuantity <= 0;
                     return (
-                      <button
+                      <DynamicButton
                         key={lineKey || title}
                         type="button"
                         onClick={() => handleItemSelect(item)}
@@ -239,7 +241,7 @@ function ReturnRequestPage({ orderId }) {
                             <span className="h-2 w-2 rounded-full bg-white" />
                           )}
                         </span>
-                      </button>
+                      </DynamicButton>
                     );
                   })}
                 </div>

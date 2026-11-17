@@ -5,6 +5,8 @@ import { endpoints } from "../../../api/endpoints";
 import { apiRequest } from "../../../api/client";
 import { notify } from "../../../utils/notify";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const MAX_REVIEW_IMAGES = 5;
 const MAX_REVIEW_IMAGE_BYTES = 10 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -172,7 +174,7 @@ export default function ReviewImageUploader({
                 <Loader2 size={18} className="animate-spin" />
               </span>
             )}
-            <button
+            <DynamicButton
               type="button"
               className="absolute right-1 top-1 grid size-6 place-items-center rounded-full bg-white text-[#1B1D60] shadow-sm disabled:opacity-60"
               onClick={() => removeImage(index)}
@@ -180,14 +182,15 @@ export default function ReviewImageUploader({
               aria-label="Remove Image"
             >
               <X size={14} />
-            </button>
+            </DynamicButton>
           </div>
         ))}
 
         {value.length < MAX_REVIEW_IMAGES && (
-          <button
+          <DynamicButton
             type="button"
-            className="flex aspect-square flex-col items-center justify-center gap-1 rounded-[8px] border border-dashed border-[#CE9F2D] bg-[#CE9F2D0D] text-[#1B1D60] transition hover:bg-[#CE9F2D1A] disabled:cursor-not-allowed disabled:opacity-60"
+            variant="unstyled"
+            className="flex h-full w-full aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-[#CE9F2D] bg-[#CE9F2D0D] px-2 py-3 text-[#1B1D60] transition hover:bg-[#CE9F2D1A] disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => inputRef.current?.click()}
             disabled={uploadDisabled}
             aria-label="Upload Review Images"
@@ -200,7 +203,7 @@ export default function ReviewImageUploader({
             <span className="text-xs font-bold">
               {uploading ? "Uploading" : "Add"}
             </span>
-          </button>
+          </DynamicButton>
         )}
       </div>
 

@@ -7,6 +7,8 @@ import { cn } from "../../../utils/common";
 import { notify } from "../../../utils/notify";
 import { HomeIcon } from "../../../components/ui/icons";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function Breadcrumbs({
   items = [],
   className = "",
@@ -158,19 +160,20 @@ export default function Breadcrumbs({
 
                 {/* Copy icon immediately after Order ID */}
                 {isLast && copyLastItem && copyValue && (
-                  <button
+                  <DynamicButton
                     type="button"
+                    variant="unstyled"
                     onClick={handleCopy}
                     title="Copy Order number"
                     aria-label="Copy Order number"
-                    className="inline-flex shrink-0 items-center justify-center rounded p-1 text-[#2E2E2E] transition-colors hover:text-[#CE9F2D]"
+                    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm p-0 text-[#2E2E2E] transition-colors hover:text-[#CE9F2D]"
                   >
                     {copied ? (
                       <Check size={13} className="text-emerald-600" />
                     ) : (
                       <Copy size={13} />
                     )}
-                  </button>
+                  </DynamicButton>
                 )}
               </span>
             )}

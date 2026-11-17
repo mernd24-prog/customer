@@ -1,6 +1,8 @@
 
 import { Plus, Minus } from "lucide-react";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function QuantitySelector({
   quantity,
   onIncrease,
@@ -41,7 +43,7 @@ export default function QuantitySelector({
         }`}
       >
         {/* Decrease */}
-        <button
+        <DynamicButton
           type="button"
           onClick={onDecrease}
           disabled={disabled || quantity <= 1}
@@ -57,7 +59,7 @@ export default function QuantitySelector({
             strokeWidth={2.5}
             className="block shrink-0"
           />
-        </button>
+        </DynamicButton>
 
         {/* Quantity */}
         <span
@@ -68,7 +70,7 @@ export default function QuantitySelector({
         </span>
 
         {/* Increase */}
-        <button
+        <DynamicButton
           type="button"
           onClick={() => {
             if (!disableIncrease) onIncrease?.();
@@ -95,7 +97,7 @@ export default function QuantitySelector({
             strokeWidth={2.5}
             className="block shrink-0"
           />
-        </button>
+        </DynamicButton>
       </div>
     </div>
   );

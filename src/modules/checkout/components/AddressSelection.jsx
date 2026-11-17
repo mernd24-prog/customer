@@ -29,6 +29,8 @@ import { validatePostalCodeForCountry } from "../../../validations";
 import { scrollToFirstFormError } from "../../../utils/formErrors";
 import { fetchFullList } from "../../../utils/pages/checkoutUtils";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
 const addressLabels = ADDRESS_LABEL_OPTIONS;
@@ -294,13 +296,13 @@ export default function AddressSelection({
       className="w-full"
       bodyClassName="flex flex-col w-full max-w-full gap-3 px-3 py-3 sm:px-5 sm:py-3"
       headerContent={
-        <button
+        <DynamicButton
           type="button"
           onClick={onAddNewAddress}
           className="inline-flex shrink-0 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-[#3E4093] text-xs font-semibold leading-5 transition hover:bg-[#3E4093]/10 sm:text-sm sm:px-3 sm:py-2"
         >
           + Add Address
-        </button>
+        </DynamicButton>
       }
     >
       <div className="flex flex-col gap-3">
@@ -413,13 +415,13 @@ export default function AddressSelection({
                     </label>
                   )}
                 </div>
-                <button
+                <DynamicButton
                   type="button"
                   onClick={() => startEdit(addr)}
                   className="inline-flex lg:h-10 lg:w-10 h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-[#1B1D60] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
                 >
                   <SquarePen size={14} />
-                </button>
+                </DynamicButton>
               </div>
 
               <AddressEditModal
@@ -446,7 +448,7 @@ export default function AddressSelection({
 
         {displayAddresses.length > 2 && (
           <div className="flex justify-center w-full mt-2 mb-4">
-            <button
+            <DynamicButton
               type="button"
               onClick={() => setShowAllAddresses(!showAllAddresses)}
               className="flex w-[90%] sm:w-[60%] max-w-[350px] items-center justify-center gap-2 rounded-full border border-gold px-6 py-2.5 text-sm font-semibold text-gold transition-colors hover:bg-gold-soft hover:text-gold-dark"
@@ -460,7 +462,7 @@ export default function AddressSelection({
                   Show More Addresses <ChevronDown size={16} />
                 </>
               )}
-            </button>
+            </DynamicButton>
           </div>
         )}
       </div>

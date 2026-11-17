@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut } from "lucide-react";
 
-import { HeaderGoldButton } from "../../components/ui/button/static";
+import { SolidLargeButton } from "../../components/ui/button/static";
 import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
 
 import { logout } from "../../modules/auth/slices/authSlice";
@@ -86,27 +86,13 @@ export const TopHeader = () => {
             </Link>
 
             {currentUser ? (
-              <HeaderGoldButton
+              <SolidLargeButton
                 leftIcon={<LogOut size={14} />}
-                className="
-                  inline-flex items-center justify-center gap-2
-                  h-[30px] lg:h-[32px]
-                  min-w-[90px] lg:min-w-[100px]
-                  rounded-[5px]
-                  px-3
-                  py-0
-                  text-xs lg:text-sm
-                  font-semibold
-                  leading-none
-                  whitespace-nowrap
-                  transition-all duration-300 ease-in-out
-                  hover:bg-gray-50
-                  hover:shadow-md
-                "
+                className="h-[30px] min-w-[90px] px-3 py-0 text-xs leading-none whitespace-nowrap lg:h-[32px] lg:min-w-[100px] lg:text-sm"
                 onClick={() => setShowLogoutModal(true)}
               >
                 Sign Out
-              </HeaderGoldButton>
+              </SolidLargeButton>
             ) : null}
           </div>
         </div>

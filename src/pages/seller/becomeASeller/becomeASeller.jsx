@@ -30,6 +30,8 @@ import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 import { SELLER_LOGIN_URL } from "../../../config/seller";
 import { SolidLargeButton } from "../../../components/ui/button/static";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 function useStorySlidesPerView() {
   const getSlidesPerView = () => {
     if (typeof window === "undefined") return 1;
@@ -351,20 +353,20 @@ export default function BecomeASeller() {
 
                   {mappedExperiences.length > storySlidesPerView && (
                     <div className="hidden justify-center gap-2.5 sm:flex sm:gap-3 md:shrink-0">
-                      <button
+                      <DynamicButton
                         type="button"
                         className="seller-story-prev grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
                         aria-label="Previous Seller Story"
                       >
                         <ArrowLeft size={19} />
-                      </button>
-                      <button
+                      </DynamicButton>
+                      <DynamicButton
                         type="button"
                         className="seller-story-next grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
                         aria-label="Next Seller Story"
                       >
                         <ArrowRight size={19} />
-                      </button>
+                      </DynamicButton>
                     </div>
                   )}
                 </div>

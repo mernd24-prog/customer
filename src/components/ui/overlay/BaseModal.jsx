@@ -3,6 +3,8 @@ import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
+
+import DynamicButton from "../button/button.jsx";
 export default function BaseModal({
   children,
   onClose,
@@ -43,14 +45,14 @@ export default function BaseModal({
       >
         {children}
         {showCloseButton ? (
-          <button
+          <DynamicButton
             type="button"
             onClick={onClose}
             className="absolute right-4 top-4  z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white p-0 text-[var(--customer-navy)] transition-colors duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)]"
             aria-label="Close"
           >
             <X size={17} strokeWidth={3} className="block shrink-0" />
-          </button>
+          </DynamicButton>
         ) : null}
       </div>
     </div>

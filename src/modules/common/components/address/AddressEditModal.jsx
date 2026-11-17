@@ -33,7 +33,7 @@ export default function AddressEditModal({
     <BaseModal exiting={exiting} onClose={onClose} maxWidth="max-w-2xl">
       <div className="flex max-h-[90vh] flex-col overflow-hidden rounded-2xl bg-white p-2">
         <header className="flex shrink-0 items-center gap-3 border-b border-[#E8ECF3] px-5 py-4 sm:px-7">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#FFF7E6] text-[#CE9F2D]">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#FFF7E6] text-[#CE9F2D]">
             <Icon size={21} className={iconClassName} />
           </span>
           <div className="min-w-0">

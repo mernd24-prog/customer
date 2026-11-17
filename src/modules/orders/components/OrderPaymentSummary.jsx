@@ -3,6 +3,8 @@ import { formatMoney } from "../../../utils/ecommerce/money";
 import ShowMoreText from "../../../utils/showMore";
 import { Loader2 } from "lucide-react";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 function SummaryRow({
   label,
   value,
@@ -446,7 +448,7 @@ function OrderPaymentSummary({
 
       {/* Cart Checkout Button */}
       {variant === "cart" && buttonText && (
-        <button
+        <DynamicButton
           type="button"
           onClick={onCheckout}
           disabled={disabled || loading}
@@ -456,11 +458,11 @@ function OrderPaymentSummary({
             <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
           )}
           <span>{buttonText}</span>
-        </button>
+        </DynamicButton>
       )}
       {variant === "checkout" && buttonText && (
         <>
-          <button
+          <DynamicButton
             type="submit"
             disabled={loading || disabled}
             className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50 sm:h-[54px] sm:text-[16px]"
@@ -469,7 +471,7 @@ function OrderPaymentSummary({
               <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
             )}
             <span>{buttonText}</span>
-          </button>
+          </DynamicButton>
 
           {selectedLabel && (
             <p className="mt-2 text-center text-sm font-medium text-[#2E2E2E] sm:mt-3 sm:text-[15px] md:text-[16px]">

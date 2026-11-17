@@ -29,6 +29,8 @@ import {
 import { adaptItemForCard } from "../../../utils/pages/cartUtils";
 import useCart from "../controllers/useCart";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function CartPage() {
   const [itemToRemove, setItemToRemove] = useState(null);
   const {
@@ -228,13 +230,13 @@ export default function CartPage() {
                           </div>
                         </div>
 
-                        <button
+                        <DynamicButton
                           type="button"
                           onClick={removeOutOfStockItems}
                           className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium leading-4 text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300"
                         >
                           Remove unavailable items
-                        </button>
+                        </DynamicButton>
                       </div>
                     </section>
                   )}

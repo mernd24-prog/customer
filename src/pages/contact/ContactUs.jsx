@@ -36,6 +36,8 @@ import {
   getSubjectOptions,
 } from "./contactUtils";
 
+
+import DynamicButton from "../../components/ui/button/button.jsx";
 const INITIAL_FORM = {
   name: "",
   email: "",
@@ -259,7 +261,7 @@ export default function ContactUs() {
                       const isSelected = selectedInquiry === inquiry.label;
 
                       return (
-                        <button
+                        <DynamicButton
                           key={inquiry.label}
                           type="button"
                           onClick={() => handleInquirySelect(inquiry)}
@@ -282,7 +284,7 @@ export default function ContactUs() {
                           <span className="text-xs font-semibold leading-4">
                             {inquiry.label}
                           </span>
-                        </button>
+                        </DynamicButton>
                       );
                     })}
                   </div>
@@ -304,13 +306,13 @@ export default function ContactUs() {
                             Your message has been submitted successfully. Our
                             team will contact you within 24 hours.
                           </p>
-                          <button
+                          <DynamicButton
                             type="button"
                             onClick={() => setSubmitted(false)}
                             className="mt-5 h-10 w-full rounded-lg bg-[#D4A12F] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#B98212]"
                           >
                             Done
-                          </button>
+                          </DynamicButton>
                         </div>
                       </div>
                     </BaseModal>
@@ -415,14 +417,14 @@ export default function ContactUs() {
                         </p>
                       </div>
 
-                      <button
+                      <DynamicButton
                         type="submit"
                         disabled={loadingForm}
                         className="inline-flex h-10 min-w-[150px] items-center justify-center gap-2 rounded-lg bg-[#D4A12F] px-5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(212,161,47,0.2)] transition-colors duration-200 hover:bg-[#B98212] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A12F] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <Send size={16} />
                         {loadingForm ? "Sending..." : "Send Message"}
-                      </button>
+                      </DynamicButton>
                     </div>
                   </form>
                 </div>
