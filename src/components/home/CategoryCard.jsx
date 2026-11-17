@@ -1,9 +1,6 @@
 import { Link } from "react-router-dom";
 import { applyImageFallback, getImageFallbackSrc } from "../../utils/ecommerce";
 import { cn } from "../../utils/common";
-import { LinkButton } from "../ui/button/static";
-
-
 import DynamicButton from "../ui/button/button.jsx";
 export default function CategoryCard({
   image,
@@ -47,9 +44,9 @@ export default function CategoryCard({
           </h3>
 
           {/* Shop Now CTA */}
-          <LinkButton className="text-white">
+          <DynamicButton variant="link" className="text-white">
             {ctaLabel}
-          </LinkButton>
+          </DynamicButton>
         </div>
       </div>
     </article>
@@ -65,7 +62,6 @@ export default function CategoryCard({
 
   return (
     <DynamicButton
-      type="button"
       onClick={onClick}
       className="block h-full w-full text-left focus:outline-none group"
     >

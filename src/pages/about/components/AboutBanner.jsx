@@ -1,7 +1,7 @@
 
 import { FALLBACK_ABOUT } from "../../../data/fallbackCmsData";
 import FallbackImage from "../../../components/ui/FallbackImage";
-import { BannerActionButton } from "../../../components/ui/button/static";
+import { DynamicButton } from "../../../components/ui/button";
 
 export default function AboutBanner({ image, data }) {
   const fallbackImage = FALLBACK_ABOUT.banner.image;
@@ -43,12 +43,15 @@ export default function AboutBanner({ image, data }) {
 
               {banner?.cta?.label && (
                 <div className="mt-4 sm:mt-5 md:mt-7">
-                  <BannerActionButton
+                  <DynamicButton
                     as="a"
+                    variant="bannerAction"
+                    size="md"
+                    shape="circle"
                     href={banner.cta.href || "#who-we-are"}
                   >
                     {banner.cta.label}
-                  </BannerActionButton>
+                  </DynamicButton>
                 </div>
               )}
 

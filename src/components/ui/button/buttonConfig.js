@@ -1,10 +1,10 @@
 import { cn } from "../../../utils/common";
 
 export const buttonBaseClasses = cn(
-  "group inline-flex items-center justify-center gap-2",
-  "font-semibold tracking-[0.01em] transition-all duration-300 ease-in-out",
+  "group inline-flex items-center justify-center",
+  "font-medium transition-all duration-300 ease-in-out",
   "outline-none focus:outline-none focus-visible:outline-none",
-  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
   "whitespace-nowrap align-middle",
 );
 
@@ -18,22 +18,29 @@ export const buttonShapes = {
   rounded: "rounded-lg",
   md: "rounded-md",
   circle: "rounded-full",
+  none: "",
 };
 
 export const resolveButtonClasses = ({
-  variant,
+  variant = "unstyled",
   size,
   shape,
-  className,
-  buttonVariants,
-  buttonSizes,
+  className = "",
+  buttonVariants = {},
+  buttonSizes = {},
   resolvedShape,
-}) =>
-  cn(
-    buttonBaseClasses,
-    buttonInteractionClasses,
-    buttonVariants[variant] ?? buttonVariants.primary,
-    buttonSizes[size] ?? buttonSizes.md,
-    buttonShapes[resolvedShape] ?? buttonShapes.rounded,
+}) => {
+  const isUnstyled = !variant || variant === "unstyled";
+  const effectiveSize = size ?? "md";
+  const effectiveShape = resolvedShape ?? shape ?? "rounded";
+  const shouldApplySize = effectiveSize !== "none" && !isUnstyled;
+
+  return cn(
+    !isUnstyled && buttonBaseClasses,
+    !isUnstyled && buttonInteractionClasses,
+    isUnstyled ? "" : (buttonVariants[variant] ?? ""),
+    shouldApplySize ? (buttonSizes[effectiveSize] ?? "") : "",
+    effectiveShape !== "none" ? (buttonShapes[effectiveShape] ?? "") : "",
     className,
   );
+};

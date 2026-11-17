@@ -139,9 +139,6 @@ export default function NeedHelpPanel({
             <div key={`${item.title}-${index}`} className="flex flex-col">
               {item.onClick ? (
                 <DynamicButton
-                  type="button"
-                  variant="unstyled"
-                  size="none"
                   onClick={item.onClick}
                   className="flex min-w-0 items-center gap-3 py-5 focus:outline-none w-full"
                 >
@@ -149,9 +146,6 @@ export default function NeedHelpPanel({
                 </DynamicButton>
               ) : item.expandableContent ? (
                 <DynamicButton
-                  type="button"
-                  variant="unstyled"
-                  size="none"
                   onClick={() =>
                     setExpandedIndex(expandedIndex === index ? null : index)
                   }

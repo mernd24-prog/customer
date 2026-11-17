@@ -59,9 +59,10 @@ export default function Drawer({
       >
         <div className=" flex items-center justify-end  pb-3">
           <DynamicButton
-            type="button"
+            variant="iconNeutral"
+            size="iconSm"
+            shape="circle"
             onClick={onClose}
-            className="icon-button"
             aria-label="Close"
           >
             <X size={16} />

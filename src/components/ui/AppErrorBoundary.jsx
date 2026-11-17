@@ -32,9 +32,11 @@ export default class AppErrorBoundary extends React.Component {
               We Hit an Unexpected Issue While Rendering This Page.
             </p>
             <DynamicButton
-              type="button"
+              variant="solidLarge"
+              size="sm"
+              shape="rounded"
               onClick={this.handleReload}
-              className="mt-5 rounded bg-ink px-5 py-2 text-sm font-semibold text-white"
+              className="mt-5"
             >
               Reload
             </DynamicButton>

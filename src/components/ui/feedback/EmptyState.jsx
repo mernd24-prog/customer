@@ -1,5 +1,6 @@
 
-import { ContinueShoppingButton ,SolidLargeButton } from "../../ui/button/static";
+import DynamicButton from "../button/button";
+
 import { ArrowRight } from "lucide-react";
 import EmptyStateIllustration from "./EmptyStateIllustration";
 import ReviewEmptyIllustration from "./ReviewEmptyIllustration";
@@ -45,8 +46,13 @@ export default function EmptyState({
           height="400"
           src={imageSrc}
           alt={title}
-className="h-28 w-28 object-contain mix-blend-multiply xs:h-32 xs:w-32 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-52 lg:w-52 xl:h-60 xl:w-60"        />
-      ) : illustration === "reviews" ? <ReviewEmptyIllustration /> : <EmptyStateIllustration count={count} />}
+          className="h-28 w-28 object-contain mix-blend-multiply xs:h-32 xs:w-32 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-52 lg:w-52 xl:h-60 xl:w-60"
+        />
+      ) : illustration === "reviews" ? (
+        <ReviewEmptyIllustration />
+      ) : (
+        <EmptyStateIllustration count={count} />
+      )}
 
       <h2 className="mt-5 max-w-lg text-lg font-bold text-[var(--customer-ink)] sm:text-xl">
         {title}
@@ -57,20 +63,18 @@ className="h-28 w-28 object-contain mix-blend-multiply xs:h-32 xs:w-32 sm:h-40 s
       </p>
 
       {resolvedActionLabel && resolvedAction && (
-  <div className="mt-6 flex justify-center">
-    <SolidLargeButton
-      onClick={resolvedAction}
-      className={`gap-2 ${buttonClassName}`}
-    >
-      <span>{resolvedActionLabel}</span>
-      <ArrowRight
-        size={16}
-        className="shrink-0"
-        aria-hidden="true"
-      />
-    </SolidLargeButton>
-  </div>
-)}
+        <div className="mt-6 flex justify-center">
+          <DynamicButton
+            variant="solidLarge"
+            size="lg"
+            onClick={resolvedAction}
+            className={`gap-2 ${buttonClassName}`}
+          >
+            <span>{resolvedActionLabel}</span>
+            <ArrowRight size={16} className="shrink-0" aria-hidden="true" />
+          </DynamicButton>
+        </div>
+      )}
 
       {children && <div className="mt-6 w-full">{children}</div>}
     </div>

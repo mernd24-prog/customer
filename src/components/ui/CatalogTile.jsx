@@ -120,9 +120,6 @@ export default function CatalogTile({
   if (onClick && !to) {
     return (
       <DynamicButton
-        type="button"
-        variant="unstyled"
-        size="none"
         onClick={onClick}
         className="
           block h-full w-full text-left

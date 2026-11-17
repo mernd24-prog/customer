@@ -32,9 +32,11 @@ export function TicketSuccessModal() {
         </p>
 
         <DynamicButton
-          type="button"
+          variant="solidLarge"
+          size="md"
+          shape="rounded"
           onClick={handleCloseSuccessModal}
-          className="w-full h-11 rounded-lg bg-[#CE9F2D] text-sm font-bold text-white transition hover:bg-[#C9961F] active:scale-[0.98]"
+          className="w-full"
         >
           Done
         </DynamicButton>

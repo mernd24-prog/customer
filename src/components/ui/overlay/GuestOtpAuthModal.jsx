@@ -267,16 +267,12 @@ export default function GuestOtpAuthModal({
         onClick={(event) => event.stopPropagation()}
       >
         <DynamicButton
-          type="button"
+          variant="iconNeutral"
+          size="iconSm"
+          shape="circle"
           onClick={() => onClose?.()}
           disabled={isSubmitting}
-          className={cn(
-            "absolute right-4 top-4 z-30 flex h-8 w-8 items-center justify-center sm:right-5 sm:top-5 sm:h-9 sm:w-9",
-            "rounded-full bg-white text-muted shadow-md",
-            "transition hover:bg-cream hover:text-ink",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-          )}
+          className="absolute right-4 top-4 z-30 sm:right-5 sm:top-5"
           aria-label="Close"
         >
           <X size={14} strokeWidth={1.8} />
@@ -404,7 +400,7 @@ export default function GuestOtpAuthModal({
                     </label>
 
                     <DynamicButton
-                      type="button"
+                      variant="link"
                       onClick={handleChangeMobile}
                       disabled={isSubmitting}
                       className="text-sm font-semibold text-gold transition hover:underline disabled:cursor-not-allowed disabled:opacity-50"
@@ -439,7 +435,7 @@ export default function GuestOtpAuthModal({
                     </span>
                   ) : (
                     <DynamicButton
-                      type="button"
+                      variant="link"
                       onClick={handleSendOtp}
                       disabled={isSubmitting}
                       className="font-semibold text-gold transition hover:underline disabled:cursor-not-allowed disabled:opacity-50"

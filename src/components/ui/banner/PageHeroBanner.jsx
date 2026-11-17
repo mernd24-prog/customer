@@ -29,7 +29,7 @@ export default function PageHeroBanner({
   badge,
   title,
   description,
-  actions,
+  cta,
   bottomContent,
   theme = "navy",
   minHeightClass = "min-h-[570px] lg:min-h-[780px]",
@@ -114,14 +114,16 @@ export default function PageHeroBanner({
             </p>
           )}
 
-          {actions && (
-            <div className="mt-6 flex flex-row flex-wrap items-center justify-center gap-2 text-center sm:mt-8 sm:justify-start sm:gap-3">
-              {actions}
+          {cta && (
+            <div className="mt-6 flex flex-wrap items-center justify-start gap-2 sm:mt-8 sm:gap-3">
+              {cta}
             </div>
           )}
 
           {bottomContent && (
-            <div className="mt-6 sm:mt-8">{bottomContent}</div>
+            <div className="mt-6 sm:mt-8">
+              {bottomContent}
+            </div>
           )}
         </div>
       </div>

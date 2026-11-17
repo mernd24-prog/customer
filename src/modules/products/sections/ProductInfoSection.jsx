@@ -9,9 +9,8 @@ import {
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import { ProductGallery } from "../components/ImageGallery";
 import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
+import { DynamicButton } from "../../../components/ui/button";
 
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
 const decodeHtml = (html) => {
   if (!html || typeof html !== "string") return html || "";
   if (html.includes("&lt;") && html.includes("&gt;")) {
@@ -70,9 +69,10 @@ function ProductDescription({ content }) {
       />
       {canExpand && (
         <DynamicButton
-          type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-navy hover:text-[#CE9F2D] transition-colors"
+          variant="link"
+          size="none"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold"
         >
           <span>{expanded ? "Read Less" : "Read More"}</span>
           {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
@@ -177,9 +177,10 @@ export default function ProductInfoSection({
     <div className="product-details-accordion min-w-0 border border-border rounded-lg overflow-hidden bg-white shadow-xs">
       {/* ── Flipkart-style Header: Title + Subtitle + Square Chevron Button ── */}
       <DynamicButton
-        type="button"
         onClick={() => setCardOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-5 py-2 bg-white hover:bg-surface-soft transition-colors text-left"
+        variant="unstyled"
+        size="none"
+        className="w-full flex items-center justify-between px-5 py-2 text-left"
         aria-expanded={cardOpen}
       >
         <div>
@@ -187,12 +188,18 @@ export default function ProductInfoSection({
             All details
           </h3>
         </div>
-        <div className="w-8 h-8 rounded-lg bg-cream hover:bg-cream-strong flex items-center justify-center text-ink transition-colors shrink-0 ml-3">
+        <DynamicButton
+          as="span"
+          variant="unstyled"
+          size="icon"
+          aria-hidden="true"
+          className="ml-3 shrink-0"
+        >
           <ChevronDown
-            size={18}
+            size={20}
             className={`product-details-chevron ${cardOpen ? "rotate-180" : "rotate-0"}`}
           />
-        </div>
+        </DynamicButton>
       </DynamicButton>
 
       <div
@@ -220,14 +227,11 @@ export default function ProductInfoSection({
               return (
                 <DynamicButton
                   key={tab.key}
-                  type="button"
                   data-scroll-selected={isActive ? "true" : undefined}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
-                    isActive
-                      ? "bg-navy text-white shadow-xs"
-                      : "bg-cream text-ink hover:bg-cream-strong hover:text-ink"
-                  }`}
+                  variant={isActive ? "navy" : "secondaryOutline"}
+                  size="sm"
+                  className="shrink-0 whitespace-nowrap"
                 >
                   {tab.label}
                 </DynamicButton>
@@ -411,9 +415,11 @@ export default function ProductInfoSection({
         createPortal(
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4">
             <DynamicButton
-              type="button"
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-6 right-6 z-[10000] w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200"
+              variant="iconNeutral"
+              size="iconSm"
+              shape="square"
+              className="absolute top-6 right-6 z-[10000]"
             >
               <X size={24} />
             </DynamicButton>

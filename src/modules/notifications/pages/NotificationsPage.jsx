@@ -10,7 +10,7 @@ import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPreset
 import { useNotifications } from "../controllers/useNotifications";
 import { NotificationCard } from "../components/NotificationCard";
 import { NotificationFilterBar } from "../components/NotificationFilterBar";
-import { ContinueShoppingButton } from "../../../components/ui/button/static";
+import { DynamicButton } from "../../../components/ui/button";
 const BREADCRUMB_ITEMS = [
   { label: "Home", href: "/" },
   { label: "Notifications", href: "/notifications" },
@@ -81,8 +81,9 @@ export function NotificationsPage() {
 
                 {totalPages > 1 && (
                   <div className="flex justify-center py-4">
-                    <ContinueShoppingButton
-                      type="button"
+                    <DynamicButton
+                      variant="continueShopping"
+                      size="md"
                       onClick={
                         page >= totalPages ? handleShowLess : handleLoadMore
                       }
@@ -98,14 +99,13 @@ export function NotificationsPage() {
                           />
                         )
                       }
-                      className="min-h-[42px] px-6 text-sm lg:text-base"
                     >
                       {loading
                         ? "Loading..."
                         : page >= totalPages
                           ? "Show Less"
                           : "Load More"}
-                    </ContinueShoppingButton>
+                    </DynamicButton>
                   </div>
                 )}
               </div>

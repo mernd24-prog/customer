@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight ,ArrowRight} from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
 import SearchBar from "../../../components/ui/inputs/SearchBar";

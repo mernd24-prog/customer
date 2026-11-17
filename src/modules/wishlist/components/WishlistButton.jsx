@@ -11,7 +11,6 @@ export default function WishlistButton({
 }) {
   return (
     <DynamicButton
-      type="button"
       title={active ? "Remove from wishlist" : "Add to wishlist"}
       aria-label={
         active ? `Remove ${label} from wishlist` : `Add ${label} to wishlist`

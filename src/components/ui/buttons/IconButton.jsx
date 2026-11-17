@@ -32,7 +32,6 @@ export default function IconButton({
 }) {
   return (
     <DynamicButton
-      type={type}
       onClick={onClick}
       disabled={disabled}
       title={title}

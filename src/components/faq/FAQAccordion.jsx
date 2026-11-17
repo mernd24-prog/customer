@@ -23,9 +23,6 @@ export default function FAQAccordion({ faqs = [] }) {
               >
                 {/* Question */}
                 <DynamicButton
-                  type="button"
-                  variant="unstyled"
-                  size="none"
                   aria-expanded={isOpen}
                   onClick={() => toggleFAQ(index)}
                   className="flex w-full cursor-pointer items-center justify-between px-5 py-4 text-left transition-colors duration-300 ease-in-out"

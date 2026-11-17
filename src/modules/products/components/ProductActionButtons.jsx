@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { buildCartItem } from "../../../utils/ecommerce";
 import NotifyMeModal from "../../../components/ui/overlay/NotifyMeModal";
+import { DynamicButton } from "../../../components/ui/button";
 
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function ProductActionButtons({
   inStock,
   product,
@@ -21,19 +20,22 @@ export default function ProductActionButtons({
           {inStock ? (
             <>
               <DynamicButton
-                type="button"
+                variant="goldOutline"
+                size="md"
                 disabled={!inStock}
+                className="w-full"
                 onClick={() => {
                   addToCart({ ...product, selectedVariant }, quantity);
                 }}
-                className="h-11 min-w-0 w-full rounded-lg border border-gold bg-white px-2 text-sm font-bold text-gold shadow-sm transition-colors duration-200 hover:bg-[#FFF8E8] active:bg-[#FFF1CC] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:text-base"
               >
                 Add to cart
               </DynamicButton>
 
               <DynamicButton
-                type="button"
+                variant="gold"
+                size="md"
                 disabled={!inStock}
+                className="w-full"
                 onClick={() => {
                   const buyNowItem = buildCartItem(
                     { ...product, selectedVariant },
@@ -41,16 +43,16 @@ export default function ProductActionButtons({
                   );
                   onBuyNow?.(buyNowItem);
                 }}
-                className="h-11 min-w-0 w-full rounded-lg bg-gold px-2 text-sm font-bold text-white shadow-sm transition-colors duration-200 hover:bg-gold-dark active:bg-[#A97810] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:text-base"
               >
                 Buy now
               </DynamicButton>
             </>
           ) : (
             <DynamicButton
-              type="button"
+              variant="gold"
+              size="md"
+              className="w-full"
               onClick={() => setShowNotifyModal(true)}
-              className="h-11 w-full rounded-lg bg-gold px-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-gold-dark active:bg-[#A97810] sm:h-12 sm:text-base"
             >
               Notify Me
             </DynamicButton> 

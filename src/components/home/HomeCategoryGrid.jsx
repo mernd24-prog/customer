@@ -163,7 +163,6 @@ export default function HomeCategoryGrid({
       <div className="group/carousel relative my-3 sm:my-4">
         <DynamicButton
           ref={prevRef}
-          type="button"
           aria-label="Previous categories"
           className={cn(
             NAV_BUTTON_CLASS,
@@ -252,7 +251,6 @@ export default function HomeCategoryGrid({
 
         <DynamicButton
           ref={nextRef}
-          type="button"
           aria-label="Next categories"
           className={cn(
             NAV_BUTTON_CLASS,

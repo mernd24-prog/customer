@@ -101,13 +101,12 @@ export function PreferencesPage() {
               <DynamicButton
                 type="submit"
                 disabled={isSubmitting}
+                variant="gold"
+                size="md"
+                shape="rounded"
                 className={cn(
-                  "flex items-center gap-2.5 px-6 py-3 rounded-lg",
-                  "bg-gradient-to-r from-[#D6A323] via-[#CE9F2D] to-[#B8871B]",
-                  "text-white font-bold text-base",
-                  "shadow-[0_4px_16px_rgba(206,159,45,0.35)]",
-                  "hover:shadow-[0_6px_22px_rgba(206,159,45,0.45)]  active:scale-[0.99]",
-                  "transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",
+                  "flex items-center gap-2.5",
+                  isSubmitting && "opacity-60 cursor-not-allowed",
                 )}
               >
                 <BookmarkCheck size={18} className="text-white shrink-0" />

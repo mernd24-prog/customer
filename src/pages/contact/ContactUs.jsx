@@ -37,7 +37,8 @@ import {
 } from "./contactUtils";
 
 
-import DynamicButton from "../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../components/ui/button";
+
 const INITIAL_FORM = {
   name: "",
   email: "",
@@ -263,20 +264,15 @@ export default function ContactUs() {
                       return (
                         <DynamicButton
                           key={inquiry.label}
-                          type="button"
                           onClick={() => handleInquirySelect(inquiry)}
                           aria-pressed={isSelected}
-                          className={`flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-lg border px-2 py-3 text-center transition-all duration-200 ${
-                            isSelected
-                              ? "border-[#D4A12F] bg-[#FFF7E7] text-[#171B65] shadow-[0_3px_10px_rgba(212,161,47,0.12)]"
-                              : "border-[#E0E4EE] bg-white text-[#171B3F] hover:border-[#D4A12F] hover:bg-[#FFFAEF]"
-                          }`}
+                          variant={isSelected ? "contactChipActive" : "contactChip"}
                         >
                           <span
                             className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
                               isSelected
-                                ? "bg-white text-[#B98212]"
-                                : "bg-[#F5F6FA] text-[#171B65] group-hover:bg-white"
+                                ? "bg-white text-[#B98212] shadow-xs"
+                                : "bg-[#F5F6FA] text-[#171B65] group-hover:bg-white group-hover:text-[#B98212]"
                             }`}
                           >
                             <Icon size={21} strokeWidth={1.8} />
@@ -307,9 +303,10 @@ export default function ContactUs() {
                             team will contact you within 24 hours.
                           </p>
                           <DynamicButton
-                            type="button"
+                            variant="solidLarge"
+                            size="md"
+                            className="mt-5 w-full"
                             onClick={() => setSubmitted(false)}
-                            className="mt-5 h-10 w-full rounded-lg bg-[#D4A12F] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#B98212]"
                           >
                             Done
                           </DynamicButton>
@@ -418,9 +415,10 @@ export default function ContactUs() {
                       </div>
 
                       <DynamicButton
+                      variant="solidLarge"
+                      size="md"
                         type="submit"
                         disabled={loadingForm}
-                        className="inline-flex h-10 min-w-[150px] items-center justify-center gap-2 rounded-lg bg-[#D4A12F] px-5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(212,161,47,0.2)] transition-colors duration-200 hover:bg-[#B98212] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A12F] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <Send size={16} />
                         {loadingForm ? "Sending..." : "Send Message"}

@@ -28,10 +28,7 @@ import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
 import { SELLER_LOGIN_URL } from "../../../config/seller";
-import { SolidLargeButton } from "../../../components/ui/button/static";
-
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
 function useStorySlidesPerView() {
   const getSlidesPerView = () => {
     if (typeof window === "undefined") return 1;
@@ -187,13 +184,16 @@ export default function BecomeASeller() {
 
   const stepsSection = sellerPage?.sections?.[2];
 
-  const fallbackStoryPoints = Array.isArray(FALLBACK_SELLER_PAGE?.sections?.[0]?.points)
+  const fallbackStoryPoints = Array.isArray(
+    FALLBACK_SELLER_PAGE?.sections?.[0]?.points,
+  )
     ? FALLBACK_SELLER_PAGE.sections[0].points
     : [];
 
-  const sellerStories = Array.isArray(storySection?.points) && storySection.points.length
-    ? storySection.points
-    : fallbackStoryPoints;
+  const sellerStories =
+    Array.isArray(storySection?.points) && storySection.points.length
+      ? storySection.points
+      : fallbackStoryPoints;
 
   const mergedSellerStories = sellerStories.map((point, index) => {
     const fallbackPoint =
@@ -205,15 +205,14 @@ export default function BecomeASeller() {
     return {
       ...fallbackPoint,
       ...point,
-      image:
-        point?.image?.url ||
-        point?.image ||
-        fallbackPoint?.image ||
-        "",
+      image: point?.image?.url || point?.image || fallbackPoint?.image || "",
       description: point?.description || fallbackPoint?.description || "",
       title: point?.title || fallbackPoint?.title || "",
       cta: point?.cta || fallbackPoint?.cta || {},
-      metadata: { ...(fallbackPoint?.metadata || {}), ...(point?.metadata || {}) },
+      metadata: {
+        ...(fallbackPoint?.metadata || {}),
+        ...(point?.metadata || {}),
+      },
     };
   });
 
@@ -286,20 +285,17 @@ export default function BecomeASeller() {
             }
             description={heroDesc}
             theme="navy"
-            actions={
-              <SolidLargeButton
-                type="button"
+            cta={
+              <DynamicButton
+                variant="solidLarge"
+                size="lg"
+                rightIcon={<ArrowRight size={18} />}
                 onClick={() =>
                   window.open(SELLER_LOGIN_URL, "_blank", "noopener,noreferrer")
                 }
-                className="group min-h-12 rounded-lg px-6 font-bold sm:px-7"
               >
                 Seller Login
-                <ArrowRight
-                  size={18}
-                  className="ml-2 inline-block transition-transform duration-300 "
-                />
-              </SolidLargeButton>
+              </DynamicButton>
             }
             bottomContent={
               <div className="flex flex-wrap gap-x-5 gap-y-2.5 text-sm text-white/75 sm:gap-x-6 sm:gap-y-3">
@@ -354,14 +350,12 @@ export default function BecomeASeller() {
                   {mappedExperiences.length > storySlidesPerView && (
                     <div className="hidden justify-center gap-2.5 sm:flex sm:gap-3 md:shrink-0">
                       <DynamicButton
-                        type="button"
                         className="seller-story-prev grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
                         aria-label="Previous Seller Story"
                       >
                         <ArrowLeft size={19} />
                       </DynamicButton>
                       <DynamicButton
-                        type="button"
                         className="seller-story-next grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
                         aria-label="Next Seller Story"
                       >
@@ -391,42 +385,54 @@ export default function BecomeASeller() {
                 {mappedExperiences.length >= 3 && (
                   <>
                     <div className="mt-5 grid grid-cols-1 gap-3 sm:hidden">
-                    {mappedExperiences.map((story, index) => (
-                      <SellerStoryCard key={story.name || index} story={story} />
-                    ))}
-                  </div>
-
-                  <div className="mt-8 hidden sm:block sm:mt-10">
-                    <CustomSwiper
-                      prevEl=".seller-story-prev"
-                      nextEl=".seller-story-next"
-                      showPagination={
-                        mappedExperiences.length > storySlidesPerView
-                      }
-                      spaceBetween={20}
-                      slidesPerView={1}
-                      breakpoints={{
-                        640: {
-                          slidesPerView: Math.min(2, mappedExperiences.length),
-                        },
-                        900: {
-                          slidesPerView: Math.min(3, mappedExperiences.length),
-                        },
-                        1100: {
-                          slidesPerView: Math.min(4, mappedExperiences.length),
-                        },
-                      }}
-                    >
                       {mappedExperiences.map((story, index) => (
-                        <SwiperSlide
+                        <SellerStoryCard
                           key={story.name || index}
-                          className="!h-auto pb-2"
-                        >
-                          <SellerStoryCard story={story} />
-                        </SwiperSlide>
+                          story={story}
+                        />
                       ))}
-                    </CustomSwiper>
-                  </div>
+                    </div>
+
+                    <div className="mt-8 hidden sm:block sm:mt-10">
+                      <CustomSwiper
+                        prevEl=".seller-story-prev"
+                        nextEl=".seller-story-next"
+                        showPagination={
+                          mappedExperiences.length > storySlidesPerView
+                        }
+                        spaceBetween={20}
+                        slidesPerView={1}
+                        breakpoints={{
+                          640: {
+                            slidesPerView: Math.min(
+                              2,
+                              mappedExperiences.length,
+                            ),
+                          },
+                          900: {
+                            slidesPerView: Math.min(
+                              3,
+                              mappedExperiences.length,
+                            ),
+                          },
+                          1100: {
+                            slidesPerView: Math.min(
+                              4,
+                              mappedExperiences.length,
+                            ),
+                          },
+                        }}
+                      >
+                        {mappedExperiences.map((story, index) => (
+                          <SwiperSlide
+                            key={story.name || index}
+                            className="!h-auto pb-2"
+                          >
+                            <SellerStoryCard story={story} />
+                          </SwiperSlide>
+                        ))}
+                      </CustomSwiper>
+                    </div>
                   </>
                 )}
               </div>
@@ -535,19 +541,17 @@ export default function BecomeASeller() {
                 </div>
 
                 <div className="mt-6 text-center sm:mt-12">
-                  <SolidLargeButton
+                  <DynamicButton
                     as="a"
+                    variant="solidLarge"
+                    size="lg"
                     href={SELLER_LOGIN_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex min-h-12 items-center justify-center gap-2  px-7 "
+                    rightIcon={<ChevronRight size={18} />}
                   >
                     Get Started
-                    <ChevronRight
-                      size={18}
-                      className="transition-transform duration-300 ease-in-out "
-                    />
-                  </SolidLargeButton>
+                  </DynamicButton>
                 </div>
               </div>
             </section>

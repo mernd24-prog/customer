@@ -1,33 +1,7 @@
+import React from "react";
 import { cn } from "../../../utils/common";
 import { SpinnerIcon } from "../icons";
-
-
 import DynamicButton from "../button/button.jsx";
-const sizeMap = {
-  xs: "text-sm leading-[22px] tracking-[0.5px] min-h-[36px] px-2.5 py-1",
-  sm: "text-sm leading-[22px] tracking-[0.5px] min-h-[40px] px-3 py-1.5",
-  md: "text-sm leading-[22px] tracking-[0.5px] min-h-[44px] px-4 py-2",
-  lg: "text-sm leading-[22px] tracking-[0.5px] md:text-base md:leading-[20px] md:tracking-[0.5px] min-h-[44px] px-5 py-2.5",
-  xl: "text-base leading-[20px] tracking-[0.5px] min-h-[50px] px-6 py-3",
-};
-
-const variantMap = {
-  primary:
-    "border border-[var(--customer-gold)] bg-[var(--customer-gold)] text-[var(--customer-navy)] shadow-sm hover:bg-[var(--customer-gold-dark)] hover:border-[var(--customer-gold-dark)] hover:shadow-md",
-  secondary:
-    "border border-[var(--customer-border)] bg-white text-[var(--customer-navy)] hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]",
-  navy: "border border-[var(--customer-navy)] bg-[var(--customer-navy)] text-white shadow-sm hover:bg-[var(--customer-navy-dark)] hover:border-[var(--customer-navy-dark)]",
-  gradient:
-    "border border-transparent bg-gradient-to-r from-[var(--customer-gold-dark)] to-[var(--customer-gold)] text-[var(--customer-navy)] shadow-sm hover:shadow-md",
-  outline:
-    "bg-white border border-[var(--customer-navy)] text-[var(--customer-navy)] ",
-  ghost:
-    "bg-transparent text-[var(--customer-navy)] hover:bg-[var(--customer-navy-soft)] border border-transparent",
-  link: "border border-transparent bg-transparent p-0 text-[var(--customer-navy)] underline-offset-4 hover:underline",
-  danger: "bg-red-600 hover:bg-red-700 text-white border border-red-600",
-  google: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100",
-  custom: "",
-};
 
 export default function Button({
   children,
@@ -48,7 +22,9 @@ export default function Button({
   style,
   ...rest
 }) {
-  const isDisabled = disabled || loading;
+  const isSpinnerLoading = Boolean(loading);
+  const isDisabled = Boolean(disabled || isSpinnerLoading);
+
   const customStyle =
     variant === "custom"
       ? {
@@ -58,40 +34,33 @@ export default function Button({
         }
       : style;
 
+  const leftIcon = icon && iconPosition === "left" ? icon : undefined;
+  const rightIcon = icon && iconPosition === "right" ? icon : undefined;
+
   return (
     <DynamicButton
       type={type}
+      variant={variant}
+      size={size}
+      rounded={rounded}
       onClick={onClick}
       disabled={isDisabled}
-      aria-busy={loading || undefined}
+      isLoading={isSpinnerLoading}
+      leftIcon={leftIcon}
+      rightIcon={rightIcon}
       style={customStyle}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center gap-2  font-semibold tracking-normal transition-all duration-300 ease-in-out",
-        "focus:outline-none focus:ring-0 focus-visible:outline-none",
-        sizeMap[size] || sizeMap.md,
-        rounded ? "rounded-full" : "rounded-[var(--customer-radius-sm)]",
-        fullWidth ? "w-full" : "",
-        variantMap[variant] || variantMap.primary,
-        isDisabled ? "cursor-not-allowed opacity-60" : "",
+        fullWidth && "w-full",
         className,
       )}
       {...rest}
     >
-      {loading ? (
+      {isSpinnerLoading ? (
         <span className="customer-content-enter flex items-center gap-2" role="status">
-          <SpinnerIcon className="h-4 w-4 animate-spin" />
           Please Wait…
         </span>
       ) : (
-        <>
-          {icon && iconPosition === "left" && (
-            <span className="flex shrink-0 items-center">{icon}</span>
-          )}
-          {children ?? label}
-          {icon && iconPosition === "right" && (
-            <span className="flex shrink-0 items-center">{icon}</span>
-          )}
-        </>
+        children ?? label
       )}
     </DynamicButton>
   );

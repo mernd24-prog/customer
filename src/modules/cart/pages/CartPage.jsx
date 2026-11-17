@@ -11,8 +11,8 @@ import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { ConfirmModal } from "../../../components/ui";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";
-import { ContinueShoppingButton } from "../../../components/ui/button/static";
-import { CircleAlert, X } from "lucide-react";
+import { DynamicButton } from "../../../components/ui/button";
+import { ArrowRight, CircleAlert, X } from "lucide-react";
 import { CART_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../../utils/ecommerce/money";
 import { PageContainer } from "../../../components/ui/layout";
@@ -29,8 +29,6 @@ import {
 import { adaptItemForCard } from "../../../utils/pages/cartUtils";
 import useCart from "../controllers/useCart";
 
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function CartPage() {
   const [itemToRemove, setItemToRemove] = useState(null);
   const {
@@ -231,7 +229,6 @@ export default function CartPage() {
                         </div>
 
                         <DynamicButton
-                          type="button"
                           onClick={removeOutOfStockItems}
                           className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium leading-4 text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300"
                         >
@@ -338,9 +335,14 @@ export default function CartPage() {
 
                   {hasCartItems && (
                     <div className="flex items-center justify-center pt-5">
-                      <ContinueShoppingButton to="/products">
+                      <DynamicButton
+                        to="/products"
+                        variant="continueShopping"
+                        size="md"
+                        rightIcon={<ArrowRight />}
+                      >
                         Continue Shopping
-                      </ContinueShoppingButton>
+                      </DynamicButton>
                     </div>
                   )}
                 </div>

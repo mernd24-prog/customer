@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut } from "lucide-react";
 
-import { SolidLargeButton } from "../../components/ui/button/static";
+import { DynamicButton } from "../../components/ui/button";
 import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
 
 import { logout } from "../../modules/auth/slices/authSlice";
@@ -86,13 +86,14 @@ export const TopHeader = () => {
             </Link>
 
             {currentUser ? (
-              <SolidLargeButton
+              <DynamicButton
+                variant="solidLarge"
+                size="xs"
                 leftIcon={<LogOut size={14} />}
-                className="h-[30px] min-w-[90px] px-3 py-0 text-xs leading-none whitespace-nowrap lg:h-[32px] lg:min-w-[100px] lg:text-sm"
                 onClick={() => setShowLogoutModal(true)}
               >
                 Sign Out
-              </SolidLargeButton>
+              </DynamicButton>
             ) : null}
           </div>
         </div>

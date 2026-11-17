@@ -67,7 +67,7 @@ export default function CustomerToast({
         <p className="customer-toast-card__message">{message}</p>
         {actionLabel ? (
           <DynamicButton
-            type="button"
+            variant="link"
             className="customer-toast-card__action"
             onClick={onAction}
           >

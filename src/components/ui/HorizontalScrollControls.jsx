@@ -89,9 +89,11 @@ export default function HorizontalScrollControls({
     <div className={cn("relative", className)}>
       {showButtons && (
         <DynamicButton
-          type="button"
           aria-label="Scroll left"
           onClick={() => scroll(-1)}
+          variant="unstyled"
+          size="none"
+          shape="none"
           className={cn(
             defaultButtonClass,
             "left-0",
@@ -201,9 +203,11 @@ export default function HorizontalScrollControls({
 
       {showButtons && (
         <DynamicButton
-          type="button"
           aria-label="Scroll right"
           onClick={() => scroll(1)}
+          variant="unstyled"
+          size="none"
+          shape="none"
           className={cn(
             defaultButtonClass,
             "right-0",

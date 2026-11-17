@@ -155,7 +155,6 @@ function ReturnRequestPage({ orderId }) {
                     return (
                       <DynamicButton
                         key={lineKey || title}
-                        type="button"
                         onClick={() => handleItemSelect(item)}
                         disabled={disabled}
                         className={`grid w-full min-w-0 grid-cols-[52px_minmax(0,1fr)_20px] items-start gap-2.5 rounded-lg border p-2.5 text-left transition-all duration-200 sm:grid-cols-[80px_minmax(0,1fr)_20px] sm:items-center sm:gap-3.5 sm:p-3.5 ${

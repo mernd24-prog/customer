@@ -153,9 +153,6 @@ function Footer({ data }) {
                   className="border-b border-[#D2E2F4] last:border-b-0 md:border-0 md:!border-none"
                 >
                   <DynamicButton
-                    type="button"
-                    variant="unstyled"
-                    size="none"
                     aria-expanded={isOpen}
                     onClick={() => setOpenBenefit(isOpen ? -1 : index)}
                     className="flex w-full items-center gap-3 py-2.5 text-left md:cursor-default md:gap-3.5 md:py-3.5"

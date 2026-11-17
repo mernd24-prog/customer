@@ -156,8 +156,11 @@ export function RaiseTicketModal() {
           <div className="pt-2">
             <DynamicButton
               type="submit"
+              variant="solidLarge"
+              size="md"
+              shape="rounded"
               disabled={supportSubmitting}
-              className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] text-sm font-bold text-white shadow-md transition hover:bg-[#B88B22] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full"
             >
               {supportSubmitting ? (
                 <>

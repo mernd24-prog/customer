@@ -137,8 +137,10 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
         <div className="relative group/carousel">
           {canScrollLeft && (
             <DynamicButton
-              type="button"
               onClick={() => handleScroll("left")}
+              variant="unstyled"
+              size="none"
+              shape="none"
               aria-label="Scroll left"
               className="absolute -left-2 sm:left-1 lg:-left-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white hover:shadow-lg focus:outline-none"
             >
@@ -148,8 +150,10 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
 
           {canScrollRight && (
             <DynamicButton
-              type="button"
               onClick={() => handleScroll("right")}
+              variant="unstyled"
+              size="none"
+              shape="none"
               aria-label="Scroll right"
               className="absolute -right-2 sm:right-1 lg:-right-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white hover:shadow-lg focus:outline-none"
             >

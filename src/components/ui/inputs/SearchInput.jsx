@@ -92,8 +92,6 @@ export default function SearchInput({
           />
           {query && (
             <DynamicButton
-              type="button"
-              variant="unstyled"
               onClick={handleClear}
               className="mr-1 h-5 w-5 shrink-0 rounded-sm p-0 text-[var(--customer-muted)] transition-colors hover:bg-[#F8F3E7] hover:text-[var(--customer-ink)]"
               aria-label="Clear Search"
@@ -103,7 +101,6 @@ export default function SearchInput({
           )}
           {showButton && (
             <DynamicButton
-              type="button"
               onClick={handleSearch}
               className="ml-1 shrink-0 rounded-full bg-[var(--customer-gold)] px-4 py-1.5  text-sm font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-dark)]"
               aria-label="Search"

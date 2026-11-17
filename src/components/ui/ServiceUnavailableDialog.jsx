@@ -1,31 +1,32 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Clock3, RefreshCw, ServerCog, WifiOff, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Clock3, RefreshCw, ServerCog, WifiOff } from "lucide-react";
+
 import {
   checkBackendAvailability,
   isServiceUnavailable,
 } from "../../api/client";
 
+import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
 
-import DynamicButton from "./button/button.jsx";
 const COPY = {
   offline: {
     title: "You're offline",
-    message: "Check your internet connection. Your shopping session is safe, and you can continue when you're back online.",
+    message: "Check your internet connection and try again.",
     Icon: WifiOff,
   },
   timeout: {
-    title: "The server is taking longer than usual",
-    message: "We're having trouble connecting right now. Please wait a moment and try again.",
+    title: "Connection issue",
+    message: "The server is taking longer than expected. Please try again.",
     Icon: Clock3,
   },
   maintenance: {
-    title: "We're under maintenance",
-    message: "Sam Global is temporarily unavailable while we make improvements. Please try again shortly.",
+    title: "Under maintenance",
+    message: "We're making improvements. Please check back shortly.",
     Icon: ServerCog,
   },
   unavailable: {
-    title: "We can't reach the server",
-    message: "Our services are temporarily unavailable. Your saved items remain safe—please try again in a moment.",
+    title: "Service unavailable",
+    message: "We couldn't reach the server. Please try again shortly.",
     Icon: ServerCog,
   },
 };
@@ -34,32 +35,62 @@ export default function ServiceUnavailableDialog() {
   const [failure, setFailure] = useState(null);
   const [checking, setChecking] = useState(false);
 
+  const checkingRef = useRef(false);
+
   const retry = useCallback(async () => {
+    if (checkingRef.current) return;
+
+    checkingRef.current = true;
     setChecking(true);
-    const available = await checkBackendAvailability();
-    if (available) setFailure(null);
-    setChecking(false);
+
+    try {
+      const available = await checkBackendAvailability();
+
+      if (available) {
+        setFailure(null);
+      }
+    } catch (error) {
+      console.error("Service availability check failed:", error);
+    } finally {
+      checkingRef.current = false;
+      setChecking(false);
+    }
   }, []);
 
+  // Listen for service availability
   useEffect(() => {
     const handleAvailability = (event) => {
       if (event.detail?.available) {
         setFailure(null);
         return;
       }
+
       setFailure({
         kind: event.detail?.kind || "unavailable",
         retryAfter: event.detail?.retryAfter || 0,
       });
     };
-    const handleOffline = () => setFailure({ kind: "offline", retryAfter: 0 });
-    const handleOnline = () => void retry();
+
+    const handleOffline = () => {
+      setFailure({
+        kind: "offline",
+        retryAfter: 0,
+      });
+    };
+
+    const handleOnline = () => {
+      void retry();
+    };
 
     window.addEventListener("service:availability", handleAvailability);
     window.addEventListener("offline", handleOffline);
     window.addEventListener("online", handleOnline);
-    if (!navigator.onLine) handleOffline();
-    else if (isServiceUnavailable()) void checkBackendAvailability();
+
+    if (!navigator.onLine) {
+      handleOffline();
+    } else if (isServiceUnavailable()) {
+      void checkBackendAvailability();
+    }
 
     return () => {
       window.removeEventListener("service:availability", handleAvailability);
@@ -68,9 +99,16 @@ export default function ServiceUnavailableDialog() {
     };
   }, [retry]);
 
+  // Automatically retry every 15 seconds
   useEffect(() => {
-    if (!failure || failure.kind === "offline") return undefined;
-    const timer = window.setInterval(() => void retry(), 15000);
+    if (!failure || failure.kind === "offline") {
+      return undefined;
+    }
+
+    const timer = window.setInterval(() => {
+      void retry();
+    }, 15000);
+
     return () => window.clearInterval(timer);
   }, [failure, retry]);
 
@@ -80,59 +118,52 @@ export default function ServiceUnavailableDialog() {
   );
 
   if (!failure) return null;
+
   const { Icon } = content;
 
   return (
-    <div className="pointer-events-none fixed bottom-4 left-0 right-0 z-[10000] flex justify-center px-4">
-      <section
-        role="status"
-        aria-live="polite"
-        aria-labelledby="service-status-title"
-        aria-describedby="service-status-message"
-        className="pointer-events-auto relative w-full max-w-md overflow-hidden rounded-lg border border-[#15115d] bg-[var(--customer-cream)] shadow-2xl"
-      >
-        <DynamicButton
-          type="button"
-          aria-label="Dismiss service status"
-          onClick={() => setFailure(null)}
-          className="absolute right-4 top-5 rounded-lg p-2 text-[var(--customer-muted)] transition hover:bg-white hover:text-[var(--customer-navy)]"
-        >
-          <X size={19} />
-        </DynamicButton>
+    <ConfirmModal
+      open={Boolean(failure)}
+      title={content.title}
+      description={content.message}
+      icon={Icon}
+      iconBgClassName="bg-[var(--customer-gold-soft)]"
+      iconClassName="text-[var(--customer-gold-dark)]"
+      iconSize={26}
+      confirmLabel={checking ? "Checking connection..." : "Try again"}
+      confirmDisabled={checking || failure.kind === "offline"}
+      onConfirm={retry}
+      onCancel={() => setFailure(null)}
+      cancelLabel={null}
+      confirmClassName="!bg-[var(--customer-navy)] hover:!bg-[var(--customer-navy-dark)] !w-full sm:!w-full"
+      maxWidth="max-w-sm"
+    >
+      {/* Automatic recovery information */}
+      <div className="mt-1 flex items-start gap-3 rounded-lg border border-[#EEEAF0] bg-[#FAF9F7] px-3.5 py-3">
+        {/* Status indicator */}
+        <span className="relative mt-1 flex h-2 w-2 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C18A26] opacity-30" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-[#C18A26]" />
+        </span>
 
-        <div className="px-7 py-5 text-center sm:px-9">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-lg bg-[var(--customer-gold-soft)] text-[var(--customer-gold-dark)] shadow-sm">
-            <Icon size={31} strokeWidth={1.8} />
-          </div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--customer-gold-dark)]">
-            Service update
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold leading-4 text-[#333653]">
+            Automatic recovery
           </p>
-          <h2 id="service-status-title" className="text-2xl font-bold text-[var(--customer-navy)]">
-            {content.title}
-          </h2>
-          <p id="service-status-message" className="mt-3 text-sm leading-6 text-[var(--customer-muted)]">
-            {content.message}
+
+          <p className="mt-1 text-xs leading-[18px] text-[#777B8C]">
+            {failure.kind === "offline"
+              ? "Reconnect to the internet to continue."
+              : "We'll close this notice automatically when service returns."}
           </p>
-          {failure.retryAfter > 0 ? (
-            <p className="mt-2 text-xs font-semibold text-[var(--customer-navy)]">
-              Suggested retry: in {failure.retryAfter} seconds
+
+          {failure.retryAfter > 0 && (
+            <p className="mt-1.5 text-xs font-medium text-[var(--customer-navy)]">
+              Suggested retry in {failure.retryAfter} seconds
             </p>
-          ) : null}
-
-          <DynamicButton
-            type="button"
-            onClick={retry}
-            disabled={checking || failure.kind === "offline"}
-            className="mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--customer-navy)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--customer-navy-dark)] disabled:cursor-not-allowed disabled:opacity-55"
-          >
-            <RefreshCw size={17} className={checking ? "animate-spin" : ""} />
-            {checking ? "Checking connection…" : failure.kind === "offline" ? "Waiting for internet" : "Try again"}
-          </DynamicButton>
-          <p className="mt-4 text-xs text-[var(--customer-muted)]">
-            This notice will close automatically when service is restored.
-          </p>
+          )}
         </div>
-      </section>
-    </div>
+      </div>
+    </ConfirmModal>
   );
 }

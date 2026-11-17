@@ -95,8 +95,6 @@ export default function ReturnItemCard({
               {returnId}
             </span>
             <DynamicButton
-              type="button"
-              variant="unstyled"
               onClick={handleCopyReturnId}
               title="Copy Return ID"
               className="inline-flex h-5 w-5 items-center justify-center rounded p-0 text-[#7A7365] transition-colors hover:bg-[#FAF3E0] hover:text-[#CE9F2D]"
@@ -256,7 +254,6 @@ export default function ReturnItemCard({
 
               <div className="shrink-0 pt-2 xl:pt-0 xl:pl-3 border-t xl:border-t-0 xl:border-l border-[#EFE5D2] flex items-center justify-end">
                 <DynamicButton
-                  type="button"
                   onClick={onTrackRequest}
                   className="w-full xl:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#CE9F2D] px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:opacity-90 transition-opacity"
                 >

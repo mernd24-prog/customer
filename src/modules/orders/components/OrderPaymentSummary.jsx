@@ -449,10 +449,12 @@ function OrderPaymentSummary({
       {/* Cart Checkout Button */}
       {variant === "cart" && buttonText && (
         <DynamicButton
-          type="button"
+          variant="pill"
+          size="lg"
+          shape="rounded"
           onClick={onCheckout}
           disabled={disabled || loading}
-          className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-lg bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
+          className="mt-6 w-full text-sm font-bold sm:text-base"
         >
           {loading && (
             <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
@@ -464,8 +466,11 @@ function OrderPaymentSummary({
         <>
           <DynamicButton
             type="submit"
+            variant="pill"
+            size="lg"
+            shape="rounded"
             disabled={loading || disabled}
-            className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50 sm:h-[54px] sm:text-[16px]"
+            className="mt-4 w-full text-sm font-semibold sm:text-[16px]"
           >
             {loading && (
               <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />

@@ -59,7 +59,6 @@ export default function ImageVariantPicker({
           return (
             <DynamicButton
               key={variantId}
-              type="button"
               onClick={() => setSelectedVariant(variant)}
               className={`relative h-[80px] w-[70px] shrink-0 overflow-hidden rounded-lg border bg-white transition-all duration-300 ease-in-out sm:h-[100px] sm:w-[80px] ${
                 isSelected

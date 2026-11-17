@@ -65,7 +65,6 @@ export default function CustomSwiper({
       {showNavigation && !prevEl && (
         <DynamicButton
           ref={internalPrevRef}
-          type="button"
           aria-label="Previous slide"
           className={cn(
             `
@@ -154,7 +153,6 @@ export default function CustomSwiper({
       {showNavigation && !nextEl && (
         <DynamicButton
           ref={internalNextRef}
-          type="button"
           aria-label="Next slide"
           className={cn(
             `

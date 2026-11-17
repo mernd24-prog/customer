@@ -157,7 +157,6 @@ function ProductGallery({
                 return (
                   <DynamicButton
                     key={`${item.type}-${item.src}-${i}`}
-                    type="button"
                     onClick={() => {
                       if (isLastVisible && onCollapsedThumbnailClick) {
                         onCollapsedThumbnailClick(targetIndex);
@@ -267,7 +266,6 @@ function ProductGallery({
               <SwiperSlide key={i} className="!h-full bg-transparent">
                 {item.type === "video" ? (
                   <DynamicButton
-                    type="button"
                     className="relative flex h-full w-full items-center justify-center overflow-hidden bg-black"
                     onClick={() => handleVideoToggle(i)}
                     aria-label={isVideoPlaying ? "Pause video" : "Play video"}
@@ -433,7 +431,6 @@ export default function ImageGallery({
         createPortal(
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
             <DynamicButton
-              type="button"
               onClick={() => {
                 setIsModalOpen(false);
                 if (onModalClose) onModalClose();

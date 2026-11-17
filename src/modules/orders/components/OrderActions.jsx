@@ -51,7 +51,9 @@ const buttonClass =
     actionItems.push(
       <DynamicButton
         key="retry-payment"
-        type="button"
+        variant="softGold"
+        size="sm"
+        shape="rounded"
         className={buttonClass}
         onClick={handleRetryPayment}
         disabled={retrying}
@@ -66,7 +68,9 @@ const buttonClass =
     actionItems.push(
       <DynamicButton
         key="cancel"
-        type="button"
+        variant="softGold"
+        size="sm"
+        shape="rounded"
         className={buttonClass}
         onClick={openCancellation}
       >
@@ -80,8 +84,9 @@ const buttonClass =
 
   if (hasReturnAction) {
     actionItems.push(
-      <Link
+      <DynamicButton
         key="return"
+        as={Link}
         to={
           selectedOrderItem
             ? `/returns/request/${orderId}?orderItemId=${encodeURIComponent(
@@ -89,11 +94,14 @@ const buttonClass =
               )}`
             : `/returns/request/${orderId}`
         }
+        variant="softGold"
+        size="sm"
+        shape="rounded"
         className={buttonClass}
       >
         <RotateCcw size={15} className={iconClass} />
         <span className={textClass}>Request Return</span>
-      </Link>,
+      </DynamicButton>,
     );
   }
 
@@ -115,7 +123,9 @@ const buttonClass =
     ...actionItems,
     <DynamicButton
       key="ticket"
-      type="button"
+      variant="softGold"
+      size="sm"
+      shape="rounded"
       onClick={handleTicketClick}
       className={buttonClass}
     >
@@ -124,7 +134,9 @@ const buttonClass =
     </DynamicButton>,
     <DynamicButton
       key="chat"
-      type="button"
+      variant="softGold"
+      size="sm"
+      shape="rounded"
       onClick={handleChatClick}
       className={buttonClass}
     >

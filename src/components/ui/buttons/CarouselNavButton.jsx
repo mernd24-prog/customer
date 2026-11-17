@@ -36,8 +36,6 @@ const CarouselNavButton = forwardRef(function CarouselNavButton(
     <DynamicButton
       ref={ref}
       type={type}
-      variant="unstyled"
-      size="none"
       disabled={disabled}
       aria-label={ariaLabel || defaultAria}
       onClick={onClick}

@@ -302,7 +302,6 @@ export default function AiSupportChatWidget() {
     <>
       {/* Floating Chat Button */}
       <DynamicButton
-        type="button"
         onClick={() =>
           setIsOpen((prev) => !prev)
         }
@@ -360,7 +359,6 @@ export default function AiSupportChatWidget() {
 
             {/* Only necessary header icon */}
             <DynamicButton
-              type="button"
               onClick={() =>
                 setIsOpen(false)
               }
@@ -453,7 +451,6 @@ export default function AiSupportChatWidget() {
                         </p>
 
                         <DynamicButton
-                          type="button"
                           onClick={() =>
                             handleRaiseTicketFromChat(
                               msg,
@@ -508,7 +505,6 @@ export default function AiSupportChatWidget() {
                     (prompt) => (
                       <DynamicButton
                         key={prompt}
-                        type="button"
                         onClick={() =>
                           handleSendMessage(
                             prompt,
@@ -547,7 +543,6 @@ export default function AiSupportChatWidget() {
               />
 
               <DynamicButton
-                type="button"
                 onClick={() =>
                   handleSendMessage()
                 }

@@ -91,8 +91,6 @@ export default function FormField({
           </div>
         ) : isPassword ? (
           <DynamicButton
-            type="button"
-            variant="unstyled"
             aria-label={showPassword ? "Hide password" : "Show password"}
             onClick={(event) => {
               event.preventDefault();

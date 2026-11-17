@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { cn } from "../../../utils/common";
 import { checkServiceability } from "../../../features/delivery/deliverySlice";
 import {
   Truck,
@@ -14,6 +15,7 @@ import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { Download } from "lucide-react";
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
+import { resolveInputClasses } from "../../../components/ui/inputs/inputStyles";
 export default function DeliveryChecker({
   productId: initialProductId,
   onResultChange,
@@ -161,41 +163,55 @@ export default function DeliveryChecker({
                 Pincode
               </label>
 
-              <DynamicButton
-                id="product-delivery-pincode"
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                disabled={loading}
-                className="flex h-10 w-full min-w-0 items-center gap-2 rounded-lg border border-[#1B1D60]/25 bg-[#F4F4F8] py-1 pl-3 pr-1 text-sm font-semibold text-navy transition-colors hover:border-[#1B1D60]/50 disabled:cursor-wait"
-              >
-                {loading ? (
-                  <Loader2
-                    size={16}
-                    className="shrink-0 animate-spin text-gold-dark"
-                  />
-                ) : (
-                  <MapPin size={16} className="shrink-0 text-gold-dark" />
+              {/* Pincode Input Wrapper */}
+              <div
+                className={cn(
+                  "flex h-10 w-full items-center gap-1 p-1",
+                  resolveInputClasses({ variant: "quantity" }),
                 )}
+              >
+                {/* Pincode Trigger */}
+                <DynamicButton
+                  id="product-delivery-pincode"
+                  variant="unstyled"
+                  size="none"
+                  shape="rounded"
+                  onClick={() => setIsModalOpen(true)}
+                  disabled={loading}
+                  className="!h-full !min-w-0 !flex-1 !justify-start !px-3 !py-0"
+                >
+                  <span className="flex min-w-0 w-full items-center justify-start gap-2">
+                    {loading ? (
+                      <Loader2
+                        size={16}
+                        className="shrink-0 animate-spin text-gold-dark"
+                      />
+                    ) : (
+                      <MapPin size={16} className="shrink-0 text-gold-dark" />
+                    )}
 
-                <span className="min-w-0 flex-1 truncate text-left">
-                  {lastCheckedPincode || "Enter pincode"}
-                </span>
-
-                <span className="group flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white hover:bg-[#2F346F]">
-                  <ArrowRight
-                    size={16}
-                    aria-hidden="true"
-                  
-                  />
-                </span>
-              </DynamicButton>
+                    <span className="min-w-0 truncate text-left text-sm font-semibold text-[#1B1D60]">
+                      {lastCheckedPincode || "Enter pincode"}
+                    </span>
+                  </span>
+                </DynamicButton>
+                <DynamicButton
+                  variant="primary"
+                  size="none"
+                  shape="circle"
+                  onClick={() => setIsModalOpen(true)}
+                  disabled={loading}
+                  aria-label="Open delivery checker"
+                  className="!h-8 !w-8 shrink-0"
+                >
+                  <ArrowRight size={14} aria-hidden="true" />
+                </DynamicButton>
+              </div>
             </div>
           ) : (
-            <DynamicButton
-              type="button"
-              onClick={() => setIsModalOpen(true)}
-              disabled={loading}
-              className="flex w-full min-w-0 flex-col items-start gap-3 rounded-lg border border-border bg-surface-soft p-4 text-left transition-colors hover:border-gold hover:bg-cream disabled:cursor-wait sm:flex-row sm:items-center sm:justify-between"
+            <div
+              onClick={() => !loading && setIsModalOpen(true)}
+              className="group flex w-full min-w-0 cursor-pointer flex-col items-start gap-3 rounded-lg border border-border bg-surface-soft p-4 text-left transition-colors hover:border-gold hover:bg-cream sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold-dark">
@@ -222,11 +238,21 @@ export default function DeliveryChecker({
                 </div>
               </div>
 
-              <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 self-stretch rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold text-navy sm:self-center">
+              <DynamicButton
+                variant="qtyWhite"
+                size="sm"
+                shape="rounded"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsModalOpen(true);
+                }}
+                disabled={loading}
+                rightIcon={<ArrowRight size={14} aria-hidden="true" />}
+                className="self-stretch sm:self-center"
+              >
                 {lastCheckedPincode ? "Change pincode" : "Enter pincode"}
-                <ArrowRight size={14} aria-hidden="true" />
-              </span>
-            </DynamicButton>
+              </DynamicButton>
+            </div>
           )}
 
           {/* Inline Delivery Status */}
@@ -290,7 +316,10 @@ export default function DeliveryChecker({
                 }
               }}
               placeholder="Enter 6-digit Pincode"
-              className="h-11 w-full min-w-0 rounded-lg border border-[#DCDDE5] bg-white px-4 text-sm font-medium text-[#1B1D60] outline-none transition-colors placeholder:text-[#8C8E9E] focus:border-[#CE9F2D] disabled:bg-gray-50"
+              className={cn(
+                resolveInputClasses({ variant: "default" }),
+                "h-11 w-full min-w-0 px-4 text-sm font-medium text-[#1B1D60] placeholder:text-[#8C8E9E] bg-white",
+              )}
             />
 
             {error && (

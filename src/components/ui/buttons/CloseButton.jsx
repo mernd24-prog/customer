@@ -48,8 +48,6 @@ const CloseButton = forwardRef(function CloseButton(
     <DynamicButton
       ref={ref}
       type={type}
-      variant="unstyled"
-      size="none"
       shape="circle"
       disabled={disabled}
       aria-label={ariaLabel}

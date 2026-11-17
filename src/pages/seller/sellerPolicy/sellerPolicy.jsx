@@ -12,15 +12,12 @@ import {
   TriangleAlert,
   Sparkles,
 } from "lucide-react";
-import {
-  OutlineSecondaryButton,
-  SolidLargeButton,
-} from "../../../components/ui/button/static";
-import PageHeroBanner from "../../../components/ui/banner/PageHeroBanner";
 
+import { DynamicButton } from "../../../components/ui/button";
+
+import PageHeroBanner from "../../../components/ui/banner/PageHeroBanner";
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
-import FallbackImage from "../../../components/ui/FallbackImage";
 import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_POLICY } from "../../../data/fallbackCmsData";
@@ -184,7 +181,6 @@ export default function SellerPolicy() {
 
   const responsibilities = mapSectionPoints(section2, responsibilityIcons);
 
-
   const compBadge =
     section3?.cta?.label ||
     String(section3?.type || "")
@@ -230,29 +226,32 @@ export default function SellerPolicy() {
           title={heroTitle}
           description={heroDesc}
           theme="cream"
-          actions={
+          cta={
             <>
               {primaryCtaLabel && (
-                <SolidLargeButton
+                <DynamicButton
+                  variant="solidLarge"
+                  size="lg"
                   to={primaryCtaUrl}
-                  className="h-[42px] min-w-[138px] px-4 text-sm font-bold whitespace-nowrap sm:h-[48px] sm:min-w-[158px] sm:px-6 sm:text-[15px]"
                 >
                   {primaryCtaLabel}
-                </SolidLargeButton>
+                </DynamicButton>
               )}
 
               {secondaryCtaLabel && (
-                <OutlineSecondaryButton
+                <DynamicButton
+                  variant="outlineSecondary"
+                  size="lg"
                   to={secondaryCtaUrl}
-                  className="h-[42px] min-w-[130px] px-4 text-sm font-semibold whitespace-nowrap text-[#18156D] sm:h-[48px] sm:min-w-[150px] sm:px-6 sm:text-[15px]"
                 >
                   {secondaryCtaLabel}
-                </OutlineSecondaryButton>
+                </DynamicButton>
               )}
             </>
           }
         />
 
+        {/* Policy Highlights */}
         {section1 && (highlights.length > 0 || highlightTitle) && (
           <section className="bg-[#FAF8F3] py-12 sm:py-16 lg:py-24">
             <div className="customer-container">
@@ -260,7 +259,6 @@ export default function SellerPolicy() {
                 {highlightBadge && (
                   <span className="inline-flex items-center gap-2 rounded-lg bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
                     <ShieldCheck size={14} />
-
                     {highlightBadge}
                   </span>
                 )}
@@ -314,16 +312,14 @@ export default function SellerPolicy() {
           </section>
         )}
 
-  
-
+        {/* Seller Responsibilities */}
         {section2 && (responsibilities.length > 0 || respTitle) && (
           <section className="bg-white py-12 sm:py-16 lg:py-24">
             <div className="customer-container">
               <div className="mx-auto max-w-3xl text-center">
                 {respBadge && (
                   <span className="inline-flex items-center gap-2 rounded-lg bg-[#18156D]/5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#18156D] sm:px-4 sm:py-2">
-                    <ClipboardList size={14}  />
-
+                    <ClipboardList size={14} />
                     {respBadge}
                   </span>
                 )}
@@ -377,7 +373,7 @@ export default function SellerPolicy() {
           </section>
         )}
 
-
+        {/* Account Compliance */}
         {section3 && (compliance.length > 0 || compTitle) && (
           <section className="bg-[#F7F5EF] py-12 sm:py-16 lg:py-24">
             <div className="customer-container">
@@ -385,7 +381,6 @@ export default function SellerPolicy() {
                 {compBadge && (
                   <span className="inline-flex items-center gap-2 rounded-lg bg-[#F5E9C6] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#B88400] sm:px-4 sm:py-2">
                     <BadgeCheck size={14} />
-
                     {compBadge}
                   </span>
                 )}

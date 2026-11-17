@@ -37,9 +37,6 @@ export default function Pagination({
       className={cn("mt-8 flex items-center justify-center gap-2", className)}
     >
       <DynamicButton
-        type="button"
-        variant="unstyled"
-        size="none"
         aria-label="Previous page"
         disabled={currentPage <= 1}
         onClick={() => onPageChange?.(currentPage - 1)}
@@ -53,9 +50,6 @@ export default function Pagination({
       {pages.map((page) => (
         <DynamicButton
           key={page}
-          type="button"
-          variant="unstyled"
-          size="none"
           onClick={() => onPageChange?.(page)}
           className={cn(
             "h-9 min-w-[36px] rounded-[6px] border px-2.5  text-sm font-medium transition-all duration-300 ease-in-out",
@@ -71,9 +65,6 @@ export default function Pagination({
         <span className="text-[var(--customer-subtle)]">...</span>
       )}
       <DynamicButton
-        type="button"
-        variant="unstyled"
-        size="none"
         aria-label="Next page"
         disabled={currentPage >= totalPages}
         onClick={() => onPageChange?.(currentPage + 1)}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X, ThumbsUp, ThumbsDown } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
-import DynamicButton from "../../../components/ui/button/button";
+import { DynamicButton } from "../../../components/ui/button";
 import { CloseButton } from "../../../components/ui/buttons";
 
 function getUserDisplayName(user = {}) {
@@ -128,9 +128,6 @@ export default function ReviewMediaLightbox({
           <div className="relative flex-1 flex items-center justify-center w-full min-h-0 px-12 py-5">
             {showNavigation && safeIndex > 0 && (
               <DynamicButton
-                type="button"
-                variant="unstyled"
-                size="none"
                 onClick={() => onIndexChange(safeIndex - 1)}
                 className="absolute left-3 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/50 text-[#1B1D60] hover:bg-white border border-[#EAD9B6] shadow-md transition-all focus:outline-none"
                 aria-label="Previous Image"
@@ -151,9 +148,6 @@ export default function ReviewMediaLightbox({
 
             {showNavigation && safeIndex < images.length - 1 && (
               <DynamicButton
-                type="button"
-                variant="unstyled"
-                size="none"
                 onClick={() => onIndexChange(safeIndex + 1)}
                 className="absolute right-3 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#1B1D60] hover:bg-white border border-[#EAD9B6] shadow-md transition-all focus:outline-none"
                 aria-label="Next Image"
@@ -168,9 +162,6 @@ export default function ReviewMediaLightbox({
             <div className="flex items-center justify-center gap-2 px-4 py-3 shrink-0 overflow-x-auto border-t border-[#E8DAAF] bg-[#FAF4E8]/80">
               {images.map((img, thumbIndex) => (
                 <DynamicButton
-                  type="button"
-                  variant="unstyled"
-                  size="none"
                   key={`${img}-${thumbIndex}`}
                   onClick={() => onIndexChange(thumbIndex)}
                   style={{ outline: "none", boxShadow: "none" }}

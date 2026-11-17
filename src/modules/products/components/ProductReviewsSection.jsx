@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { ArrowRight, ThumbsUp } from "lucide-react";
-import DynamicButton from "../../../components/ui/button/button";
+import { DynamicButton } from "../../../components/ui/button";
 import {
   fetchProductReviews,
   submitProductReview,
@@ -147,9 +147,6 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     <div className="mt-2.5 flex flex-wrap gap-2">
       {media.slice(0, 5).map((url, index) => (
         <DynamicButton
-          type="button"
-          variant="unstyled"
-          size="none"
           key={`${url}-${index}`}
           onClick={() => setLightboxIndex(index)}
           aria-label={`Open review photo ${index + 1}${index === 4 && media.length > 5 ? `, and ${media.length - 5} more` : ""}`}
@@ -200,9 +197,6 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     </div>
 
     <DynamicButton
-      type="button"
-      variant="unstyled"
-      size="none"
       onClick={() => onHelpful?.(reviewId)}
       disabled={!reviewId || isOwn}
       className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
@@ -371,8 +365,6 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
 
       <DynamicButton
         type="submit"
-        variant="unstyled"
-        size="none"
         disabled={
           submitting ||
           isUploadingImages ||
@@ -661,9 +653,6 @@ export default function ProductReviewsSection({ productId, product }) {
                     return (
                       <DynamicButton
                         key={item.label}
-                        type="button"
-                        variant="unstyled"
-                        size="none"
                         onClick={() => {
                           setRatingFilter(ratingFilter === rating ? 0 : rating);
                           setPage(1);
@@ -693,9 +682,7 @@ export default function ProductReviewsSection({ productId, product }) {
 
                 {ratingFilter > 0 && (
                   <DynamicButton
-                    type="button"
                     variant="link"
-                    size="none"
                     onClick={() => setRatingFilter(0)}
                     className="w-fit text-xs font-bold text-[#A96F14] underline hover:text-[#CE9F2D]"
                   >
@@ -730,23 +717,21 @@ export default function ProductReviewsSection({ productId, product }) {
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
               {canWriteReview ? (
                 <DynamicButton
-                  type="button"
                   variant="primary"
                   size="sm"
                   shape="rounded"
                   onClick={() => setShowForm((prev) => !prev)}
-                  className="min-h-9 w-full px-4 py-2 text-xs font-bold text-white shadow-xs sm:w-auto"
+                  className="w-full sm:w-auto"
                 >
                   {showForm ? "Cancel Review" : "Write a Review"}
                 </DynamicButton>
               ) : !isLoggedIn ? (
                 <DynamicButton
-                  type="button"
                   variant="primaryOutline"
                   size="sm"
                   shape="rounded"
                   onClick={openAuthModal}
-                  className="min-h-9 w-full px-4 py-2 text-xs font-bold sm:w-auto"
+                  className="w-full sm:w-auto"
                 >
                   Sign in to review
                 </DynamicButton>

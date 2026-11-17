@@ -7,11 +7,7 @@ import Label from "../../../components/ui/label/Label";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
-import {
-  IconCircleButton,
-  PillButton,
-  ProductBrandButton,
-} from "../../../components/ui/button/static";
+import { DynamicButton } from "../../../components/ui/button";
 
 import Price from "./Price";
 import Rating from "./Rating";
@@ -39,8 +35,6 @@ import {
 import { cn } from "../../../utils/common";
 import StarRating from "../../../components/ui/display/StarRating";
 
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
 const getDealEndDateValue = (product = {}) =>
   product?.deal?.endAt ||
   product?.deal?.end_at ||
@@ -446,7 +440,6 @@ export default function ProductCard({
           >
             {brand && (
               <DynamicButton
-                type="button"
                 onClick={handleBrandClick}
                 className="text-left text-xs font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
@@ -535,7 +528,6 @@ export default function ProductCard({
       {/* WISHLIST BUTTON (Top-Right: Minimal, elegant, The Bear House style) */}
       {showActions && (
         <DynamicButton
-          type="button"
           title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           aria-label={
             isWishlisted
@@ -694,13 +686,13 @@ export default function ProductCard({
         <div className="flex min-w-0 flex-1 flex-col p-2 sm:p-2 ">
           {/* BRAND */}
           {brand ? (
-            <ProductBrandButton
-              type="button"
+            <DynamicButton
+              variant="productBrand"
               onClick={handleBrandClick}
               title={brand}
             >
               {capitalizeFirst(brand)}
-            </ProductBrandButton>
+            </DynamicButton>
           ) : (
             <div className="h-[15px]" />
           )}

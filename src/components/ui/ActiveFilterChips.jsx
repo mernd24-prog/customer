@@ -42,8 +42,10 @@ export default function ActiveFilterChips({
           {filters.map((filter) => (
             <DynamicButton
               key={filter.key}
-              type="button"
               onClick={() => onRemove?.(filter.key, filter)}
+              variant="unstyled"
+              size="none"
+              shape="none"
               aria-label={`Remove ${filter.label} filter`}
               className="
               group inline-flex shrink-0 items-center gap-1.5
@@ -72,8 +74,10 @@ export default function ActiveFilterChips({
 
       {isOverflowing && (
         <DynamicButton
-          type="button"
           onClick={() => setExpanded((prev) => !prev)}
+          variant="link"
+          size="none"
+          shape="none"
           className="w-fit text-xs font-semibold uppercase tracking-wide text-[#2874F0] hover:underline"
         >
           {expanded ? "Show less" : "Show more"}

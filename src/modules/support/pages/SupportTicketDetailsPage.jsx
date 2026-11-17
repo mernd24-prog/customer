@@ -400,7 +400,6 @@ export default function SupportTicketDetailsPage() {
                       </p>
                     </div>
                     <DynamicButton
-                      type="button"
                       onClick={() => navigate("/support")}
                       className="hidden h-9 rounded-[10px] border border-white/25 bg-white/10 px-3.5 text-xs font-semibold text-white transition hover:bg-white/20 active:scale-95 sm:block"
                     >

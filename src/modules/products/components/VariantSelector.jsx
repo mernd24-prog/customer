@@ -7,8 +7,7 @@ import { getColorSwatchImage } from "../../../utils/pages/productUtils";
 import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
 
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
-import { LinkButton } from "../../../components/ui/button/static";
+import { DynamicButton } from "../../../components/ui/button";
 export default function VariantSelector({
   variantOptions,
   selectedAttributes,
@@ -63,13 +62,13 @@ export default function VariantSelector({
             {option.name?.toLowerCase() === "size" &&
               (product?.category?.toLowerCase().includes("fashion") ||
                 product?.parentCategory?.toLowerCase().includes("fashion")) && (
-                <LinkButton
-                  type="button"
+                <DynamicButton
+                  variant="link"
                   onClick={onSizeChartClick}
                   className="text-sm font-bold text-gold transition-colors hover:text-gold-dark hover:underline"
                 >
                   Size Chart
-                </LinkButton>
+                </DynamicButton>
               )}
           </div>
 
@@ -145,7 +144,6 @@ export default function VariantSelector({
                 return (
                   <DynamicButton
                     key={value}
-                    type="button"
                     data-scroll-selected={isSelected ? "true" : undefined}
                     aria-pressed={isSelected}
                     disabled={!isComboAvailable}
@@ -217,7 +215,6 @@ export default function VariantSelector({
                   }
                 >
                   <DynamicButton
-                    type="button"
                     data-scroll-selected={isSelected ? "true" : undefined}
                     aria-pressed={isSelected}
                     disabled={!isComboAvailable}

@@ -9,7 +9,7 @@ import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 import Loader from "../../../components/ui/Loader";
 
-import { ContinueShoppingButton } from "../../../components/ui/button/static";
+import { DynamicButton } from "../../../components/ui/button";
 export default function ProductResultsLayout({
   totalResults = 0,
   pageSize = 12,
@@ -179,8 +179,9 @@ export default function ProductResultsLayout({
                 )}{" "}
                 {currentPage < totalPages && (
                   <div className="mt-8 flex items-center justify-center">
-                    <ContinueShoppingButton
-                      type="button"
+                    <DynamicButton
+                      variant="continueShopping"
+                      size="md"
                       onClick={() => {
                         if (onLoadMore) {
                           onLoadMore();
@@ -196,10 +197,9 @@ export default function ProductResultsLayout({
                           />
                         )
                       }
-                      className="min-h-[42px] px-6 text-sm lg:text-base"
                     >
                       {loadingMore ? "Loading..." : "Load More"}
-                    </ContinueShoppingButton>
+                    </DynamicButton>
                   </div>
                 )}{" "}
                 {!showPagination && loadingMore && !onLoadMore && (

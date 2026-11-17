@@ -161,8 +161,6 @@ export default function Breadcrumbs({
                 {/* Copy icon immediately after Order ID */}
                 {isLast && copyLastItem && copyValue && (
                   <DynamicButton
-                    type="button"
-                    variant="unstyled"
                     onClick={handleCopy}
                     title="Copy Order number"
                     aria-label="Copy Order number"

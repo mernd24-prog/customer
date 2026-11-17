@@ -4,10 +4,7 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { Sparkles } from "lucide-react";
 
 import Label from "../components/ui/label/Label";
-import {
-  OutlineLightButton,
-  SolidLargeButton,
-} from "../components/ui/button/static";
+import { DynamicButton } from "../components/ui/button";
 
 import "swiper/css";
 
@@ -85,21 +82,23 @@ const HeroSwiper = memo(({ slides }) => {
 
               <div className="relative z-30 flex w-full shrink-0 flex-wrap items-center justify-center gap-2.5 pt-1 pb-1 sm:gap-3 sm:pt-2 md:pt-3 lg:w-auto lg:justify-start">
                 {slide.primaryButton && (
-                  <SolidLargeButton
+                  <DynamicButton
+                    variant="solidLarge"
+                    size="lg"
                     to={slide.primaryLink || "/products"}
-                    className="h-[40px] min-w-[145px] px-3 text-xs shadow-none min-[375px]:min-w-[155px] min-[375px]:text-sm sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0"
                   >
                     {slide.primaryButton}
-                  </SolidLargeButton>
+                  </DynamicButton>
                 )}
 
                 {slide.secondaryButton && (
-                  <OutlineLightButton
+                  <DynamicButton
+                    variant="outlineLight"
+                    size="lg"
                     to={slide.secondaryLink || "/categories"}
-                    className="hero-outline-btn h-[40px] min-w-[145px] rounded-lg px-3 text-xs min-[375px]:min-w-[155px] min-[375px]:text-sm sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0"
                   >
                     {slide.secondaryButton}
-                  </OutlineLightButton>
+                  </DynamicButton>
                 )}
               </div>
             </div>

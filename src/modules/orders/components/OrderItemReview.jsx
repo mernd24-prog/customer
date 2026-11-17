@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { BadgeCheck, Camera } from "lucide-react";
+import { BadgeCheck, Camera, SquarePen } from "lucide-react";
 import { useDispatch } from "react-redux";
 
 import ReviewImageUploader from "../../products/components/ReviewImageUploader";
@@ -150,9 +150,11 @@ function ExistingReviewCard({ review }) {
             <div className="flex flex-wrap gap-2">
               {media.slice(0, 5).map((url, index) => (
                 <DynamicButton
-                  type="button"
                   key={`${url}-${index}`}
                   onClick={() => setLightboxIndex(index)}
+                  variant="unstyled"
+                  size="none"
+                  shape="none"
                   className="group relative block size-14 overflow-hidden rounded-lg border border-[#E2E3EA] bg-[#F7F7FA] shadow-sm transition hover:border-[#CE9F2D] sm:size-16"
                   aria-label={`Preview review image ${index + 1}`}
                 >
@@ -274,6 +276,9 @@ function ReviewModal({
       open={true}
       title="Write Review"
       description={getProductTitle(item)}
+      icon={SquarePen}
+      iconBgClassName="bg-[#F5E9C9]"
+      iconClassName="text-[#A96F14]"
       confirmLabel={
         submitting
           ? "Submitting..."
@@ -376,6 +381,7 @@ function OrderItemReviewAction({
       type="button"
       onClick={() => onReviewClick(item)}
       disabled={!orderId}
+      leftIcon={<SquarePen size={14} className="shrink-0" />}
     >
       Write Review
     </OrderActionButton>

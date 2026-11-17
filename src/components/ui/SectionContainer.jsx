@@ -1,6 +1,6 @@
 
 import { ArrowRight } from "lucide-react";
-import { OutlineSmallButton } from "../ui/button/static";
+import DynamicButton from "./button/button";
 import { Link } from "react-router-dom";
 
 export default function SectionContainer({
@@ -81,7 +81,9 @@ export default function SectionContainer({
                   <ArrowRight className={arrowIconClass} strokeWidth={2} />
                 </Link>
               ) : (
-                <OutlineSmallButton
+                <DynamicButton
+                  variant="outlineSmall"
+                  size="sm"
                   to={actionHref}
                   onClick={onAction}
                   rightIcon={
@@ -91,7 +93,7 @@ export default function SectionContainer({
                   aria-label={`${actionLabel} ${title || ""}`}
                 >
                   {actionLabel}
-                </OutlineSmallButton>
+                </DynamicButton>
               )
             ) : null}
           </div>
@@ -114,7 +116,9 @@ export default function SectionContainer({
             mobileActionFullWidth ? "w-full px-3" : "justify-center"
           }`}
         >
-          <OutlineSmallButton
+          <DynamicButton
+            variant="outlineSmall"
+            size="sm"
             to={actionHref}
             rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={2.2} />}
             className={
@@ -125,7 +129,7 @@ export default function SectionContainer({
             aria-label={`${actionLabel} ${title || ""}`}
           >
             {actionLabel}
-          </OutlineSmallButton>
+          </DynamicButton>
         </div>
       ) : null}
     </section>

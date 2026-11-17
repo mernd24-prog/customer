@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
           <p className="text-center  text-[0.8rem] text-muted">
             Didn&apos;t receive the OTP?{" "}
             <DynamicButton
-              type="button"
+              variant="link"
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
               onClick={handleResendOtp}
             >
