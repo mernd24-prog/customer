@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { useSupportController } from "../../support/controllers/useSupportController";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function OrderActions({
   order,
   orderId,
@@ -47,7 +49,7 @@ const buttonClass =
 
   if (hasRetryPayment) {
     actionItems.push(
-      <button
+      <DynamicButton
         key="retry-payment"
         type="button"
         className={buttonClass}
@@ -56,13 +58,13 @@ const buttonClass =
       >
         <RefreshCw size={15} className={iconClass} />
         <span className={textClass}>Retry Payment</span>
-      </button>,
+      </DynamicButton>,
     );
   }
 
   if (hasCancelAction) {
     actionItems.push(
-      <button
+      <DynamicButton
         key="cancel"
         type="button"
         className={buttonClass}
@@ -72,7 +74,7 @@ const buttonClass =
         <span className={textClass}>
           {selectedOrderItem ? "Cancel Item" : "Cancel Order"}
         </span>
-      </button>,
+      </DynamicButton>,
     );
   }
 
@@ -111,7 +113,7 @@ const buttonClass =
 
   const allActions = [
     ...actionItems,
-    <button
+    <DynamicButton
       key="ticket"
       type="button"
       onClick={handleTicketClick}
@@ -119,8 +121,8 @@ const buttonClass =
     >
       <Ticket size={15} className={iconClass} />
       <span className={textClass}>Raise Ticket</span>
-    </button>,
-    <button
+    </DynamicButton>,
+    <DynamicButton
       key="chat"
       type="button"
       onClick={handleChatClick}
@@ -128,7 +130,7 @@ const buttonClass =
     >
       <MessageSquare size={15} className={iconClass} />
       <span className={textClass}>Chat with us</span>
-    </button>,
+    </DynamicButton>,
   ];
 
  return (

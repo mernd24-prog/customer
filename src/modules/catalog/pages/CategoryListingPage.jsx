@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { ArrowRight, Grid2X2, Search, X } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
+import SearchBar from "../../../components/ui/inputs/SearchBar";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { EmptyState } from "../../../components/ui/feedback";
 import { PageContainer } from "../../../components/ui/layout";
@@ -22,7 +23,7 @@ import {
 } from "../../../utils/pages/categoryUtils";
 
 import { scrollToTop } from "../../../utils/common";
-
+import CatalogTile from "../../../components/ui/CatalogTile";
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 40];
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -62,98 +63,6 @@ function getRootCategoriesForListing(list = []) {
       (a, b) =>
         Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0),
     );
-}
-
-function CategoryTile({ category }) {
-  const count = getCategoryCount(category);
-
-  const imageSrc =
-    category.iconUrl ||
-    category.displayImage ||
-    category.imageUrl ||
-    category.bannerUrl;
-
-  return (
-    <Link
-      to={CUSTOMER_ROUTES.category(category.routeKey)}
-      className="group block text-center"
-    >
-      <div
-        className="
-          mt-2 overflow-hidden rounded-lg
-          border border-[#EEE8DA]
-          bg-[#FAF8F3]
-          p-1.5
-          shadow-[0_2px_8px_rgba(0,0,0,0.04)]
-          transition-all duration-300
-
-          hover:border-[#E5D6B5]
-          hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]
-        "
-      >
-        <div
-          className="
-            relative flex h-[140px] w-full
-            items-center justify-center
-            overflow-hidden rounded-lg
-            bg-white
-            p-3
-            transition-all duration-300
-            sm:h-[150px]
-            lg:h-[115px]
-          "
-        >
-          {imageSrc ? (
-            <img
-              width="100"
-              height="100"
-              src={imageSrc}
-              alt={category.displayName}
-              loading="lazy"
-              decoding="async"
-              onError={(event) => {
-                event.currentTarget.onerror = null;
-                event.currentTarget.src = "/image/png/favicon.png";
-              }}
-              className="
-                h-[52px] w-[52px]
-                object-contain
-                transition-transform duration-300
-                sm:h-[60px] sm:w-[60px]
-                lg:h-[76px] lg:w-[76px]
-
-              "
-            />
-          ) : (
-            <Grid2X2
-              size={36}
-              strokeWidth={1.4}
-              className="text-[var(--customer-border-strong)]"
-            />
-          )}
-
-          <span
-            aria-hidden="true"
-            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
-          >
-            <ArrowRight size={14} strokeWidth={1.8} />
-          </span>
-        </div>
-      </div>
-
-      <h2 className="mt-2 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
-        {category.displayName}
-      </h2>
-
-      {/* {count !== undefined &&
-      count !== null &&
-      count !== "" ? (
-        <p className="mt-0.5 text-xs font-semibold text-muted">
-          {Number(count).toLocaleString()} Products
-        </p>
-      ) : null} */}
-    </Link>
-  );
 }
 
 function CategoryGridSkeleton({ count = DEFAULT_PAGE_SIZE }) {
@@ -401,65 +310,15 @@ export default function CategoryListingPage() {
           <section className="min-w-0 rounded-lg bg-white">
             <div className="mb-6 flex flex-col gap-3">
               <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-                {/* Search */}
-                <label className="relative block w-full sm:max-w-[640px]">
-                  <Search
-                    size={16}
-                    className="
-                      pointer-events-none
-                      absolute left-4 top-1/2
-                      -translate-y-1/2
-                      text-[#9E886A]
-                    "
-                  />
-
-                  <input
-                    value={search}
-                    onChange={(event) =>
-                      handleSearchChange(
-                        event.target.value,
-                      )
-                    }
-                    placeholder="Search categories"
-                    className="
-                      h-11 w-full
-                      rounded-lg
-                      border border-[#E4DDCF]
-                      bg-[#FAF6EE]/40
-                      pl-11 pr-11
-                      text-sm font-medium
-                      text-[#1F2430]
-                      placeholder-[#6F7480]
-                      outline-none
-                      transition-all
-                      focus:border-[#E4DDCF]
-                      focus:bg-white
-                      focus:ring-3
-                      focus:ring-[#D6A323]/15
-                      shadow-2xs
-                    "
-                  />
-
-                  {Boolean(search) && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleSearchChange("")
-                      }
-                      aria-label="Clear search"
-                      className="
-                        absolute right-4 top-1/2
-                        flex -translate-y-1/2
-                        items-center justify-center
-                        text-[#6F7480]
-                        transition
-                        hover:text-[#1F2430]
-                      "
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
-                </label>
+                <SearchBar
+                  value={search}
+                  onChange={(event) =>
+                    handleSearchChange(event.target.value)
+                  }
+                  placeholder="Search categories"
+                  className="w-full sm:max-w-[640px]"
+                  showButton={false}
+                />
 
                 {/* Per page */}
                 <FilterDropdown
@@ -511,12 +370,24 @@ export default function CategoryListingPage() {
               <>
                 <div className={categoryGridClass}>
                   {categories.map((category) => (
-                    <CategoryTile
-                      key={
-                        category.id ||
-                        category.routeKey
+                    <CatalogTile
+                      key={category.id || category.routeKey}
+                      to={CUSTOMER_ROUTES.category(category.routeKey)}
+                      title={category.displayName}
+                      image={
+                        category.iconUrl ||
+                        category.displayImage ||
+                        category.imageUrl ||
+                        category.bannerUrl
                       }
-                      category={category}
+                      imageAlt={category.displayName}
+                      meta={
+                        getCategoryCount(category) !== undefined &&
+                        getCategoryCount(category) !== null &&
+                        getCategoryCount(category) !== ""
+                          ? `${Number(getCategoryCount(category)).toLocaleString()} Products`
+                          : undefined
+                      }
                     />
                   ))}
                 </div>

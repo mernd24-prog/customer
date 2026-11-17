@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSearchParams, Link } from "react-router-dom";
-import { ArrowRight, Search, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
+import SearchBar from "../../../components/ui/inputs/SearchBar";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
-import BrandCard from "../components/BrandCard";
+import CatalogTile from "../../../components/ui/CatalogTile";
 import { EmptyState } from "../../../components/ui";
 import { Pagination } from "../../../modules/products/components";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
@@ -22,6 +23,8 @@ import {
 } from "../../../utils/pages/brandUtils";
 import { scrollToTop } from "../../../utils/common";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 40];
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -187,32 +190,15 @@ export default function BrandOutletPage() {
           <section className="min-w-0 rounded-lg bg-white">
             <div className="mb-6 flex flex-col gap-3">
               <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-                <label className="relative block w-full sm:max-w-[640px]">
-                  <Search
-                    size={16}
-                    className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9E886A]"
-                  />
-
-                  <input
-                    value={search}
-                    onChange={(event) =>
-                      handleSearchChange(event.target.value)
-                    }
-                    placeholder="Search brands"
-                    className="h-11 w-full rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/40 pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-all focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
-                  />
-
-                  {Boolean(search) && (
-                    <button
-                      type="button"
-                      onClick={() => handleSearchChange("")}
-                      aria-label="Clear search"
-                      className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#6F7480] transition hover:text-[#1F2430]"
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
-                </label>
+                <SearchBar
+                  value={search}
+                  onChange={(event) =>
+                    handleSearchChange(event.target.value)
+                  }
+                  placeholder="Search brands"
+                  className="w-full sm:max-w-[640px]"
+                  showButton={false}
+                />
 
                 <FilterDropdown
                   options={PAGE_SIZE_OPTIONS.map((size) => ({
@@ -246,13 +232,12 @@ export default function BrandOutletPage() {
               <>
                 <div className={brandGridClass}>
                   {brands.map((brand) => (
-                    <BrandCard
+                    <CatalogTile
                       key={getBrandRouteKey(brand)}
-                      name={getBrandName(brand)}
-                      logo={getBrandLogo(brand)}
+                      to={CUSTOMER_ROUTES.brand(getBrandRouteKey(brand))}
+                      title={getBrandName(brand)}
                       image={getBrandLogo(brand)}
-                      subtitle=""
-                      href={CUSTOMER_ROUTES.brand(getBrandRouteKey(brand))}
+                      imageAlt={getBrandName(brand)}
                     />
                   ))}
                 </div>

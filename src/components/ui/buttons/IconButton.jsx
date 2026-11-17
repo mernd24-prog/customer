@@ -1,5 +1,7 @@
 import { cn } from "../../../utils/common";
 
+
+import DynamicButton from "../button/button.jsx";
 const sizeMap = {
   xs: "h-6 w-6",
   sm: "h-8 w-8",
@@ -29,7 +31,7 @@ export default function IconButton({
   ...rest
 }) {
   return (
-    <button
+    <DynamicButton
       type={type}
       onClick={onClick}
       disabled={disabled}
@@ -46,6 +48,6 @@ export default function IconButton({
       {...rest}
     >
       {children}
-    </button>
+    </DynamicButton>
   );
 }

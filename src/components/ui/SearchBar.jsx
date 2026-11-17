@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Search, ChevronDown, X } from "lucide-react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import DynamicButton from "./button/button";
 import { useDispatch, useSelector } from "react-redux";
 import { sanitizeSearchQuery } from "../../validations";
 import { getImageUrlFromValue } from "../../utils/ecommerce/product";
@@ -506,8 +507,10 @@ const SearchBar = ({
                 className="static sm:relative h-full flex items-center"
                 ref={categoryDropdownRef}
               >
-                <button
+                <DynamicButton
+                  as="button"
                   type="button"
+                  variant="unstyled"
                   aria-label="Select Category"
                   aria-expanded={isDropdownOpen}
                   aria-haspopup="listbox"
@@ -520,7 +523,7 @@ const SearchBar = ({
                       return next;
                     });
                   }}
-                  className="flex h-full w-[92px] min-w-0 items-center gap-1 rounded-l-full pl-2 pr-1.5 text-xs font-medium text-[var(--customer-ink)] !outline-none transition-all duration-300  ease-in-out hover:bg-black/[0.02] hover:text-[#03014D] focus:!outline-none focus-visible:!outline-none min-[375px]:w-[100px] min-[375px]:pl-2.5 min-[375px]:pr-2 min-[375px]:text-xs min-[425px]:w-[108px] sm:w-auto sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
+                  className="flex h-full w-[92px] min-w-0 items-center justify-start gap-1 rounded-l-full pl-2 pr-1.5 text-left text-xs font-medium text-[var(--customer-ink)] !outline-none transition-all duration-300 ease-in-out hover:bg-black/[0.02] hover:text-[#03014D] focus:!outline-none focus-visible:!outline-none min-[375px]:w-[100px] min-[375px]:pl-2.5 min-[375px]:pr-2 min-[375px]:text-xs min-[425px]:w-[108px] sm:w-auto sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
                 >
                   <span className="truncate">
                     {selectedCategory
@@ -534,7 +537,7 @@ const SearchBar = ({
                       isDropdownOpen ? "rotate-180" : ""
                     }`}
                   />
-                </button>
+                </DynamicButton>
 
                 <div
                   className={`absolute  left-0 top-[calc(100%+10px)] z-50 max-h-[280px] w-[220px] max-w-[calc(100vw-32px)] overflow-hidden rounded-lg border border-[#1B1D601A] bg-white  transition-all duration-300 ease-in-out sm:left-2 sm:max-h-[320px] sm:min-w-[260px] sm:w-auto sm:max-w-none ${
@@ -561,18 +564,20 @@ const SearchBar = ({
                             selectedCategory.id === category.id);
 
                         return (
-                          <button
+                          <DynamicButton
+                            as="button"
                             key={key}
                             type="button"
+                            variant="unstyled"
                             onClick={() => handleSelectCategory(category)}
-                            className={`w-full rounded-lg px-3 py-2.5 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
+                            className={`w-full justify-start rounded-lg px-3 py-2.5 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
                               isSelected
                                 ? "font-semibold text-[#03014D]"
                                 : "font-medium text-[var(--customer-ink)]"
                             } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
                           >
                             {label}
-                          </button>
+                          </DynamicButton>
                         );
                       })
                     ) : (
@@ -621,25 +626,29 @@ const SearchBar = ({
 
           {/* Clear Button */}
           {Boolean(searchQuery) && (
-            <button
+            <DynamicButton
+              as="button"
               type="button"
+              variant="unstyled"
               onClick={handleClear}
-              className="mr-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+              className="mr-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm p-0 text-gray-400 transition-colors hover:bg-[#F8F3E7] hover:text-[#03014D]"
               aria-label="Clear search text"
             >
-              <X size={14} />
-            </button>
+              <X size={13} />
+            </DynamicButton>
           )}
 
           {/* Search Button */}
-          <button
+          <DynamicButton
+            as="button"
             type="button"
+            variant="unstyled"
             onClick={() => handleSearch()}
             className="flex h-full w-[42px] shrink-0 items-center justify-center rounded-r-full bg-[#CE9F2D] text-[#03014D] transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98] min-[375px]:w-[44px] min-[425px]:w-[48px] sm:w-[64px] !outline-none focus:!outline-none focus-visible:!outline-none"
             aria-label="Search"
           >
             <Search size={18} className="text-[#03014D] sm:size-5" />
-          </button>
+          </DynamicButton>
         </div>
       </div>
       {shouldShowSuggestions && (
@@ -656,10 +665,12 @@ const SearchBar = ({
             const isActive = index === activeSuggestionIndex;
 
             return (
-              <button
+              <DynamicButton
+                as="button"
                 key={`${label}-${index}`}
                 type="button"
                 role="option"
+                variant="unstyled"
                 aria-selected={isActive}
                 onMouseDown={(event) => event.preventDefault()}
                 onMouseEnter={() => setActiveSuggestionIndex(index)}
@@ -686,7 +697,7 @@ const SearchBar = ({
                     </span>
                   ) : null}
                 </span>
-              </button>
+              </DynamicButton>
             );
           })}
           {autocompleteLoading && suggestions.length === 0 ? (

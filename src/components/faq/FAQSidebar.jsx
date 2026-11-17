@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import DynamicButton from "../ui/button/button";
 
 export default function FAQSidebar({
   activeTopic,
@@ -16,6 +17,9 @@ export default function FAQSidebar({
           return (
             <button
               key={topic}
+              // type="button"
+              // variant="unstyled"
+              // size="none"
               onClick={() => setActiveTopic(topic)}
               className={`flex items-center justify-between p-4 text-left ${
                 active

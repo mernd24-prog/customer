@@ -1,6 +1,7 @@
 
 import { Star } from "lucide-react";
 import { PiStarThin, PiStarFill } from "react-icons/pi";
+import DynamicButton from "../button/button";
 
 const formatRatingCount = (count) => {
   const value = Number(count);
@@ -39,12 +40,13 @@ export function RatingStars({
   ariaLabelPrefix = "Star",
 }) {
   const safeRating = Math.min(5, Math.max(0, Number(rating) || 0));
+  const interactiveRating = interactive ? (hoverStar > 0 ? hoverStar : safeRating) : 0;
 
   return (
-    <div className={`flex shrink-0 items-center gap-0 sm:gap-0.5 ${className}`.trim()}>
+    <div className={`flex shrink-0 items-center gap-0.5 ${className}`.trim()}>
       {[1, 2, 3, 4, 5].map((star) => {
         const fillAmount = interactive
-          ? (star <= (hoverStar || 0) ? 1 : 0)
+          ? (star <= interactiveRating ? 1 : 0)
           : Math.min(1, Math.max(0, safeRating - star + 1));
 
         const starClassName = `${
@@ -55,10 +57,13 @@ export function RatingStars({
           const Icon = fillAmount > 0 ? PiStarFill : PiStarThin;
 
           return (
-            <button
+            <DynamicButton
+              as="button"
               key={star}
               type="button"
-              className="shrink-0 focus:outline-none"
+              variant="unstyled"
+              size="none"
+              className="flex h-auto w-auto shrink-0 items-center justify-center rounded-none border-0 bg-transparent p-0 shadow-none focus:outline-none"
               aria-label={`${ariaLabelPrefix} ${star}`}
               onMouseEnter={() => onHover?.(star)}
               onClick={(event) => {
@@ -72,7 +77,7 @@ export function RatingStars({
                 className={starClassName}
                 style={{ width: size, height: size }}
               />
-            </button>
+            </DynamicButton>
           );
         }
 
@@ -124,7 +129,7 @@ export const StarRatingUI = ({
     return (
       <div className="flex items-center justify-between gap-3 sm:justify-start sm:gap-2.5">
         <div
-          className="flex items-center gap-1"
+          className="flex items-center gap-0.5"
           onMouseLeave={() => setHoverStar(0)}
         >
           <RatingStars
@@ -140,8 +145,10 @@ export const StarRatingUI = ({
           />
         </div>
 
-        <button
+        <DynamicButton
+          as="button"
           type="button"
+          variant="unstyled"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -150,7 +157,7 @@ export const StarRatingUI = ({
           className="whitespace-nowrap border-none text-xs font-bold text-[#201B78] outline-none"
         >
           Rate & Review
-        </button>
+        </DynamicButton>
       </div>
     );
   }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
+import DynamicButton from "../../components/ui/button/button";
 import { cn } from "../../utils/common";
 
 export default function HeaderDropdown({
@@ -43,10 +44,12 @@ export default function HeaderDropdown({
       }}
     >
       {hasDropdown ? (
-        <button
+        <DynamicButton
+          as="button"
           type="button"
+          variant="unstyled"
           className={cn(
-            "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
+            "flex items-center justify-start gap-1.5 text-left text-white/85 transition-all duration-300 ease-in-out hover:text-white",
             className,
           )}
           aria-expanded={isOpen}
@@ -67,7 +70,7 @@ export default function HeaderDropdown({
               )}
             />
           )}
-        </button>
+        </DynamicButton>
       ) : path ? (
         isExternal ? (
           <a
@@ -75,7 +78,7 @@ export default function HeaderDropdown({
             rel="noreferrer"
             href={path}
             className={cn(
-              "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
+              "flex items-center justify-start gap-1.5 text-left text-white/85 transition-all duration-300 ease-in-out hover:text-white",
               className,
             )}
           >
@@ -97,7 +100,7 @@ export default function HeaderDropdown({
           <Link
             to={path}
             className={cn(
-              "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
+              "flex items-center justify-start gap-1.5 text-left text-white/85 transition-all duration-300 ease-in-out hover:text-white",
               className,
             )}
           >
@@ -117,10 +120,12 @@ export default function HeaderDropdown({
           </Link>
         )
       ) : (
-        <button
+        <DynamicButton
+          as="button"
           type="button"
+          variant="unstyled"
           className={cn(
-            "flex items-center gap-1.5 d text-white/85 transition-all duration-300 ease-in-out hover:text-white",
+            "flex items-center justify-start gap-1.5 text-left text-white/85 transition-all duration-300 ease-in-out hover:text-white",
             className,
           )}
           aria-expanded={isOpen}
@@ -137,7 +142,7 @@ export default function HeaderDropdown({
               isOpen && "rotate-180",
             )}
           />
-        </button>
+        </DynamicButton>
       )}
 
       <div

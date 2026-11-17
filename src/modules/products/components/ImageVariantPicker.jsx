@@ -4,6 +4,8 @@ import {
 } from "../../../utils/ecommerce";
 import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 /**
  * ImageVariantPicker — a thumbnail-based variant selector shown when variants
  * exist but have no distinguishing attributes (empty `attributes: {}`).
@@ -55,7 +57,7 @@ export default function ImageVariantPicker({
             variant.isAvailable === false;
 
           return (
-            <button
+            <DynamicButton
               key={variantId}
               type="button"
               onClick={() => setSelectedVariant(variant)}
@@ -95,7 +97,7 @@ export default function ImageVariantPicker({
                   Out Of Stock
                 </span>
               )}
-            </button>
+            </DynamicButton>
           );
         })}
       </HorizontalScrollControls>

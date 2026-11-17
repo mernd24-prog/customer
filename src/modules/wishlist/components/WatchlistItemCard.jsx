@@ -16,6 +16,8 @@ import {
 import ProductCard from "../../products/components/ProductCard";
 import { PillButton } from "../../../components/ui/button/static";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export function WatchlistItemCard({
   product,
   compact = false,
@@ -196,14 +198,14 @@ export function WatchlistItemCard({
           </Link>
         </div>
 
-        <button
+        <DynamicButton
           type="button"
           className="absolute right-2 top-2 rounded-full p-1 text-gray transition-all duration-300 ease-in-out hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
           onClick={() => onRemove?.(product)}
           aria-label={`Remove ${title} from watchlist`}
         >
           <X size={14} aria-hidden="true" />
-        </button>
+        </DynamicButton>
       </article>
     );
   }
@@ -218,7 +220,7 @@ export function WatchlistItemCard({
       />
 
       {/* Wishlist Remove Button */}
-      <button
+      <DynamicButton
         type="button"
         onClick={(e) => {
           e.preventDefault();
@@ -230,7 +232,7 @@ export function WatchlistItemCard({
         title={`Remove ${title} from wishlist`}
       >
         <X size={15} strokeWidth={1.8} />
-      </button>
+      </DynamicButton>
 
       {/* Wishlist Move to Cart Button */}
       <div className="absolute inset-x-2 bottom-2 z-20">

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ApiState from "../../../components/ui/ApiState";
 import ActiveFilterChips from "../../../components/ui/ActiveFilterChips";
@@ -7,6 +8,8 @@ import ProductFilterSidebar from "./ProductFilterSidebar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 import Loader from "../../../components/ui/Loader";
+
+import { ContinueShoppingButton } from "../../../components/ui/button/static";
 export default function ProductResultsLayout({
   totalResults = 0,
   pageSize = 12,
@@ -176,8 +179,7 @@ export default function ProductResultsLayout({
                 )}{" "}
                 {currentPage < totalPages && (
                   <div className="mt-8 flex items-center justify-center">
-                    {" "}
-                    <button
+                    <ContinueShoppingButton
                       type="button"
                       onClick={() => {
                         if (onLoadMore) {
@@ -185,19 +187,19 @@ export default function ProductResultsLayout({
                         }
                       }}
                       disabled={loadingMore}
-                      className="inline-flex h-[42px] px-6 items-center justify-center gap-2 rounded-[10px] border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                      rightIcon={
+                        loadingMore ? undefined : (
+                          <ChevronDown
+                            size={14}
+                            strokeWidth={2.5}
+                            className="transition-transform duration-200"
+                          />
+                        )
+                      }
+                      className="min-h-[42px] px-6 text-sm lg:text-base"
                     >
-                      {" "}
-                      {loadingMore ? (
-                        <>
-                          {" "}
-                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />{" "}
-                          <span>Loading...</span>{" "}
-                        </>
-                      ) : (
-                        <span>Load More</span>
-                      )}{" "}
-                    </button>{" "}
+                      {loadingMore ? "Loading..." : "Load More"}
+                    </ContinueShoppingButton>
                   </div>
                 )}{" "}
                 {!showPagination && loadingMore && !onLoadMore && (

@@ -1,6 +1,8 @@
 import { Heart } from "lucide-react";
 import { cn } from "../../../utils/common";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function WishlistButton({
   active = false,
   label = "product",
@@ -8,7 +10,7 @@ export default function WishlistButton({
   className = "",
 }) {
   return (
-    <button
+    <DynamicButton
       type="button"
       title={active ? "Remove from wishlist" : "Add to wishlist"}
       aria-label={
@@ -29,6 +31,6 @@ export default function WishlistButton({
             : "text-[var(--customer-navy)]"
         }
       />
-    </button>
+    </DynamicButton>
   );
 }

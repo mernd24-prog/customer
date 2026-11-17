@@ -2,6 +2,8 @@ import { X } from "lucide-react";
 import { useEffect } from "react";
 import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 
+
+import DynamicButton from "../button/button.jsx";
 export default function Drawer({
   open,
   onClose,
@@ -56,14 +58,14 @@ export default function Drawer({
         }}
       >
         <div className=" flex items-center justify-end  pb-3">
-          <button
+          <DynamicButton
             type="button"
             onClick={onClose}
             className="icon-button"
             aria-label="Close"
           >
             <X size={16} />
-          </button>
+          </DynamicButton>
         </div>
         {children}
       </div>

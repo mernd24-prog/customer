@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import DynamicButton from "../ui/button/button";
 
 export default function FAQAccordion({ faqs = [] }) {
   const [openIndex, setOpenIndex] = useState(null);
@@ -21,8 +22,10 @@ export default function FAQAccordion({ faqs = [] }) {
                 className="overflow-hidden rounded-md bg-navy-soft mb-4"
               >
                 {/* Question */}
-                <button
+                <DynamicButton
                   type="button"
+                  variant="unstyled"
+                  size="none"
                   aria-expanded={isOpen}
                   onClick={() => toggleFAQ(index)}
                   className="flex w-full cursor-pointer items-center justify-between px-5 py-4 text-left transition-colors duration-300 ease-in-out"
@@ -43,7 +46,7 @@ export default function FAQAccordion({ faqs = [] }) {
                   >
                     <ChevronDown size={16} className={`transition-transform duration-300 motion-reduce:transition-none ${isOpen ? "rotate-180" : ""}`} />
                   </span>
-                </button>
+                </DynamicButton>
 
                 {/* Answer */}
                 <div

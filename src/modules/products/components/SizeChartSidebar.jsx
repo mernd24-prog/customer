@@ -2,6 +2,8 @@ import { X } from "lucide-react";
 import { useEffect } from "react";
 import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function SizeChartSidebar({ isOpen, onClose, productName }) {
   const { present, exiting } = useAnimatedPresence(isOpen);
   useEffect(() => {
@@ -30,13 +32,13 @@ export default function SizeChartSidebar({ isOpen, onClose, productName }) {
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-5 bg-white border-b border-border">
           <h2 className="text-lg sm:text-xl font-bold text-ink text-center w-full px-8">{productName || "Size Chart"}</h2>
-          <button 
+          <DynamicButton 
             type="button"
             onClick={onClose}
             className="absolute right-4 top-4 p-1.5 rounded-full hover:bg-gold-soft transition-colors"
           >
             <X size={20} className="text-gold-dark" />
-          </button>
+          </DynamicButton>
         </div>
 
         {/* Content */}

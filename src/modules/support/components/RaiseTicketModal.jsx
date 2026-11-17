@@ -8,6 +8,8 @@ import CustomDropdown from "../../../components/ui/CustomDropdown";
 import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { useSupportController } from "../controllers/useSupportController";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const CUSTOMER_SUPPORT_CATEGORIES = [
   { value: "ORDER_ISSUE", label: "Order Issue" },
   { value: "DELIVERY_ISSUE", label: "Delivery Issue" },
@@ -152,7 +154,7 @@ export function RaiseTicketModal() {
           </label>
 
           <div className="pt-2">
-            <button
+            <DynamicButton
               type="submit"
               disabled={supportSubmitting}
               className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] text-sm font-bold text-white shadow-md transition hover:bg-[#B88B22] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
@@ -168,7 +170,7 @@ export function RaiseTicketModal() {
                   <span>Submit Ticket</span>
                 </>
               )}
-            </button>
+            </DynamicButton>
 
             {!isSignedIn && (
               <p className="mt-2.5 text-center text-xs font-medium text-slate-500 flex items-center justify-center gap-1.5">

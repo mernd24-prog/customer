@@ -1,3 +1,4 @@
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function IconActionButton({
   title,
   onClick,
@@ -5,14 +6,15 @@ export default function IconActionButton({
   className = "",
 }) {
   return (
-    <button
+    <DynamicButton
       type="button"
+      variant="unstyled"
       onClick={onClick}
-      className={`flex h-10 w-10 items-center justify-center rounded-full border border-blue/60 bg-[#F5F8FB] transition-[color,background-color,border-color,box-shadow] duration-300 ease-in-out  hover:bg-[#EAF0F8] hover:shadow-sm sm:h-12 sm:w-12 ${className}`}
+      className={`flex h-8 w-8 items-center justify-center rounded-full border border-blue/60 bg-[#F5F8FB] p-0 transition-[color,background-color,border-color,box-shadow] duration-300 ease-in-out hover:bg-[#EAF0F8] hover:shadow-sm sm:h-10 sm:w-10 ${className}`}
       title={title}
       aria-label={title}
     >
       {children}
-    </button>
+    </DynamicButton>
   );
 }

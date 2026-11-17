@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
+
+import DynamicButton from "./button/button.jsx";
 export default function FormField({
   placeholder,
   error,
@@ -88,17 +90,18 @@ export default function FormField({
             <Loader2 size={18} className="animate-spin text-[#CE9F2D]" />
           </div>
         ) : isPassword ? (
-          <button
+          <DynamicButton
             type="button"
+            variant="unstyled"
             aria-label={showPassword ? "Hide password" : "Show password"}
             onClick={(event) => {
               event.preventDefault();
               setShowPassword((currentValue) => !currentValue);
             }}
-            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--customer-muted)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40"
+            className="absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md p-0 text-[var(--customer-muted)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+          </DynamicButton>
         ) : null}
       </span>
       {(reserveErrorSpace || error?.message) && (

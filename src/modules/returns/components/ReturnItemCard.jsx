@@ -16,15 +16,33 @@ import ShowMoreText from "../../../utils/showMore";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import { notify } from "../../../utils/notify";
 
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const getStatusBadgeStyle = (statusRaw = "") => {
   const s = String(statusRaw).toLowerCase();
-  if (s.includes("refunded") || s.includes("passed") || s.includes("completed") || s.includes("replaced") || s.includes("approved")) {
+  if (
+    s.includes("refunded") ||
+    s.includes("passed") ||
+    s.includes("completed") ||
+    s.includes("replaced") ||
+    s.includes("approved")
+  ) {
     return "bg-[#E6F4EA] text-[#0D652D] border-[#CEEAD6]";
   }
-  if (s.includes("failed") || s.includes("rejected") || s.includes("upheld") || s.includes("closed")) {
+  if (
+    s.includes("failed") ||
+    s.includes("rejected") ||
+    s.includes("upheld") ||
+    s.includes("closed")
+  ) {
     return "bg-[#FCE8E6] text-[#C5221F] border-[#FAD2CF]";
   }
-  if (s.includes("transit") || s.includes("shipped") || s.includes("received") || s.includes("pickup") || s.includes("scheduled")) {
+  if (
+    s.includes("transit") ||
+    s.includes("shipped") ||
+    s.includes("received") ||
+    s.includes("pickup") ||
+    s.includes("scheduled")
+  ) {
     return "bg-[#E8F0FE] text-[#1967D2] border-[#D2E3FC]";
   }
   return "bg-[#FFF8E7] text-[#9A6D00] border-[#FCE8B3]";
@@ -73,25 +91,31 @@ export default function ReturnItemCard({
         <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-xs font-semibold text-[#4E4E4E]">
           <div className="flex items-center gap-1.5 text-[#1B1D60]">
             <span className="text-[#6E6E6E]">Return ID:</span>
-            <span className="font-mono font-bold text-[#1B1D60]">{returnId}</span>
-            <button
+            <span className="font-mono font-bold text-[#1B1D60]">
+              {returnId}
+            </span>
+            <DynamicButton
               type="button"
+              variant="unstyled"
               onClick={handleCopyReturnId}
               title="Copy Return ID"
-              className="inline-flex items-center justify-center p-1 rounded hover:bg-[#FAF3E0] text-[#7A7365] hover:text-[#CE9F2D] transition-colors"
+              className="inline-flex h-5 w-5 items-center justify-center rounded p-0 text-[#7A7365] transition-colors hover:bg-[#FAF3E0] hover:text-[#CE9F2D]"
             >
               {copied ? (
                 <Check size={13} className="text-emerald-600" />
               ) : (
                 <Copy size={13} />
               )}
-            </button>
+            </DynamicButton>
           </div>
           {requestedOn && (
             <span className="flex items-center gap-1.5 text-[#6E6E6E]">
               <CalendarDays size={13} className="text-[#CE9F2D] shrink-0" />
               <span>
-                Requested on <span className="font-medium text-[#2E2E2E]">{requestedOn}</span>
+                Requested on{" "}
+                <span className="font-medium text-[#2E2E2E]">
+                  {requestedOn}
+                </span>
               </span>
             </span>
           )}
@@ -106,137 +130,143 @@ export default function ReturnItemCard({
       </div>
 
       <div className="p-3.5 sm:p-4">
-     
-<div className="flex flex-col lg:flex-row items-start gap-3.5 lg:gap-4">
-  <div className="shrink-0 flex w-full items-center justify-center overflow-hidden bg-white p-2 h-[180px] lg:w-[165px] lg:h-[142px]">
-    {productPath ? (
-      <Link
-        to={productPath}
-        className="flex h-full w-full items-center justify-center group"
-      >
-        <ImageWithFallback
-          src={image}
-          alt={title}
-          className="max-h-full max-w-full object-contain transition-transform "
-          imgClassName="object-contain max-h-full max-w-full mix-blend-multiply"
-        />
-      </Link>
-    ) : (
-      <ImageWithFallback
-        src={image}
-        alt={title}
-        className="max-h-full max-w-full object-contain"
-        imgClassName="object-contain max-h-full max-w-full mix-blend-multiply"
-      />
-    )}
-  </div>
+        <div className="flex flex-col lg:flex-row items-start gap-3.5 lg:gap-4">
+          <div className="shrink-0 flex w-full items-center justify-center overflow-hidden bg-white p-2 h-[180px] lg:w-[165px] lg:h-[142px]">
+            {productPath ? (
+              <Link
+                to={productPath}
+                className="flex h-full w-full items-center justify-center group"
+              >
+                <ImageWithFallback
+                  src={image}
+                  alt={title}
+                  className="max-h-full max-w-full object-contain transition-transform "
+                  imgClassName="object-contain max-h-full max-w-full mix-blend-multiply"
+                />
+              </Link>
+            ) : (
+              <ImageWithFallback
+                src={image}
+                alt={title}
+                className="max-h-full max-w-full object-contain"
+                imgClassName="object-contain max-h-full max-w-full mix-blend-multiply"
+              />
+            )}
+          </div>
 
-  <div className="min-w-0 flex-1 flex flex-col justify-between space-y-3 w-full">
-    <div className="space-y-2">
-      <h2 className="text-sm sm:text-base font-bold leading-snug text-[#1B1D60] hover:text-[#CE9F2D] transition-colors">
-        {productPath ? (
-          <Link
-            to={productPath}
-            className="inline-flex items-baseline gap-1 group"
-          >
-            <ShowMoreText
-              text={title}
-              mode="characters"
-              limit={75}
-              moreLabel="more"
-              lessLabel="less"
-              textClassName="inline"
-              buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
-            />
-            <ArrowUpRight
-              size={13}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-[#CE9F2D] inline shrink-0"
-            />
-          </Link>
-        ) : (
-          <ShowMoreText
-            text={title}
-            mode="characters"
-            limit={75}
-            moreLabel="more"
-            lessLabel="less"
-            textClassName="inline"
-            buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
-          />
-        )}
-      </h2>
+          <div className="min-w-0 flex-1 flex flex-col justify-between space-y-3 w-full">
+            <div className="space-y-2">
+              <h2 className="text-sm sm:text-base font-bold leading-snug text-[#1B1D60] hover:text-[#CE9F2D] transition-colors">
+                {productPath ? (
+                  <Link
+                    to={productPath}
+                    className="inline-flex items-baseline gap-1 group"
+                  >
+                    <ShowMoreText
+                      text={title}
+                      mode="characters"
+                      limit={75}
+                      moreLabel="more"
+                      lessLabel="less"
+                      textClassName="inline"
+                      buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
+                    />
+                    <ArrowUpRight
+                      size={13}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-[#CE9F2D] inline shrink-0"
+                    />
+                  </Link>
+                ) : (
+                  <ShowMoreText
+                    text={title}
+                    mode="characters"
+                    limit={75}
+                    moreLabel="more"
+                    lessLabel="less"
+                    textClassName="inline"
+                    buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
+                  />
+                )}
+              </h2>
 
-      <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#6E6E6E]">
-        <span className="rounded-md bg-[#F3F4F6] px-2 py-0.5 text-[#2E2E2E] font-semibold">
-          Qty: {quantity}
-        </span>
+              <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#6E6E6E]">
+                <span className="rounded-md bg-[#F3F4F6] px-2 py-0.5 text-[#2E2E2E] font-semibold">
+                  Qty: {quantity}
+                </span>
 
-        {seller && (
-          <span>
-            Sold by :{" "}
-            <strong className="text-[#2E2E2E]">{seller}</strong>
-          </span>
-        )}
-      </div>
-    </div>
+                {seller && (
+                  <span>
+                    Sold by :{" "}
+                    <strong className="text-[#2E2E2E]">{seller}</strong>
+                  </span>
+                )}
+              </div>
+            </div>
 
-    <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 rounded-lg border border-[#e4ca8e] bg-[#FFFDF9] p-3.5">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 flex-1">
-        <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EFE5D2] pb-2 sm:pb-0 sm:pr-3">
-          <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
-            <AlertCircle size={13} className="text-[#CE9F2D] shrink-0" />
-            Reason for Return
-          </p>
+            <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 rounded-lg border border-[#e4ca8e] bg-[#FFFDF9] p-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 flex-1">
+                <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EFE5D2] pb-2 sm:pb-0 sm:pr-3">
+                  <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
+                    <AlertCircle
+                      size={13}
+                      className="text-[#CE9F2D] shrink-0"
+                    />
+                    Reason for Return
+                  </p>
 
-          <div className="text-xs font-semibold text-[#1B1D60] leading-snug">
-            <ShowMoreText
-              label="Reason for Return"
-              text={capitalizeFirst(reason) || "Not specified"}
-              mode="lines"
-              limit={1}
-              buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
-            />
+                  <div className="text-xs font-semibold text-[#1B1D60] leading-snug">
+                    <ShowMoreText
+                      label="Reason for Return"
+                      text={capitalizeFirst(reason) || "Not specified"}
+                      mode="lines"
+                      limit={1}
+                      buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] "
+                    />
+                  </div>
+                </div>
+
+                <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EFE5D2] pb-2 sm:pb-0 sm:pr-3">
+                  <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
+                    <PackageCheck
+                      size={13}
+                      className="text-[#0D652D] shrink-0"
+                    />
+                    Refund Amount
+                  </p>
+
+                  <p className="text-sm sm:text-base font-bold text-[#0D652D]">
+                    {formatMoney(refundAmount || price || 0, currency)}
+                  </p>
+                </div>
+
+                <div className="min-w-0 space-y-0.5">
+                  <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
+                    <CalendarDays
+                      size={13}
+                      className="text-[#CE9F2D] shrink-0"
+                    />
+                    Expected Date
+                  </p>
+
+                  <p className="text-xs sm:text-sm font-semibold text-[#1B1D60]">
+                    {expectedDate || "—"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="shrink-0 pt-2 xl:pt-0 xl:pl-3 border-t xl:border-t-0 xl:border-l border-[#EFE5D2] flex items-center justify-end">
+                <DynamicButton
+                  type="button"
+                  onClick={onTrackRequest}
+                  className="w-full xl:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#CE9F2D] px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:opacity-90 transition-opacity"
+                >
+                  <Truck size={14} />
+                  <span>{trackLabel}</span>
+                </DynamicButton>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EFE5D2] pb-2 sm:pb-0 sm:pr-3">
-          <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
-            <PackageCheck size={13} className="text-[#0D652D] shrink-0" />
-            Refund Amount
-          </p>
-
-          <p className="text-sm sm:text-base font-bold text-[#0D652D]">
-            {formatMoney(refundAmount || price || 0, currency)}
-          </p>
-        </div>
-
-        <div className="min-w-0 space-y-0.5">
-          <p className="text-xs font-medium text-[#6E6E6E] flex items-center gap-1">
-            <CalendarDays size={13} className="text-[#CE9F2D] shrink-0" />
-            Expected Date
-          </p>
-
-          <p className="text-xs sm:text-sm font-semibold text-[#1B1D60]">
-            {expectedDate || "—"}
-          </p>
-        </div>
-      </div>
-
-      <div className="shrink-0 pt-2 xl:pt-0 xl:pl-3 border-t xl:border-t-0 xl:border-l border-[#EFE5D2] flex items-center justify-end">
-        <button
-          type="button"
-          onClick={onTrackRequest}
-          className="w-full xl:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#CE9F2D] px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:opacity-90 transition-opacity"
-        >
-          <Truck size={14} />
-          <span>{trackLabel}</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
       </div>
     </article>
   );

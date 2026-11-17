@@ -19,6 +19,8 @@ import Loader from "../../../components/ui/Loader";
 import { CHECKOUT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { PageContainer } from "../../../components/ui/layout";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function CheckoutPage() {
   const {
     navigate,
@@ -149,13 +151,13 @@ export default function CheckoutPage() {
                       </div>
 
                       {!isBuyNowCheckout && (
-                        <button
+                        <DynamicButton
                           type="button"
                           onClick={() => excludeBlockedItem(blocker)}
                           className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
                         >
                           Exclude item
-                        </button>
+                        </DynamicButton>
                       )}
                     </div>
                   ))}
@@ -216,7 +218,7 @@ export default function CheckoutPage() {
                         Please add address to continue.
                       </p>
 
-                      <button
+                      <DynamicButton
                         type="button"
                         onClick={() =>
                           setValue("useNewAddress", true, {
@@ -227,7 +229,7 @@ export default function CheckoutPage() {
                       >
                         <Plus size={24} />
                         Add Address
-                      </button>
+                      </DynamicButton>
                     </div>
                   )}
 

@@ -45,7 +45,7 @@ export const DynamicButton = React.forwardRef(
       md: "h-10 px-4 text-base",
       lg: "h-12 px-6 text-lg",
       xl: "h-12 px-12 text-xl",
-      icon: "h-10 w-10",
+      icon: "h-10 w-10 px-0 text-base",
     };
 
     const shapes = {
@@ -54,10 +54,16 @@ export const DynamicButton = React.forwardRef(
       circle: "rounded-full",
     };
 
+    const hasExplicitSizing = /(?:^|\s)(?:h-|w-|min-h-|min-w-|p-|px-|py-|pt-|pr-|pb-|pl-)/.test(
+      className ?? "",
+    );
+    const isIconOnlyButton = size === "icon" || (!children && Boolean(leftIcon || rightIcon));
+    const shouldApplyDefaultSize = !hasExplicitSizing && (variant !== "unstyled" || isIconOnlyButton);
+
     const classes = cn(
       baseStyles,
       variants[variant],
-      sizes[size],
+      shouldApplyDefaultSize ? sizes[size] : "",
       shapes[shape],
       className,
     );
@@ -86,19 +92,31 @@ export const DynamicButton = React.forwardRef(
       }
     };
 
+    const isIconOnlyContent = !children && Boolean(leftIcon || rightIcon);
+
     const content = (
       <>
         {isLoading && (
           <SpinnerIcon className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" />
         )}
         {!isLoading && leftIcon && (
-          <span className="mr-2 inline-flex items-center justify-center shrink-0 self-center">
+          <span
+            className={cn(
+              "inline-flex items-center justify-center shrink-0 self-center",
+              isIconOnlyContent ? "mr-0" : "mr-2",
+            )}
+          >
             {leftIcon}
           </span>
         )}
         {children}
         {!isLoading && rightIcon && (
-          <span className="ml-2 inline-flex items-center justify-center shrink-0 self-center transition-transform duration-300">
+          <span
+            className={cn(
+              "inline-flex items-center justify-center shrink-0 self-center transition-transform duration-300",
+              isIconOnlyContent ? "ml-0" : "ml-2",
+            )}
+          >
             {rightIcon}
           </span>
         )}

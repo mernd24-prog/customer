@@ -3,6 +3,8 @@ import { ArrowUpRight } from "lucide-react";
 import { cn } from "../../../utils/common";
 import { getOptimizedCloudinaryUrl } from "../../../utils/ecommerce";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export const getValidImage = (...images) => {
   for (const image of images) {
     if (
@@ -113,13 +115,15 @@ export default function BrandCard({
 
   if (onClick && !href) {
     return (
-      <button
+      <DynamicButton
         type="button"
+        variant="unstyled"
+        size="none"
         onClick={onClick}
         className="block h-full w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
       >
         {content}
-      </button>
+      </DynamicButton>
     );
   }
 

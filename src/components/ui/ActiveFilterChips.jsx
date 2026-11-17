@@ -1,6 +1,8 @@
 import { X } from "lucide-react";
 import { useState, useRef, useLayoutEffect } from "react";
 
+
+import DynamicButton from "./button/button.jsx";
 export default function ActiveFilterChips({
   filters = [],
   onRemove,
@@ -38,7 +40,7 @@ export default function ActiveFilterChips({
       >
         <div ref={contentRef} className="flex flex-wrap items-center gap-2">
           {filters.map((filter) => (
-            <button
+            <DynamicButton
               key={filter.key}
               type="button"
               onClick={() => onRemove?.(filter.key, filter)}
@@ -63,19 +65,19 @@ export default function ActiveFilterChips({
                 strokeWidth={1.6}
                 className="shrink-0 text-[#6B7280] transition-colors group-hover:text-[#172033]"
               />
-            </button>
+            </DynamicButton>
           ))}
         </div>
       </div>
 
       {isOverflowing && (
-        <button
+        <DynamicButton
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
           className="w-fit text-xs font-semibold uppercase tracking-wide text-[#2874F0] hover:underline"
         >
           {expanded ? "Show less" : "Show more"}
-        </button>
+        </DynamicButton>
       )}
     </div>
   );

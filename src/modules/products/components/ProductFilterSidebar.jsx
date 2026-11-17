@@ -8,6 +8,7 @@ import {
 } from "react";
 import { ChevronDown, Search, Star, X } from "lucide-react";
 import { Check } from "lucide-react";
+import DynamicButton from "../../../components/ui/button/button";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 
 const FILTER_ROW_CLASS =
@@ -90,19 +91,23 @@ export function FilterSection({
             })()}
             className="min-w-0 flex-1 border-none bg-transparent text-[13px] font-medium text-[#2E2E2E] outline-none placeholder:text-[#8D8F98]"
           />
-          <button
+          <DynamicButton
             type="button"
+            variant="unstyled"
+            size="none"
             onClick={closeSearch}
             className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[#5960B8] transition-colors duration-200 hover:bg-white"
             aria-label={`Close ${title} search`}
           >
             <X size={14} />
-          </button>
+          </DynamicButton>
         </div>
       ) : (
         <div className="flex w-full items-center justify-between gap-2">
-          <button
+          <DynamicButton
             type="button"
+            variant="unstyled"
+            size="none"
             onClick={() => setOpen((value) => !value)}
             className="flex min-w-0 flex-1 items-center justify-between gap-2 text-left font-dm-sans text-[15px] font-semibold leading-none tracking-[-0.01em] text-[#1B1D60] transition-colors duration-200 sm:text-[16px]"
           >
@@ -113,17 +118,19 @@ export function FilterSection({
                 open ? "rotate-180" : ""
               }`}
             />
-          </button>
+          </DynamicButton>
 
           {searchable && (
-            <button
+            <DynamicButton
               type="button"
+              variant="unstyled"
+              size="none"
               onClick={() => setSearchOpen(true)}
               className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F4F4F6] text-[#6F7480] transition-colors duration-200 hover:bg-[#ECECF0]"
               aria-label={`Search ${title}`}
             >
               <Search size={14} />
-            </button>
+            </DynamicButton>
           )}
         </div>
       )}
@@ -396,13 +403,15 @@ export function PriceRangeFilter({
       </div>
 
       {(min || max) && (
-        <button
+        <DynamicButton
           type="button"
+          variant="unstyled"
+          size="none"
           onClick={clear}
           className="block mx-auto text-xs font-semibold text-[#CE9F2D] hover:underline"
         >
           Clear Price Filter
-        </button>
+        </DynamicButton>
       )}
     </form>
   );
@@ -461,8 +470,10 @@ function FilterOptionGroup({
 
   return (
     <div className={`max-w-full overflow-hidden ${isRoot ? "mb-1" : "mb-0.5"}`}>
-      <button
+      <DynamicButton
         type="button"
+        variant="unstyled"
+        size="none"
         onClick={() => setExpanded((prev) => !prev)}
         className={`${headerClass} py-1.5`}
       >
@@ -479,7 +490,7 @@ function FilterOptionGroup({
             className={`shrink-0 text-[#3E4093] transition-transform duration-300 ease-in-out ${expanded ? "rotate-180" : ""}`}
           />
         </div>
-      </button>
+      </DynamicButton>
 
       {expanded && (
         <div
@@ -737,13 +748,15 @@ export function OptionFilter({
       </div>
 
       {allowViewMoreForFiltered && (
-        <button
+        <DynamicButton
           type="button"
+          variant="unstyled"
+          size="none"
           onClick={() => setExpanded((value) => !value)}
           className="pt-2 text-left text-[13px] font-semibold leading-none text-[#1B1D60] transition-colors duration-200"
         >
           {expanded ? "View Less" : "View More"}
-        </button>
+        </DynamicButton>
       )}
     </div>
   );
@@ -944,13 +957,15 @@ export default function ProductFilterSidebar({
           <h3 className="text-[15px] font-semibold normal-case tracking-[-0.01em] text-[#1B1D60]  sm:text-[20px]">Filters</h3>
 
           {onClearAll && (
-            <button
+            <DynamicButton
               type="button"
+              variant="unstyled"
+              size="none"
               onClick={onClearAll}
               className="inline-flex h-[26px] shrink-0 items-center justify-center rounded-[12px] text-[12px] font-semibold text-[#1B1D60] sm:text-[13px]"
             >
               Clear All
-            </button>
+            </DynamicButton>
           )}
         </div>
       </div>

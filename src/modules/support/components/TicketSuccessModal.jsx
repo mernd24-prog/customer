@@ -3,6 +3,8 @@ import { CheckCircle2 } from "lucide-react";
 import BaseModal from "../../../components/ui/overlay/BaseModal";
 import { useSupportController } from "../controllers/useSupportController";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export function TicketSuccessModal() {
   const { ticketSuccessModalOpen, ticketSuccessModalData, handleCloseSuccessModal } = useSupportController();
 
@@ -29,13 +31,13 @@ export function TicketSuccessModal() {
           )}
         </p>
 
-        <button
+        <DynamicButton
           type="button"
           onClick={handleCloseSuccessModal}
           className="w-full h-11 rounded-lg bg-[#CE9F2D] text-sm font-bold text-white transition hover:bg-[#C9961F] active:scale-[0.98]"
         >
           Done
-        </button>
+        </DynamicButton>
       </div>
     </BaseModal>
   );

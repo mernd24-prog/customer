@@ -8,6 +8,8 @@ import { AUTH_ROUTES } from "../routes/apiRoutes";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import useResetPassword from "../controllers/useResetPassword";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function ResetPasswordPage() {
   const {
     register,
@@ -87,13 +89,13 @@ export default function ResetPasswordPage() {
 
           <p className="text-center  text-[0.8rem] text-muted">
             Didn&apos;t receive the OTP?{" "}
-            <button
+            <DynamicButton
               type="button"
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
               onClick={handleResendOtp}
             >
               Resend OTP
-            </button>
+            </DynamicButton>
           </p>
 
           <p className="text-center  text-[0.8rem] text-muted">

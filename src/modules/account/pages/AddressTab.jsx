@@ -6,6 +6,8 @@ import SharedAddressCard from "../../common/components/address/SharedAddressCard
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useAddressBook } from "../controllers/useAddressBook";
 import { Trash2 } from "lucide-react";
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function AddressTab({ user }) {
   const {
     loading,
@@ -100,14 +102,14 @@ export default function AddressTab({ user }) {
 
           {/* Show header button only when an address exists */}
           {addresses.length > 0 && (
-            <button
+            <DynamicButton
               type="button"
               onClick={handleToggleAddForm}
               className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none sm:w-auto sm:text-sm"
             >
               {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
               <span>{showAddForm ? "Close Form" : "Add New Address"}</span>
-            </button>
+            </DynamicButton>
           )}
         </header>
 
@@ -188,7 +190,7 @@ export default function AddressTab({ user }) {
             {/* Show More / Show Less Addresses */}
             {addresses.length > 4 && (
               <div className="flex justify-center border-t border-[#E7D9B8] px-4 py-4">
-                <button
+                <DynamicButton
                   type="button"
                   onClick={handleShowAllAddresses}
                   className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-5 py-2 text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF8E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2"
@@ -204,7 +206,7 @@ export default function AddressTab({ user }) {
                       <ChevronDown size={16} />
                     </>
                   )}
-                </button>
+                </DynamicButton>
               </div>
             )}
           </div>
@@ -223,14 +225,14 @@ export default function AddressTab({ user }) {
               Please add an address to continue.
             </p>
 
-            <button
+            <DynamicButton
               type="button"
               onClick={handleToggleAddForm}
               className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2"
             >
               <Plus size={17} />
               Add Address
-            </button>
+            </DynamicButton>
           </div>
         )}
       </section>

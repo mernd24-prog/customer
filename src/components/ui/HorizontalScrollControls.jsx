@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "../../utils/common";
 
+
+import DynamicButton from "./button/button.jsx";
 export default function HorizontalScrollControls({
   children,
   className = "",
@@ -86,7 +88,7 @@ export default function HorizontalScrollControls({
   return (
     <div className={cn("relative", className)}>
       {showButtons && (
-        <button
+        <DynamicButton
           type="button"
           aria-label="Scroll left"
           onClick={() => scroll(-1)}
@@ -99,7 +101,7 @@ export default function HorizontalScrollControls({
           )}
         >
           <ChevronLeft className="h-4 w-4 stroke-[2.5]" />
-        </button>
+        </DynamicButton>
       )}
 
       <div
@@ -198,7 +200,7 @@ export default function HorizontalScrollControls({
       </div>
 
       {showButtons && (
-        <button
+        <DynamicButton
           type="button"
           aria-label="Scroll right"
           onClick={() => scroll(1)}
@@ -211,7 +213,7 @@ export default function HorizontalScrollControls({
           )}
         >
           <ChevronRight className="h-4 w-4 stroke-[2.5]" />
-        </button>
+        </DynamicButton>
       )}
     </div>
   );

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, Star, ThumbsUp } from "lucide-react";
+import DynamicButton from "../../components/ui/button/button";
 import CustomDropdown from "../../components/ui/CustomDropdown";
 import ReviewMediaLightbox from "../../modules/products/components/ReviewMediaLightbox";
 import Seo from "../../components/ui/Seo";
@@ -169,9 +170,11 @@ function RatingSummary({
         {/* Rating Distribution */}
         <div className="min-w-0 space-y-1.5 pl-1">
           {STAR_VALUES.map((star) => (
-            <button
+            <DynamicButton
               key={star}
               type="button"
+              variant="unstyled"
+              size="none"
               onClick={() => onFilter(star)}
               className={`block w-full text-left transition-opacity ${
                 ratingFilter === star
@@ -184,7 +187,7 @@ function RatingSummary({
                 count={ratingDist[star] ?? ratingDist[String(star)] ?? 0}
                 total={reviewCount}
               />
-            </button>
+            </DynamicButton>
           ))}
         </div>
       </div>
@@ -306,8 +309,10 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       {media.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {media.slice(0, 5).map((url, index) => (
-            <button
+            <DynamicButton
               type="button"
+              variant="unstyled"
+              size="none"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
               className="block h-20 w-20 overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
@@ -320,7 +325,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
                 alt={`Review media ${index + 1}`}
                 className="h-full w-full object-cover"
               />
-            </button>
+            </DynamicButton>
           ))}
         </div>
       )}
@@ -334,8 +339,10 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
           )}
         </p>
 
-        <button
+        <DynamicButton
           type="button"
+          variant="unstyled"
+          size="none"
           onClick={() => onHelpful(reviewId)}
           disabled={!reviewId || isOwn}
           className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
@@ -349,7 +356,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
             className={alreadyVoted ? "fill-gold text-gold" : ""}
           />
           <span>{helpfulVotes}</span>
-        </button>
+        </DynamicButton>
       </div>
 
       {/* Review Image Lightbox */}
@@ -450,27 +457,31 @@ function ReviewPagination({ page, totalPages, onPrev, onNext }) {
 
   return (
     <div className="mt-6 flex items-center justify-between gap-4">
-      <button
+      <DynamicButton
         type="button"
+        variant="unstyled"
+        size="none"
         disabled={page <= 1}
         onClick={onPrev}
         className="rounded-[6px] border border-border px-4 py-2 text-sm font-semibold text-ink disabled:opacity-40 hover:enabled:bg-cream"
       >
         Previous
-      </button>
+      </DynamicButton>
 
       <span className="text-xs text-muted">
         Page {page} Of {totalPages}
       </span>
 
-      <button
+      <DynamicButton
         type="button"
+        variant="unstyled"
+        size="none"
         disabled={page >= totalPages}
         onClick={onNext}
         className="rounded-[6px] border border-border px-4 py-2 text-sm font-semibold text-ink disabled:opacity-40 hover:enabled:bg-cream"
       >
         Next
-      </button>
+      </DynamicButton>
     </div>
   );
 }

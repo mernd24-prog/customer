@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import DynamicButton from "../../components/ui/button/button";
 
 import DropdownHeader from "./DropdownHeader";
 
@@ -13,7 +14,7 @@ function MenuItem({ item }) {
         href={item.path}
         target="_blank"
         rel="noreferrer"
-        className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
+        className={`flex w-full items-center justify-start gap-3 px-4 py-3 text-left text-sm font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
       >
         {item.icon && (
           <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>
@@ -25,22 +26,25 @@ function MenuItem({ item }) {
 
   if (item.action) {
     return (
-      <button
+      <DynamicButton
+        as="button"
+        type="button"
+        variant="unstyled"
         onClick={item.action}
-        className={`flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
+        className={`flex w-full items-center justify-start gap-3 px-4 py-3 text-left text-sm font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
       >
         {item.icon && (
           <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>
         )}
         <span>{item.label}</span>
-      </button>
+      </DynamicButton>
     );
   }
 
   return (
     <Link
       to={item.path || "#"}
-      className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
+      className={`flex w-full items-center justify-start gap-3 px-4 py-3 text-left text-sm font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
     >
       {item.icon && (
         <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>

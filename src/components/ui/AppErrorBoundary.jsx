@@ -1,5 +1,7 @@
 import React from "react";
 
+
+import DynamicButton from "./button/button.jsx";
 export default class AppErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -29,13 +31,13 @@ export default class AppErrorBoundary extends React.Component {
             <p className="mt-2  text-sm text-muted">
               We Hit an Unexpected Issue While Rendering This Page.
             </p>
-            <button
+            <DynamicButton
               type="button"
               onClick={this.handleReload}
               className="mt-5 rounded bg-ink px-5 py-2 text-sm font-semibold text-white"
             >
               Reload
-            </button>
+            </DynamicButton>
           </div>
         </main>
       );

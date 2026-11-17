@@ -9,6 +9,8 @@ import { useNotificationPreferences } from "../controllers/useNotificationPrefer
 import { PreferenceChannelCard } from "../components/PreferenceChannelCard";
 import { PreferenceScheduleFields } from "../components/PreferenceScheduleFields";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export function PreferencesPage() {
   const {
     state,
@@ -96,7 +98,7 @@ export function PreferencesPage() {
 
             {/* Save Preferences Button */}
             <div className="mt-8 flex items-center justify-start">
-              <button
+              <DynamicButton
                 type="submit"
                 disabled={isSubmitting}
                 className={cn(
@@ -113,7 +115,7 @@ export function PreferencesPage() {
                   {isSubmitting ? "Saving Preferences..." : "Save Preferences"}
                 </span>
                 <ChevronRight size={16} className="text-white/90 shrink-0" />
-              </button>
+              </DynamicButton>
             </div>
           </form>
         </ApiState>

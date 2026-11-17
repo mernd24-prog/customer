@@ -8,6 +8,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+
+import DynamicButton from "../ui/button/button.jsx";
 export { SwiperSlide };
 
 export default function CustomSwiper({
@@ -61,7 +63,7 @@ export default function CustomSwiper({
     <div className={cn("relative group/custom-swiper w-full", containerClassName)}>
       {/* Built-in Navigation Previous Button */}
       {showNavigation && !prevEl && (
-        <button
+        <DynamicButton
           ref={internalPrevRef}
           type="button"
           aria-label="Previous slide"
@@ -92,7 +94,7 @@ export default function CustomSwiper({
           )}
         >
           <ChevronLeft className="h-6 w-6 stroke-[2]" />
-        </button>
+        </DynamicButton>
       )}
 
       <Swiper
@@ -150,7 +152,7 @@ export default function CustomSwiper({
 
       {/* Built-in Navigation Next Button */}
       {showNavigation && !nextEl && (
-        <button
+        <DynamicButton
           ref={internalNextRef}
           type="button"
           aria-label="Next slide"
@@ -181,7 +183,7 @@ export default function CustomSwiper({
           )}
         >
           <ChevronRight className="h-6 w-6 stroke-[2]" />
-        </button>
+        </DynamicButton>
       )}
 
       {/* Custom Pagination Container */}

@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { EmptyState, PageContainer, Seo } from "../../../components/ui";
-
+import { useNavigate } from "react-router-dom";
 import { WatchlistItemCard } from "../components/WatchlistItemCard";
 import { useWishlistActions } from "../../products/controllers/actions";
 import { useWatchlistProducts } from "../../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { wishlistItemKey } from "../../../utils/ecommerce";
-import { FaAngleRight } from "react-icons/fa6";
 import { ContinueShoppingButton } from "../../../components/ui/button/static";
 import { Loader2 } from "lucide-react";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
@@ -72,102 +70,97 @@ export default function WatchlistPage() {
     <>
       <Seo title="My Wishlist | Sam Global" />
 
-     <PageContainer>
-          <Breadcrumbs items={breadcrumbItems} />
+      <PageContainer>
+        <Breadcrumbs items={breadcrumbItems} />
 
-          {isLoading ? (
-            <div className="mt-8 lg:mt-10">
-              <SkeletonLoader
-                count={products.length || 4}
-                containerClass="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6"
-                wrapperClass=""
-                layout={[
-                  {
-                    type: "col",
-                    className:
-                      "rounded-[12px] border border-border overflow-hidden bg-white p-3",
-                    children: [
-                      {
-                        type: "box",
-                        width: "100%",
-                        height: "180px",
-                        rounded: "rounded-[8px]",
-                      },
-                      {
-                        type: "col",
-                        className: "mt-3",
-                        children: [
-                          { type: "box", width: "85%", height: "14px" },
-                          {
-                            type: "box",
-                            width: "50%",
-                            height: "16px",
-                            className: "mt-2",
-                          },
-                          {
-                            type: "box",
-                            width: "100%",
-                            height: "32px",
-                            className: "mt-3 rounded-md",
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ]}
-              />
-            </div>
-          ) : products.length > 0 ? (
-            <>
-              <div className="mt-8 lg:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
-                {visibleProducts.map((product) => {
-                  const id = wishlistItemKey(product.wishlistEntry || product);
-
-                  return (
-                    <WatchlistItemCard
-                      key={id}
-                      product={product}
-                      onAddToCart={() => handleAddToCart(product)}
-                      onRemove={() => handleRemove(product)}
-                    />
-                  );
-                })}
-              </div>
-
-              {/* Infinite scroll sentinel */}
-              {hasMore && (
-                <div
-                  ref={sentinelRef}
-                  className="mt-8 flex justify-center items-center py-4"
-                >
-                  <Loader2
-                    className="animate-spin text-[#CE9F2D]"
-                    size={28}
-                    strokeWidth={2}
-                  />
-                </div>
-              )}
-
-              <div className="flex items-center gap-3 mt-6 lg:mt-8">
-                <Link
-                  to="/products"
-                  className="wishlist-continue-button inline-flex min-h-[42px] items-center justify-center gap-3 rounded-md border border-[#18156D]/20 bg-white px-6 py-2 text-base font-semibold text-[#3E4093] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E4093]"
-                >
-                  Continue Shopping
-                  <FaAngleRight className="shrink-0 text-xs" aria-hidden="true" />
-                </Link>
-              </div>
-            </>
-          ) : (
-            <EmptyState
-              title="Your Wishlist Is Empty"
-              description="Save items you love to buy later."
-              actionLabel="Continue Shopping"
-              onAction={() => navigate("/products")}
+        {isLoading ? (
+          <div className="mt-8 lg:mt-10">
+            <SkeletonLoader
+              count={products.length || 4}
+              containerClass="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6"
+              wrapperClass=""
+              layout={[
+                {
+                  type: "col",
+                  className:
+                    "rounded-[12px] border border-border overflow-hidden bg-white p-3",
+                  children: [
+                    {
+                      type: "box",
+                      width: "100%",
+                      height: "180px",
+                      rounded: "rounded-[8px]",
+                    },
+                    {
+                      type: "col",
+                      className: "mt-3",
+                      children: [
+                        { type: "box", width: "85%", height: "14px" },
+                        {
+                          type: "box",
+                          width: "50%",
+                          height: "16px",
+                          className: "mt-2",
+                        },
+                        {
+                          type: "box",
+                          width: "100%",
+                          height: "32px",
+                          className: "mt-3 rounded-md",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ]}
             />
-          )}
-        </PageContainer>
+          </div>
+        ) : products.length > 0 ? (
+          <>
+            <div className="mt-8 lg:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
+              {visibleProducts.map((product) => {
+                const id = wishlistItemKey(product.wishlistEntry || product);
 
+                return (
+                  <WatchlistItemCard
+                    key={id}
+                    product={product}
+                    onAddToCart={() => handleAddToCart(product)}
+                    onRemove={() => handleRemove(product)}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Infinite scroll sentinel */}
+            {hasMore && (
+              <div
+                ref={sentinelRef}
+                className="mt-8 flex justify-center items-center py-4"
+              >
+                <Loader2
+                  className="animate-spin text-[#CE9F2D]"
+                  size={28}
+                  strokeWidth={2}
+                />
+              </div>
+            )}
+
+            <div className="flex items-center justify-center gap-3 mt-6 lg:mt-8">
+              <ContinueShoppingButton to="/products">
+                Continue Shopping
+              </ContinueShoppingButton>
+            </div>
+          </>
+        ) : (
+          <EmptyState
+            title="Your Wishlist Is Empty"
+            description="Save items you love to buy later."
+            actionLabel="Continue Shopping"
+            onAction={() => navigate("/products")}
+          />
+        )}
+      </PageContainer>
     </>
   );
 }

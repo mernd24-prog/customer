@@ -10,6 +10,8 @@ import { capitalizeFirst } from "../../../utils/stringUtils";
 import { ProductGallery } from "../components/ImageGallery";
 import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 const decodeHtml = (html) => {
   if (!html || typeof html !== "string") return html || "";
   if (html.includes("&lt;") && html.includes("&gt;")) {
@@ -67,14 +69,14 @@ function ProductDescription({ content }) {
         dangerouslySetInnerHTML={{ __html: normalizeDescriptionHtml(content) }}
       />
       {canExpand && (
-        <button
+        <DynamicButton
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
           className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-navy hover:text-[#CE9F2D] transition-colors"
         >
           <span>{expanded ? "Read Less" : "Read More"}</span>
           {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-        </button>
+        </DynamicButton>
       )}
     </div>
   );
@@ -174,7 +176,7 @@ export default function ProductInfoSection({
   return (
     <div className="product-details-accordion min-w-0 border border-border rounded-lg overflow-hidden bg-white shadow-xs">
       {/* ── Flipkart-style Header: Title + Subtitle + Square Chevron Button ── */}
-      <button
+      <DynamicButton
         type="button"
         onClick={() => setCardOpen((prev) => !prev)}
         className="w-full flex items-center justify-between px-5 py-2 bg-white hover:bg-surface-soft transition-colors text-left"
@@ -191,7 +193,7 @@ export default function ProductInfoSection({
             className={`product-details-chevron ${cardOpen ? "rotate-180" : "rotate-0"}`}
           />
         </div>
-      </button>
+      </DynamicButton>
 
       <div
         className="product-details-content overflow-hidden"
@@ -216,7 +218,7 @@ export default function ProductInfoSection({
             {tabs.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
-                <button
+                <DynamicButton
                   key={tab.key}
                   type="button"
                   data-scroll-selected={isActive ? "true" : undefined}
@@ -228,7 +230,7 @@ export default function ProductInfoSection({
                   }`}
                 >
                   {tab.label}
-                </button>
+                </DynamicButton>
               );
             })}
           </HorizontalScrollControls>
@@ -408,13 +410,13 @@ export default function ProductInfoSection({
       {isModalOpen &&
         createPortal(
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4">
-            <button
+            <DynamicButton
               type="button"
               onClick={() => setIsModalOpen(false)}
               className="absolute top-6 right-6 z-[10000] w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200"
             >
               <X size={24} />
-            </button>
+            </DynamicButton>
             <div className="flex h-[85vh] w-full max-w-[1000px] items-center justify-center">
               <ProductGallery
                 images={product.commonImages.map((img) => getImageUrlFromValue(img))}

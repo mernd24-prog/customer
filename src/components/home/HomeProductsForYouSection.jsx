@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { ChevronDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
 import ProductCard from "../../modules/products/components/ProductCard";
@@ -15,6 +16,8 @@ import { getPagination } from "../../utils/filterUtils";
 import SectionContainer from "../ui/SectionContainer";
 import { fetchProducts } from "../../modules/products/slices/productSlice";
 
+
+import DynamicButton from "../ui/button/button.jsx";
 export default function HomeProductsForYouSection({
   title = "Featured Products",
   description = "",
@@ -159,7 +162,7 @@ export default function HomeProductsForYouSection({
         </div>
         {page < totalPages && (
           <div className="mt-8 flex items-center justify-center">
-            <button
+            <DynamicButton
               type="button"
               onClick={loadNextPage}
               disabled={isLoadingMore}
@@ -171,9 +174,12 @@ export default function HomeProductsForYouSection({
                   <span>Loading...</span>
                 </>
               ) : (
-                <span>Load More</span>
+                <>
+                  <span>Load More</span>
+                  <ChevronDown size={14} strokeWidth={2.5} className="transition-transform duration-200" />
+                </>
               )}
-            </button>
+            </DynamicButton>
           </div>
         )}
       </div>

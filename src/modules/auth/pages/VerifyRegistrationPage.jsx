@@ -6,6 +6,8 @@ import OtpInput from "../../../components/ui/OtpInput";
 import Seo from "../../../components/ui/Seo";
 import useVerifyRegistration from "../controllers/useVerifyRegistration";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function VerifyRegistrationPage() {
   const {
     register,
@@ -92,14 +94,14 @@ export default function VerifyRegistrationPage() {
 
           <p className="text-center  text-[0.8rem] text-muted">
             Didn&apos;t receive the code?{" "}
-            <button
+            <DynamicButton
               type="button"
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
               onClick={handleResendOtp}
               disabled={loading}
             >
               {resending ? "Sending OTP…" : "Resend OTP"}
-            </button>
+            </DynamicButton>
           </p>
         </form>
       </AuthCard>

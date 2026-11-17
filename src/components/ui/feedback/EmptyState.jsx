@@ -1,5 +1,5 @@
 
-import { ContinueShoppingButton } from "../../ui/button/static";
+import { ContinueShoppingButton ,SolidLargeButton } from "../../ui/button/static";
 import { ArrowRight } from "lucide-react";
 import EmptyStateIllustration from "./EmptyStateIllustration";
 import ReviewEmptyIllustration from "./ReviewEmptyIllustration";
@@ -57,16 +57,20 @@ className="h-28 w-28 object-contain mix-blend-multiply xs:h-32 xs:w-32 sm:h-40 s
       </p>
 
       {resolvedActionLabel && resolvedAction && (
-        <div className="mt-6 flex justify-center">
-          <ContinueShoppingButton
-            onClick={resolvedAction}
-            className={`!mx-0 !mt-0 !h-[44px] sm:!h-[46px] !w-auto px-7 sm:px-8 whitespace-nowrap !rounded-full !bg-[#3E4093] !text-white !border-[#3E4093] hover:!bg-[#32347C] hover:!border-[#32347C] hover:!text-white shadow-sm hover:shadow-md ${buttonClassName}`}
-          >
-            {resolvedActionLabel}
-            {/* <ArrowRight size={16} aria-hidden="true" /> */}
-          </ContinueShoppingButton>
-        </div>
-      )}
+  <div className="mt-6 flex justify-center">
+    <SolidLargeButton
+      onClick={resolvedAction}
+      className={`gap-2 ${buttonClassName}`}
+    >
+      <span>{resolvedActionLabel}</span>
+      <ArrowRight
+        size={16}
+        className="shrink-0"
+        aria-hidden="true"
+      />
+    </SolidLargeButton>
+  </div>
+)}
 
       {children && <div className="mt-6 w-full">{children}</div>}
     </div>

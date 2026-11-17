@@ -1,5 +1,5 @@
 import { Download, FileText } from "lucide-react";
-import Button from "../../../components/ui/buttons/Button";
+import { OrderActionButton } from "../../../components/ui/button/buttonSpecialized";
 
 export default function OrderDocuments({
   documents = [],
@@ -46,18 +46,16 @@ export default function OrderDocuments({
                     Pending
                   </span>
                 ) : (
-                  <Button
-                    variant="secondary"
+                  <OrderActionButton
                     size="sm"
-                    loading={downloadingId === document.downloadPath}
+                    isLoading={downloadingId === document.downloadPath}
                     onClick={() =>
                       handleDownload?.(document.downloadPath, document.filename)
                     }
-                    className="!min-h-9 !h-9 max-w-full shrink-0 gap-1.5 rounded-md border border-[#CE9F2D] bg-[#FFF9EA] px-3 py-2 text-xs font-semibold leading-none text-[#1B1D60] transition-colors hover:!bg-[#F8EDCF] sm:text-sm"
+                    leftIcon={<Download size={14} />}
                   >
-                    <Download size={14} />
                     Download
-                  </Button>
+                  </OrderActionButton>
                 )}
               </div>
             ))}

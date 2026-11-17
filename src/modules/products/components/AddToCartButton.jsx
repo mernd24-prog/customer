@@ -1,6 +1,8 @@
 import { ShoppingCart } from "lucide-react";
 import { cn } from "../../../utils/common";
 
+
+import DynamicButton from "../../../components/ui/button/button.jsx";
 export default function AddToCartButton({
   label = "Add to cart",
   disabled = false,
@@ -9,7 +11,7 @@ export default function AddToCartButton({
   className = "",
 }) {
   return (
-    <button
+    <DynamicButton
       type="button"
       disabled={disabled}
       title={label}
@@ -23,6 +25,6 @@ export default function AddToCartButton({
     >
       <ShoppingCart size={18} />
       {!compact && <span>{label}</span>}
-    </button>
+    </DynamicButton>
   );
 }

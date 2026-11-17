@@ -1,6 +1,8 @@
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
+
+import DynamicButton from "./button/button.jsx";
 export default function ScrollTopButton() {
   const [visible, setVisible] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -34,7 +36,7 @@ export default function ScrollTopButton() {
   if (!visible || isChatOpen) return null;
 
   return (
-    <button
+    <DynamicButton
       type="button"
       aria-label="Scroll to Top"
       title="Scroll to Top"
@@ -42,6 +44,6 @@ export default function ScrollTopButton() {
       className="fixed bottom-[94px] right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-[#1B1D60] shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] border border-gold transition-[color,background-color,border-color,box-shadow] duration-300 ease-out hover:bg-yellow-400  hover:shadow-[0_6px_20px_rgba(0,0,0,0.16)] focus:outline-none focus:ring-4 focus:ring-yellow-200"
     >
       <ArrowUp size={22} strokeWidth={2.5} />
-    </button>
+    </DynamicButton>
   );
 }

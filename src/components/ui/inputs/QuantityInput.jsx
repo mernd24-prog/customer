@@ -1,5 +1,7 @@
 import { cn } from "../../../utils/common";
 
+
+import DynamicButton from "../button/button.jsx";
 export default function QuantityInput({
   value = 1,
   min = 1,
@@ -46,7 +48,7 @@ export default function QuantityInput({
         className,
       )}
     >
-      <button
+      <DynamicButton
         type="button"
         onClick={handleDecrease}
         disabled={atMin || disabled}
@@ -57,7 +59,7 @@ export default function QuantityInput({
         )}
       >
         −
-      </button>
+      </DynamicButton>
       <span
         className={cn(
           "flex items-center justify-center border-x border-border font-semibold text-ink",
@@ -66,7 +68,7 @@ export default function QuantityInput({
       >
         {value}
       </span>
-      <button
+      <DynamicButton
         type="button"
         onClick={handleIncrease}
         disabled={atMax || disabled}
@@ -77,7 +79,7 @@ export default function QuantityInput({
         )}
       >
         +
-      </button>
+      </DynamicButton>
     </div>
   );
 }

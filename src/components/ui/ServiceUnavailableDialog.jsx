@@ -5,6 +5,8 @@ import {
   isServiceUnavailable,
 } from "../../api/client";
 
+
+import DynamicButton from "./button/button.jsx";
 const COPY = {
   offline: {
     title: "You're offline",
@@ -89,14 +91,14 @@ export default function ServiceUnavailableDialog() {
         aria-describedby="service-status-message"
         className="pointer-events-auto relative w-full max-w-md overflow-hidden rounded-lg border border-[#15115d] bg-[var(--customer-cream)] shadow-2xl"
       >
-        <button
+        <DynamicButton
           type="button"
           aria-label="Dismiss service status"
           onClick={() => setFailure(null)}
           className="absolute right-4 top-5 rounded-lg p-2 text-[var(--customer-muted)] transition hover:bg-white hover:text-[var(--customer-navy)]"
         >
           <X size={19} />
-        </button>
+        </DynamicButton>
 
         <div className="px-7 py-5 text-center sm:px-9">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-lg bg-[var(--customer-gold-soft)] text-[var(--customer-gold-dark)] shadow-sm">
@@ -117,7 +119,7 @@ export default function ServiceUnavailableDialog() {
             </p>
           ) : null}
 
-          <button
+          <DynamicButton
             type="button"
             onClick={retry}
             disabled={checking || failure.kind === "offline"}
@@ -125,7 +127,7 @@ export default function ServiceUnavailableDialog() {
           >
             <RefreshCw size={17} className={checking ? "animate-spin" : ""} />
             {checking ? "Checking connection…" : failure.kind === "offline" ? "Waiting for internet" : "Try again"}
-          </button>
+          </DynamicButton>
           <p className="mt-4 text-xs text-[var(--customer-muted)]">
             This notice will close automatically when service is restored.
           </p>

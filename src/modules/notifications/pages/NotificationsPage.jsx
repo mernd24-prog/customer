@@ -10,7 +10,7 @@ import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPreset
 import { useNotifications } from "../controllers/useNotifications";
 import { NotificationCard } from "../components/NotificationCard";
 import { NotificationFilterBar } from "../components/NotificationFilterBar";
-
+import { ContinueShoppingButton } from "../../../components/ui/button/static";
 const BREADCRUMB_ITEMS = [
   { label: "Home", href: "/" },
   { label: "Notifications", href: "/notifications" },
@@ -81,29 +81,31 @@ export function NotificationsPage() {
 
                 {totalPages > 1 && (
                   <div className="flex justify-center py-4">
-                    <button
+                    <ContinueShoppingButton
                       type="button"
                       onClick={
                         page >= totalPages ? handleShowLess : handleLoadMore
                       }
                       disabled={loading}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-[#D9DDE8] bg-white px-5 py-2 text-sm font-semibold text-[#1B1D60] shadow-sm transition hover:bg-[#F3F3F7] disabled:opacity-50"
+                      rightIcon={
+                        loading ? undefined : (
+                          <ChevronDown
+                            size={14}
+                            strokeWidth={2.5}
+                            className={`transition-transform duration-200 ${
+                              page >= totalPages ? "rotate-180" : ""
+                            }`}
+                          />
+                        )
+                      }
+                      className="min-h-[42px] px-6 text-sm lg:text-base"
                     >
                       {loading
                         ? "Loading..."
                         : page >= totalPages
                           ? "Show Less"
                           : "Load More"}
-                      {!loading && (
-                        <ChevronDown
-                          size={14}
-                          strokeWidth={2.5}
-                          className={`transition-transform duration-200 ${
-                            page >= totalPages ? "rotate-180" : ""
-                          }`}
-                        />
-                      )}
-                    </button>
+                    </ContinueShoppingButton>
                   </div>
                 )}
               </div>

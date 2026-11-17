@@ -13,6 +13,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import ProductPriceBlock from "../../products/components/ProductPriceBlock";
 import ProductStockStatus from "../../products/components/ProductStockStatus";
 import StarRating from "../../../components/ui/display/StarRating";
+import DynamicButton from "../../../components/ui/button/button";
 
 export default function CartItemCard({
   item,
@@ -248,8 +249,10 @@ export default function CartItemCard({
       {/* Product actions */}
       <div className="grid grid-cols-3 divide-x divide-[#EAE6DC] border-t border-[#E9DFC8] bg-[#F8F5EE]">
         {/* Save for later */}
-        <button
+        <DynamicButton
+          as="button"
           type="button"
+          variant="unstyled"
           onClick={handleSaveForLater}
           disabled={isWishlistAction && (isWishlisted || isSaving)}
           aria-label={isWishlisted ? "Wishlisted" : saveForLaterLabel}
@@ -263,22 +266,26 @@ export default function CartItemCard({
             fill={isWishlisted ? "currentColor" : "none"}
           />
           <span className="truncate">{isWishlisted ? "Saved" : "Save"}</span>
-        </button>
+        </DynamicButton>
 
         {/* Remove */}
-        <button
+        <DynamicButton
+          as="button"
           type="button"
+          variant="unstyled"
           onClick={() => onRemove?.(item?.id)}
           aria-label={removeLabel}
           className="flex min-w-0 min-h-[52px] flex-col items-center justify-center gap-1 px-1 py-1.5 text-[10px] font-semibold text-[#51545A] transition-colors hover:bg-[#F5F0E7] hover:text-[#1B1D60] sm:min-h-[36px] sm:flex-row sm:gap-2 sm:px-2 sm:py-1 sm:text-xs"
         >
           <Trash2 size={15} className="shrink-0" />
           <span className="truncate">Remove</span>
-        </button>
+        </DynamicButton>
 
         {/* Buy Now */}
-        <button
+        <DynamicButton
+          as="button"
           type="button"
+          variant="unstyled"
           onClick={() => onBuyNow?.(item?.id)}
           disabled={!onBuyNow || isOutOfStock}
           aria-label="Buy this now"
@@ -286,7 +293,7 @@ export default function CartItemCard({
         >
           <Zap size={15} className="shrink-0" />
           <span className="truncate">Buy Now</span>
-        </button>
+        </DynamicButton>
       </div>
     </article>
   );
