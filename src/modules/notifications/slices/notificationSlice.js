@@ -1,5 +1,17 @@
 import { createApiSlice } from "../../../features/createApiSlice";
 import { notificationThunks } from "../../../features/domainThunks";
+import { apiRequest } from "../../../api/client";
+import { endpoints } from "../../../api/endpoints";
+
+export const persistNotificationRead = (notificationId) => async (dispatch) => {
+  if (!notificationId) return;
+  try {
+    await apiRequest({ method: "patch", url: `${endpoints.notifications.me.replace(/\/me$/, "")}/${encodeURIComponent(notificationId)}/read` });
+    dispatch(notificationSlice.actions.markAsRead(notificationId));
+  } catch {
+    // Keep the unread state if persistence failed. Opening the detail still works.
+  }
+};
 
 export const { fetchNotifications, createNotification, fetchNotificationPreferences, updateNotificationPreferences } = notificationThunks;
 
@@ -55,7 +67,7 @@ const notificationSlice = createApiSlice({
 
         // Sync local storage read state
         newItems.forEach(item => {
-          if (readIds.includes(item.id) || readIds.includes(item._id)) {
+          if (typeof item.read !== "boolean" && (readIds.includes(item.id) || readIds.includes(item._id))) {
             item.read = true;
             item.isRead = true;
           }

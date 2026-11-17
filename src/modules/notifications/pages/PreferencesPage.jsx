@@ -81,6 +81,10 @@ export function PreferencesPage() {
                 })}
               </div>
 
+              <label className="my-5 flex items-start gap-3 rounded-lg border border-border p-4 text-sm text-ink">
+                <input type="checkbox" checked={Boolean(values.marketingConsent)} onChange={(event) => setValue("marketingConsent", event.target.checked, { shouldDirty: true })} className="mt-1" />
+                <span>Send me optional offers, saved-product price updates and cart reminders. You can turn these off here at any time. Essential security and financial notices are handled separately.</span>
+              </label>
               {/* Frequency & Timezone Row */}
               <PreferenceScheduleFields
                 frequency={values.frequency}

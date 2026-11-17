@@ -24,4 +24,5 @@ export const {
 export default createApiSlice({
   name: "returns",
   thunks: returnsThunks,
+  actionThunks: Object.keys(returnsThunks).filter((name) => !name.startsWith("fetch")),
 }).reducer;

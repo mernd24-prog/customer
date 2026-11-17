@@ -26,7 +26,8 @@ export function useNotificationPreferences() {
   const { handleSubmit, reset, watch, setValue, register } = useForm({
     defaultValues: {
       email: true,
-      sms: true,
+      sms: false,
+      marketingConsent: false,
       push: true,
       inApp: true,
       frequency: "real_time",
@@ -41,7 +42,8 @@ export function useNotificationPreferences() {
     const prefs = state.current;
     reset({
       email: prefs.channels?.email ?? true,
-      sms: prefs.channels?.sms ?? true,
+      sms: prefs.channels?.sms ?? false,
+      marketingConsent: prefs.marketingConsent?.granted === true,
       push: prefs.channels?.push ?? true,
       inApp: prefs.channels?.inApp ?? true,
       frequency: prefs.frequency || "real_time",
@@ -56,6 +58,7 @@ export function useNotificationPreferences() {
         await run(
           dispatch,
           updateNotificationPreferences({
+            marketingConsent: Boolean(v.marketingConsent),
             channels: {
               email: Boolean(v.email),
               sms: Boolean(v.sms),

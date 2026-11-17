@@ -6,6 +6,7 @@ export const { fetchCart, updateCart } = cartThunks;
 const cartSlice = createApiSlice({
   name: "cart",
   thunks: cartThunks,
+  actionThunks: ["updateCart"],
   reducers: {
     setGuestCart: (state, action) => {
       state.current = action.payload;

@@ -109,7 +109,7 @@ export default function CheckoutPage() {
       <Seo title="Checkout | Sam Global" />
 
       <ApiState
-        loading={cartState.loading}
+        loading={cartState.loading && !cartState.current}
         error={cartState.error}
         empty={items.length === 0}
         skeletonLayout={CHECKOUT_PAGE_SKELETON}

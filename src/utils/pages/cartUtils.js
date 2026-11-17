@@ -13,6 +13,7 @@ import {
   getCartItemStock,
   normalizeCartItemId,
 } from "../../utils/ecommerce/cart";
+import { getCartQuantityLimit } from "../ecommerce/cartQuantity";
 
 export function adaptItemForCard(item, fullProduct = null) {
   const product = fullProduct || item.productId || {};
@@ -84,15 +85,15 @@ export function adaptItemForCard(item, fullProduct = null) {
   const size = item.size || item.selectedSize || attributes.size;
   const stock = getCartItemStock(item, product);
   const outOfStock = stock !== null && stock <= 0;
-  const effectiveMaxStock = stock !== null ? Math.min(stock, 10) : 10;
-  const stockLimitReached = stock !== null && stock < 10 && quantity >= stock;
-  const maxOrderLimitReached = quantity >= 10;
+  const effectiveMaxStock = getCartQuantityLimit(item, stock);
+  const stockLimitReached = stock !== null && stock <= effectiveMaxStock && quantity >= stock;
+  const maxOrderLimitReached = quantity >= effectiveMaxStock;
   const stockMessage = outOfStock
     ? "Out of stock"
     : stockLimitReached
       ? `Only ${stock} in stock`
       : maxOrderLimitReached
-        ? "We're sorry! Only 10 unit(s) allowed in each order"
+        ? `Limit ${effectiveMaxStock} items per order`
         : "";
   const rating =
     item.rating ??

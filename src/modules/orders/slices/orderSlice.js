@@ -3,4 +3,8 @@ import { orderThunks } from "../../../features/domainThunks";
 export const { quoteOrder, createOrder, fetchMyOrders,
      fetchSellerOrders, fetchOrderById, 
      cancelOrder, updateOrderStatus, retryOrderPayment } = orderThunks;
-export default createApiSlice({ name: "order", thunks: orderThunks }).reducer;
+export default createApiSlice({
+  name: "order",
+  thunks: orderThunks,
+  actionThunks: ["quoteOrder", "createOrder", "cancelOrder", "updateOrderStatus", "retryOrderPayment"],
+}).reducer;

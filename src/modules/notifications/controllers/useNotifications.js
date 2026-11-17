@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   fetchNotifications,
-  markAsRead,
+  persistNotificationRead,
 } from "../slices/notificationSlice";
 import {
   getTypeConfig,
@@ -149,7 +149,7 @@ export function useNotifications({ defaultPageSize = 6 } = {}) {
   }, [dispatch, loading, pageSize]);
 
   const handleNotificationClick = useCallback(async (notif) => {
-    dispatch(markAsRead(notif.id || notif._id));
+    dispatch(persistNotificationRead(notif.id || notif._id));
 
     if (notif.actionUrl) {
       navigate(notif.actionUrl);

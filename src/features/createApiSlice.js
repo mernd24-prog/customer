@@ -8,6 +8,8 @@ export const defaultInitialState = {
   meta: null,
   loading: false,
   error: null,
+  actionError: null,
+  actionLoading: false,
   lastFetchedAt: null,
 };
 
@@ -112,6 +114,7 @@ export function createApiSlice({
   setCurrentFromList = true,
   initialState = {},
   thunkReducers = {},
+  actionThunks = [],
 }) {
   const resolvedInitialState = { ...defaultInitialState, ...initialState };
   const slice = createSlice({
@@ -121,6 +124,7 @@ export function createApiSlice({
       resetState: () => resolvedInitialState,
       clearError: (state) => {
         state.error = null;
+        state.actionError = null;
       },
       ...reducers,
     },
@@ -128,18 +132,26 @@ export function createApiSlice({
       Object.entries(thunks).forEach(([thunkName, thunk]) => {
         if (!thunk || !thunk.pending) return;
         const dedicatedReducers = thunkReducers[thunkName];
+        const isAction = actionThunks.includes(thunkName);
 
         builder
           .addCase(thunk.pending, (state, action) => {
             dedicatedReducers?.pending?.(state, action);
             if (dedicatedReducers?.skipDefault) return;
             state.loading = true;
-            state.error = null;
+            if (isAction) {
+              state.actionLoading = true;
+              state.actionError = null;
+            } else {
+              state.error = null;
+              state.actionError = null;
+            }
           })
           .addCase(thunk.fulfilled, (state, action) => {
             dedicatedReducers?.fulfilled?.(state, action);
             if (dedicatedReducers?.skipDefault) return;
             state.loading = false;
+            if (isAction) state.actionLoading = false;
             state.meta = action.payload?.meta || null;
             state.lastFetchedAt = Date.now();
             const data = action.payload?.data;
@@ -207,7 +219,8 @@ export function createApiSlice({
             dedicatedReducers?.rejected?.(state, action);
             if (dedicatedReducers?.skipDefault) return;
             state.loading = false;
-            state.error =
+            if (isAction) state.actionLoading = false;
+            state[isAction ? "actionError" : "error"] =
               action.payload || action.error?.message || "An error occurred";
           });
       });

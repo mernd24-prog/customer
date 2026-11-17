@@ -712,7 +712,7 @@ export function useOrderDetail({ orderId, track }) {
         idempotencyKey: cancelRequestKey.current,
       }),
       "Product cancellation request submitted for seller/admin approval",
-    );
+    ).catch(() => null);
     if (!result) return;
     setCancelModalOpen(false);
     setCancelReason("");

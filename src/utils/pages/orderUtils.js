@@ -60,6 +60,7 @@ export const getDeliveryStatus = (order) =>
 export const getProgressStatus = (order) => {
   const status = order?.display_status || order?.displayStatus || getOrderStatus(order);
   const deliveryStatus = getDeliveryStatus(order);
+  if (/^(return_|refund_|replacement_)/.test(status)) return status;
   if (["fulfilled", "cancelled", "pending_payment", "payment_failed", "on_hold", "return_requested", "return_approved", "partially_returned", "returned", "refunded"].includes(status)) return status;
   if (
     deliveryStatus === "delivered" &&
@@ -345,6 +346,14 @@ export const STATUS_LABELS = {
   return_qc_passed: "Return QC Passed",
   return_requested: "Return Requested",
   return_approved: "Return Approved",
+  return_received: "Return Received",
+  return_in_progress: "Return In Progress",
+  return_pickup_scheduled: "Return Pickup Scheduled",
+  return_pickup_failed: "Return Pickup Failed",
+  return_in_transit: "Return In Transit",
+  return_ship_back_required: "Return Ship-back Required",
+  return_shipped_back: "Return Shipped Back",
+  return_qc_failed: "Return QC Failed",
   return_rejected: "Return Rejected",
   partially_returned: "Partially Returned",
   returned: "Returned",

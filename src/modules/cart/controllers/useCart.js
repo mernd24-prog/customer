@@ -5,6 +5,7 @@ import {
   fetchCart,
   setGuestCart,
   updateCart,
+  clearError,
 } from "../slices/cartSlice";
 import { fetchProductById } from "../../../modules/products/slices/productSlice";
 import { useToastThunk } from "../../../hooks/useToastThunk";
@@ -45,6 +46,7 @@ import {
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../../constants";
 import { adaptItemForCard } from "../utils/cartUtils";
+import { getCartQuantityLimit, getReducedCartQuantity, rollbackCartQuantities } from "../../../utils/ecommerce/cartQuantity";
 
 export default function useCart() {
   const dispatch = useDispatch();
@@ -271,7 +273,11 @@ export default function useCart() {
           }),
         ),
         "Cart updated",
-      );
+      ).catch(() => {
+        // The toast reports the validation failure; restore rejected optimistic
+        // values so customers can still edit or remove the affected item.
+        setLocalQuantities((current) => rollbackCartQuantities(current, pending));
+      });
     }, 600);
   }, [currentUser, dispatch, run]);
 
@@ -281,7 +287,7 @@ export default function useCart() {
       const current = prev[id] ?? item?.quantity ?? 1;
       const product = item?.productId || {};
       const stock = item ? getCartItemStock(item, product) : null;
-      const effectiveMax = stock !== null ? Math.min(stock, 10) : 10;
+      const effectiveMax = getCartQuantityLimit(item, stock);
 
       if (current >= effectiveMax) return prev;
 
@@ -294,7 +300,8 @@ export default function useCart() {
     setLocalQuantities((prev) => {
       const item = rawItems.find((ci) => cartLineKey(ci) === id);
       const current = prev[id] ?? item?.quantity ?? 1;
-      return { ...prev, [id]: Math.max(1, current - 1) };
+      const stock = item ? getCartItemStock(item, item.productId || {}) : null;
+      return { ...prev, [id]: getReducedCartQuantity(current, getCartQuantityLimit(item, stock)) };
     });
     scheduleCartUpdate();
   };
@@ -321,7 +328,7 @@ export default function useCart() {
         }),
       ),
       "Item removed",
-    );
+    ).catch(() => {}); // useToastThunk already displays the action error.
   };
 
   const handleSelectItem = (id, selected) => {
@@ -383,7 +390,7 @@ export default function useCart() {
           dispatch,
           updateCart(wishlistPayload(nextCart, productToWishlist, false, true)),
           "Moved to wishlist",
-        );
+        ).catch(() => {});
       });
       return;
     }
@@ -410,7 +417,7 @@ export default function useCart() {
       dispatch,
       updateCart(wishlistPayload(nextCart, productToWishlist, false, true)),
       "Moved to wishlist",
-    );
+    ).catch(() => {});
   };
 
   const handleMoveWishlistToCart = (savedProduct) => {
@@ -427,16 +434,11 @@ export default function useCart() {
       true,
     );
 
-    run(dispatch, updateCart(newWishlistPayload), "Moved to cart");
+    run(dispatch, updateCart(newWishlistPayload), "Moved to cart").catch(() => {});
   };
 
   const handleMoveSavedLineToCart = (savedItem) => {
     const normalizedSavedItemId = normalizeCartItemId(savedItem);
-    persistSavedForLater(
-      savedForLaterItems.filter(
-        (item) => normalizeCartItemId(item) !== normalizedSavedItemId,
-      ),
-    );
     run(
       dispatch,
       updateCart(
@@ -446,7 +448,11 @@ export default function useCart() {
         }),
       ),
       "Moved to cart",
-    );
+    ).then(() => {
+      persistSavedForLater(savedForLaterItems.filter(
+        (item) => normalizeCartItemId(item) !== normalizedSavedItemId,
+      ));
+    }).catch(() => {});
   };
 
   const handleBuyNow = (id) => {
@@ -480,6 +486,7 @@ export default function useCart() {
     "h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto";
 
   return {
+    dismissCartActionError: () => dispatch(clearError()),
     navigate,
     showGuestOtpModal,
     setShowGuestOtpModal,

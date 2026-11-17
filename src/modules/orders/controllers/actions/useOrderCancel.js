@@ -80,7 +80,7 @@ export function useOrderCancel({
         idempotencyKey: cancelRequestKey.current,
       }),
       "Product cancellation request submitted for seller/admin approval",
-    );
+    ).catch(() => null); // Keep the form open after the existing error toast.
     if (!result) return;
     setCancelModalOpen(false);
     setCancelReason("");

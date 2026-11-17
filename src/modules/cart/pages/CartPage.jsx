@@ -41,6 +41,7 @@ export default function CartPage() {
     setShowLimitModal,
     breadcrumbItems,
     cartState,
+    dismissCartActionError,
     cart,
     hasCartItems,
     hasSavedItems,
@@ -173,6 +174,18 @@ export default function CartPage() {
         <div className="mb-4 sm:mb-5">
           <Breadcrumbs items={breadcrumbItems} />
         </div>
+
+        {cartState.actionError && (
+          <div role="alert" className="mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-ink">
+            <CircleAlert size={20} className="shrink-0" aria-hidden="true" />
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold">Please review your cart</p>
+              <p>{cartState.actionError}</p>
+              <p className="mt-1">Your cart is still available. Review the quantity or remove the affected item before continuing.</p>
+            </div>
+            <button type="button" onClick={dismissCartActionError} aria-label="Dismiss cart message" className="shrink-0 p-1"><X size={18} /></button>
+          </div>
+        )}
 
         <ApiState
           loading={cartState.loading && !cart.items}
