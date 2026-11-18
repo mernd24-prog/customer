@@ -3,6 +3,8 @@ import { MapPin, MoreVertical, Pencil, Phone, Trash2 } from "lucide-react";
 import { ADDRESS_LABEL_OPTIONS } from "./AddressFormFields";
 
 import DynamicButton from "../../../../components/ui/button/button.jsx";
+import { GoldOutlineButton } from "../../../../components/ui/button/buttonSpecialized";
+
 function resolveLabel(value) {
   if (!value) return "Home";
   const match = ADDRESS_LABEL_OPTIONS.find(
@@ -73,26 +75,22 @@ export default function SharedAddressCard({
             {menuOpen && (
               <div className="absolute right-0 top-full z-30 w-36 pt-1">
                 <div className="space-y-1 rounded-sm bg-white p-1.5 shadow-lg">
-                  <DynamicButton
-                    variant="goldOutline"
-                    size="sm"
+                  <GoldOutlineButton
                     shape="md"
                     leftIcon={<Pencil className="size-3.5" />}
                     onClick={() => { setMenuOpen(false); startEdit(addr); }}
                     className="w-full justify-start"
                   >
                     Edit
-                  </DynamicButton>
-                  <DynamicButton
-                    variant="goldOutline"
-                    size="sm"
+                  </GoldOutlineButton>
+                  <GoldOutlineButton
                     shape="md"
                     leftIcon={<Trash2 className="size-3.5" />}
                     onClick={() => { setMenuOpen(false); handleDelete(addrId); }}
                     className="w-full justify-start border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50 hover:text-red-700"
                   >
                     Remove
-                  </DynamicButton>
+                  </GoldOutlineButton>
                 </div>
               </div>
             )}

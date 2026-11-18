@@ -1,7 +1,7 @@
+
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useSearchParams, Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import Seo from "../../../components/ui/Seo";
 import SearchBar from "../../../components/ui/inputs/SearchBar";
@@ -21,20 +21,21 @@ import {
   getBrandLogo,
   filterBrandList,
 } from "../../../utils/pages/brandUtils";
+
 import { scrollToTop } from "../../../utils/common";
 
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 40];
 const DEFAULT_PAGE_SIZE = 10;
 
 export default function BrandOutletPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [brandList, setBrandList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
   const [pagination, setPagination] = useState({
     page: 1,
     limit: DEFAULT_PAGE_SIZE,
@@ -84,7 +85,7 @@ export default function BrandOutletPage() {
           res?.pagination ||
           res?.meta?.pagination ||
           res?.meta || {
-            page, 
+            page,
             limit,
             total: list.length,
             totalPages: Math.max(1, Math.ceil(list.length / limit)),
@@ -99,7 +100,7 @@ export default function BrandOutletPage() {
             Math.max(
               1,
               Math.ceil(
-                Number(backendPagination.total) || list.length / limit
+                (Number(backendPagination.total) || list.length) / limit
               )
             ),
         });
@@ -108,12 +109,14 @@ export default function BrandOutletPage() {
         if (!active) return;
 
         setBrandList([]);
+
         setPagination({
           page: 1,
           limit,
           total: 0,
           totalPages: 1,
         });
+
         setError(err?.message || "Failed to load brands.");
       })
       .finally(() => {
@@ -228,7 +231,14 @@ export default function BrandOutletPage() {
                   />
                 ))}
               </div>
-            ) : brands.length ? (
+            ) : error ? (
+              <EmptyState
+                title="Unable to Load Brands"
+                description={error}
+                actionLabel="Explore Products"
+                onAction={() => navigate("/products")}
+              />
+            ) : brands.length > 0 ? (
               <>
                 <div className={brandGridClass}>
                   {brands.map((brand) => (
@@ -242,39 +252,25 @@ export default function BrandOutletPage() {
                   ))}
                 </div>
 
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
               </>
             ) : (
               <EmptyState
-               
                 title="No Brands Found"
                 description={
                   search
                     ? `We couldn't find any brands matching "${search}". Please try another search or explore our products.`
                     : "We couldn't find any brands available at the moment. Please check back later or explore our products."
                 }
-              >
-                <div className="flex flex-wrap items-center justify-center gap-3.5">
-                  <Link
-                    to="/products"
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] px-6 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:from-[#3E4093] hover:to-[#1B1D60] hover:shadow-md"
-                  >
-                    <span>Explore Products</span>
-                    <ArrowRight size={16} />
-                  </Link>
-
-                  <Link
-                    to="/categories"
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-6 text-sm font-bold text-[#1B1D60] transition-all duration-200 hover:border-[#B8891F] hover:bg-[#FAF8F3]"
-                  >
-                    <span>Browse Categories</span>
-                  </Link>
-                </div>
-              </EmptyState>
+                actionLabel="Explore Products"
+                onAction={() => navigate("/products")}
+              />
             )}
           </section>
         </div>

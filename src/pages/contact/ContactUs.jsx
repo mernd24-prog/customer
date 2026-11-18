@@ -35,9 +35,8 @@ import {
   mapContactInformation,
   getSubjectOptions,
 } from "./contactUtils";
-
-
 import { DynamicButton } from "../../components/ui/button";
+import { PillButton } from "../../components/ui/button/buttonSpecialized";
 
 const INITIAL_FORM = {
   name: "",
@@ -302,14 +301,14 @@ export default function ContactUs() {
                             Your message has been submitted successfully. Our
                             team will contact you within 24 hours.
                           </p>
-                          <DynamicButton
-                            variant="solidLarge"
+                          <PillButton
                             size="md"
-                            className="mt-5 w-full"
+        
+                            className="mt-5 "
                             onClick={() => setSubmitted(false)}
                           >
                             Done
-                          </DynamicButton>
+                          </PillButton>
                         </div>
                       </div>
                     </BaseModal>
@@ -414,15 +413,14 @@ export default function ContactUs() {
                         </p>
                       </div>
 
-                      <DynamicButton
-                      variant="solidLarge"
-                      size="md"
+                      <PillButton
+                        size="sm"
                         type="submit"
                         disabled={loadingForm}
                       >
                         <Send size={16} />
                         {loadingForm ? "Sending..." : "Send Message"}
-                      </DynamicButton>
+                      </PillButton>
                     </div>
                   </form>
                 </div>

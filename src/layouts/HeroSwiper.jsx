@@ -5,6 +5,7 @@ import { Sparkles } from "lucide-react";
 
 import Label from "../components/ui/label/Label";
 import { DynamicButton } from "../components/ui/button";
+import { PillButton } from "../components/ui/button/buttonSpecialized";
 
 import "swiper/css";
 
@@ -66,12 +67,12 @@ const HeroSwiper = memo(({ slides }) => {
                   </Label>
                 )}
 
-               <h2 className="banner-heading mt-1 max-w-[300px] text-[18px] font-bold leading-[1.2] min-[375px]:text-[20px] sm:mt-0 sm:max-w-[550px] sm:text-[32px] sm:leading-tight md:text-[38px] lg:max-w-[800px] lg:text-[48px] xl:text-[62px]">
-  {slide.title} {slide.highlight && <br />}{" "}
-  {slide.highlight && (
-    <span className="text-[#CE9F2D]">{slide.highlight}</span>
-  )}
-</h2>
+                <h2 className="banner-heading mt-1 max-w-[300px] text-[18px] font-bold leading-[1.2] min-[375px]:text-[20px] sm:mt-0 sm:max-w-[550px] sm:text-[32px] sm:leading-tight md:text-[38px] lg:max-w-[800px] lg:text-[48px] xl:text-[62px]">
+                  {slide.title} {slide.highlight && <br />}{" "}
+                  {slide.highlight && (
+                    <span className="text-[#CE9F2D]">{slide.highlight}</span>
+                  )}
+                </h2>
               </div>
 
               {slide.description && (
@@ -82,19 +83,21 @@ const HeroSwiper = memo(({ slides }) => {
 
               <div className="relative z-30 flex w-full shrink-0 flex-wrap items-center justify-center gap-2.5 pt-1 pb-1 sm:gap-3 sm:pt-2 md:pt-3 lg:w-auto lg:justify-start">
                 {slide.primaryButton && (
-                  <DynamicButton
-                    variant="solidLarge"
-                    size="lg"
+                  <PillButton
+                    size="md"
+                    shape="square"
                     to={slide.primaryLink || "/products"}
+                    className="ml-1 !text-[#03014D] hover:!text-[#03014D] px-12 sm:px-12"
                   >
                     {slide.primaryButton}
-                  </DynamicButton>
+                  </PillButton>
                 )}
 
                 {slide.secondaryButton && (
                   <DynamicButton
                     variant="outlineLight"
-                    size="lg"
+                    size="md"
+                    shape="square"
                     to={slide.secondaryLink || "/categories"}
                   >
                     {slide.secondaryButton}

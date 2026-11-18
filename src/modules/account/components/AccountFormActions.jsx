@@ -1,5 +1,5 @@
 import React from "react";
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { GoldOutlineButton, PillButton } from "../../../components/ui/button/buttonSpecialized";
 
 export default function AccountFormActions({
   submitLabel = "Save Changes",
@@ -11,7 +11,6 @@ export default function AccountFormActions({
   cancelDisabled = false,
   borderTop = false,
   className = "",
-  submitVariant = "gold",
   children,
 }) {
   return (
@@ -21,25 +20,20 @@ export default function AccountFormActions({
       } ${className}`}
     >
       {onCancel && (
-        <DynamicButton
-          variant="goldOutline"
-          size="sm"
-          shape="rounded"
+        <GoldOutlineButton
           onClick={onCancel}
           disabled={cancelDisabled || loading}
           className="flex-1 sm:flex-none sm:w-auto"
         >
           {cancelLabel}
-        </DynamicButton>
+        </GoldOutlineButton>
       )}
 
       {children}
 
-      <DynamicButton
+      <PillButton
         type="submit"
-        variant={submitVariant}
         size="sm"
-        shape="rounded"
         isLoading={loading}
         disabled={disabled || loading}
         leftIcon={submitIcon}
@@ -50,7 +44,7 @@ export default function AccountFormActions({
         }
       >
         {submitLabel}
-      </DynamicButton>
+      </PillButton>
     </div>
   );
 }

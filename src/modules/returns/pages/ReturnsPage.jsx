@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { ArrowLeft, Package, RotateCcw } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
-import Button from "../../../components/ui/buttons/Button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 import ShowMoreText from "../../../utils/showMore";
 import useReturnRequest from "../controllers/useReturnRequest";
@@ -426,7 +426,8 @@ function ReturnRequestPage({ orderId }) {
                     </div>
                   )}
 
-                  <Button
+                  <PillButton
+                  size="md"
                     type="submit"
                     loading={loading}
                     disabled={
@@ -434,10 +435,11 @@ function ReturnRequestPage({ orderId }) {
                       quantityExceedsRemaining ||
                       selectedReturnableQuantity <= 0
                     }
-                    className="w-full h-12 bg-[#CE9F2D] text-white hover:bg-[#B68A22] font-bold rounded-lg shadow-sm transition hover:shadow-md flex items-center justify-center gap-2"
+                    className="w-full"
                   >
-                    <RotateCcw size={18} /> Submit Return Request
-                  </Button>
+                    <RotateCcw size={18} />
+                    Submit Return Request
+                  </PillButton>
                 </>
               )}
             </form>

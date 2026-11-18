@@ -14,9 +14,10 @@ import { AUTH_ROUTES } from "../../../modules/auth/routes/apiRoutes";
 import { fetchCart, updateCart } from "../../../modules/cart/slices/cartSlice";
 import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
+import DynamicButton from "../../../components/ui/button/button.jsx";
 
+import { PillButton } from "../../ui/button/buttonSpecialized.jsx";
 
-import DynamicButton from "../button/button.jsx";
 const FIXED_INDIAN_DIAL_CODE = "+91";
 const GENERIC_OTP_AUTH_ERROR =
   "We couldn’t continue with this mobile number. Check the number or try another mobile number.";
@@ -369,26 +370,27 @@ export default function GuestOtpAuthModal({
                   )}
                 </div>
 
-                <Button
+                <PillButton
                   type="submit"
-                  variant="primary"
-                  fullWidth
+                  size="md"
                   disabled={isSubmitting || mobile.length < 10}
-                  className="h-11 text-sm font-semibold uppercase"
+                  className="w-full "
+                  isLoading={isSubmitting}
                 >
                   {isSubmitting ? "Sending mobile OTP..." : "Send Mobile OTP"}
-                </Button>
+                </PillButton>
 
                 <p className="text-center text-[0.8rem] text-muted">
                   New numbers create a phone-verified account automatically.
-                  Prefer email and password?{" "}
-                  <Link
+                  Prefer email and password?
+                  <DynamicButton
+                    size="xs"
                     to={AUTH_ROUTES.register}
                     onClick={() => onClose?.()}
-                    className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
+                    variant="link"
                   >
                     Complete registration form
-                  </Link>
+                  </DynamicButton>
                 </p>
               </form>
             ) : (
@@ -445,17 +447,14 @@ export default function GuestOtpAuthModal({
                   )}
                 </div>
 
-                <Button
-                  type="submit"
-                  variant="primary"
-                  fullWidth
+                <PillButton
+                  size="md"
                   disabled={isSubmitting || otp.length !== 6}
-                  className="h-11 text-sm font-semibold uppercase"
                 >
                   {isSubmitting
                     ? "Verifying mobile OTP..."
                     : "Verify & Continue"}
-                </Button>
+                </PillButton>
               </form>
             )}
           </AuthCard>

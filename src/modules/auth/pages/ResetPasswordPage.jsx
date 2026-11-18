@@ -1,16 +1,16 @@
-import { Link } from "react-router-dom";
 import AuthCard from "../../../components/ui/AuthCard";
-import Button from "../../../components/ui/buttons/Button";
 import FormField from "../../../components/ui/FormField";
 import OtpInput from "../../../components/ui/OtpInput";
 import Seo from "../../../components/ui/Seo";
 import { AUTH_ROUTES } from "../routes/apiRoutes";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import useResetPassword from "../controllers/useResetPassword";
-
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { DynamicButton } from "../../../components/ui/button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 export default function ResetPasswordPage() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
     loading,
     error,
     submit,
-    handleResendOtp
+    handleResendOtp,
   } = useResetPassword();
 
   return (
@@ -78,33 +78,36 @@ export default function ResetPasswordPage() {
             </div>
           )}
 
-          <Button
+          <PillButton
             type="submit"
+            size="md"
+            shape="rounded"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-sm leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full"
           >
             Reset Password
-          </Button>
+          </PillButton>
 
-          <p className="text-center  text-[0.8rem] text-muted">
+          <p className="text-center text-[0.8rem] text-muted">
             Didn&apos;t receive the OTP?{" "}
             <DynamicButton
               variant="link"
-              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
               onClick={handleResendOtp}
             >
+              
               Resend OTP
             </DynamicButton>
           </p>
 
-          <p className="text-center  text-[0.8rem] text-muted">
-            <Link
-              to={AUTH_ROUTES.login}
-              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
+          <p className="text-center text-[0.8rem] text-muted">
+            <DynamicButton
+              variant="link"
+              onClick={() => navigate(AUTH_ROUTES.login)}
             >
+              <ArrowLeft/>
               Back to Login
-            </Link>
+            </DynamicButton>
           </p>
         </form>
       </AuthCard>

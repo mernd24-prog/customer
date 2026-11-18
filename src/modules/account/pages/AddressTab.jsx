@@ -7,7 +7,8 @@ import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useAddressBook } from "../controllers/useAddressBook";
 import { AccountTabHeader, AccountEmptyState } from "../components";
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
+import { PillButton, GoldOutlineButton } from "../../../components/ui/button/buttonSpecialized";
 export default function AddressTab({ user }) {
   const {
     loading,
@@ -80,16 +81,14 @@ export default function AddressTab({ user }) {
           description="Manage your delivery addresses for a faster checkout."
           action={
             addresses.length > 0 && (
-              <DynamicButton
-                variant="gold"
-                size="sm"
-                shape="rounded"
+              <PillButton
+              size="sm"
                 onClick={handleToggleAddForm}
                 leftIcon={showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
-                className="w-full sm:w-auto"
+               
               >
                 <span>{showAddForm ? "Close Form" : "Add New Address"}</span>
-              </DynamicButton>
+              </PillButton>
             )
           }
         />
@@ -165,10 +164,7 @@ export default function AddressTab({ user }) {
             </div>
             {addresses.length > 4 && (
               <div className="flex justify-center border-t border-[#E7D9B8] px-4 py-4">
-                <DynamicButton
-                  variant="goldOutline"
-                  size="sm"
-                  shape="rounded"
+                <GoldOutlineButton
                   onClick={handleShowAllAddresses}
                 >
                   {showAllAddresses ? (
@@ -182,7 +178,7 @@ export default function AddressTab({ user }) {
                       <ChevronDown size={16} />
                     </>
                   )}
-                </DynamicButton>
+                </GoldOutlineButton>
               </div>
             )}
           </div>

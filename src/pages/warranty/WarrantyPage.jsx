@@ -6,7 +6,7 @@ import { ShieldCheck } from "lucide-react";
 
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
-import BrandButton from "../../components/ui/buttons/Button";
+import { PillButton } from "../../components/ui/button/buttonSpecialized";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   fetchWarrantyById,
@@ -70,13 +70,12 @@ export function WarrantyPage({ detail = false }) {
                 {...lookupForm.register("orderId", { required: true })}
                 className="flex-1 rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
-              <BrandButton
-                variant="secondary"
-                rounded
+              <PillButton
                 type="submit"
-                label="Search"
-                className="h-11 px-5 text-sm"
-              />
+                className="px-6"
+              >
+                Search
+              </PillButton>
             </div>
           </form>
         )}
@@ -129,11 +128,8 @@ export function WarrantyPage({ detail = false }) {
                   </div>
                   {detail && (
                     <div className="mt-5">
-                      <BrandButton
-                        variant="secondary"
-                        rounded
-                        label="File a Claim"
-                        className="h-10 px-6 text-sm"
+                      <PillButton
+                        className="px-6"
                         onClick={() =>
                           run(
                             dispatch,
@@ -145,7 +141,9 @@ export function WarrantyPage({ detail = false }) {
                             "Claim submitted",
                           )
                         }
-                      />
+                      >
+                        File a Claim
+                      </PillButton>
                     </div>
                   )}
                 </div>
@@ -174,13 +172,12 @@ export function WarrantyPage({ detail = false }) {
                     </div>
                   </div>
                   <Link to={getOpaqueWarrantyPath(reference)}>
-                    <BrandButton
-                      variant="secondary"
-                      rounded
+                    <PillButton
                       size="sm"
-                      label="View"
                       className="h-8 px-3 text-xs"
-                    />
+                    >
+                      View
+                    </PillButton>
                   </Link>
                 </div>
                 );
@@ -224,13 +221,12 @@ export function WarrantyPage({ detail = false }) {
               />
             </div>
             <div className="mt-4">
-              <BrandButton
-                variant="primary"
-                rounded
+              <PillButton
                 type="submit"
-                label="Register Warranty"
                 className="h-10 px-6 text-sm"
-              />
+              >
+                Register Warranty
+              </PillButton>
             </div>
           </form>
         </ApiState>

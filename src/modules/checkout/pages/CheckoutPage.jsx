@@ -1,4 +1,3 @@
-
 import { useCallback } from "react";
 import { MapPin, Plus } from "lucide-react";
 import useCheckout from "../controllers/useCheckout";
@@ -20,7 +19,8 @@ import { CHECKOUT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts"
 import { PageContainer } from "../../../components/ui/layout";
 
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
+import { GoldButton } from "../../../components/ui/button/buttonSpecialized";
 export default function CheckoutPage() {
   const {
     navigate,
@@ -220,19 +220,17 @@ export default function CheckoutPage() {
                         Please add address to continue.
                       </p>
 
-                      <DynamicButton
+                      <GoldButton
                         onClick={() =>
                           setValue("useNewAddress", true, {
                             shouldValidate: true,
                           })
                         }
-                        variant="gold"
-                        size="md"
                         leftIcon={<Plus size={24} />}
                         className="mt-5 w-full max-w-[200px]"
                       >
                         Add Address
-                      </DynamicButton>
+                      </GoldButton>
                     </div>
                   )}
 

@@ -441,6 +441,7 @@ export default function ProductCard({
             {brand && (
               <DynamicButton
                 onClick={handleBrandClick}
+                title={brand}
                 className="text-left text-xs font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
                 {capitalizeFirst(brand)}
@@ -681,21 +682,20 @@ export default function ProductCard({
             </div>
           )}
         </div>
-
-        {/* PRODUCT INFO (The Bear House style: Clean, tight, perfectly aligned) */}
         <div className="flex min-w-0 flex-1 flex-col p-2 sm:p-2 ">
           {/* BRAND */}
-          {brand ? (
-            <DynamicButton
-              variant="productBrand"
-              onClick={handleBrandClick}
-              title={brand}
-            >
-              {capitalizeFirst(brand)}
-            </DynamicButton>
-          ) : (
-            <div className="h-[15px]" />
-          )}
+          <div className="flex h-[15px] w-full items-start justify-start overflow-hidden">
+            {brand && (
+              <DynamicButton
+                variant="textGold"
+                onClick={handleBrandClick}
+                title={brand}
+                className="max-w-full break-words font-bold tracking-wide uppercase"
+              >
+                {capitalizeFirst(brand)}
+              </DynamicButton>
+            )}
+          </div>
 
           <h3
             className="mt-1 truncate text-sm sm:text-sm font-medium text-[#171A3A] transition-colors"

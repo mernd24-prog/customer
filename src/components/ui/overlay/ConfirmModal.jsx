@@ -1,7 +1,7 @@
-
-  import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
+import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
   import BaseModal from "./BaseModal";
-  import DynamicButton from "../button/button.jsx";
+  import { PillButton
+    , GoldOutlineButton } from "../button/buttonSpecialized";
 
   export default function ConfirmModal({
     open,
@@ -90,28 +90,23 @@
 
           <div className="mt-5 flex flex-col-reverse gap-2.5 sm:mt-6 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
             {cancelLabel && (
-              <DynamicButton
-                variant="goldOutline"
-                size="sm"
-                shape="rounded"
+              <GoldOutlineButton
                 onClick={onCancel}
-                className="w-full sm:w-auto sm:min-w-[96px]"
               >
                 {cancelLabel}
-              </DynamicButton>
+              </GoldOutlineButton>
             )}
 
-            <DynamicButton
-              variant="gold"
-              size="sm"
-              shape="rounded"
+            <PillButton
+               size="sm"
               onClick={onConfirm}
               isLoading={confirmLoading || loading}
               disabled={confirmDisabled || confirmLoading || loading}
               className={`w-full sm:w-auto sm:min-w-[96px] ${confirmClassName}`}
             >
               {confirmLabel}
-            </DynamicButton>
+            </PillButton
+            >
           </div>
         </div>
       </BaseModal>

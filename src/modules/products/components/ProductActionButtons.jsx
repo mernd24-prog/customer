@@ -2,6 +2,7 @@ import { useState } from "react";
 import { buildCartItem } from "../../../utils/ecommerce";
 import NotifyMeModal from "../../../components/ui/overlay/NotifyMeModal";
 import { DynamicButton } from "../../../components/ui/button";
+import { PillButton , GoldOutlineButton } from "../../../components/ui/button/buttonSpecialized";
 
 export default function ProductActionButtons({
   inStock,
@@ -19,8 +20,7 @@ export default function ProductActionButtons({
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
           {inStock ? (
             <>
-              <DynamicButton
-                variant="goldOutline"
+              <GoldOutlineButton
                 size="md"
                 disabled={!inStock}
                 className="w-full"
@@ -29,10 +29,9 @@ export default function ProductActionButtons({
                 }}
               >
                 Add to cart
-              </DynamicButton>
+              </GoldOutlineButton>
 
-              <DynamicButton
-                variant="gold"
+              <PillButton
                 size="md"
                 disabled={!inStock}
                 className="w-full"
@@ -45,17 +44,16 @@ export default function ProductActionButtons({
                 }}
               >
                 Buy now
-              </DynamicButton>
+              </PillButton>
             </>
           ) : (
-            <DynamicButton
-              variant="gold"
-              size="md"
+            <PillButton
+            size="md"
               className="w-full"
               onClick={() => setShowNotifyModal(true)}
             >
               Notify Me
-            </DynamicButton> 
+            </PillButton> 
           )}
         </div>
       </div>

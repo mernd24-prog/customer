@@ -379,14 +379,13 @@ export function OrderItemCard({
       <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 lg:w-auto lg:justify-end">
         {!isCancelled && !isReturned && shipment?.tracking_url && (
           <DynamicButton
+           variant="outlineSecondary"
+            size="sm"
             as="a"
             href={shipment.tracking_url}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Track order on courier website"
-            variant="softGold"
-            size="sm"
-            shape="rounded"
             leftIcon={<ExternalLink size={14} className="shrink-0" />}
           >
             Track Order

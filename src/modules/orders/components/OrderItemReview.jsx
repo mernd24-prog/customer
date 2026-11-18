@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import ReviewImageUploader from "../../products/components/ReviewImageUploader";
 import ReviewMediaLightbox from "../../products/components/ReviewMediaLightbox";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
-import { OrderActionButton } from "../../../components/ui/button/buttonSpecialized";
 import ShowMoreText from "../../../utils/showMore";
 import StarRating, {
   RatingStars,
@@ -367,26 +366,31 @@ function OrderItemReviewAction({
 
   if (!reviewChecked) {
     return (
-      <OrderActionButton
+      <DynamicButton
         as="span"
-        className="pointer-events-none opacity-80"
+        variant="outlineSecondary"
+        size="sm"
+        disabled
       >
         Checking review...
-      </OrderActionButton>
+      </DynamicButton>
     );
   }
 
   return (
-    <OrderActionButton
+    <DynamicButton
       type="button"
+      variant="outlineSecondary"
+      size="sm"
       onClick={() => onReviewClick(item)}
       disabled={!orderId}
-      leftIcon={<SquarePen size={14} className="shrink-0" />}
+      leftIcon={<SquarePen size={14} />}
     >
       Write Review
-    </OrderActionButton>
+    </DynamicButton>
   );
 }
+
 
 export {
   OrderItemReviewAction,

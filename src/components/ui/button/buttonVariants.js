@@ -1,4 +1,3 @@
-
 export const buttonVariants = {
   unstyled: "",
   primary:
@@ -40,22 +39,19 @@ export const buttonVariants = {
     "border border-transparent bg-transparent p-0 text-[var(--customer-gold-dark)] hover:text-[var(--customer-gold-dark)] hover:underline",
 
   google:
-    "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100",
+    "border border-border bg-white text-ink hover:border-border-strong hover:bg-gray-50 active:scale-[0.99]",
 
   headerGold:
     "border border-[#CE9F2D] bg-[#CE9F2D] text-[#03014D] hover:brightness-95 hover:shadow-md",
 
   headerIcon:
-    "border border-transparent bg-transparent text-[#1B1D60] hover:bg-[#CE9F2D]/15 hover:text-[#CE9F2D] hover:shadow-sm focus-visible:ring-[#CE9F2D]/40",
+    "border border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white shadow-sm hover:bg-[var(--customer-gold-dark)] hover:border-[var(--customer-gold-dark)] active:bg-[#A97810]",
 
   headerIconOutlined:
     "border border-[#1B1D60]/20 bg-[#1B1D60]/5 text-[#1B1D60] hover:bg-[#CE9F2D]/15 hover:text-[#CE9F2D]",
 
   solidSmall:
     "border border-[var(--customer-navy)] bg-[var(--customer-navy)] text-white hover:border-[var(--customer-navy-dark)] hover:bg-[var(--customer-navy-dark)] shadow-sm",
-
-  solidLarge:
-    "border border-[var(--customer-gold)] bg-[var(--customer-gold)] !text-[var(--customer-navy)] hover:bg-[var(--customer-gold-dark)] hover:border-[var(--customer-gold-dark)] shadow-sm",
 
   outlineSmall:
     "border border-[#18156D]/20 bg-white/70 text-[#3E4093] hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer",
@@ -67,7 +63,7 @@ export const buttonVariants = {
     "border border-white/60 bg-transparent text-white hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold)]/10 hover:text-[var(--customer-gold)] active:border-[var(--customer-gold)] active:text-[var(--customer-gold)]",
 
   pill:
-    "border border-transparent bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] text-white hover:bg-[linear-gradient(#bd9025,#bd9025)] shadow-xs",
+    "border border-transparent bg-[linear-gradient(#CE9F2D,#CE9F2D)] !text-white hover:!text-white hover:bg-[linear-gradient(#bd9025,#bd9025)] shadow-xs",
 
   ghostPill:
     "border border-[#CE9F2D4D] bg-[#CE9F2D4D] text-[#D6A323] hover:bg-black/60",
@@ -75,11 +71,8 @@ export const buttonVariants = {
   continueShopping:
     "border border-[#18156D]/20 bg-white/70 text-[#3E4093] shadow-xs hover:bg-[#3E4093] hover:!text-white hover:border-[#3E4093] hover:shadow-md active:bg-[#2A2B66] active:!text-white cursor-pointer",
 
-  productBrand:
-    "border-none bg-transparent p-0 text-left uppercase text-[#CE9F2D] hover:text-[#B8860B]",
-
   textGold:
-    "border-none bg-transparent p-0 text-[#8A6500] hover:text-[#7A5A00]",
+    "border-none bg-transparent p-0 text-left text-xs leading-[15px] text-[#CE9F2D] hover:text-[#B8860B]",
 
   textWhite:
     "border-none bg-transparent p-0 text-white hover:text-white/80",

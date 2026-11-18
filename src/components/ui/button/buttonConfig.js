@@ -14,7 +14,7 @@ export const buttonInteractionClasses = cn(
 );
 
 export const buttonShapes = {
-  square: "rounded-[8px]",
+  square: "rounded-[5px]",
   rounded: "rounded-lg",
   md: "rounded-md",
   circle: "rounded-full",
@@ -31,8 +31,11 @@ export const resolveButtonClasses = ({
   resolvedShape,
 }) => {
   const isUnstyled = !variant || variant === "unstyled";
-  const effectiveSize = size ?? "md";
-  const effectiveShape = resolvedShape ?? shape ?? "rounded";
+  const isTextVariant = variant === "textGold" || variant === "textWhite";
+  const effectiveSize = isTextVariant ? "none" : (size ?? "md");
+  const effectiveShape = isTextVariant
+    ? "none"
+    : (resolvedShape ?? shape ?? (isUnstyled ? "none" : "rounded"));
   const shouldApplySize = effectiveSize !== "none" && !isUnstyled;
 
   return cn(

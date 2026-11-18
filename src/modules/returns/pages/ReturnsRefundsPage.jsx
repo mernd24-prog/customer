@@ -7,7 +7,6 @@ import { disputeReturnQc, fetchMyReturns } from "../slices/returnsSlice";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
 import { notify } from "../../../utils/notify";
 import {
-  ChevronDown,
   Clock,
   CheckCircle2,
   XCircle,
@@ -36,7 +35,7 @@ import useReturnsRefunds from "../controllers/useReturnsRefunds";
 import { PageContainer } from "../../../components/ui/layout";
 import EmptyState from "../../../components/ui/feedback/EmptyState";
 
-import { DynamicButton } from "../../../components/ui/button";
+import { DynamicButton, LoadMoreButton } from "../../../components/ui/button";
 const STATUS_FILTERS = [
   { value: "all", label: "All Returns" },
   { value: "requested", label: "Return Requested" },
@@ -555,14 +554,9 @@ function ReturnsRefundsPage() {
               {renderReturnsList(visibleReturns)}
               {hasMoreReturns && (
                 <div className="mt-8 flex justify-center">
-                  <DynamicButton
-                    variant="continueShopping"
-                    size="md"
+                  <LoadMoreButton
                     onClick={() => setVisibleCount((prev) => prev + 3)}
-                    rightIcon={<ChevronDown size={14} strokeWidth={2.5} />}
-                  >
-                    Load More
-                  </DynamicButton>
+                  />
                 </div>
               )}
             </>

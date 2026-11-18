@@ -22,7 +22,8 @@ import {
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { AccountFormActions } from "../components";
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
+import { GoldButton } from "../../../components/ui/button/buttonSpecialized";
 const FALLBACK_AVATAR = "/image/png/person.png";
 const isSyntheticMobileEmail = (value = "") =>
   String(value).toLowerCase().endsWith("@mobile.samglobal.local");
@@ -452,16 +453,13 @@ export default function ProfileTab({ user }) {
 
         {/* Edit Profile button */}
         {!isEditing && (
-          <DynamicButton
+          <GoldButton
             onClick={handleEdit}
-            variant="gold"
-            size="sm"
-            shape="rounded"
             leftIcon={<SquarePen size={15} />}
             className="w-full sm:w-auto"
           >
             <span>Edit Profile</span>
-          </DynamicButton>
+          </GoldButton>
         )}
       </section>
 

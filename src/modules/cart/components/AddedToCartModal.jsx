@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { ShoppingBag, X } from "lucide-react";
 import ModalOverlay from "../../../components/ui/overlay/BaseModal";
 import { DynamicButton } from "../../../components/ui/button";
+import { PillButton, GoldOutlineButton } from "../../../components/ui/button/buttonSpecialized";
 import {
   applyImageFallback,
   formatMoney,
@@ -135,13 +136,15 @@ function CartLine({ item, onClose }) {
           </p>
         </div>
       </Link>
-      <Link
+      <GoldOutlineButton
         to={productPath}
+        shape="square"
+        size="xs"
         onClick={onClose}
-        className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-[#CE9F2D]/50 bg-white px-3 text-xs font-semibold text-[#1F2430] transition-colors hover:border-[#CE9F2D] hover:bg-[#FFF8E8]"
+        className="shrink-0"
       >
         View
-      </Link>
+      </GoldOutlineButton>
     </div>
   );
 }
@@ -235,25 +238,24 @@ export default function AddedToCartModal({
           </Link>
 
           <div className="relative mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Link
+            <GoldOutlineButton
               to="/cart"
+              size="md"
               onClick={onClose}
-              className="inline-flex h-[44px] w-full items-center justify-center rounded-lg border border-[#CE9F2D] bg-transparent px-4 text-sm font-semibold text-[#1F2430] transition-colors hover:bg-[#FFF8E8]"
+              className="w-full"
             >
               View Cart
-            </Link>
+            </GoldOutlineButton>
 
-            <DynamicButton
-              variant="solidLarge"
+            <PillButton
               size="md"
-              className="w-full"
               onClick={() => {
                 onClose?.();
                 onCheckout?.(cartItems);
               }}
             >
               Checkout
-            </DynamicButton>
+            </PillButton>
           </div>
         </div>
 

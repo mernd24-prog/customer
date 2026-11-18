@@ -1,5 +1,4 @@
-
-import DynamicButton from "../button/button";
+import {PillButton} from "../button/buttonSpecialized";
 
 import { ArrowRight } from "lucide-react";
 import EmptyStateIllustration from "./EmptyStateIllustration";
@@ -64,15 +63,14 @@ export default function EmptyState({
 
       {resolvedActionLabel && resolvedAction && (
         <div className="mt-6 flex justify-center">
-          <DynamicButton
-            variant="solidLarge"
-            size="lg"
+           <PillButton
+                size="md"
             onClick={resolvedAction}
             className={`gap-2 ${buttonClassName}`}
           >
             <span>{resolvedActionLabel}</span>
-            <ArrowRight size={16} className="shrink-0" aria-hidden="true" />
-          </DynamicButton>
+            <ArrowRight/>
+          </PillButton>
         </div>
       )}
 

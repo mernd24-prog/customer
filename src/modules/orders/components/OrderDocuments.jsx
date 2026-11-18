@@ -1,5 +1,6 @@
+
 import { Download, FileText } from "lucide-react";
-import { OrderActionButton } from "../../../components/ui/button/buttonSpecialized";
+import DynamicButton from "../../../components/ui/button/button.jsx";
 
 export default function OrderDocuments({
   documents = [],
@@ -34,7 +35,10 @@ export default function OrderDocuments({
                 className="flex min-w-0 items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 transition-colors hover:border-[#CE9F2D80] sm:flex-1"
               >
                 <div className="flex min-w-0 flex-1 items-center gap-1.5">
-                  <FileText size={15} className="shrink-0 text-[#3E4093]" />
+                  <FileText
+                    size={15}
+                    className="shrink-0 text-[#3E4093]"
+                  />
 
                   <span className="min-w-0 truncate text-sm font-semibold text-[#2E2E2E]">
                     {document.title}
@@ -46,16 +50,20 @@ export default function OrderDocuments({
                     Pending
                   </span>
                 ) : (
-                  <OrderActionButton
+                  <DynamicButton
+                    variant="outlineSecondary"
                     size="sm"
-                    isLoading={downloadingId === document.downloadPath}
                     onClick={() =>
-                      handleDownload?.(document.downloadPath, document.filename)
+                      handleDownload?.(
+                        document.downloadPath,
+                        document.filename
+                      )
                     }
+                    loading={downloadingId === document.downloadPath}
                     leftIcon={<Download size={14} />}
                   >
                     Download
-                  </OrderActionButton>
+                  </DynamicButton>
                 )}
               </div>
             ))}

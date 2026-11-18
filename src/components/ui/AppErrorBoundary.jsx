@@ -1,7 +1,8 @@
 import React from "react";
 
+import { PillButton } from "./button/buttonSpecialized";
 
-import DynamicButton from "./button/button.jsx";
+
 export default class AppErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -31,15 +32,14 @@ export default class AppErrorBoundary extends React.Component {
             <p className="mt-2  text-sm text-muted">
               We Hit an Unexpected Issue While Rendering This Page.
             </p>
-            <DynamicButton
-              variant="solidLarge"
+            <PillButton
               size="sm"
               shape="rounded"
               onClick={this.handleReload}
               className="mt-5"
             >
               Reload
-            </DynamicButton>
+            </PillButton>
           </div>
         </main>
       );

@@ -1,6 +1,6 @@
 import React from "react";
 import { MapPin, Plus } from "lucide-react";
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { GoldButton } from "../../../components/ui/button/buttonSpecialized";
 
 export default function AccountEmptyState({
   icon: Icon = MapPin,
@@ -37,16 +37,13 @@ export default function AccountEmptyState({
       {action ? (
         action
       ) : actionLabel && onAction ? (
-        <DynamicButton
-          variant="gold"
-          size="sm"
-          shape="rounded"
+        <GoldButton
           onClick={onAction}
           leftIcon={actionIcon}
           className="mt-4"
         >
           {actionLabel}
-        </DynamicButton>
+        </GoldButton>
       ) : null}
     </div>
   );

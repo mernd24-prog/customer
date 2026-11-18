@@ -4,7 +4,7 @@ import ShowMoreText from "../../../utils/showMore";
 import { Loader2 } from "lucide-react";
 
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 function SummaryRow({
   label,
   value,
@@ -448,35 +448,29 @@ function OrderPaymentSummary({
 
       {/* Cart Checkout Button */}
       {variant === "cart" && buttonText && (
-        <DynamicButton
-          variant="pill"
-          size="lg"
-          shape="rounded"
+        <PillButton
           onClick={onCheckout}
           disabled={disabled || loading}
-          className="mt-6 w-full text-sm font-bold sm:text-base"
+          className=" mt-6 "
         >
           {loading && (
             <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
           )}
           <span>{buttonText}</span>
-        </DynamicButton>
+        </PillButton>
       )}
       {variant === "checkout" && buttonText && (
         <>
-          <DynamicButton
+          <PillButton
             type="submit"
-            variant="pill"
-            size="lg"
-            shape="rounded"
             disabled={loading || disabled}
-            className="mt-4 w-full text-sm font-semibold sm:text-[16px]"
+            className="mt-4 "
           >
             {loading && (
               <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
             )}
             <span>{buttonText}</span>
-          </DynamicButton>
+          </PillButton>
 
           {selectedLabel && (
             <p className="mt-2 text-center text-sm font-medium text-[#2E2E2E] sm:mt-3 sm:text-[15px] md:text-[16px]">

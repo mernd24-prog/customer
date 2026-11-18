@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+
+import { useSearchParams ,useNavigate} from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { ArrowUpRight ,ArrowRight} from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
 import SearchBar from "../../../components/ui/inputs/SearchBar";
@@ -81,7 +81,7 @@ function CategoryGridSkeleton({ count = DEFAULT_PAGE_SIZE }) {
 export default function CategoryListingPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-
+const navigate = useNavigate();
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -293,151 +293,109 @@ export default function CategoryListingPage() {
     },
   ];
 
-  return (
-    <>
-      <Seo
-        title="Categories | Sam Global"
-        description="Browse Sam Global categories and collections."
+return (
+  <>
+    <Seo
+      title="Categories | Sam Global"
+      description="Browse Sam Global categories and collections."
+    />
+
+    <PageContainer>
+      <Breadcrumbs
+        items={breadcrumbItems}
+        heading={null}
       />
 
-      <PageContainer>
-        <Breadcrumbs
-          items={breadcrumbItems}
-          heading={null}
-        />
-
-        <div className="flex flex-col gap-5 sm:gap-6 lg:mt-4 lg:gap-7">
-          <section className="min-w-0 rounded-lg bg-white">
-            <div className="mb-6 flex flex-col gap-3">
-              <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-                <SearchBar
-                  value={search}
-                  onChange={(event) =>
-                    handleSearchChange(event.target.value)
-                  }
-                  placeholder="Search categories"
-                  className="w-full sm:max-w-[640px]"
-                  showButton={false}
-                />
-
-                {/* Per page */}
-                <FilterDropdown
-                  options={PAGE_SIZE_OPTIONS.map(
-                    (size) => ({
-                      value: size,
-                      label: `${size} per page`,
-                    }),
-                  )}
-                  value={limit}
-                  onChange={handleLimitChange}
-                  placeholder="Per page"
-                  className="w-full sm:w-[150px]"
-                />
-              </div>
-            </div>
-
-            {loading ? (
-              <CategoryGridSkeleton count={limit} />
-            ) : error ? (
-              <EmptyState
-                imageSrc="/image/png/NoProductFound.png"
-                title="Unable to Load Categories"
-                description={error}
-              >
-                <Link
-                  to="/products"
-                  className="
-                    inline-flex h-11
-                    items-center justify-center
-                    gap-2 rounded-full
-                    bg-gradient-to-r
-                    from-[#B8891F] to-[#CE9F2D]
-                    px-6
-                    text-sm font-bold
-                    text-white
-                    shadow-sm
-                    transition-all duration-200
-                    hover:from-[#3E4093]
-                    hover:to-[#1B1D60]
-                    hover:shadow-md
-                  "
-                >
-                  <span>Explore Products</span>
-                  <ArrowRight size={16} />
-                </Link>
-              </EmptyState>
-            ) : categories.length ? (
-              <>
-                <div className={categoryGridClass}>
-                  {categories.map((category) => (
-                    <CatalogTile
-                      key={category.id || category.routeKey}
-                      to={CUSTOMER_ROUTES.category(category.routeKey)}
-                      title={category.displayName}
-                      image={
-                        category.iconUrl ||
-                        category.displayImage ||
-                        category.imageUrl ||
-                        category.bannerUrl
-                      }
-                      imageAlt={category.displayName}
-                      meta={
-                        getCategoryCount(category) !== undefined &&
-                        getCategoryCount(category) !== null &&
-                        getCategoryCount(category) !== ""
-                          ? `${Number(getCategoryCount(category)).toLocaleString()} Products`
-                          : undefined
-                      }
-                    />
-                  ))}
-                </div>
-
-                {totalPages > 1 && (
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-                )}
-              </>
-            ) : (
-              <EmptyState
-                imageSrc="/image/png/NoProductFound.png"
-                title="No Categories Found"
-                description={
-                  search
-                    ? `We couldn't find any categories matching "${search}". Please try another search.`
-                    : "We couldn't find any categories available at the moment. Please check back later or explore our products."
+      <div className="flex flex-col gap-5 sm:gap-6 lg:mt-4 lg:gap-7">
+        <section className="min-w-0 rounded-lg bg-white">
+          <div className="mb-6 flex flex-col gap-3">
+            <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+              <SearchBar
+                value={search}
+                onChange={(event) =>
+                  handleSearchChange(event.target.value)
                 }
-              >
-                <div className="flex flex-wrap items-center justify-center gap-3.5">
-                  <Link
-                    to="/products"
-                    className="
-                      inline-flex h-11
-                      items-center justify-center
-                      gap-2 rounded-full
-                      bg-gradient-to-r
-                      from-[#B8891F] to-[#CE9F2D]
-                      px-6
-                      text-sm font-bold
-                      text-white
-                      shadow-sm
-                      transition-all duration-200
-                      hover:from-[#3E4093]
-                      hover:to-[#1B1D60]
-                      hover:shadow-md
-                    "
-                  >
-                    <span>Explore Products</span>
-                    <ArrowRight size={16} />
-                  </Link>
-                </div>
-              </EmptyState>
-            )}
-          </section>
-        </div>
-      </PageContainer>
-    </>
-  );
+                placeholder="Search categories"
+                className="w-full sm:max-w-[640px]"
+                showButton={false}
+              />
+
+              <FilterDropdown
+                options={PAGE_SIZE_OPTIONS.map((size) => ({
+                  value: size,
+                  label: `${size} per page`,
+                }))}
+                value={limit}
+                onChange={handleLimitChange}
+                placeholder="Per page"
+                className="w-full sm:w-[150px]"
+              />
+            </div>
+          </div>
+
+          {loading ? (
+            <CategoryGridSkeleton count={limit} />
+          ) : error ? (
+            <EmptyState
+              imageSrc="/image/png/NoProductFound.png"
+              title="Unable to Load Categories"
+              description={error}
+              actionLabel="Explore Products"
+              onAction={() => navigate("/products")}
+            />
+          ) : categories.length > 0 ? (
+            <>
+              <div className={categoryGridClass}>
+                {categories.map((category) => (
+                  <CatalogTile
+                    key={category.id || category.routeKey}
+                    to={CUSTOMER_ROUTES.category(category.routeKey)}
+                    title={category.displayName}
+                    image={
+                      category.iconUrl ||
+                      category.displayImage ||
+                      category.imageUrl ||
+                      category.bannerUrl
+                    }
+                    imageAlt={category.displayName}
+                    meta={
+                      getCategoryCount(category) !== undefined &&
+                      getCategoryCount(category) !== null &&
+                      getCategoryCount(category) !== ""
+                        ? `${Number(
+                            getCategoryCount(category)
+                          ).toLocaleString()} Products`
+                        : undefined
+                    }
+                  />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </>
+          ) : (
+            <EmptyState
+              imageSrc="/image/png/NoProductFound.png"
+              title="No Categories Found"
+              description={
+                search
+                  ? `We couldn't find any categories matching "${search}". Please try another search.`
+                  : "We couldn't find any categories available at the moment. Please check back later or explore our products."
+              }
+              actionLabel="Explore Products"
+              onAction={() => navigate("/products")}
+            />
+          )}
+        </section>
+      </div>
+    </PageContainer>
+  </>
+);
+
 }

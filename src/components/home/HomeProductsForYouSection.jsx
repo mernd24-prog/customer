@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { ChevronDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
 import ProductCard from "../../modules/products/components/ProductCard";
@@ -16,8 +15,7 @@ import { getPagination } from "../../utils/filterUtils";
 import SectionContainer from "../ui/SectionContainer";
 import { fetchProducts } from "../../modules/products/slices/productSlice";
 
-
-import DynamicButton from "../ui/button/button.jsx";
+import { LoadMoreButton } from "../ui/button";
 export default function HomeProductsForYouSection({
   title = "Featured Products",
   description = "",
@@ -162,23 +160,11 @@ export default function HomeProductsForYouSection({
         </div>
         {page < totalPages && (
           <div className="mt-8 flex items-center justify-center">
-            <DynamicButton
+            <LoadMoreButton
               onClick={loadNextPage}
+              loading={isLoadingMore}
               disabled={isLoadingMore}
-              className="inline-flex h-[42px] px-6 items-center justify-center gap-2 rounded-lg border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {isLoadingMore ? (
-                <>
-                  <div className="animate-spin rounded-lg h-4 w-4 border-2 border-current border-t-transparent"></div>
-                  <span>Loading...</span>
-                </>
-              ) : (
-                <>
-                  <span>Load More</span>
-                  <ChevronDown size={14} strokeWidth={2.5} className="transition-transform duration-200" />
-                </>
-              )}
-            </DynamicButton>
+            />
           </div>
         )}
       </div>

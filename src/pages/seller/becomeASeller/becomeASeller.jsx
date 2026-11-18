@@ -29,6 +29,7 @@ import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 
 import { SELLER_LOGIN_URL } from "../../../config/seller";
 import { DynamicButton } from "../../../components/ui/button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 function useStorySlidesPerView() {
   const getSlidesPerView = () => {
     if (typeof window === "undefined") return 1;
@@ -286,16 +287,17 @@ export default function BecomeASeller() {
             description={heroDesc}
             theme="navy"
             cta={
-              <DynamicButton
-                variant="solidLarge"
-                size="lg"
+              <PillButton
+                size="md"
+                shape="square"
                 rightIcon={<ArrowRight size={18} />}
                 onClick={() =>
                   window.open(SELLER_LOGIN_URL, "_blank", "noopener,noreferrer")
                 }
+                className=" !text-[#17145f] hover:!text-[#17145f]"
               >
                 Seller Login
-              </DynamicButton>
+              </PillButton>
             }
             bottomContent={
               <div className="flex flex-wrap gap-x-5 gap-y-2.5 text-sm text-white/75 sm:gap-x-6 sm:gap-y-3">
@@ -541,17 +543,16 @@ export default function BecomeASeller() {
                 </div>
 
                 <div className="mt-6 text-center sm:mt-12">
-                  <DynamicButton
-                    as="a"
-                    variant="solidLarge"
-                    size="lg"
+                  <PillButton
+                    size="md"
                     href={SELLER_LOGIN_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     rightIcon={<ChevronRight size={18} />}
+                    className="!text-[#17145f] hover:!text-[#17145f]"
                   >
                     Get Started
-                  </DynamicButton>
+                  </PillButton>
                 </div>
               </div>
             </section>

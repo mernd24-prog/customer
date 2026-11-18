@@ -25,6 +25,8 @@ import {
   CategoryMoreButton,
   DynamicButton,
 } from "../components/ui/button";
+import {PillButton ,GoldButton} from "../components/ui/button/buttonSpecialized";
+
 import ConfirmModal from "../components/ui/overlay/ConfirmModal";
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
@@ -486,14 +488,14 @@ export const Navbar = ({ icons: propIcons }) => {
                 <MenuDropdown title="My Account" items={accountMenuItems} />
               </HeaderDropdown>
             ) : (
-              <DynamicButton
-                variant="headerGold"
+              <PillButton
                 size="sm"
-                className="ml-1"
+                shape="square"
+                className="ml-1 !text-[#03014D] hover:!text-[#03014D] px-12 sm:px-12 py-4 sm:py-5 !text-[16px] "
                 onClick={() => navigate("/login")}
               >
                 Login
-              </DynamicButton>
+              </PillButton>
             )}
           </div>
         </div>

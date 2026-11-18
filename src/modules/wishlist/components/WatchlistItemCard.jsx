@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, X } from "lucide-react";
@@ -15,6 +14,7 @@ import {
 
 import ProductCard from "../../products/components/ProductCard";
 import { DynamicButton } from "../../../components/ui/button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 export function WatchlistItemCard({
   product,
   compact = false,
@@ -218,7 +218,7 @@ export function WatchlistItemCard({
       {/* Wishlist Remove Button */}
       <DynamicButton
         variant="iconNeutral"
-        size="icon"
+         size="iconSm"
         shape="circle"
         onClick={(e) => {
           e.preventDefault();
@@ -229,13 +229,12 @@ export function WatchlistItemCard({
         aria-label={`Remove ${title} from wishlist`}
         title={`Remove ${title} from wishlist`}
       >
-        <X size={15} strokeWidth={1.8} />
+        <X size={11} strokeWidth={1.8} />
       </DynamicButton>
 
       {/* Wishlist Move to Cart Button */}
       <div className="absolute inset-x-2 bottom-2 z-20">
-        <DynamicButton
-          variant="pill"
+        <PillButton
           size="sm"
           disabled={isUnavailable || !isInStock}
           onClick={(e) => {
@@ -253,7 +252,7 @@ export function WatchlistItemCard({
           className="wishlist-cart-button w-full !bg-none !bg-[#CE9F2D] hover:!bg-[#bd9025] hover:shadow-md active:scale-[0.98] transition-[background-color,box-shadow,transform] duration-300 ease-in-out disabled:transform-none disabled:hover:shadow-none motion-reduce:transition-none"
         >
           <span className="truncate">Move to Cart</span>
-        </DynamicButton>
+        </PillButton>
       </div>
     </div>
   );

@@ -4,10 +4,6 @@ import { FaRegHeart } from "react-icons/fa";
 import { cn } from "../../../utils/common";
 import DynamicButton from "./button";
 
-/**
- * Specialized complex button components with custom composite layouts.
- * For standard buttons, use <DynamicButton variant="..." /> directly.
- */
 
 export const ButtonLoading = () => (
   <div className="flex items-center gap-2">
@@ -137,34 +133,46 @@ export const CategoryMoreButton = ({
   </div>
 );
 
-/**
- * Standardized action button for Order cards, tracking, reviews, and documents
- */
-export const OrderActionButton = React.forwardRef(
-  (
-    {
-      children,
-      className = "",
-      size = "sm",
-      shape = "rounded",
-      variant = "softGold",
-      loading,
-      isLoading,
-      ...props
-    },
-    ref,
-  ) => (
+
+
+export { default as LoadMoreButton } from "./LoadMoreButton";
+
+
+export const GoldButton = React.forwardRef(
+  ({ size = "sm", shape = "rounded", ...props }, ref) => (
     <DynamicButton
       ref={ref}
-      variant={variant}
+      variant="gold"
       size={size}
       shape={shape}
-      isLoading={isLoading || loading}
-      className={className}
       {...props}
-    >
-      {children}
-    </DynamicButton>
+    />
   ),
 );
-OrderActionButton.displayName = "OrderActionButton";
+GoldButton.displayName = "GoldButton";
+
+export const GoldOutlineButton = React.forwardRef(
+  ({ size = "sm", shape = "rounded", ...props }, ref) => (
+    <DynamicButton
+      ref={ref}
+      variant="goldOutline"
+      size={size}
+      shape={shape}
+      {...props}
+    />
+  ),
+);
+GoldOutlineButton.displayName = "GoldOutlineButton";
+
+export const PillButton = React.forwardRef(
+  ({ size = "lg", shape = "rounded", ...props }, ref) => (
+    <DynamicButton
+      ref={ref}
+      variant="pill"
+      size={size}
+      shape={shape}
+      {...props}
+    />
+  ),
+);
+PillButton.displayName = "PillButton";

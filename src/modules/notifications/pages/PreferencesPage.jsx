@@ -10,7 +10,8 @@ import { PreferenceChannelCard } from "../components/PreferenceChannelCard";
 import { PreferenceScheduleFields } from "../components/PreferenceScheduleFields";
 
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
+import { GoldButton } from "../../../components/ui/button/buttonSpecialized";
 export function PreferencesPage() {
   const {
     state,
@@ -98,12 +99,9 @@ export function PreferencesPage() {
 
             {/* Save Preferences Button */}
             <div className="mt-8 flex items-center justify-start">
-              <DynamicButton
+              <GoldButton
                 type="submit"
                 disabled={isSubmitting}
-                variant="gold"
-                size="md"
-                shape="rounded"
                 className={cn(
                   "flex items-center gap-2.5",
                   isSubmitting && "opacity-60 cursor-not-allowed",
@@ -114,7 +112,7 @@ export function PreferencesPage() {
                   {isSubmitting ? "Saving Preferences..." : "Save Preferences"}
                 </span>
                 <ChevronRight size={16} className="text-white/90 shrink-0" />
-              </DynamicButton>
+              </GoldButton>
             </div>
           </form>
         </ApiState>

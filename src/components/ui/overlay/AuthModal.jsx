@@ -8,8 +8,8 @@ import { X } from "lucide-react";
 
 import { LockIcon } from "../../../components/ui/icons";
 
-
-import DynamicButton from "../button/button.jsx";
+import { DynamicButton } from "../button";
+import { PillButton } from "../button/buttonSpecialized";
 export default function AuthModal({ open, onClose }) {
   const navigate = useNavigate();
   const loginBtnRef = useRef(null);
@@ -146,16 +146,15 @@ export default function AuthModal({ open, onClose }) {
 
           {/* CTA buttons */}
           <div className="flex flex-col gap-3">
-            <DynamicButton
-              ref={loginBtnRef}
-              variant="solidLarge"
+            <PillButton
               size="md"
+              ref={loginBtnRef}
               shape="rounded"
               onClick={handleGoToLogin}
               className="w-full"
             >
               Go to Login
-            </DynamicButton>
+            </PillButton>
 
             <DynamicButton
               variant="outlineSecondary"

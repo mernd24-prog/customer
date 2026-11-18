@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { DynamicButton } from "../../../components/ui/button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 
 import PageHeroBanner from "../../../components/ui/banner/PageHeroBanner";
 import Seo from "../../../components/ui/Seo";
@@ -229,19 +230,16 @@ export default function SellerPolicy() {
           cta={
             <>
               {primaryCtaLabel && (
-                <DynamicButton
-                  variant="solidLarge"
-                  size="lg"
-                  to={primaryCtaUrl}
-                >
+                <PillButton size="md" shape="square" to={primaryCtaUrl}>
                   {primaryCtaLabel}
-                </DynamicButton>
+                </PillButton>
               )}
 
               {secondaryCtaLabel && (
                 <DynamicButton
                   variant="outlineSecondary"
-                  size="lg"
+                  size="md"
+                  shape="square"
                   to={secondaryCtaUrl}
                 >
                   {secondaryCtaLabel}

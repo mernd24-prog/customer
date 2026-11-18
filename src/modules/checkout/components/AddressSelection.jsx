@@ -31,6 +31,7 @@ import { fetchFullList } from "../../../utils/pages/checkoutUtils";
 
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
+import { GoldOutlineButton } from "../../../components/ui/button/buttonSpecialized";
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
 const addressLabels = ADDRESS_LABEL_OPTIONS;
@@ -449,10 +450,8 @@ export default function AddressSelection({
 
         {displayAddresses.length > 2 && (
           <div className="flex justify-center w-full mt-2 mb-4">
-            <DynamicButton
+            <GoldOutlineButton
               onClick={() => setShowAllAddresses(!showAllAddresses)}
-              variant="goldOutline"
-              size="sm"
               shape="pill"
               className="flex w-[90%] sm:w-[60%] max-w-[350px] items-center justify-center gap-2"
             >
@@ -465,7 +464,7 @@ export default function AddressSelection({
                   Show More Addresses <ChevronDown size={16} />
                 </>
               )}
-            </DynamicButton>
+            </GoldOutlineButton>
           </div>
         )}
       </div>

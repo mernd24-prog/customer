@@ -12,6 +12,8 @@ import { ConfirmModal } from "../../../components/ui";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";
 import { DynamicButton } from "../../../components/ui/button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
+
 import { ArrowRight, CircleAlert, X } from "lucide-react";
 import { CART_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../../utils/ecommerce/money";
@@ -290,8 +292,6 @@ export default function CartPage() {
                       ))}
                     </div>
                   )}
-
-                  {/* On screens below lg, display Order Summary ABOVE Wishlist */}
                   {hasCartItems && (
                     <div className="block pt-0.5 lg:hidden">
                       <OrderPaymentSummary
@@ -334,15 +334,14 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="flex items-center justify-center pt-5">
-                      <DynamicButton
-                        to="/products"
-                        variant="continueShopping"
+                    <div className="flex items-center justify-center pt-5 ">
+                      <PillButton
                         size="md"
+                        to="/products"
                         rightIcon={<ArrowRight />}
                       >
                         Continue Shopping
-                      </DynamicButton>
+                      </PillButton>
                     </div>
                   )}
                 </div>
@@ -381,7 +380,6 @@ export default function CartPage() {
                           setShowGuestOtpModal(true);
                           return;
                         }
-
                         navigate("/checkout");
                       }}
                     />
