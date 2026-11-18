@@ -180,14 +180,15 @@ export function OrderTimeline({
                     e.status === "completed" ||
                     e.to_status === "completed")) ||
                 (step.status === "in_transit" &&
-                  (e.status === "shipped" ||
-                    e.to_status === "shipped" ||
-                    e.status === "in_transit" ||
+                  (e.status === "in_transit" ||
                     e.to_status === "in_transit" ||
                     e.status === "out_for_delivery" ||
-                    e.to_status === "out_for_delivery" ||
-                    e.status === "ready_to_ship" ||
-                    e.status === "packed")) ||
+                    e.to_status === "out_for_delivery")) ||
+                (step.status === "shipped" &&
+                  (e.status === "picked_up" ||
+                    e.to_status === "picked_up" ||
+                    e.status === "shipped" ||
+                    e.to_status === "shipped")) ||
                 (step.status === "confirmed" &&
                   (e.status === "initiated" ||
                     e.to_status === "initiated" ||

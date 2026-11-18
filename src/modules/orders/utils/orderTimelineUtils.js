@@ -11,6 +11,7 @@ export const dateTime = (value) =>
 
 export const TIMELINE_STEPS = [
   { status: "confirmed", label: "Order Confirmed" },
+  { status: "shipped", label: "Shipped / Handed to Courier" },
   { status: "in_transit", label: "In Transit" },
   { status: "delivered", label: "Delivered" },
 ];
@@ -24,14 +25,15 @@ export const STATUS_RANK = {
   packed: 2,
   ready_to_ship: 2,
   shipped: 3,
-  in_transit: 3,
-  out_for_delivery: 4,
-  partially_delivered: 4,
-  delivered: 5,
-  fulfilled: 5,
-  completed: 5,
-  order_closed: 5,
-  seller_marked_delivered: 5,
+  picked_up: 3,
+  in_transit: 4,
+  out_for_delivery: 5,
+  partially_delivered: 5,
+  delivered: 6,
+  fulfilled: 6,
+  completed: 6,
+  order_closed: 6,
+  seller_marked_delivered: 6,
 };
 
 export const getCancellationSteps = (

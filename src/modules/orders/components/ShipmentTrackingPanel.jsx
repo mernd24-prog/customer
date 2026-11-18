@@ -5,6 +5,21 @@ const STATUS_LABELS = { out_for_delivery: "Out For Delivery" };
 
 const label = (value = "") =>
   STATUS_LABELS[value] || String(value || "Not available").replace(/_/g, " ");
+const eventPayload = (event = {}) => {
+  const raw = event.raw_payload || event.rawPayload || {};
+  if (typeof raw !== "string") return raw;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+};
+const eventLabel = (event = {}) =>
+  event.eventType === "eta_updated" ||
+  event.event_type === "eta_updated" ||
+  eventPayload(event).eventType === "eta_updated"
+    ? "ETA Updated"
+    : label(event.status);
 const dateTime = (value) =>
   value
     ? new Date(value).toLocaleString("en-IN", {
@@ -302,7 +317,7 @@ export default function ShipmentTrackingPanel({
                       {/* Event content details - Always fully visible */}
                       <div>
                         <p className={`text-sm font-semibold capitalize ${isCancelledEvent ? "text-[#E53935]" : "text-[#2E2E2E]"}`}>
-                          {label(event.status)}
+                          {eventLabel(event)}
                         </p>
 
                         <p className="mt-1 text-xs text-[#6F7480]">
@@ -319,6 +334,12 @@ export default function ShipmentTrackingPanel({
                             {event.note.replace(/_/g, " ")}
                           </p>
                         )}
+                        {eventPayload(event).eventType === "eta_updated" &&
+                          eventPayload(event).expectedDeliveryAt && (
+                            <p className="mt-1 text-xs font-medium text-[#3E4093]">
+                              New expected delivery: {dateTime(eventPayload(event).expectedDeliveryAt)}
+                            </p>
+                          )}
                       </div>
                     </div>
                   );
