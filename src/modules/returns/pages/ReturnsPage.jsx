@@ -1,3 +1,4 @@
+import { formatReturnDuration } from "../../../utils/returnDuration";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { ArrowLeft, Package, RotateCcw } from "lucide-react";
@@ -225,7 +226,7 @@ function ReturnRequestPage({ orderId }) {
                                     : expired
                                       ? "Return window has closed"
                                       : policy.returnable
-                                        ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}${policy.inspectionRequired ? " · QC required" : ""}`
+                                        ? `Returnable${policy.days ? ` for ${formatReturnDuration(policy.days)}` : ""}${policy.inspectionRequired ? " · QC required" : ""}`
                                         : "This item is not returnable"}
                           </p>
                         </div>

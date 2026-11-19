@@ -1,3 +1,4 @@
+import { formatReturnDuration } from "../../../utils/returnDuration";
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, ShieldCheck, ChevronDown, ChevronUp } from "lucide-react";
@@ -305,7 +306,7 @@ export default function ProductInfoSection({
                   <span className="text-sm font-semibold text-navy break-words sm:text-base">
                     {returnPolicy.returnable === false
                       ? "Non-Returnable"
-                      : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7} Days Return Policy`}
+                      : `${formatReturnDuration(returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7)} Return Policy`}
                   </span>
                   <span className="text-xs text-muted">
                     {returnPolicy.inspectionRequired !== false
