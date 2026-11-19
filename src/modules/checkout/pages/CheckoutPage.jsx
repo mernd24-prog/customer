@@ -1,4 +1,3 @@
-
 import { useCallback } from "react";
 import { MapPin, Plus } from "lucide-react";
 import useCheckout from "../controllers/useCheckout";
@@ -20,7 +19,8 @@ import { CHECKOUT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts"
 import { PageContainer } from "../../../components/ui/layout";
 
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
+import { GoldButton } from "../../../components/ui/button/buttonSpecialized";
 export default function CheckoutPage() {
   const {
     navigate,
@@ -152,8 +152,10 @@ export default function CheckoutPage() {
 
                       {!isBuyNowCheckout && (
                         <DynamicButton
-                          type="button"
                           onClick={() => excludeBlockedItem(blocker)}
+                          variant="unstyled"
+                          size="none"
+                          shape="none"
                           className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
                         >
                           Exclude item
@@ -218,18 +220,17 @@ export default function CheckoutPage() {
                         Please add address to continue.
                       </p>
 
-                      <DynamicButton
-                        type="button"
+                      <GoldButton
                         onClick={() =>
                           setValue("useNewAddress", true, {
                             shouldValidate: true,
                           })
                         }
-                        className="mt-5 inline-flex h-11 w-full max-w-[200px] items-center justify-center gap-2 rounded-lg border border-[#C69D2A] bg-[#C69D2A] px-4 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#b98a1f]"
+                        leftIcon={<Plus size={24} />}
+                        className="mt-5 w-full max-w-[200px]"
                       >
-                        <Plus size={24} />
                         Add Address
-                      </DynamicButton>
+                      </GoldButton>
                     </div>
                   )}
 

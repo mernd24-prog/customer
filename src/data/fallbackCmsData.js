@@ -85,6 +85,24 @@ export const FALLBACK_PROMO_CARDS = [
     "Explore now",
   ],
   [
+    "diwali.webp",
+    "Diwali Special Collection",
+    "Celebrate the Festival of Lights with beautiful festive décor, traditional diyas, and special gifts for every occasion",
+    "Explore now",
+  ],
+  [
+    "diwali.webp",
+    "Diwali Special Collection",
+    "Celebrate the Festival of Lights with beautiful festive décor, traditional diyas, and special gifts for every occasion",
+    "Explore now",
+  ],
+  [
+    "diwali.webp",
+    "Diwali Special Collection",
+    "Celebrate the Festival of Lights with beautiful festive décor, traditional diyas, and special gifts for every occasion",
+    "Explore now",
+  ],
+  [
     "diwali3.webp",
     "Diwali Festive Wear",
     "Shine this Diwali with elegant ethnic outfits, vibrant colours, and timeless traditional styles.",

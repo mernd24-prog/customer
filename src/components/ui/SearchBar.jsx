@@ -509,8 +509,6 @@ const SearchBar = ({
               >
                 <DynamicButton
                   as="button"
-                  type="button"
-                  variant="unstyled"
                   aria-label="Select Category"
                   aria-expanded={isDropdownOpen}
                   aria-haspopup="listbox"
@@ -567,8 +565,6 @@ const SearchBar = ({
                           <DynamicButton
                             as="button"
                             key={key}
-                            type="button"
-                            variant="unstyled"
                             onClick={() => handleSelectCategory(category)}
                             className={`w-full justify-start rounded-lg px-3 py-2.5 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
                               isSelected
@@ -628,8 +624,6 @@ const SearchBar = ({
           {Boolean(searchQuery) && (
             <DynamicButton
               as="button"
-              type="button"
-              variant="unstyled"
               onClick={handleClear}
               className="mr-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm p-0 text-gray-400 transition-colors hover:bg-[#F8F3E7] hover:text-[#03014D]"
               aria-label="Clear search text"
@@ -641,8 +635,6 @@ const SearchBar = ({
           {/* Search Button */}
           <DynamicButton
             as="button"
-            type="button"
-            variant="unstyled"
             onClick={() => handleSearch()}
             className="flex h-full w-[42px] shrink-0 items-center justify-center rounded-r-full bg-[#CE9F2D] text-[#03014D] transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98] min-[375px]:w-[44px] min-[425px]:w-[48px] sm:w-[64px] !outline-none focus:!outline-none focus-visible:!outline-none"
             aria-label="Search"
@@ -668,9 +660,7 @@ const SearchBar = ({
               <DynamicButton
                 as="button"
                 key={`${label}-${index}`}
-                type="button"
                 role="option"
-                variant="unstyled"
                 aria-selected={isActive}
                 onMouseDown={(event) => event.preventDefault()}
                 onMouseEnter={() => setActiveSuggestionIndex(index)}

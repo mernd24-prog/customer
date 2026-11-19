@@ -1,13 +1,14 @@
-import { ChevronDown, ChevronUp, MapPin, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, MapPin, Plus, Trash2 } from "lucide-react";
 
 import AddressFormFields from "../../common/components/address/AddressFormFields";
 import AddressEditModal from "../../common/components/address/AddressEditModal";
 import SharedAddressCard from "../../common/components/address/SharedAddressCard";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useAddressBook } from "../controllers/useAddressBook";
-import { Trash2 } from "lucide-react";
+import { AccountTabHeader, AccountEmptyState } from "../components";
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
+import { PillButton, GoldOutlineButton } from "../../../components/ui/button/buttonSpecialized";
 export default function AddressTab({ user }) {
   const {
     loading,
@@ -55,20 +56,11 @@ export default function AddressTab({ user }) {
   if ((loading || !user) && !showAddForm) {
     return (
       <section className="mx-auto w-full min-w-0 space-y-5">
-        <header className="flex items-center gap-3 border-b border-[#E7D9B8] pb-4">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60]">
-            <MapPin size={22} />
-          </span>
-
-          <div className="min-w-0">
-            <h2 className="text-xl font-bold text-[#1B1D60]">
-              Saved Addresses
-            </h2>
-            <p className="mt-1 text-sm text-[#64708A]">
-              Manage your delivery addresses for a faster checkout.
-            </p>
-          </div>
-        </header>
+        <AccountTabHeader
+          icon={MapPin}
+          title="Saved Addresses"
+          description="Manage your delivery addresses for a faster checkout."
+        />
 
         <div className="animate-pulse rounded-lg border border-[#E7D9B8] bg-white p-6">
           <div className="h-5 w-40 rounded bg-[#F5E9C9]" />
@@ -83,35 +75,23 @@ export default function AddressTab({ user }) {
     <>
       <section className="mx-auto w-full min-w-0 space-y-5">
         {/* Saved Addresses Header */}
-        <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex min-w-0 items-start gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60] sm:size-11">
-              <MapPin size={21} />
-            </span>
-
-            <div className="min-w-0">
-              <h2 className="text-base font-bold leading-6 text-[#171A3A] sm:text-lg lg:text-xl">
-                Saved Addresses
-              </h2>
-
-              <p className="mt-0.5 text-xs font-normal leading-snug text-[#64708A] sm:text-sm">
-                Manage your delivery addresses for a faster checkout.
-              </p>
-            </div>
-          </div>
-
-          {/* Show header button only when an address exists */}
-          {addresses.length > 0 && (
-            <DynamicButton
-              type="button"
-              onClick={handleToggleAddForm}
-              className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-gold px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none sm:w-auto sm:text-sm"
-            >
-              {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
-              <span>{showAddForm ? "Close Form" : "Add New Address"}</span>
-            </DynamicButton>
-          )}
-        </header>
+        <AccountTabHeader
+          icon={MapPin}
+          title="Saved Addresses"
+          description="Manage your delivery addresses for a faster checkout."
+          action={
+            addresses.length > 0 && (
+              <PillButton
+              size="sm"
+                onClick={handleToggleAddForm}
+                leftIcon={showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
+               
+              >
+                <span>{showAddForm ? "Close Form" : "Add New Address"}</span>
+              </PillButton>
+            )
+          }
+        />
 
         {/* Add Address Form */}
         <AddressEditModal
@@ -135,8 +115,6 @@ export default function AddressTab({ user }) {
           submitLabel="Save Address"
           icon={MapPin}
         />
-
-        {/* Saved Addresses Panel */}
         {addresses.length > 0 ? (
           <div className="min-w-0 bg-white">
             <div className="grid min-w-0 grid-cols-1 gap-4">
@@ -159,8 +137,6 @@ export default function AddressTab({ user }) {
                       startEdit={startEdit}
                       handleDelete={handleDelete}
                     />
-
-                    {/* Edit Address Modal */}
                     <AddressEditModal
                       isOpen={isEditing}
                       onClose={cancelEdit}
@@ -186,14 +162,10 @@ export default function AddressTab({ user }) {
                 );
               })}
             </div>
-
-            {/* Show More / Show Less Addresses */}
             {addresses.length > 4 && (
               <div className="flex justify-center border-t border-[#E7D9B8] px-4 py-4">
-                <DynamicButton
-                  type="button"
+                <GoldOutlineButton
                   onClick={handleShowAllAddresses}
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#CE9F2D] px-5 py-2 text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF8E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2"
                 >
                   {showAllAddresses ? (
                     <>
@@ -206,38 +178,22 @@ export default function AddressTab({ user }) {
                       <ChevronDown size={16} />
                     </>
                   )}
-                </DynamicButton>
+                </GoldOutlineButton>
               </div>
             )}
           </div>
         ) : (
-          /* Empty State */
-          <div className="rounded-lg border border-dashed border-[#CE9F2D] bg-[#FFFCF5] px-5 py-10 text-center">
-            <span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F5E9C9] text-[#1B1D60]">
-              <MapPin size={23} />
-            </span>
-
-            <h3 className="text-base font-semibold text-[#1B1D60]">
-              No addresses saved yet
-            </h3>
-
-            <p className="mx-auto mt-1 max-w-sm text-sm text-[#64708A]">
-              Please add an address to continue.
-            </p>
-
-            <DynamicButton
-              type="button"
-              onClick={handleToggleAddForm}
-              className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2"
-            >
-              <Plus size={17} />
-              Add Address
-            </DynamicButton>
-          </div>
+          <AccountEmptyState
+            icon={MapPin}
+            title="No addresses saved yet"
+            description="Please add an address to continue."
+            actionLabel="Add Address"
+            onAction={handleToggleAddForm}
+            actionIcon={<Plus size={17} />}
+          />
         )}
       </section>
 
-      {/* Delete Confirmation */}
       <ConfirmModal
         open={Boolean(deleteAddressId)}
         title="Delete This Address?"

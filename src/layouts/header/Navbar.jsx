@@ -5,10 +5,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Heart, ShoppingCart, LogOut } from "lucide-react";
 import SearchBar from "../../components/ui/SearchBar";
-import {
-  HeaderGoldButton,
-  HeaderIconButton,
-} from "../../components/ui/button/static";
+import { DynamicButton } from "../../components/ui/button";
 import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
 import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
@@ -216,7 +213,10 @@ export const Navbar = ({ icons: propIcons }) => {
               {/* Utility icons from CMS / constants */}
               {utilityIcons.map((item, iconIndex) => (
                 <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
-                  <HeaderIconButton
+                  <DynamicButton
+                    variant="headerIcon"
+                    size="icon"
+                    shape="circle"
                     to={getNavbarIconPath(item)}
                     aria-label={getNavbarIconLabel(item, navbarIconLabels)}
                   >
@@ -236,7 +236,7 @@ export const Navbar = ({ icons: propIcons }) => {
                     <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                       {getNavbarIconLabel(item, navbarIconLabels)}
                     </span>
-                  </HeaderIconButton>
+                  </DynamicButton>
 
                   {iconIndex < utilityIcons.length - 1 && (
                     <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
@@ -248,9 +248,11 @@ export const Navbar = ({ icons: propIcons }) => {
                 <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
               )}
 
-              <HeaderIconButton
+              <DynamicButton
+                variant="headerIconOutlined"
+                size="icon"
+                shape="circle"
                 to="/cart"
-                outlined
                 className="relative overflow-visible"
                 aria-label={`Cart with ${cartItemCount} ${
                   cartItemCount === 1 ? "item" : "items"
@@ -263,13 +265,16 @@ export const Navbar = ({ icons: propIcons }) => {
                     {cartItemCount > 99 ? "99+" : cartItemCount}
                   </span>
                 )}
-              </HeaderIconButton>
+              </DynamicButton>
 
               {/* Watchlist */}
-              <HeaderIconButton
+              <DynamicButton
+                variant="headerIconOutlined"
+                size="icon"
+                shape="circle"
                 to="/wishlist"
                 onClick={handleWishlistClick}
-                className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+                className="relative overflow-visible"
                 aria-label={`Watchlist with ${wishlistCount} ${
                   wishlistCount === 1 ? "item" : "items"
                 }`}
@@ -281,7 +286,7 @@ export const Navbar = ({ icons: propIcons }) => {
                     {wishlistCount > 99 ? "99+" : wishlistCount}
                   </span>
                 )}
-              </HeaderIconButton>
+              </DynamicButton>
             </div>
 
             {/* Account dropdown OR Login button */}

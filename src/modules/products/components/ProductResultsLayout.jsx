@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ApiState from "../../../components/ui/ApiState";
 import ActiveFilterChips from "../../../components/ui/ActiveFilterChips";
@@ -9,7 +8,7 @@ import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 import Loader from "../../../components/ui/Loader";
 
-import { ContinueShoppingButton } from "../../../components/ui/button/static";
+import { LoadMoreButton } from "../../../components/ui/button";
 export default function ProductResultsLayout({
   totalResults = 0,
   pageSize = 12,
@@ -179,27 +178,15 @@ export default function ProductResultsLayout({
                 )}{" "}
                 {currentPage < totalPages && (
                   <div className="mt-8 flex items-center justify-center">
-                    <ContinueShoppingButton
-                      type="button"
+                    <LoadMoreButton
                       onClick={() => {
                         if (onLoadMore) {
                           onLoadMore();
                         }
                       }}
+                      loading={loadingMore}
                       disabled={loadingMore}
-                      rightIcon={
-                        loadingMore ? undefined : (
-                          <ChevronDown
-                            size={14}
-                            strokeWidth={2.5}
-                            className="transition-transform duration-200"
-                          />
-                        )
-                      }
-                      className="min-h-[42px] px-6 text-sm lg:text-base"
-                    >
-                      {loadingMore ? "Loading..." : "Load More"}
-                    </ContinueShoppingButton>
+                    />
                   </div>
                 )}{" "}
                 {!showPagination && loadingMore && !onLoadMore && (

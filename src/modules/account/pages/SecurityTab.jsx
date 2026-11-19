@@ -9,9 +9,9 @@ import { useNavigate } from "react-router-dom";
 import OtpInput from "../../../components/ui/OtpInput";
 import { notify } from "../../../utils/notify";
 import FormField from "../../../components/ui/FormField";
-import Button from "../../../components/ui/buttons/Button";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { useToastThunk } from "../../../hooks/useToastThunk";
+import { AccountTabHeader, AccountFormActions } from "../components";
 
 import {
   changePassword,
@@ -109,23 +109,11 @@ export default function SecurityTab() {
         onSubmit={handleSubmit((values) => submit(values))}
         noValidate
       >
-        <header className="flex flex-col gap-4 border-b border-[#E7D9B8] pb-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex min-w-0 items-start gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F5E9C9] text-[#1B1D60] sm:size-11">
-              <UserRound size={21} />
-            </span>
-
-            <div className="min-w-0">
-              <h2 className="text-base font-bold leading-6 text-[#171A3A] sm:text-lg lg:text-xl">
-                Security
-              </h2>
-
-              <p className="mt-0.5 text-xs font-normal leading-snug text-[#64708A] sm:text-sm">
-                Manage your password and security settings.
-              </p>
-            </div>
-          </div>
-        </header>
+        <AccountTabHeader
+          icon={UserRound}
+          title="Security"
+          description="Manage your password and security settings."
+        />
 
         <FormField
           id="currentPassword"
@@ -168,18 +156,12 @@ export default function SecurityTab() {
           disabled={loading}
         />
 
-        <div className="flex w-full justify-end pt-2">
-          <Button
-            type="submit"
-            loading={loading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-xs font-semibold text-white shadow-2xs hover:bg-gold-dark sm:w-auto sm:text-sm"
-            size="md"
-            disabled={loading || otpRequired}
-          >
-            <Mail size={16} />
-            Send OTP
-          </Button>
-        </div>
+        <AccountFormActions
+          submitLabel="Send OTP"
+          submitIcon={<Mail size={16} />}
+          loading={loading}
+          disabled={loading || otpRequired}
+        />
       </form>
 
       {/* OTP Verification Modal */}
@@ -187,7 +169,7 @@ export default function SecurityTab() {
         open={otpRequired}
         title="Verify Password"
         icon={ShieldCheck}
-        iconBgClassName="bg-blue-50"
+        iconBgClassName = "bg-[#F5E9C9]"
         iconClassName="text-blue-600"
         iconSize={22}
         description={deliveryMessage}
@@ -197,37 +179,37 @@ export default function SecurityTab() {
         onConfirm={handleSubmit((values) => submit(values))}
         onCancel={closeOtpModal}
         maxWidth="max-w-[440px]"
-      >
-        <div className="space-y-4">
-          <div className="text-center">
-            <p className="mb-3 text-sm font-semibold text-[#2D2D2D]">
-              Enter the 6-digit verification code
-            </p>
+        >
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="mb-3 text-sm font-semibold text-[#2D2D2D]">
+                Enter the 6-digit verification code
+              </p>
 
-            <div className="mx-auto w-full max-w-[320px]">
-              <OtpInput value={otp} onChange={setOtp} />
+              <div className="mx-auto w-full max-w-[320px]">
+                <OtpInput value={otp} onChange={setOtp} />
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center justify-between gap-3 border-t border-[#F0E6D2] pt-3">
-            <DynamicButton
-              type="button"
-              disabled={loading}
-              onClick={closeOtpModal}
-              className="text-sm font-medium text-[#64708A] underline-offset-4 hover:text-[#1B1D60] hover:underline disabled:opacity-50"
-            >
-              Edit password details
-            </DynamicButton>
+            <div className="flex items-center justify-between gap-3 border-t border-[#F0E6D2] pt-3">
+              <DynamicButton
+                variant="link"
+                disabled={loading}
+                onClick={closeOtpModal}
+                className="text-sm font-medium text-[#64708A] underline-offset-4 hover:text-[#1B1D60] hover:underline disabled:opacity-50"
+              >
+                Edit password details
+              </DynamicButton>
 
-            <DynamicButton
-              type="button"
-              disabled={loading}
-              onClick={handleSubmit((values) => submit(values, true))}
-              className="text-sm font-semibold text-[#1B1D60] underline-offset-4 hover:underline disabled:opacity-50"
-            >
-              Resend OTP
-            </DynamicButton>
-          </div>
+              <DynamicButton
+                variant="link"
+                disabled={loading}
+                onClick={handleSubmit((values) => submit(values, true))}
+                className="text-sm font-semibold text-[#1B1D60] underline-offset-4 hover:underline disabled:opacity-50"
+              >
+                Resend OTP
+              </DynamicButton>
+            </div>
         </div>
       </ConfirmModal>
     </>

@@ -133,10 +133,12 @@ export default function Breadcrumbs({
                 </span>
               </Link>
             ) : (
-              <span
+              <DynamicButton
+                variant="textGold"
                 title={label}
+               
                 className={cn(
-                  "inline-flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden font-medium text-xs leading-tight text-[#8A6500] sm:text-sm lg:text-base",
+                  "gap-2 overflow-hidden text-sm sm:text-sm lg:text-base font-semibold ",
                   currentClassName,
                 )}
               >
@@ -161,8 +163,6 @@ export default function Breadcrumbs({
                 {/* Copy icon immediately after Order ID */}
                 {isLast && copyLastItem && copyValue && (
                   <DynamicButton
-                    type="button"
-                    variant="unstyled"
                     onClick={handleCopy}
                     title="Copy Order number"
                     aria-label="Copy Order number"
@@ -175,7 +175,7 @@ export default function Breadcrumbs({
                     )}
                   </DynamicButton>
                 )}
-              </span>
+              </DynamicButton>
             )}
           </span>
         );

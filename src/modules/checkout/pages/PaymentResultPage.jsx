@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-
+import { ArrowRight } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
-import BrandButton from "../../../components/ui/buttons/Button";
+import {
+  GoldOutlineButton,
+  PillButton,
+} from "../../../components/ui/button/buttonSpecialized";
 import { fetchOrderById } from "../../orders/slices/orderSlice";
 import { fetchMe } from "../../../features/user/userSlice";
 
@@ -36,13 +39,9 @@ export function PaymentResultPage() {
 
   const [searchParams] = useSearchParams();
 
-  const orderTokenPayload = decodeRouteToken(
-    searchParams.get("o"),
-    "order",
-  );
+  const orderTokenPayload = decodeRouteToken(searchParams.get("o"), "order");
 
-  const orderId =
-    orderTokenPayload?.id || searchParams.get("orderId");
+  const orderId = orderTokenPayload?.id || searchParams.get("orderId");
 
   const reason = searchParams.get("reason") || "";
 
@@ -53,36 +52,23 @@ export function PaymentResultPage() {
       ? "failed"
       : "success";
 
-    navigate(
-      getOpaquePaymentResultPath(status, orderId, reason),
-      { replace: true },
-    );
-  }, [
-    location.pathname,
-    navigate,
-    orderId,
-    reason,
-    searchParams,
-  ]);
+    navigate(getOpaquePaymentResultPath(status, orderId, reason), {
+      replace: true,
+    });
+  }, [location.pathname, navigate, orderId, reason, searchParams]);
 
   const order = findFetchedOrder(orderState, orderId);
 
-  const displayOrderRef =
-    getOrderNumber(order) || orderId;
+  const displayOrderRef = getOrderNumber(order) || orderId;
 
-  const currentUser =
-    userState.current || userState.data || {};
+  const currentUser = userState.current || userState.data || {};
 
   const orderStatus = String(
-    order?.status ||
-      order?.orderStatus ||
-      "",
+    order?.status || order?.orderStatus || "",
   ).toLowerCase();
 
   const paymentStatus = String(
-    order?.paymentStatus ||
-      order?.payment_status ||
-      "",
+    order?.paymentStatus || order?.payment_status || "",
   ).toLowerCase();
 
   const isCod =
@@ -95,53 +81,35 @@ export function PaymentResultPage() {
 
   const isConfirmed =
     Boolean(order) &&
-    (isCod
-      ? paymentStatus === "authorized"
-      : paymentStatus === "captured") &&
-    ![
-      "pending_payment",
-      "payment_failed",
-    ].includes(orderStatus);
+    (isCod ? paymentStatus === "authorized" : paymentStatus === "captured") &&
+    !["pending_payment", "payment_failed"].includes(orderStatus);
 
   const isActuallyFailed =
-    paymentStatus === "failed" ||
-    orderStatus === "payment_failed";
+    paymentStatus === "failed" || orderStatus === "payment_failed";
 
-  const isPending =
-    Boolean(orderId) &&
-    !isConfirmed &&
-    !isActuallyFailed;
+  const isPending = Boolean(orderId) && !isConfirmed && !isActuallyFailed;
 
-  const deliveryDateRange =
-    getDeliveryDateRange(order || {});
+  const deliveryDateRange = getDeliveryDateRange(order || {});
 
   const deliveryLabel = deliveryDateRange
     ? deliveryDateRange.minDate
-      ? `${formatOrderDate(
-          deliveryDateRange.minDate,
-        )} – ${formatOrderDate(
+      ? `${formatOrderDate(deliveryDateRange.minDate)} – ${formatOrderDate(
           deliveryDateRange.maxDate,
         )}`
-      : formatOrderDate(
-          deliveryDateRange.maxDate,
-        )
+      : formatOrderDate(deliveryDateRange.maxDate)
     : "To be confirmed";
 
   useEffect(() => {
     if (!orderId) return;
 
-    dispatch(
-      fetchOrderById({ orderId }),
-    );
+    dispatch(fetchOrderById({ orderId }));
   }, [dispatch, orderId]);
 
   useEffect(() => {
     if (!orderId || !isPending) return undefined;
 
     const interval = window.setInterval(() => {
-      dispatch(
-        fetchOrderById({ orderId }),
-      );
+      dispatch(fetchOrderById({ orderId }));
     }, 3000);
 
     const timeout = window.setTimeout(() => {
@@ -155,19 +123,10 @@ export function PaymentResultPage() {
   }, [dispatch, isPending, orderId]);
 
   useEffect(() => {
-    if (
-      !currentUser?.id &&
-      !currentUser?._id &&
-      !userState.loading
-    ) {
+    if (!currentUser?.id && !currentUser?._id && !userState.loading) {
       dispatch(fetchMe());
     }
-  }, [
-    currentUser?._id,
-    currentUser?.id,
-    dispatch,
-    userState.loading,
-  ]);
+  }, [currentUser?._id, currentUser?.id, dispatch, userState.loading]);
 
   const breadcrumbItems = [
     {
@@ -192,17 +151,13 @@ export function PaymentResultPage() {
 
   const resultCard = (
     <PageContainer>
-      <Breadcrumbs
-        items={breadcrumbItems}
-      />
+      <Breadcrumbs items={breadcrumbItems} />
 
       <div className="mx-auto flex w-full justify-center">
         <div className="w-full max-w-3xl">
           <section
-            className={`overflow-hidden rounded-[20px] border bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)] ${
-              isActuallyFailed
-                ? "border-red-200"
-                : "border-amber-200"
+            className={`overflow-hidden rounded-lg border bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)] ${
+              isActuallyFailed ? "border-red-200" : "border-amber-200"
             }`}
           >
             <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 text-center sm:px-10">
@@ -217,10 +172,7 @@ export function PaymentResultPage() {
                   {isActuallyFailed ? (
                     <FailedIcon className="h-8 w-8 sm:h-10 sm:w-10" />
                   ) : (
-                    <span
-                      className="text-3xl sm:text-4xl"
-                      aria-hidden="true"
-                    >
+                    <span className="text-3xl sm:text-4xl" aria-hidden="true">
                       ⌛
                     </span>
                   )}
@@ -247,43 +199,28 @@ export function PaymentResultPage() {
             </div>
 
             <div className="flex flex-col justify-center gap-3 border-t border-red-100 px-6 py-5 sm:flex-row sm:px-10">
-              <BrandButton
-                variant="secondary"
-                rounded
+              <PillButton
+                size="md"
+                rightIcon={<ArrowRight size={16} />}
                 onClick={() => {
                   if (orderId) {
-                    if (
-                      isActuallyFailed ||
-                      reason === "dismissed"
-                    ) {
+                    if (isActuallyFailed || reason === "dismissed") {
                       navigate("/orders");
                     } else {
-                      dispatch(
-                        fetchOrderById({
-                          orderId,
-                        }),
-                      )
+                      dispatch(fetchOrderById({ orderId }))
                         .unwrap()
-                        .finally(() => {
-                          navigate(
-                            getOpaqueOrderPath(
-                              orderId,
-                            ),
-                          );
-                        });
+                        .finally(() => navigate(getOpaqueOrderPath(orderId)));
                     }
                   } else {
                     navigate("/orders");
                   }
                 }}
-                label={
-                  isActuallyFailed ||
-                  reason === "dismissed"
-                    ? "All pending orders"
-                    : "View order status"
-                }
                 className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
-              />
+              >
+                {isActuallyFailed || reason === "dismissed"
+                  ? "All pending orders"
+                  : "View order status"}
+              </PillButton>
             </div>
           </section>
         </div>
@@ -307,13 +244,9 @@ export function PaymentResultPage() {
                 Open My Orders to check whether an order was created.
               </p>
 
-              <BrandButton
-                variant="secondary"
-                rounded
-                onClick={() => navigate("/orders")}
-                label="View Orders"
-                className="mt-5"
-              />
+              <PillButton onClick={() => navigate("/orders")} className="mt-5">
+                View Orders
+              </PillButton>
             </div>
           </div>
         </PageContainer>
@@ -322,9 +255,7 @@ export function PaymentResultPage() {
   }
 
   if (
-    (!order &&
-      !orderState.loading &&
-      orderState.error) ||
+    (!order && !orderState.loading && orderState.error) ||
     (order && !isConfirmed)
   ) {
     return (
@@ -361,7 +292,7 @@ export function PaymentResultPage() {
 
             <div className="mx-auto flex w-full justify-center">
               <div className="w-full max-w-3xl">
-                <section className="flex w-full flex-col overflow-hidden rounded-[16px] border border-[#CE9F2D]/40 bg-[#fffcf6] shadow-sm sm:rounded-[18px]">
+                <section className="flex w-full flex-col overflow-hidden rounded-lg border border-[#CE9F2D]/40 bg-[#fffcf6] shadow-sm sm:rounded-lg">
                   <div className="flex flex-col gap-4 px-5 py-6 text-center sm:px-8 sm:py-8">
                     <div className="flex flex-col items-center justify-center gap-3 sm:gap-4">
                       <div className="shrink-0">
@@ -388,27 +319,21 @@ export function PaymentResultPage() {
                         </p>
 
                         <div className="mt-3 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
-                          <BrandButton
-                            variant="secondary"
-                            rounded
+                          <GoldOutlineButton
+                            shape="circle"
+                            size="sm"
+                            rightIcon={<ArrowRight/>}
                             onClick={() => {
-                              dispatch(
-                                fetchOrderById({
-                                  orderId,
-                                }),
-                              )
+                              dispatch(fetchOrderById({ orderId }))
                                 .unwrap()
-                                .finally(() => {
-                                  navigate(
-                                    getOpaqueOrderPath(
-                                      orderId,
-                                    ),
-                                  );
-                                });
+                                .finally(() =>
+                                  navigate(getOpaqueOrderPath(orderId)),
+                                );
                             }}
-                            label="View order details"
-                            className="h-10 w-full min-w-[160px] px-6 text-xs sm:w-auto sm:text-sm"
-                          />
+                            className=" !text-[#17145f] hover:!text-[#17145f]"
+                          >
+                            View order details
+                          </GoldOutlineButton>
                         </div>
                       </div>
                     </div>

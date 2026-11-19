@@ -31,6 +31,7 @@ import VariantSelector from "../components/VariantSelector";
 import ImageVariantPicker from "../components/ImageVariantPicker";
 import ProductActionButtons from "../components/ProductActionButtons";
 import StarRating from "../../../components/ui/display/StarRating";
+import { DynamicButton } from "../../../components/ui/button";
 
 const ProductInfoSection = lazy(() => import("../sections/ProductInfoSection"));
 const ProductRecommendationSection = lazy(
@@ -247,15 +248,17 @@ export default function ProductDetailPage() {
 
                 <div className="relative flex min-w-0 flex-col gap-5 lg:mt-10">
                   <div className="flex flex-col gap-2">
-                    <div className="mt-5 flex min-w-0 items-baseline gap-1.5 text-[#CE9F2D]">
+                    <div className="mt-2 flex min-w-0 items-baseline gap-1.5 text-[#CE9F2D]">
                       {/* <span className="shrink-0 font-medium text-muted">Brand:</span> */}
                       {brand ? (
-                        <Link
+                        <DynamicButton
+                          variant="textGold"
                           to={`/brands/${encodeURIComponent(brand)}`}
-                          className="max-w-full text-[#CE9F2D] break-words font-bold uppercase tracking-wide  transition-colors hover:text-[#CE9F2D]"
+                          title={brand}
+                          className="max-w-full break-words text-sm font-bold tracking-wide uppercase"
                         >
                           {capitalizeFirst(brand)}
-                        </Link>
+                        </DynamicButton>
                       ) : (
                         <span className="font-medium text-muted">Not specified</span>
                       )}

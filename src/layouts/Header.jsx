@@ -23,10 +23,10 @@ import ImageSkeleton from "../components/ui/Image";
 import SearchBar from "../components/ui/SearchBar";
 import {
   CategoryMoreButton,
-  HeaderGoldButton,
-  HeaderIconButton,
-  SolidLargeButton,
-} from "../components/ui/button/static";
+  DynamicButton,
+} from "../components/ui/button";
+import {PillButton ,GoldButton} from "../components/ui/button/buttonSpecialized";
+
 import ConfirmModal from "../components/ui/overlay/ConfirmModal";
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
@@ -366,7 +366,10 @@ export const Navbar = ({ icons: propIcons }) => {
             <div className="flex items-center gap-2 sm:gap-5">
               {utilityIcons.map((item, iconIndex) => (
                 <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
-                  <HeaderIconButton
+                  <DynamicButton
+                    variant="headerIcon"
+                    size="icon"
+                    shape="circle"
                     to={getNavbarIconPath(item)}
                     aria-current={
                       location.pathname === getNavbarIconPath(item)
@@ -396,7 +399,7 @@ export const Navbar = ({ icons: propIcons }) => {
                     <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                       {getNavbarIconLabel(item)}
                     </span>
-                  </HeaderIconButton>
+                  </DynamicButton>
 
                   {iconIndex < utilityIcons.length - 1 && (
                     <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
@@ -407,9 +410,11 @@ export const Navbar = ({ icons: propIcons }) => {
               {utilityIcons.length > 0 && (
                 <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
               )}
-              <HeaderIconButton
+              <DynamicButton
+                variant="headerIconOutlined"
+                size="icon"
+                shape="circle"
                 to="/cart"
-                outlined
                 className="relative overflow-visible"
                 aria-label={`Cart with ${cartItemCount} ${
                   cartItemCount === 1 ? "item" : "items"
@@ -422,12 +427,14 @@ export const Navbar = ({ icons: propIcons }) => {
                     {cartItemCount > 99 ? "99+" : cartItemCount}
                   </span>
                 )}
-              </HeaderIconButton>
+              </DynamicButton>
 
-              <HeaderIconButton
+              <DynamicButton
+                variant="headerIconOutlined"
+                size="icon"
+                shape="circle"
                 to="/wishlist"
                 onClick={handleWishlistClick}
-                outlined
                 className="relative overflow-visible"
                 aria-label={`Watchlist with ${wishlistCount} ${
                   wishlistCount === 1 ? "item" : "items"
@@ -440,7 +447,7 @@ export const Navbar = ({ icons: propIcons }) => {
                     {wishlistCount > 99 ? "99+" : wishlistCount}
                   </span>
                 )}
-              </HeaderIconButton>
+              </DynamicButton>
             </div>
 
             {currentUser ? (
@@ -481,12 +488,14 @@ export const Navbar = ({ icons: propIcons }) => {
                 <MenuDropdown title="My Account" items={accountMenuItems} />
               </HeaderDropdown>
             ) : (
-              <SolidLargeButton
-                className="ml-1 flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-base font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[15px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-sm sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-base lg:text-[16px]"
+              <PillButton
+                size="sm"
+                shape="square"
+                className="ml-1 !text-[#03014D] hover:!text-[#03014D] px-12 sm:px-12 py-4 sm:py-5 !text-[16px] "
                 onClick={() => navigate("/login")}
               >
                 Login
-              </SolidLargeButton>
+              </PillButton>
             )}
           </div>
         </div>

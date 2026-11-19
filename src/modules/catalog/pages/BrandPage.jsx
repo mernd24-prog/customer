@@ -1,4 +1,3 @@
-import { Store } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { ProductListingLayout } from "../../../modules/products/components";
@@ -6,21 +5,18 @@ import {
   useCartActions,
   useWishlistActions,
 } from "../../../modules/products/controllers/actions";
-import {
-  getImageUrlFromValue,
-  getProductPrice,
-  isProductInStock,
-} from "../../../utils/ecommerce";
 import { getBrandLogo } from "../../../utils/pages/brandUtils";
 import { scrollToTop } from "../../../utils/common";
 import LoadingSkeleton from "../components/BrandLoadingSkeleton";
 import { PAGE_SIZES, SORT_OPTIONS } from "../../../constants/data.constant";
 import useBrandPageController from "../controllers/useBrandPageController";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import EmptyState from "../../../components/ui/feedback/EmptyState";
 
 export default function BrandPage() {
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
+  const navigate = useNavigate();
 
   const {
     brandSlug,
@@ -64,18 +60,13 @@ export default function BrandPage() {
 
   if (brandError) {
     return (
-      <div className="w-container py-16 text-center">
-        <Store size={48} className="mx-auto mb-4 text-gray-300" />
-        <h2 className=" text-2xl font-bold text-ink">Brand Coming Soon</h2>
-        <p className="mt-2  text-sm text-muted">
-          This Brand Page Is Being Prepared and Will Be Available Soon.
-        </p>
-        <Link
-          to="/brand-outlet"
-          className="button primary mt-6 inline-block px-6 py-2"
-        >
-          Browse Brand Outlet
-        </Link>
+      <div className="w-container py-16">
+        <EmptyState
+          title="Brand Coming Soon"
+          description="This brand page is being prepared and will be available soon."
+          actionLabel="Browse Brand Outlet"
+          onAction={() => navigate("/brand-outlet")}
+        />
       </div>
     );
   }

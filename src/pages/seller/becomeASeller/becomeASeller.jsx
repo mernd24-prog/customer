@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
-import CustomSwiper, {
-  SwiperSlide,
-} from "../../../components/swiper/CustomSwiper";
+import { useEffect, useRef, useState } from "react";
+import { SwiperSlide } from "../../../components/swiper/CustomSwiper";
+import CustomSwiper from "../../../components/swiper/CustomSwiper";
 import {
-  ArrowLeft,
   ArrowRight,
   BarChart3,
   Check,
@@ -18,40 +16,18 @@ import {
   UserRoundPlus,
   WalletCards,
 } from "lucide-react";
-import PageHeroBanner from "../../../components/ui/banner/PageHeroBanner";
 
+import PageHeroBanner from "../../../components/ui/banner/PageHeroBanner";
 import Seo from "../../../components/ui/Seo";
 import Loader from "../../../components/ui/Loader";
-import FallbackImage from "../../../components/ui/FallbackImage";
-import Button from "../../../components/ui/buttons/Button";
+import { DynamicButton } from "../../../components/ui/button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
+import CarouselNavigation from "../../../components/ui/carousel/CarouselNavigation";
+import CarouselCard from "../../../components/ui/carousel/CarouselCard";
+
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
-
 import { SELLER_LOGIN_URL } from "../../../config/seller";
-import { SolidLargeButton } from "../../../components/ui/button/static";
-
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
-function useStorySlidesPerView() {
-  const getSlidesPerView = () => {
-    if (typeof window === "undefined") return 1;
-    const width = window.innerWidth;
-    if (width >= 1100) return 4;
-    if (width >= 900) return 3;
-    if (width >= 640) return 2;
-    return 1;
-  };
-
-  const [slidesPerView, setSlidesPerView] = useState(getSlidesPerView);
-
-  useEffect(() => {
-    const updateSlidesPerView = () => setSlidesPerView(getSlidesPerView());
-    window.addEventListener("resize", updateSlidesPerView);
-    return () => window.removeEventListener("resize", updateSlidesPerView);
-  }, []);
-
-  return slidesPerView;
-}
 
 const benefitIcons = [
   CircleDollarSign,
@@ -63,6 +39,33 @@ const benefitIcons = [
 ];
 
 const stepIcons = [UserRoundPlus, Store, PackageCheck, WalletCards];
+
+function useStorySlidesPerView() {
+  const getSlidesPerView = () => {
+    if (typeof window === "undefined") return 1;
+
+    const width = window.innerWidth;
+
+    if (width >= 1100) return 4;
+    if (width >= 900) return 3;
+    if (width >= 640) return 2;
+
+    return 1;
+  };
+
+  const [slidesPerView, setSlidesPerView] = useState(getSlidesPerView);
+
+  useEffect(() => {
+    const updateSlidesPerView = () => {
+      setSlidesPerView(getSlidesPerView());
+    };
+
+    window.addEventListener("resize", updateSlidesPerView);
+    return () => window.removeEventListener("resize", updateSlidesPerView);
+  }, []);
+
+  return slidesPerView;
+}
 
 const getCmsPayload = (page) =>
   page?.metadata?.data ||
@@ -105,36 +108,24 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
 
 function SellerStoryCard({ story, featured = false }) {
   return (
-    <article
-      className={`h-full overflow-hidden rounded-lg bg-white ${
+    <CarouselCard
+      image={story.photo}
+      alt={`${story.name} at their business`}
+      fallbackType="seller"
+      articleClassName={
         featured
-          ? "grid grid-cols-1 gap-0 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]"
-          : "flex flex-col p-2.5 "
-      }`}
+          ? "min-h-[220px] grid-cols-1 bg-white md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] md:min-h-[360px]"
+          : "h-full flex-col bg-white p-2.5"
+      }
+      imageClassName="object-top"
+      relativeImage
     >
       <div
-        className={`overflow-hidden bg-[#e8e5df] ${featured ? "min-h-[220px] md:min-h-full" : "rounded-lg"}`}
-      >
-        {story.photo ? (
-          <img
-            width="600"
-            height="400"
-            src={story.photo}
-            alt={`${story.name} at their business`}
-            className={`w-full object-cover object-top ${featured ? "h-full min-h-[220px] md:min-h-[360px]" : "h-40 sm:h-52"}`}
-            loading="lazy"
-          />
-        ) : (
-          <div
-            className={`flex items-center justify-center text-3xl font-bold text-[#201b78] ${featured ? "h-full min-h-[220px] md:min-h-[360px]" : "h-40 sm:h-52"}`}
-          >
-            {story.initials}
-          </div>
-        )}
-      </div>
-
-      <div
-        className={`flex flex-col ${featured ? "justify-center p-4 sm:p-7 lg:p-9" : "flex-1 px-1 pt-3 sm:px-2 sm:pt-6"}`}
+        className={`flex flex-col ${
+          featured
+            ? "justify-center p-4 sm:p-7 lg:p-9"
+            : "flex-1 px-1 pt-3 sm:px-2 sm:pt-6"
+        }`}
       >
         <h3 className="text-base font-bold leading-tight text-[#181928] sm:text-xl">
           {story.name}
@@ -161,87 +152,63 @@ function SellerStoryCard({ story, featured = false }) {
           </div>
         )}
       </div>
-    </article>
+    </CarouselCard>
   );
 }
 
 export default function BecomeASeller() {
   const storySlidesPerView = useStorySlidesPerView();
-  const { page: cmsPage, loading, error } = useCmsRecord("become-a-seller");
+  const { page: cmsPage, loading } = useCmsRecord("become-a-seller");
 
   const cmsPayload = getCmsPayload(cmsPage);
-
   const sellerPage = cmsPayload?.image?.url ? cmsPayload : FALLBACK_SELLER_PAGE;
 
-  const heroTitle = sellerPage?.title || "";
-
-  const [titleLine1, titleLine2] = heroTitle.split("\n");
+  const [titleLine1, titleLine2] = (sellerPage?.title || "").split("\n");
 
   const heroDesc = sellerPage?.excerpt || "";
-
   const heroImg = sellerPage?.image?.url || FALLBACK_SELLER_PAGE.image.url;
 
-  const storySection = sellerPage?.sections?.[0];
+  const [storySection, benefitsSection, stepsSection] =
+    sellerPage?.sections || [];
 
-  const benefitsSection = sellerPage?.sections?.[1];
+  const fallbackStoryPoints = FALLBACK_SELLER_PAGE?.sections?.[0]?.points || [];
+  const sellerStories =
+    storySection?.points?.length > 0
+      ? storySection.points
+      : fallbackStoryPoints;
 
-  const stepsSection = sellerPage?.sections?.[2];
-
-  const fallbackStoryPoints = Array.isArray(FALLBACK_SELLER_PAGE?.sections?.[0]?.points)
-    ? FALLBACK_SELLER_PAGE.sections[0].points
-    : [];
-
-  const sellerStories = Array.isArray(storySection?.points) && storySection.points.length
-    ? storySection.points
-    : fallbackStoryPoints;
-
-  const mergedSellerStories = sellerStories.map((point, index) => {
+  const mappedExperiences = sellerStories.map((point, index) => {
     const fallbackPoint =
       fallbackStoryPoints.find((item) => item?.title === point?.title) ||
       fallbackStoryPoints[index] ||
-      fallbackStoryPoints[fallbackStoryPoints.length - 1] ||
       {};
 
+    const image =
+      point?.image?.url || point?.image || fallbackPoint?.image || "";
+
     return {
-      ...fallbackPoint,
-      ...point,
-      image:
-        point?.image?.url ||
-        point?.image ||
-        fallbackPoint?.image ||
-        "",
-      description: point?.description || fallbackPoint?.description || "",
-      title: point?.title || fallbackPoint?.title || "",
-      cta: point?.cta || fallbackPoint?.cta || {},
-      metadata: { ...(fallbackPoint?.metadata || {}), ...(point?.metadata || {}) },
+      name: point?.title || fallbackPoint?.title || "",
+      quote: point?.description || fallbackPoint?.description || "",
+      role: point?.metadata?.role || fallbackPoint?.metadata?.role || "",
+      result: point?.cta?.label || fallbackPoint?.cta?.label || "",
+      photo: image,
+      initials: (point?.title || fallbackPoint?.title || "")
+        .substring(0, 2)
+        .toUpperCase(),
     };
   });
 
-  const benefits = Array.isArray(benefitsSection?.points)
-    ? benefitsSection.points
-    : [];
+  const mappedBenefits = (benefitsSection?.points || []).map(
+    (point, index) => ({
+      icon: benefitIcons[index % benefitIcons.length],
+      title: point?.title || "",
+      text: point?.description || "",
+    }),
+  );
 
-  const steps = Array.isArray(stepsSection?.points) ? stepsSection.points : [];
-
-  const mappedExperiences = mergedSellerStories.map((point) => ({
-    quote: point?.description || "",
-    name: point?.title || "",
-    role: point?.metadata?.role || "",
-    category: point?.metadata?.category || "",
-    result: point?.cta?.label || "",
-    photo: point?.image?.url || point?.image || "",
-    initials: point?.title?.substring(0, 2).toUpperCase() || "",
-  }));
-
-  const mappedBenefits = benefits.map((point, index) => ({
-    icon: benefitIcons[index % benefitIcons.length],
-    title: point?.title || "",
-    text: point?.description || "",
-  }));
-
-  const mappedSteps = steps.map((point, index) => ({
+  const mappedSteps = (stepsSection?.points || []).map((point, index) => ({
     icon: stepIcons[index % stepIcons.length],
-    number: `0${index + 1}`,
+    number: index + 1,
     title: point?.title || "",
     text: point?.description || "",
   }));
@@ -251,23 +218,17 @@ export default function BecomeASeller() {
       <Seo
         title="Become a Seller | Sam Global"
         description={
-          sellerPage?.excerpt ||
+          heroDesc ||
           "Grow your business with Sam Global. Reach more customers, manage orders easily, and get reliable seller support."
         }
       />
 
-      {loading && !cmsPage && (
+      {loading && !cmsPage ? (
         <div className="flex min-h-[60vh] items-center justify-center">
           <Loader size="xl" />
         </div>
-      )}
-
-      {(!loading || cmsPage) && (
+      ) : (
         <>
-          {/* =====================================================
-              HERO
-          ===================================================== */}
-
           <PageHeroBanner
             image={heroImg}
             badge={
@@ -286,20 +247,18 @@ export default function BecomeASeller() {
             }
             description={heroDesc}
             theme="navy"
-            actions={
-              <SolidLargeButton
-                type="button"
+            cta={
+              <PillButton
+                size="md"
+                shape="square"
+                rightIcon={<ArrowRight size={18} />}
                 onClick={() =>
                   window.open(SELLER_LOGIN_URL, "_blank", "noopener,noreferrer")
                 }
-                className="group min-h-12 rounded-lg px-6 font-bold sm:px-7"
+                className="!text-[#17145f] hover:!text-[#17145f]"
               >
                 Seller Login
-                <ArrowRight
-                  size={18}
-                  className="ml-2 inline-block transition-transform duration-300 "
-                />
-              </SolidLargeButton>
+              </PillButton>
             }
             bottomContent={
               <div className="flex flex-wrap gap-x-5 gap-y-2.5 text-sm text-white/75 sm:gap-x-6 sm:gap-y-3">
@@ -312,7 +271,6 @@ export default function BecomeASeller() {
                     <span className="grid h-5 w-5 place-items-center rounded-full bg-white/10">
                       <Check size={12} className="text-[#efc75f]" />
                     </span>
-
                     {item}
                   </span>
                 ))}
@@ -320,18 +278,20 @@ export default function BecomeASeller() {
             }
           />
 
-          {/* =====================================================
-              SELLER STORIES
-          ===================================================== */}
-
           {mappedExperiences.length > 0 && (
             <section className="relative overflow-hidden bg-[#faf6ee] py-7 sm:py-12 lg:py-16">
               <div className="customer-container relative">
                 <div
-                  className={`flex flex-col gap-3 sm:gap-5 md:flex-row md:items-end md:justify-between ${mappedExperiences.length < 3 ? "mb-5 sm:mb-9" : ""}`}
+                  className={`flex flex-col gap-3 sm:gap-5 md:flex-row md:items-end md:justify-between ${
+                    mappedExperiences.length < 3 ? "mb-5 sm:mb-9" : ""
+                  }`}
                 >
                   <div
-                    className={`max-w-2xl ${mappedExperiences.length < 3 ? "mx-auto text-center" : "text-center md:text-left"}`}
+                    className={`max-w-2xl ${
+                      mappedExperiences.length < 3
+                        ? "mx-auto text-center"
+                        : "text-center md:text-left"
+                    }`}
                   >
                     <span className="inline-flex items-center gap-2 rounded-lg bg-[#f1e5c9] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#8d5d08] sm:px-4 sm:py-2">
                       <Sparkles size={14} />
@@ -344,7 +304,11 @@ export default function BecomeASeller() {
                     </h2>
 
                     <p
-                      className={`mt-2 text-sm leading-6 text-[#6f7480] sm:mt-4 sm:text-base sm:leading-7 ${mappedExperiences.length < 3 ? "mx-auto max-w-xl" : "max-w-xl"}`}
+                      className={`mt-2 text-sm leading-6 text-[#6f7480] sm:mt-4 sm:text-base sm:leading-7 ${
+                        mappedExperiences.length < 3
+                          ? "mx-auto max-w-xl"
+                          : "max-w-xl"
+                      }`}
                     >
                       Meet the entrepreneurs building remarkable businesses with
                       Sam Global by their side.
@@ -352,21 +316,17 @@ export default function BecomeASeller() {
                   </div>
 
                   {mappedExperiences.length > storySlidesPerView && (
-                    <div className="hidden justify-center gap-2.5 sm:flex sm:gap-3 md:shrink-0">
-                      <DynamicButton
-                        type="button"
-                        className="seller-story-prev grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
-                        aria-label="Previous Seller Story"
-                      >
-                        <ArrowLeft size={19} />
-                      </DynamicButton>
-                      <DynamicButton
-                        type="button"
-                        className="seller-story-next grid h-10 w-10 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:shadow-none sm:h-12 sm:w-12"
-                        aria-label="Next Seller Story"
-                      >
-                        <ArrowRight size={19} />
-                      </DynamicButton>
+                    <div className="hidden sm:block md:shrink-0">
+                      <CarouselNavigation
+                        prevRef=".seller-story-prev"
+                        nextRef=".seller-story-next"
+                        prevLabel="Previous seller story"
+                        nextLabel="Next seller story"
+                        alwaysVisible
+                        inline
+                        prevClassName="seller-story-prev [&.swiper-button-disabled]:opacity-40"
+                        nextClassName="seller-story-next [&.swiper-button-disabled]:opacity-40"
+                      />
                     </div>
                   )}
                 </div>
@@ -391,51 +351,60 @@ export default function BecomeASeller() {
                 {mappedExperiences.length >= 3 && (
                   <>
                     <div className="mt-5 grid grid-cols-1 gap-3 sm:hidden">
-                    {mappedExperiences.map((story, index) => (
-                      <SellerStoryCard key={story.name || index} story={story} />
-                    ))}
-                  </div>
-
-                  <div className="mt-8 hidden sm:block sm:mt-10">
-                    <CustomSwiper
-                      prevEl=".seller-story-prev"
-                      nextEl=".seller-story-next"
-                      showPagination={
-                        mappedExperiences.length > storySlidesPerView
-                      }
-                      spaceBetween={20}
-                      slidesPerView={1}
-                      breakpoints={{
-                        640: {
-                          slidesPerView: Math.min(2, mappedExperiences.length),
-                        },
-                        900: {
-                          slidesPerView: Math.min(3, mappedExperiences.length),
-                        },
-                        1100: {
-                          slidesPerView: Math.min(4, mappedExperiences.length),
-                        },
-                      }}
-                    >
                       {mappedExperiences.map((story, index) => (
-                        <SwiperSlide
+                        <SellerStoryCard
                           key={story.name || index}
-                          className="!h-auto pb-2"
-                        >
-                          <SellerStoryCard story={story} />
-                        </SwiperSlide>
+                          story={story}
+                        />
                       ))}
-                    </CustomSwiper>
-                  </div>
+                    </div>
+
+                    <div className="mt-8 hidden sm:block sm:mt-10">
+                      <CustomSwiper
+                        prevEl=".seller-story-prev"
+                        nextEl=".seller-story-next"
+                        showNavigation
+                        showPagination={
+                          mappedExperiences.length > storySlidesPerView
+                        }
+                        spaceBetween={20}
+                        slidesPerView={1}
+                        breakpoints={{
+                          640: {
+                            slidesPerView: Math.min(
+                              2,
+                              mappedExperiences.length,
+                            ),
+                          },
+                          900: {
+                            slidesPerView: Math.min(
+                              3,
+                              mappedExperiences.length,
+                            ),
+                          },
+                          1100: {
+                            slidesPerView: Math.min(
+                              4,
+                              mappedExperiences.length,
+                            ),
+                          },
+                        }}
+                      >
+                        {mappedExperiences.map((story, index) => (
+                          <SwiperSlide
+                            key={story.name || index}
+                            className="!h-auto pb-2"
+                          >
+                            <SellerStoryCard story={story} />
+                          </SwiperSlide>
+                        ))}
+                      </CustomSwiper>
+                    </div>
                   </>
                 )}
               </div>
             </section>
           )}
-
-          {/* =====================================================
-              BENEFITS
-          ===================================================== */}
 
           {mappedBenefits.length > 0 && (
             <section className="bg-[#FAF8F3] py-8 sm:py-14 lg:py-24">
@@ -486,10 +455,6 @@ export default function BecomeASeller() {
             </section>
           )}
 
-          {/* =====================================================
-              STEPS
-          ===================================================== */}
-
           {mappedSteps.length > 0 && (
             <section className="relative overflow-hidden bg-[#17145f] py-8 sm:py-14 lg:py-24">
               <div className="customer-container relative">
@@ -503,8 +468,8 @@ export default function BecomeASeller() {
                   }
                 />
 
-                <div className="relative mt-6 sm:mt-12 lg:mt-14">
-                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-4">
+                <div className="mt-6 sm:mt-12 lg:mt-14">
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
                     {mappedSteps.map(({ icon: Icon, number, title, text }) => (
                       <article
                         key={number}
@@ -535,19 +500,16 @@ export default function BecomeASeller() {
                 </div>
 
                 <div className="mt-6 text-center sm:mt-12">
-                  <SolidLargeButton
-                    as="a"
+                  <PillButton
+                    size="md"
                     href={SELLER_LOGIN_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex min-h-12 items-center justify-center gap-2  px-7 "
+                    rightIcon={<ChevronRight size={18} />}
+                    className="!text-[#17145f] hover:!text-[#17145f]"
                   >
                     Get Started
-                    <ChevronRight
-                      size={18}
-                      className="transition-transform duration-300 ease-in-out "
-                    />
-                  </SolidLargeButton>
+                  </PillButton>
                 </div>
               </div>
             </section>

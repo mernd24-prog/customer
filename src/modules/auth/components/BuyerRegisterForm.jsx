@@ -2,12 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import Button from "../../../components/ui/buttons/Button";
 import FormField from "../../../components/ui/FormField";
 import PhoneField from "../../../components/ui/PhoneField";
 import { AUTH_ROUTES } from "../routes/apiRoutes";
 import { buildBuyerRegistrationPayload } from "../utils/buildBuyerRegistrationPayload";
 import { buyerRegisterSchema } from "../../../validations/schemas/authSchemas";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 
 export default function BuyerRegisterForm({ error, loading, onSubmit }) {
   const {
@@ -132,15 +132,15 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         </div>
       )}
 
-      <Button
-        className="h-11 w-full rounded-lg bg-gradient-to-r from-gold to-gold-dark font-semibold tracking-normal text-white shadow-sm transition-all duration-300 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
-        loading={loading}
-        size="lg"
+      <PillButton
+        className="w-full"
+        isLoading={loading}
+        size="md"
         type="submit"
+        leftIcon={<UserPlus />}
       >
-        <UserPlus size={18} />
         Create Account &amp; Send OTP
-      </Button>
+      </PillButton>
 
       <p className="text-center text-[0.8rem] text-muted">
         Already Have an Account?{" "}

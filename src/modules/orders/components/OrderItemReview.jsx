@@ -1,11 +1,10 @@
 import { useRef, useState } from "react";
-import { BadgeCheck, Camera } from "lucide-react";
+import { BadgeCheck, Camera, SquarePen } from "lucide-react";
 import { useDispatch } from "react-redux";
 
 import ReviewImageUploader from "../../products/components/ReviewImageUploader";
 import ReviewMediaLightbox from "../../products/components/ReviewMediaLightbox";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
-import { OrderActionButton } from "../../../components/ui/button/buttonSpecialized";
 import ShowMoreText from "../../../utils/showMore";
 import StarRating, {
   RatingStars,
@@ -150,9 +149,11 @@ function ExistingReviewCard({ review }) {
             <div className="flex flex-wrap gap-2">
               {media.slice(0, 5).map((url, index) => (
                 <DynamicButton
-                  type="button"
                   key={`${url}-${index}`}
                   onClick={() => setLightboxIndex(index)}
+                  variant="unstyled"
+                  size="none"
+                  shape="none"
                   className="group relative block size-14 overflow-hidden rounded-lg border border-[#E2E3EA] bg-[#F7F7FA] shadow-sm transition hover:border-[#CE9F2D] sm:size-16"
                   aria-label={`Preview review image ${index + 1}`}
                 >
@@ -274,6 +275,9 @@ function ReviewModal({
       open={true}
       title="Write Review"
       description={getProductTitle(item)}
+      icon={SquarePen}
+      iconBgClassName="bg-[#F5E9C9]"
+      iconClassName="text-[#A96F14]"
       confirmLabel={
         submitting
           ? "Submitting..."
@@ -362,25 +366,31 @@ function OrderItemReviewAction({
 
   if (!reviewChecked) {
     return (
-      <OrderActionButton
+      <DynamicButton
         as="span"
-        className="pointer-events-none opacity-80"
+        variant="outlineSecondary"
+        size="sm"
+        disabled
       >
         Checking review...
-      </OrderActionButton>
+      </DynamicButton>
     );
   }
 
   return (
-    <OrderActionButton
+    <DynamicButton
       type="button"
+      variant="outlineSecondary"
+      size="sm"
       onClick={() => onReviewClick(item)}
       disabled={!orderId}
+      leftIcon={<SquarePen size={14} />}
     >
       Write Review
-    </OrderActionButton>
+    </DynamicButton>
   );
 }
+
 
 export {
   OrderItemReviewAction,

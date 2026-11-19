@@ -16,8 +16,6 @@ export function useWishlistActions() {
   const cart = useSelector((state) => state.cart.current);
   const wishlist = useSelector((state) => state.cart.current?.wishlist);
   const checkSavedAddressServiceability = useCheckServiceability();
-
-
   const wishlistIds = useMemo(
     () => (Array.isArray(wishlist) ? wishlist.map(wishlistItemKey) : []),
     [wishlist],

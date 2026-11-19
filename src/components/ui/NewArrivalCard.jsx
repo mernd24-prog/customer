@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { IoArrowForwardOutline } from "react-icons/io5";
-import { TextWhiteButton } from "./button/static";
+import DynamicButton from "./button/button";
 import { formatPageTitle } from "../../utils/common";
 import StarRating from "./display/StarRating";
 import { getProductPublicPath } from "../../utils/ecommerce";
@@ -17,13 +17,14 @@ export default function NewArrivalCard({
       <div className="bg-[#1B1D60] p-5 flex  flex-col justify-between">
         <div className="flex items-center justify-end w-full">
           
-          <TextWhiteButton
+          <DynamicButton
+            variant="textWhite"
             to={seeAllLink}
             rightIcon={<IoArrowForwardOutline className="text-xs" />}
             className=" text-base  text-[#FFFFFF]"
           >
             See All
-          </TextWhiteButton>
+          </DynamicButton>
         </div>
         <h3 className="mt-4 text-left text-h4  line-clamp-1   font-bold text-[#FFFFFF]  ">
           {formatPageTitle(title)}

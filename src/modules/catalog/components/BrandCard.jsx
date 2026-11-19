@@ -116,9 +116,6 @@ export default function BrandCard({
   if (onClick && !href) {
     return (
       <DynamicButton
-        type="button"
-        variant="unstyled"
-        size="none"
         onClick={onClick}
         className="block h-full w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
       >

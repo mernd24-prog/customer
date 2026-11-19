@@ -6,8 +6,8 @@ import { useWishlistActions } from "../../products/controllers/actions";
 import { useWatchlistProducts } from "../../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { wishlistItemKey } from "../../../utils/ecommerce";
-import { ContinueShoppingButton } from "../../../components/ui/button/static";
-import { Loader2 } from "lucide-react";
+import { DynamicButton } from "../../../components/ui/button";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
 
 const PAGE_SIZE = 10;
@@ -147,9 +147,14 @@ export default function WatchlistPage() {
             )}
 
             <div className="flex items-center justify-center gap-3 mt-6 lg:mt-8">
-              <ContinueShoppingButton to="/products">
+              <DynamicButton
+                to="/products"
+                variant="continueShopping"
+                size="md"
+                rightIcon={<ArrowRight />}
+              >
                 Continue Shopping
-              </ContinueShoppingButton>
+              </DynamicButton>
             </div>
           </>
         ) : (

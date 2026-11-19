@@ -60,9 +60,6 @@ export function RatingStars({
             <DynamicButton
               as="button"
               key={star}
-              type="button"
-              variant="unstyled"
-              size="none"
               className="flex h-auto w-auto shrink-0 items-center justify-center rounded-none border-0 bg-transparent p-0 shadow-none focus:outline-none"
               aria-label={`${ariaLabelPrefix} ${star}`}
               onMouseEnter={() => onHover?.(star)}
@@ -147,8 +144,6 @@ export const StarRatingUI = ({
 
         <DynamicButton
           as="button"
-          type="button"
-          variant="unstyled"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

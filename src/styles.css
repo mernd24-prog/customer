@@ -204,45 +204,6 @@
   }
 }
 
-.swiper-slide img {
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-}
-
-.seller-experience-swiper .swiper-pagination {
-  bottom: 0 !important;
-  padding-bottom: 12px;
-}
-
-.seller-experience-swiper .swiper-pagination-bullet {
-  width: 26px;
-  height: 8px;
-  background: transparent;
-  opacity: 1;
-  position: relative;
-  display: inline-block;
-  margin: 0 2px !important;
-}
-
-.seller-experience-swiper .swiper-pagination-bullet::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 999px;
-  background: #b9b5d8;
-  transform: scaleX(0.3076);
-  transition:
-    transform 200ms ease,
-    background-color 200ms ease;
-}
-
-.seller-experience-swiper .swiper-pagination-bullet-active::after {
-  transform: scaleX(1);
-  background: #3e4093;
-}
 
 :root {
   color-scheme: light;
@@ -1097,43 +1058,6 @@ select:not([multiple]):disabled {
   animation: horizontalProgressGrow 1.1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-.category-custom-pagination .swiper-pagination-bullet {
-  width: 8px !important;
-  height: 8px !important;
-  background-color: #1B1D60 !important;
-  opacity: 0.25 !important;
-  margin: 0 4px !important;
-  border-radius: 50% !important;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: inline-block !important;
-  outline: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  text-decoration: none !important;
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-.category-custom-pagination .swiper-pagination-bullet-active {
-  width: 24px !important;
-  border-radius: 4px !important;
-  background-color: #1B1D60 !important;
-  opacity: 1 !important;
-}
-
-.category-custom-pagination .swiper-pagination-bullet:hover {
-  opacity: 0.8 !important;
-}
-
-.category-custom-pagination.swiper-pagination {
-  bottom: 0px !important;
-  z-index: 10;
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 12px;
-}
 
 /* Shared readability scale. Rem units respect browser text-size preferences. */
 :root {

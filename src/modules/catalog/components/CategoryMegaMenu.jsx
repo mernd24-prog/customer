@@ -404,8 +404,10 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
               className="border border-border/60 rounded-lg overflow-hidden bg-cream/10"
             >
               <DynamicButton
-                type="button"
                 onClick={() => handleToggleSub(sub.categoryKey)}
+                variant="unstyled"
+                size="none"
+                shape="none"
                 className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold transition-all duration-300 ease-in-out ${
                   isSubExpanded ? "bg-cream text-gold" : "text-ink"
                 }`}
@@ -440,10 +442,12 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
                             </Link>
                             {hasInner && (
                               <DynamicButton
-                                type="button"
                                 onClick={() =>
                                   handleToggleChild(child.categoryKey)
                                 }
+                                variant="unstyled"
+                                size="none"
+                                shape="none"
                                 className="p-1 hover:bg-cream rounded animate-pulse"
                               >
                                 <ChevronDown

@@ -242,8 +242,6 @@ export default function CustomDropdown({
 
       <DynamicButton
         as="button"
-        type="button"
-        variant="unstyled"
         disabled={disabled}
         onClick={() => setIsOpen((previousState) => !previousState)}
         onKeyDown={(event) => {
@@ -379,7 +377,6 @@ export default function CustomDropdown({
                     <DynamicButton
                       as="button"
                       key={`${optionValue}-${index}`}
-                      type="button"
                       role="option"
                       aria-selected={isSelected}
                       onClick={() => handleSelect(optionValue)}

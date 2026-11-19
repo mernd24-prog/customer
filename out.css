@@ -7722,59 +7722,6 @@ h1,
   size-adjust: 98%;
 }
 
-/* ============================= */
-
-/* GLOBAL FONT CONFIGURATION     */
-
-/* ============================= */
-
-/* ============================= */
-
-/* LAYOUT & UTILITIES            */
-
-/* ============================= */
-.seller-experience-swiper .swiper-pagination {
-  bottom: 0 !important;
-  padding-bottom: 12px;
-}
-.swiper-slide img {
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-}
-
-.seller-experience-swiper .swiper-pagination {
-  bottom: 0 !important;
-}
-
-.seller-experience-swiper .swiper-pagination-bullet {
-  width: 26px;
-  height: 8px;
-  background: transparent;
-  opacity: 1;
-  position: relative;
-  display: inline-block;
-  margin: 0 2px !important;
-}
-
-.seller-experience-swiper .swiper-pagination-bullet::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 999px;
-  background: #b9b5d8;
-  transform: scaleX(0.3076);
-  transition:
-    transform 200ms ease,
-    background-color 200ms ease;
-}
-
-.seller-experience-swiper .swiper-pagination-bullet-active::after {
-  transform: scaleX(1);
-  background: #3e4093;
-}
 
 :root {
   color-scheme: light;

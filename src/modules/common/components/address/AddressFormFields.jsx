@@ -1,8 +1,8 @@
 import { BriefcaseBusiness, Building2, House } from "lucide-react";
-import Button from "../../../../components/ui/buttons/Button";
 import FormField from "../../../../components/ui/FormField";
 import PhoneField from "../../../../components/ui/PhoneField";
 import CustomDropdown from "../../../../components/ui/CustomDropdown";
+import { DynamicButton } from "../../../../components/ui/button";
 
 export const ADDRESS_LABEL_OPTIONS = [
   { value: "home", label: "Home" },
@@ -91,27 +91,33 @@ export default function AddressFormFields({
               const label = normalizedValue === "work" ? "Office" : optionLabel;
 
               return (
-                <Button
+                <DynamicButton
                   key={optionValue}
-                  type="button"
-                  variant="custom"
-                  onClick={() => setValue("label", optionValue, { shouldValidate: true })}
+                  variant={isSelected ? "secondary" : "outlineSecondary"}
+                  size="sm"
+                  onClick={() =>
+                    setValue("label", optionValue, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
                   aria-pressed={isSelected}
-                  className={`!min-h-8 !rounded-full !px-3 !py-0.5 text-sm ${isSelected ? "!border-[#CE9F2D] !bg-[#FFF7E6] !text-[#9A6500] shadow-sm" : "border border-[#E1E7F0] bg-white text-[#40506B] hover:border-[#CE9F2D] hover:bg-[#FFFDF8]"}`}
                 >
-                  <Icon size={16} />
+                  <Icon />
                   {label}
-                </Button>
+                </DynamicButton>
               );
             })}
           </div>
           {errors.label?.message && (
-            <p role="alert" className="text-xs text-red-600">{errors.label.message}</p>
+            <p role="alert" className="text-xs text-red-600">
+              {errors.label.message}
+            </p>
           )}
         </div>
       )}
 
-        <div className="grid items-start gap-3.5 sm:grid-cols-3">
+      <div className="grid items-start gap-3.5 sm:grid-cols-3">
         <FormField
           id={`${idPrefix}-fullName`}
           label="Full Name"
@@ -152,13 +158,18 @@ export default function AddressFormFields({
           labelGapClassName="mb-1.5"
           buttonClassName="!border-[var(--customer-border)]"
           options={states.map((state) => {
-            const name = state && typeof state === "object"
-              ? state.name ?? state.label ?? state.value ?? "" : state;
+            const name =
+              state && typeof state === "object"
+                ? (state.name ?? state.label ?? state.value ?? "")
+                : state;
             return { value: name, label: name };
           })}
           value={watch("state") || selectedState || ""}
           onChange={(value) => {
-            setValue("state", value, { shouldValidate: true, shouldDirty: true });
+            setValue("state", value, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
             setValue("city", "");
             setValue("postalCode", "");
           }}
@@ -232,8 +243,12 @@ export default function AddressFormFields({
           className="flex cursor-pointer items-center justify-between gap-4 rounded-md border border-[#E1E7F0] bg-[#FAFBFD] px-4 py-3"
         >
           <span>
-            <span className="block text-sm font-semibold text-[#171A3A]">Set as default address</span>
-            <span className="mt-0.5 block text-xs text-[#64708A]">Use this address automatically for future shipments</span>
+            <span className="block text-sm font-semibold text-[#171A3A]">
+              Set as default address
+            </span>
+            <span className="mt-0.5 block text-xs text-[#64708A]">
+              Use this address automatically for future shipments
+            </span>
           </span>
           <span className="relative inline-flex shrink-0 items-center">
             <input

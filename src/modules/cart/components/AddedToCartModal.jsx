@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ShoppingBag, X } from "lucide-react";
 import ModalOverlay from "../../../components/ui/overlay/BaseModal";
-import { SolidSmallButton } from "../../../components/ui/button/static";
+import { DynamicButton } from "../../../components/ui/button";
+import { PillButton, GoldOutlineButton } from "../../../components/ui/button/buttonSpecialized";
 import {
   applyImageFallback,
   formatMoney,
@@ -16,7 +17,6 @@ import {
 } from "../../../utils/ecommerce";
 
 
-import DynamicButton from "../../../components/ui/button/button.jsx";
 function getCartLineDisplayPrice(item, product) {
   if (typeof item?.salePrice === "number" && item.salePrice > 0) {
     return item.salePrice;
@@ -136,13 +136,15 @@ function CartLine({ item, onClose }) {
           </p>
         </div>
       </Link>
-      <Link
+      <GoldOutlineButton
         to={productPath}
+        shape="square"
+        size="xs"
         onClick={onClose}
-        className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-[#CE9F2D]/50 bg-white px-3 text-xs font-semibold text-[#1F2430] transition-colors hover:border-[#CE9F2D] hover:bg-[#FFF8E8]"
+        className="shrink-0"
       >
         View
-      </Link>
+      </GoldOutlineButton>
     </div>
   );
 }
@@ -179,9 +181,11 @@ export default function AddedToCartModal({
     <ModalOverlay exiting={exiting} onClose={onClose} showCloseButton={false}>
       <div className="relative grid max-h-[92vh] w-full grid-cols-1 overflow-y-auto rounded-lg  bg-white shadow-2xl lg:max-h-[80vh] lg:grid-cols-[minmax(0,1fr)_360px] lg:overflow-hidden">
         <DynamicButton
-          type="button"
+          variant="iconNeutral"
+          size="icon"
+          shape="circle"
           onClick={onClose}
-          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[var(--customer-navy)] shadow-sm backdrop-blur transition-colors hover:bg-[var(--customer-gold-soft)] sm:right-4 sm:top-4"
+          className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4"
           aria-label="Close"
         >
           <X size={18} aria-hidden="true" />
@@ -234,24 +238,24 @@ export default function AddedToCartModal({
           </Link>
 
           <div className="relative mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Link
+            <GoldOutlineButton
               to="/cart"
+              size="md"
               onClick={onClose}
-              className="inline-flex h-[44px] w-full items-center justify-center rounded-lg border border-[#CE9F2D] bg-transparent px-4 text-sm font-semibold text-[#1F2430] transition-colors hover:bg-[#FFF8E8]"
+              className="w-full"
             >
               View Cart
-            </Link>
+            </GoldOutlineButton>
 
-            <DynamicButton
-              type="button"
+            <PillButton
+              size="md"
               onClick={() => {
                 onClose?.();
                 onCheckout?.(cartItems);
               }}
-              className="inline-flex h-[44px] w-full items-center justify-center rounded-lg bg-[#CE9F2D] px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
               Checkout
-            </DynamicButton>
+            </PillButton>
           </div>
         </div>
 

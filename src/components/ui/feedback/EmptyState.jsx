@@ -1,9 +1,9 @@
-
-import { ContinueShoppingButton ,SolidLargeButton } from "../../ui/button/static";
+import { PillButton } from "../button/buttonSpecialized";
 import { ArrowRight } from "lucide-react";
+import { PageContainer } from "../layout";
 import EmptyStateIllustration from "./EmptyStateIllustration";
 import ReviewEmptyIllustration from "./ReviewEmptyIllustration";
-
+import { cn } from "../../../utils/common";
 export default function EmptyState({
   icon: Icon,
   imageSrc,
@@ -24,55 +24,60 @@ export default function EmptyState({
   const resolvedAction = onAction || onButtonClick;
 
   const containerClasses = bordered
-    ? "rounded-lg border border-dashed border-[#E7D9B8] bg-[#FFFDF6] px-5 py-10 text-center"
-    : "rounded-lg bg-[#FFFDF6] px-4 py-8 text-center";
+    ? "rounded-lg border border-dashed border-[#E7D9B8] bg-[#FFFDF6] px-4 py-6 text-center"
+    : "rounded-lg bg-[#FFFDF6] px-4 py-5 text-center";
 
   return (
-    <div
-      className={`flex min-h-[280px] w-full flex-col items-center justify-center ${containerClasses} sm:min-h-[320px] sm:px-6 sm:py-10 lg:min-h-[380px] ${className}`}
-    >
-      {Icon ? (
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E8F0FA] text-[#52749B] ring-1 ring-[#D8E3F0] sm:h-14 sm:w-14 lg:h-16 lg:w-16">
-          <Icon
-            className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8"
-            aria-hidden="true"
+    <PageContainer>
+      <div
+        className={cn(
+          "flex min-h-[220px] w-full flex-col items-center justify-center rounded-lg border border-dashed border-[#E7D9B8] bg-[#FFFDF6] px-4 py-6 text-center",
+          className,
+        )}
+        role="alert"
+      >
+        {Icon ? (
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E8F0FA] text-[#52749B] ring-1 ring-[#D8E3F0] sm:h-12 sm:w-12">
+            <Icon className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
+          </div>
+        ) : imageSrc ? (
+          <img
+            loading="lazy"
+            width="400"
+            height="400"
+            src={imageSrc}
+            alt={title}
+            className="h-24 w-24 object-contain mix-blend-multiply sm:h-28 sm:w-28 md:h-32 md:w-32"
           />
-        </div>
-      ) : imageSrc ? (
-        <img
-          loading="lazy"
-          width="400"
-          height="400"
-          src={imageSrc}
-          alt={title}
-className="h-28 w-28 object-contain mix-blend-multiply xs:h-32 xs:w-32 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-52 lg:w-52 xl:h-60 xl:w-60"        />
-      ) : illustration === "reviews" ? <ReviewEmptyIllustration /> : <EmptyStateIllustration count={count} />}
+        ) : illustration === "reviews" ? (
+          <ReviewEmptyIllustration />
+        ) : (
+          <EmptyStateIllustration count={count} />
+        )}
 
-      <h2 className="mt-5 max-w-lg text-lg font-bold text-[var(--customer-ink)] sm:text-xl">
-        {title}
-      </h2>
+        <h2 className="mt-3 max-w-lg text-base font-bold text-[var(--customer-ink)] sm:text-lg">
+          {title}
+        </h2>
 
-      <p className="mt-2 max-w-xs text-sm leading-6 text-[var(--customer-muted)] sm:max-w-md sm:text-base lg:max-w-xl">
-        {description}
-      </p>
+        <p className="mt-1.5 max-w-xs text-sm leading-5 text-[var(--customer-muted)] sm:max-w-md sm:leading-6">
+          {description}
+        </p>
 
-      {resolvedActionLabel && resolvedAction && (
-  <div className="mt-6 flex justify-center">
-    <SolidLargeButton
-      onClick={resolvedAction}
-      className={`gap-2 ${buttonClassName}`}
-    >
-      <span>{resolvedActionLabel}</span>
-      <ArrowRight
-        size={16}
-        className="shrink-0"
-        aria-hidden="true"
-      />
-    </SolidLargeButton>
-  </div>
-)}
+        {resolvedActionLabel && resolvedAction && (
+          <div className="mt-4 flex justify-center">
+            <PillButton
+              size="md"
+              onClick={resolvedAction}
+              className={`gap-2 ${buttonClassName}`}
+            >
+              <span>{resolvedActionLabel}</span>
+              <ArrowRight size={16} />
+            </PillButton>
+          </div>
+        )}
 
-      {children && <div className="mt-6 w-full">{children}</div>}
-    </div>
+        {children && <div className="mt-4 w-full">{children}</div>}
+      </div>
+    </PageContainer>
   );
 }

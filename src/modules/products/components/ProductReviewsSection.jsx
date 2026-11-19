@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { ArrowRight, ThumbsUp } from "lucide-react";
-import DynamicButton from "../../../components/ui/button/button";
+import { DynamicButton } from "../../../components/ui/button";
 import {
   fetchProductReviews,
   submitProductReview,
@@ -103,137 +103,126 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     : [];
 
   return (
-   
-<article className="py-1 border-b border-[#E7D9B8]/50 last:border-b-0">
-  {/* Rating */}
-  <div className="flex min-w-0 items-center gap-2">
-    <StarRating
-      rating={Number(review.rating || 0)}
-      showValue={true}
-      showCountText={false}
-      showStars
-      variant="inline"
-    />
-  </div>
+    <article className="py-1 border-b border-[#E7D9B8]/50 last:border-b-0">
+      {/* Rating */}
+      <div className="flex min-w-0 items-center gap-2">
+        <StarRating
+          rating={Number(review.rating || 0)}
+          showValue={true}
+          showCountText={false}
+          showStars
+          variant="inline"
+        />
+      </div>
 
-  {/* Review Title */}
-  {review.title && (
-    <div className="mt-1 min-w-0 w-full text-sm sm:text-base font-bold text-[#1F2430]">
-      <ShowMoreText
-        text={review.title}
-        mode="lines"
-        limit={1}
-        buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] ml-1"
-      />
-    </div>
-  )}
-
-  {/* Review Description - Single More/Less */}
-  {text && (
-    <div className="mt-1.5 min-w-0 w-full text-xs sm:text-sm leading-relaxed text-[#4E4E4E]">
-      <ShowMoreText
-        text={text}
-        mode="lines"
-        limit={3}
-        moreLabel="more"
-        lessLabel="less"
-        buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] ml-1"
-      />
-    </div>
-  )}
-
-  {/* Review Images */}
-  {media.length > 0 && (
-    <div className="mt-2.5 flex flex-wrap gap-2">
-      {media.slice(0, 5).map((url, index) => (
-        <DynamicButton
-          type="button"
-          variant="unstyled"
-          size="none"
-          key={`${url}-${index}`}
-          onClick={() => setLightboxIndex(index)}
-          aria-label={`Open review photo ${index + 1}${index === 4 && media.length > 5 ? `, and ${media.length - 5} more` : ""}`}
-          className="relative block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-opacity hover:opacity-90"
-        >
-          <img
-            loading="lazy"
-            width="400"
-            height="400"
-            src={url}
-            alt={`Review media ${index + 1}`}
-            className="h-full w-full object-cover"
+      {/* Review Title */}
+      {review.title && (
+        <div className="mt-1 min-w-0 w-full text-sm sm:text-base font-bold text-[#1F2430]">
+          <ShowMoreText
+            text={review.title}
+            mode="lines"
+            limit={1}
+            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] ml-1"
           />
+        </div>
+      )}
 
-          {index === 4 && media.length > 5 && (
-            <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-xs font-bold text-white">
-              +{media.length - 5}
-            </span>
-          )}
+      {/* Review Description - Single More/Less */}
+      {text && (
+        <div className="mt-1.5 min-w-0 w-full text-xs sm:text-sm leading-relaxed text-[#4E4E4E]">
+          <ShowMoreText
+            text={text}
+            mode="lines"
+            limit={3}
+            moreLabel="more"
+            lessLabel="less"
+            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] ml-1"
+          />
+        </div>
+      )}
+
+      {/* Review Images */}
+      {media.length > 0 && (
+        <div className="mt-2.5 flex flex-wrap gap-2">
+          {media.slice(0, 5).map((url, index) => (
+            <DynamicButton
+              key={`${url}-${index}`}
+              onClick={() => setLightboxIndex(index)}
+              aria-label={`Open review photo ${index + 1}${index === 4 && media.length > 5 ? `, and ${media.length - 5} more` : ""}`}
+              className="relative block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white transition-opacity hover:opacity-90"
+            >
+              <img
+                loading="lazy"
+                width="400"
+                height="400"
+                src={url}
+                alt={`Review media ${index + 1}`}
+                className="h-full w-full object-cover"
+              />
+
+              {index === 4 && media.length > 5 && (
+                <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-xs font-bold text-white">
+                  +{media.length - 5}
+                </span>
+              )}
+            </DynamicButton>
+          ))}
+        </div>
+      )}
+
+      {/* Seller Response */}
+      {review.adminReply?.text && (
+        <div className="mt-2.5 rounded-lg border-l-3 border-[#CE9F2D] bg-[#FAF6EE] p-2.5 text-xs">
+          <p className="mb-0.5 font-bold text-[#A96F14]">Seller Response</p>
+          <p className="font-medium text-[#6F7480]">{review.adminReply.text}</p>
+        </div>
+      )}
+
+      {/* Reviewer Details and Helpful Button */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="break-words text-xs sm:text-sm font-medium text-[#1F2430]/80">
+            {name}
+            {(dateStr || review.date) && (
+              <span className="font-normal text-[#737373]">
+                {" "}
+                | {dateStr || review.date}
+              </span>
+            )}
+          </p>
+        </div>
+
+        <DynamicButton
+          onClick={() => onHelpful?.(reviewId)}
+          disabled={!reviewId || isOwn}
+          className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+            alreadyVoted
+              ? "border-[#CE9F2D] bg-[#CE9F2D]/15 text-[#1B1D60]"
+              : "border-[#E7D9B8] text-[#6F7480] hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#1B1D60]"
+          }`}
+        >
+          <ThumbsUp
+            size={14}
+            className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
+          />
+          <span>{helpfulVotes}</span>
         </DynamicButton>
-      ))}
-    </div>
-  )}
+      </div>
 
-  {/* Seller Response */}
-  {review.adminReply?.text && (
-    <div className="mt-2.5 rounded-lg border-l-3 border-[#CE9F2D] bg-[#FAF6EE] p-2.5 text-xs">
-      <p className="mb-0.5 font-bold text-[#A96F14]">
-        Seller Response
-      </p>
-      <p className="font-medium text-[#6F7480]">
-        {review.adminReply.text}
-      </p>
-    </div>
-  )}
-
-  {/* Reviewer Details and Helpful Button */}
-  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-    <div className="min-w-0 flex-1">
-      <p className="break-words text-xs sm:text-sm font-medium text-[#1F2430]/80">
-        {name}
-        {(dateStr || review.date) && (
-          <span className="font-normal text-[#737373]">
-            {" "}| {dateStr || review.date}
-          </span>
-        )}
-      </p>
-    </div>
-
-    <DynamicButton
-      type="button"
-      variant="unstyled"
-      size="none"
-      onClick={() => onHelpful?.(reviewId)}
-      disabled={!reviewId || isOwn}
-      className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
-        alreadyVoted
-          ? "border-[#CE9F2D] bg-[#CE9F2D]/15 text-[#1B1D60]"
-          : "border-[#E7D9B8] text-[#6F7480] hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#1B1D60]"
-      }`}
-    >
-      <ThumbsUp
-        size={14}
-        className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
-      />
-      <span>{helpfulVotes}</span>
-    </DynamicButton>
-  </div>
-
-  {/* Review Image Lightbox */}
-  {lightboxIndex !== null && (
-    <ReviewMediaLightbox
-      images={media}
-      index={lightboxIndex}
-      review={review}
-      currentUser={currentUser}
-      currentUserId={currentUserId}
-      onHelpful={onHelpful}
-      onClose={() => setLightboxIndex(null)}
-      onIndexChange={setLightboxIndex}
-    />
-  )}
-</article>
-
+      {/* Review Image Lightbox */}
+      {lightboxIndex !== null && (
+        <ReviewMediaLightbox
+          images={media}
+          index={lightboxIndex}
+          review={review}
+          currentUser={currentUser}
+          currentUserId={currentUserId}
+          onHelpful={onHelpful}
+          onClose={() => setLightboxIndex(null)}
+          onIndexChange={setLightboxIndex}
+        />
+      )}
+    </article>
   );
 }
 
@@ -371,8 +360,6 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
 
       <DynamicButton
         type="submit"
-        variant="unstyled"
-        size="none"
         disabled={
           submitting ||
           isUploadingImages ||
@@ -661,9 +648,6 @@ export default function ProductReviewsSection({ productId, product }) {
                     return (
                       <DynamicButton
                         key={item.label}
-                        type="button"
-                        variant="unstyled"
-                        size="none"
                         onClick={() => {
                           setRatingFilter(ratingFilter === rating ? 0 : rating);
                           setPage(1);
@@ -693,9 +677,7 @@ export default function ProductReviewsSection({ productId, product }) {
 
                 {ratingFilter > 0 && (
                   <DynamicButton
-                    type="button"
                     variant="link"
-                    size="none"
                     onClick={() => setRatingFilter(0)}
                     className="w-fit text-xs font-bold text-[#A96F14] underline hover:text-[#CE9F2D]"
                   >
@@ -728,29 +710,17 @@ export default function ProductReviewsSection({ productId, product }) {
             </div>
 
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
-              {canWriteReview ? (
+              {canWriteReview && (
                 <DynamicButton
-                  type="button"
                   variant="primary"
                   size="sm"
                   shape="rounded"
                   onClick={() => setShowForm((prev) => !prev)}
-                  className="min-h-9 w-full px-4 py-2 text-xs font-bold text-white shadow-xs sm:w-auto"
+                  className="w-full sm:w-auto"
                 >
                   {showForm ? "Cancel Review" : "Write a Review"}
                 </DynamicButton>
-              ) : !isLoggedIn ? (
-                <DynamicButton
-                  type="button"
-                  variant="primaryOutline"
-                  size="sm"
-                  shape="rounded"
-                  onClick={openAuthModal}
-                  className="min-h-9 w-full px-4 py-2 text-xs font-bold sm:w-auto"
-                >
-                  Sign in to review
-                </DynamicButton>
-              ) : null}
+              )}
             </div>
           </div>
 
@@ -798,7 +768,6 @@ export default function ProductReviewsSection({ productId, product }) {
             </div>
           )}
 
-          {/* Empty State */}
           {!bucket.loading && displayReviews.length === 0 && (
             <EmptyState
               illustration="reviews"
@@ -812,13 +781,12 @@ export default function ProductReviewsSection({ productId, product }) {
             />
           )}
 
-          {/* View All Reviews Link */}
           {displayTotal > 0 && (
             <div className="flex w-full min-w-0 justify-start border-t border-[#E7D9B8]/40 pt-3">
               <Link
                 to={`/products/${productId}/reviews`}
                 state={{ product }}
-                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#CE9F2D] "
+                className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#CE9F2D] sm:text-sm"
               >
                 <span>
                   {displayTotal === 1

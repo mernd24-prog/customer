@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, X } from "lucide-react";
@@ -14,10 +13,8 @@ import {
 } from "../../../utils/ecommerce";
 
 import ProductCard from "../../products/components/ProductCard";
-import { PillButton } from "../../../components/ui/button/static";
-
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 export function WatchlistItemCard({
   product,
   compact = false,
@@ -199,7 +196,6 @@ export function WatchlistItemCard({
         </div>
 
         <DynamicButton
-          type="button"
           className="absolute right-2 top-2 rounded-full p-1 text-gray transition-all duration-300 ease-in-out hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
           onClick={() => onRemove?.(product)}
           aria-label={`Remove ${title} from watchlist`}
@@ -210,33 +206,33 @@ export function WatchlistItemCard({
     );
   }
 
-  // Full Watchlist Card - Reuses Existing ProductCard
   return (
-    <div className="wishlist-product-card relative min-w-0 h-full rounded-lg">
+    <div className="relative min-w-0 h-full rounded-lg transition-[transform,box-shadow] duration-300 ease-in-out">
       <ProductCard
         product={product}
         showActions={false}
         className="h-full pb-12"
       />
-
-      {/* Wishlist Remove Button */}
       <DynamicButton
-        type="button"
+        variant="iconNeutral"
+         size="iconSm"
+        shape="circle"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           onRemove?.(product);
         }}
-        className="wishlist-remove-button absolute right-2 top-2 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-black/5 bg-white/90 text-[#1B1D60] shadow-xs backdrop-blur-sm transition-[color,background-color,border-color,box-shadow] duration-200  hover:bg-white hover:text-red-500 sm:h-8 sm:w-8"
+        className=" absolute right-2 top-2 z-30"
         aria-label={`Remove ${title} from wishlist`}
         title={`Remove ${title} from wishlist`}
       >
-        <X size={15} strokeWidth={1.8} />
+         <X />
       </DynamicButton>
 
       {/* Wishlist Move to Cart Button */}
       <div className="absolute inset-x-2 bottom-2 z-20">
         <PillButton
+          size="sm"
           disabled={isUnavailable || !isInStock}
           onClick={(e) => {
             e.preventDefault();
@@ -250,7 +246,7 @@ export function WatchlistItemCard({
               className="shrink-0"
             />
           }
-          className="wishlist-cart-button h-8 w-full gap-2 whitespace-nowrap !bg-none !bg-[#CE9F2D] hover:!bg-[#bd9025] hover:shadow-md active:scale-[0.98] transition-[background-color,box-shadow,transform] duration-300 ease-in-out disabled:transform-none disabled:hover:shadow-none motion-reduce:transition-none px-3 py-1.5 text-xs font-semibold sm:h-10 sm:px-4 sm:py-2.5 sm:text-sm"
+          className="w-full"
         >
           <span className="truncate">Move to Cart</span>
         </PillButton>

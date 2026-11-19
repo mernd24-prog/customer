@@ -1,10 +1,10 @@
 import { cn } from "../../../utils/common";
 
 export const buttonBaseClasses = cn(
-  "group inline-flex items-center justify-center gap-2",
-  "font-semibold tracking-[0.01em] transition-all duration-300 ease-in-out",
+  "group inline-flex items-center justify-center",
+  "font-medium transition-all duration-300 ease-in-out",
   "outline-none focus:outline-none focus-visible:outline-none",
-  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
   "whitespace-nowrap align-middle",
 );
 
@@ -14,26 +14,39 @@ export const buttonInteractionClasses = cn(
 );
 
 export const buttonShapes = {
-  square: "rounded-[8px]",
+  square: "rounded-[5px]",
   rounded: "rounded-lg",
   md: "rounded-md",
   circle: "rounded-full",
+  none: "",
 };
 
 export const resolveButtonClasses = ({
-  variant,
+  variant = "unstyled",
   size,
   shape,
-  className,
-  buttonVariants,
-  buttonSizes,
+  className = "",
+  buttonVariants = {},
+  buttonSizes = {},
   resolvedShape,
-}) =>
-  cn(
-    buttonBaseClasses,
-    buttonInteractionClasses,
-    buttonVariants[variant] ?? buttonVariants.primary,
-    buttonSizes[size] ?? buttonSizes.md,
-    buttonShapes[resolvedShape] ?? buttonShapes.rounded,
+}) => {
+  const isUnstyled = !variant || variant === "unstyled";
+  const isLink = variant === "link";
+  const isTextVariant = isLink || variant === "textGold" || variant === "textWhite";
+  const effectiveSize = isTextVariant ? (size ?? "none") : (size ?? "md");
+  const effectiveShape = isTextVariant
+    ? (shape ?? "none")
+    : (resolvedShape ?? shape ?? (isUnstyled ? "none" : "rounded"));
+  const shouldApplySize = effectiveSize !== "none" && !isUnstyled;
+
+  return cn(
+    !isUnstyled && !isTextVariant && buttonBaseClasses,
+    !isUnstyled && !isTextVariant && buttonInteractionClasses,
+    isTextVariant &&
+      "inline-flex items-center cursor-pointer transition-colors outline-none focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+    isUnstyled ? "" : (buttonVariants[variant] ?? ""),
+    shouldApplySize ? (buttonSizes[effectiveSize] ?? "") : "",
+    effectiveShape !== "none" ? (buttonShapes[effectiveShape] ?? "") : "",
     className,
   );
+};

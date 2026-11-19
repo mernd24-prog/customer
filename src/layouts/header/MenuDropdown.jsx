@@ -28,8 +28,6 @@ function MenuItem({ item }) {
     return (
       <DynamicButton
         as="button"
-        type="button"
-        variant="unstyled"
         onClick={item.action}
         className={`flex w-full items-center justify-start gap-3 px-4 py-3 text-left text-sm font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] ${item.isLast ? "border-t border-[var(--customer-border)]" : ""}`}
       >

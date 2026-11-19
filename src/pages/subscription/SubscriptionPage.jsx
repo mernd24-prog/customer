@@ -3,7 +3,7 @@ import { Star } from "lucide-react";
 
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
-import BrandButton from "../../components/ui/buttons/Button";
+import { PillButton } from "../../components/ui/button/buttonSpecialized";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   fetchSubscriptionPlans,
@@ -54,11 +54,8 @@ export function SubscriptionPage() {
                   <span className=" text-sm font-normal text-gray">/mo</span>
                 </p>
                 <div className="mt-auto pt-5">
-                  <BrandButton
-                    variant="primary"
-                    rounded
-                    label="Subscribe"
-                    className="w-full h-11 text-sm font-semibold"
+                  <PillButton
+                    className="w-full"
                     onClick={() =>
                       run(
                         dispatch,
@@ -70,7 +67,9 @@ export function SubscriptionPage() {
                         "Subscription purchased",
                       )
                     }
-                  />
+                  >
+                    Subscribe
+                  </PillButton>
                 </div>
               </div>
             ))}

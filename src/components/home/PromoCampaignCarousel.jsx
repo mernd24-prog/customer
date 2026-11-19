@@ -1,29 +1,30 @@
-import { useRef, useState, useEffect } from "react";
-
-import { Link } from "react-router-dom";
-
-import { IoChevronForward, IoChevronBack } from "react-icons/io5";
-
+import { useRef, useState } from "react";
+import CustomSwiper, { SwiperSlide } from "../swiper/CustomSwiper";
+import CarouselNavigation from "../ui/carousel/CarouselNavigation";
+import CarouselCard from "../ui/carousel/CarouselCard";
 import { FALLBACK_PROMO_CARDS } from "../../data/fallbackCmsData";
-
-
-import DynamicButton from "../ui/button/button.jsx";
+import { PillButton } from "../ui/button/buttonSpecialized";
 function normalizeCards(data) {
   let rawList = [];
 
   if (Array.isArray(data)) {
     rawList = data;
   } else if (data && typeof data === "object") {
-    const section =
-      Array.isArray(data?.sections) && data.sections.length > 0
-        ? data.sections[0]
-        : data?.metadata?.data?.sections?.[0];
+    const sections = Array.isArray(data?.sections)
+      ? data.sections
+      : Array.isArray(data?.metadata?.data?.sections)
+        ? data.metadata.data.sections
+        : [];
 
-    if (Array.isArray(section?.points) && section.points.length > 0) {
-      rawList = section.points;
-    } else if (Array.isArray(data?.points) && data.points.length > 0) {
+    const sectionPoints = sections.flatMap((section) =>
+      Array.isArray(section?.points) ? section.points : [],
+    );
+
+    if (sectionPoints.length) {
+      rawList = sectionPoints;
+    } else if (Array.isArray(data?.points)) {
       rawList = data.points;
-    } else if (Array.isArray(data?.gallery) && data.gallery.length > 0) {
+    } else if (Array.isArray(data?.gallery)) {
       rawList = data.gallery;
     } else if (Array.isArray(data?.metadata?.data?.points)) {
       rawList = data.metadata.data.points;
@@ -31,7 +32,6 @@ function normalizeCards(data) {
   }
 
   return rawList
-
     .map((item) => {
       if (!item) return null;
 
@@ -43,85 +43,28 @@ function normalizeCards(data) {
         item?.url ||
         "";
 
-      const title = item?.title || item?.name || item?.image?.title || "";
-
-      const description = item?.description || item?.subtitle || "";
-
-      const ctaUrl =
-        item?.cta?.url || item?.link || item?.href || item?.targetUrl || "";
-
-      const ctaLabel = item?.cta?.label || "";
-
-      const ctaTarget = item?.cta?.target || "_self";
-
       return {
         image: imageUrl,
-
-        title,
-
-        description,
-
-        link: ctaUrl,
-
-        ctaLabel,
-
-        ctaTarget,
+        title: item?.title || item?.name || item?.image?.title || "",
+        description: item?.description || item?.subtitle || "",
+        link: item?.cta?.url || item?.link || item?.href || item?.targetUrl || "",
+        ctaLabel: item?.cta?.label || "",
+        ctaTarget: item?.cta?.target || "_self",
       };
     })
-
     .filter((card) => card && (card.image || card.title));
 }
 
-export default function PromoCampaignCarousel({ data = null, className = "" }) {
+export default function PromoCampaignCarousel({
+  data = null,
+  className = "",
+}) {
   const cmsCards = normalizeCards(data);
-
   const cards = cmsCards.length ? cmsCards : FALLBACK_PROMO_CARDS;
-
-  const scrollRef = useRef(null);
-
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-
-  const [canScrollRight, setCanScrollRight] = useState(false);
-
-  const checkScrollButtons = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-
-      setCanScrollLeft(scrollLeft > 5);
-
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
-    }
-  };
-
-  useEffect(() => {
-    checkScrollButtons();
-
-    const el = scrollRef.current;
-
-    if (el) {
-      el.addEventListener("scroll", checkScrollButtons);
-
-      window.addEventListener("resize", checkScrollButtons);
-
-      return () => {
-        el.removeEventListener("scroll", checkScrollButtons);
-
-        window.removeEventListener("resize", checkScrollButtons);
-      };
-    }
-  }, [cards]);
-
-  const handleScroll = (direction) => {
-    if (scrollRef.current) {
-      const scrollAmount = scrollRef.current.clientWidth * 0.75;
-
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-
-        behavior: "smooth",
-      });
-    }
-  };
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
 
   if (!cards.length) return null;
 
@@ -134,126 +77,87 @@ export default function PromoCampaignCarousel({ data = null, className = "" }) {
       }}
     >
       <div className="relative z-10 customer-container py-6 sm:py-8 lg:py-10">
-        <div className="relative group/carousel">
-          {canScrollLeft && (
-            <DynamicButton
-              type="button"
-              onClick={() => handleScroll("left")}
-              aria-label="Scroll left"
-              className="absolute -left-2 sm:left-1 lg:-left-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white hover:shadow-lg focus:outline-none"
-            >
-              <IoChevronBack className="text-lg sm:text-xl text-[#333]" />
-            </DynamicButton>
-          )}
+        <div className="group/carousel relative">
+          <CarouselNavigation
+            prevRef={prevRef}
+            nextRef={nextRef}
+            isBeginning={isBeginning}
+            isEnd={isEnd}
+            prevLabel="Previous campaigns"
+            nextLabel="Next campaigns"
+          />
 
-          {canScrollRight && (
-            <DynamicButton
-              type="button"
-              onClick={() => handleScroll("right")}
-              aria-label="Scroll right"
-              className="absolute -right-2 sm:right-1 lg:-right-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white hover:shadow-lg focus:outline-none"
-            >
-              <IoChevronForward className="text-lg sm:text-xl text-[#333]" />
-            </DynamicButton>
-          )}
-
-          <div
-            ref={scrollRef}
-            className="flex items-center gap-3 sm:gap-4 lg:gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth py-1 w-full"
+          <CustomSwiper
+            prevEl={prevRef}
+            nextEl={nextRef}
+            showNavigation
+            showPagination
+            paginationClassName="shared-carousel-pagination"
+            watchOverflow
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            onNavigationStateChange={(beginning, end) => {
+              setIsBeginning(beginning);
+              setIsEnd(end);
+            }}
+            breakpoints={{
+              320: { slidesPerView: 1.15, spaceBetween: 12 },
+              375: { slidesPerView: 1.35, spaceBetween: 12 },
+              425: { slidesPerView: 1.55, spaceBetween: 14 },
+              640: { slidesPerView: 2, spaceBetween: 16 },
+              768: { slidesPerView: 2.5, spaceBetween: 16 },
+              1024: { slidesPerView: 3.25, spaceBetween: 20 },
+              1280: { slidesPerView: 4, spaceBetween: 20 },
+            }}
+            className="!pb-2"
           >
-            {cards.map((card, index) => {
-              const rawLink = (card.link || "").trim();
-
-              const hasLink = rawLink.length > 0;
-
-              const isExternal = hasLink && /^https?:\/\//i.test(rawLink);
-
-              const cardClasses =
-                "relative overflow-hidden rounded-lg sm:rounded-lg group shadow-md sm:shadow-xl h-[240px] min-[375px]:h-[270px] min-[425px]:h-[310px] sm:h-[360px] md:h-[380px] lg:h-[420px] xl:h-[450px] w-[72vw] min-[375px]:w-[68vw] min-[425px]:w-[260px] sm:w-[280px] md:w-[300px] lg:w-[calc(25%-15px)] shrink-0 snap-start block";
-
-              const CardContent = (
-                <>
-                  {card.image && (
-                    <img
-                      src={card.image}
-                      alt={card.title || "Campaign"}
-                      loading="lazy"
-                      decoding="async"
-                      width="371"
-                      height="480"
-                      className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 ease-out "
+            {cards.map((card, index) => (
+              <SwiperSlide key={`${card.title || "campaign"}-${index}`}>
+                <CarouselCard
+                  image={card.image}
+                  alt={card.title || "Campaign"}
+                  fallbackType="promo"
+                  href={card.link || undefined}
+                  target={card.ctaTarget}
+                  articleClassName="h-[240px] flex-col sm:h-[360px] md:h-[380px] lg:h-[420px] xl:h-[450px]"
+                  imageWidth="371"
+                  imageHeight="480"
+                  overlay={
+                    <div
+                      className="pointer-events-none absolute inset-0"
+                      style={{
+                        background:
+                          "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.1) 60%, transparent 75%)",
+                      }}
                     />
-                  )}
-
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background:
-                        "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.1) 60%, transparent 75%)",
-                    }}
-                  />
-
-                  <div className="absolute bottom-0 left-0 right-0 p-2.5 sm:p-4 lg:p-5 flex flex-col justify-end text-white z-10">
+                  }
+                >
+                  <div className="mt-auto flex h-full flex-col justify-end p-2.5 text-white sm:p-4 lg:p-5">
                     {card.title && (
-                      <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-1 leading-snug drop-shadow-md line-clamp-2">
+                      <h3 className="mb-1 line-clamp-2 text-sm font-bold leading-snug drop-shadow-md sm:text-base lg:text-lg">
                         {card.title}
                       </h3>
                     )}
-
                     {card.description && (
-                      <p className="text-xs sm:text-sm leading-relaxed line-clamp-2 mb-1 drop-shadow">
+                      <p className="mb-1 line-clamp-2 text-xs leading-relaxed drop-shadow sm:text-sm">
                         {card.description}
                       </p>
                     )}
-
                     {card.ctaLabel && (
-                      <span className="mt-2 inline-flex h-8 sm:h-9 w-fit items-center justify-center rounded-md bg-[#CE9F2D] px-4 sm:px-5 text-xs sm:text-sm font-semibold leading-none text-white shadow-sm transition-colors duration-200 group-hover:bg-[#B88B22]">
-                        {card.ctaLabel}
-                      </span>
+                      
+                    <PillButton
+                    size="xs"
+                    shape="square"
+                    >{card.ctaLabel}</PillButton>
                     )}
                   </div>
-                </>
-              );
-
-              if (!hasLink) {
-                return (
-                  <div key={index} className={cardClasses}>
-                    {CardContent}
-                  </div>
-                );
-              }
-
-              if (isExternal) {
-                return (
-                  <a
-                    key={index}
-                    href={rawLink}
-                    target={card.ctaTarget || "_blank"}
-                    rel="noopener noreferrer"
-                    className={cardClasses}
-                  >
-                    {CardContent}
-                  </a>
-                );
-              }
-
-              return (
-                <Link
-                  key={index}
-                  to={rawLink}
-                  target={card.ctaTarget === "_blank" ? "_blank" : undefined}
-                  rel={
-                    card.ctaTarget === "_blank"
-                      ? "noopener noreferrer"
-                      : undefined
-                  }
-                  className={cardClasses}
-                >
-                  {CardContent}
-                </Link>
-              );
-            })}
-          </div>
+                </CarouselCard>
+              </SwiperSlide>
+            ))}
+          </CustomSwiper>
         </div>
       </div>
     </section>

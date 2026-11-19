@@ -120,7 +120,6 @@ export default function SearchBar({
 
         {Boolean(query) && (
           <DynamicButton
-            type="button"
             onClick={handleClear}
             className={cn(
               "mr-4 inline-flex shrink-0 items-center justify-center rounded-full p-1 text-[#6F7480] transition-colors hover:text-[#1F2430]",

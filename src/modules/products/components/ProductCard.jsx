@@ -7,11 +7,7 @@ import Label from "../../../components/ui/label/Label";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
-import {
-  IconCircleButton,
-  PillButton,
-  ProductBrandButton,
-} from "../../../components/ui/button/static";
+import { DynamicButton } from "../../../components/ui/button";
 
 import Price from "./Price";
 import Rating from "./Rating";
@@ -39,8 +35,6 @@ import {
 import { cn } from "../../../utils/common";
 import StarRating from "../../../components/ui/display/StarRating";
 
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
 const getDealEndDateValue = (product = {}) =>
   product?.deal?.endAt ||
   product?.deal?.end_at ||
@@ -446,8 +440,8 @@ export default function ProductCard({
           >
             {brand && (
               <DynamicButton
-                type="button"
                 onClick={handleBrandClick}
+                title={brand}
                 className="text-left text-xs font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
                 {capitalizeFirst(brand)}
@@ -528,23 +522,25 @@ export default function ProductCard({
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border border-[#EAE2D3] bg-white transition-all duration-300 hover:border-[#CE9F2D] hover:shadow-[0_4px_16px_rgba(27,29,96,0.08)]",
-        isFeatured && "border-[#CE9F2D]/60 shadow-[0_2px_8px_rgba(206,159,45,0.08)]",
+        isFeatured &&
+          "border-[#CE9F2D]/60 shadow-[0_2px_8px_rgba(206,159,45,0.08)]",
         className,
       )}
     >
-      {/* WISHLIST BUTTON (Top-Right: Minimal, elegant, The Bear House style) */}
       {showActions && (
         <DynamicButton
-          type="button"
           title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          variant="iconNeutral"
           aria-label={
             isWishlisted
               ? `Remove ${title} from wishlist`
               : `Add ${title} to wishlist`
           }
+          size="iconSm"
+          shape="circle"
           onClick={handleWishlist}
           className={cn(
-            "absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-xs border border-black/5 transition-[color,background-color,border-color,box-shadow] duration-300 ease-out  hover:bg-white",
+            (className = "absolute right-2 top-2 z-10 "),
             isWishlisted
               ? "text-rose-500 bg-rose-50/90 border-rose-200"
               : "text-[#1B1D60] hover:text-rose-500",
@@ -559,8 +555,6 @@ export default function ProductCard({
           />
         </DynamicButton>
       )}
-
-      {/* BADGES (Top-Left: Subtle geometric tag) */}
       <div className="absolute left-2 top-2 z-20 flex max-w-[calc(100%-3rem)] flex-wrap items-center gap-1">
         {isFeatured && (
           <span className="rounded bg-[#CE9F2D] px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs sm:text-xs">
@@ -574,15 +568,12 @@ export default function ProductCard({
           </span>
         )}
       </div>
-
-      {/* PRODUCT CONTENT */}
       <Link
         to={to}
         target={resolvedTarget === "_self" ? undefined : resolvedTarget}
         rel={resolvedTarget === "_blank" ? "noopener noreferrer" : undefined}
         className="flex min-w-0 flex-1 flex-col"
       >
-        {/* IMAGE CONTAINER (The Bear House Portrait Aspect Ratio, clean, fixed & elegant) */}
         <div
           className=" relative aspect-[4/5] max-h-[290px] sm:max-h-[330px] w-full cursor-pointer overflow-hidden rounded-t-lg bg-[#FAF8F5]"
           onMouseEnter={() => setIsHovered(true)}
@@ -689,21 +680,20 @@ export default function ProductCard({
             </div>
           )}
         </div>
-
-        {/* PRODUCT INFO (The Bear House style: Clean, tight, perfectly aligned) */}
         <div className="flex min-w-0 flex-1 flex-col p-2 sm:p-2 ">
           {/* BRAND */}
-          {brand ? (
-            <ProductBrandButton
-              type="button"
-              onClick={handleBrandClick}
-              title={brand}
-            >
-              {capitalizeFirst(brand)}
-            </ProductBrandButton>
-          ) : (
-            <div className="h-[15px]" />
-          )}
+          <div className="flex h-[15px] w-full items-start justify-start overflow-hidden">
+            {brand && (
+              <DynamicButton
+                variant="textGold"
+                onClick={handleBrandClick}
+                title={brand}
+                className="max-w-full break-words font-bold tracking-wide uppercase"
+              >
+                {capitalizeFirst(brand)}
+              </DynamicButton>
+            )}
+          </div>
 
           <h3
             className="mt-1 truncate text-sm sm:text-sm font-medium text-[#171A3A] transition-colors"

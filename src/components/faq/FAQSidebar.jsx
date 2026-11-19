@@ -15,13 +15,10 @@ export default function FAQSidebar({
           const active = activeTopic === topic;
 
           return (
-            <button
+            <DynamicButton
               key={topic}
-              // type="button"
-              // variant="unstyled"
-              // size="none"
               onClick={() => setActiveTopic(topic)}
-              className={`flex items-center justify-between p-4 text-left ${
+              className={`flex items-center justify-between p-4 text-left transition-colors duration-200 ${
                 active
                   ? "bg-white text-navy font-semibold"
                   : "hover:bg-gray-100"
@@ -32,7 +29,7 @@ export default function FAQSidebar({
               <span>{topic}</span>
 
               {active && <ArrowRight size={18} />}
-            </button>
+            </DynamicButton>
           );
         })}
       </div>

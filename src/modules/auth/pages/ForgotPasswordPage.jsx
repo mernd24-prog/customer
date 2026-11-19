@@ -6,17 +6,12 @@ import FormField from "../../../components/ui/FormField";
 import Seo from "../../../components/ui/Seo";
 import { AUTH_ROUTES } from "../routes/apiRoutes";
 import useForgotPassword from "../controllers/useForgotPassword";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
+import DynamicButton from "../../../components/ui/button/button.jsx";
 
 export default function ForgotPasswordPage() {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    isValid,
-    loading,
-    error,
-    submit
-  } = useForgotPassword();
+  const { register, handleSubmit, errors, isValid, loading, error, submit } =
+    useForgotPassword();
 
   return (
     <>
@@ -50,23 +45,23 @@ export default function ForgotPasswordPage() {
             </div>
           )}
 
-          <Button
+          <PillButton
+            size="md"
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-sm leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Mail size={18} /> Send Reset Otp
-          </Button>
+          </PillButton>
 
           <p className="text-center  text-[0.8rem] text-muted">
             Remember Your Password?{" "}
-            <Link
-              to={AUTH_ROUTES.login}
-              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
-            >
+            <DynamicButton 
+            size="xs"
+            variant="link"
+             to={AUTH_ROUTES.login}>
               Back to Login
-            </Link>
+            </DynamicButton>
           </p>
         </form>
       </AuthCard>

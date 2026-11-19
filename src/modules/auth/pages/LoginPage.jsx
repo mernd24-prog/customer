@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { LogIn, Smartphone } from "lucide-react";
-import { SolidLargeButton } from "../../../components/ui/button/static";
+import { DynamicButton } from "../../../components/ui/button";
+import {
+  PillButton,
+  GoldOutlineButton,
+} from "../../../components/ui/button/buttonSpecialized";
 import AuthCard from "../../../components/ui/AuthCard";
-import Button from "../../../components/ui/buttons/Button";
 import FormField from "../../../components/ui/FormField";
 import Seo from "../../../components/ui/Seo";
 
@@ -73,25 +76,31 @@ export default function LoginPage() {
               />
 
               <div className="mt-2 flex justify-end">
-                <Link
-                  to={AUTH_ROUTES.forgotPassword}
-                  className="text-xs sm:text-sm font-medium text-muted underline-offset-4 transition-colors duration-200 hover:text-gold hover:underline"
+                <DynamicButton
+                  variant="link"
+                  onClick={() => navigate(AUTH_ROUTES.forgotPassword)}
+                  className=" text-muted "
                 >
+            
                   Forgot Password?
-                </Link>
+                </DynamicButton>
               </div>
             </div>
           </div>
 
-          <SolidLargeButton
+          <PillButton
             type="submit"
+            size="md"
+            className="w-full"
             loading={loading}
             disabled={!isValid || isDisabled}
-            className="h-10 w-full gap-2 px-3 text-xs sm:h-11 sm:px-4 sm:text-sm md:h-12 lg:text-base"
+            leftIcon={
+              <LogIn className="h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]" />
+            }
           >
-            <LogIn className="h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]" />
-            <span>Sign In</span>
-          </SolidLargeButton>
+            Sign In
+          </PillButton>
+
           <div className="flex items-center gap-2 sm:gap-3 py-1">
             <hr className="flex-1 border-border" />
             <span className="whitespace-nowrap text-[11px] sm:text-xs text-gray">
@@ -100,43 +109,51 @@ export default function LoginPage() {
             <hr className="flex-1 border-border" />
           </div>
 
-          <Button
-            type="button"
+          <GoldOutlineButton
+  
+            size="md"
             onClick={handleMobileOtpLogin}
             disabled={isDisabled}
-            className={`${buttonBase} border border-gold bg-white text-gold hover:bg-gold/5 hover:text-gold-dark active:scale-[0.99]`}
+            className="w-full"
+            leftIcon={
+              <Smartphone className="h-4 w-4 sm:h-[18px] sm:w-[18px] shrink-0" />
+            }
           >
-            <Smartphone className="h-4 w-4 sm:h-[18px] sm:w-[18px] shrink-0" />
-            <span>Login or Register with Mobile OTP</span>
-          </Button>
+            Login or Register with Mobile OTP
+          </GoldOutlineButton>
 
-          <Button
+          <DynamicButton
             type="button"
             variant="google"
+            size="md"
+            shape="rounded"
             onClick={handleGoogleLogin}
             loading={googleLoading}
             disabled={isDisabled}
-            className={`${buttonBase} border border-border bg-white text-ink hover:border-border-strong hover:bg-gray-50 active:scale-[0.99]`}
+            leftIcon={
+              <img
+                loading="lazy"
+                width="20"
+                height="20"
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                className="h-4 w-4 sm:h-5 sm:w-5 shrink-0"
+              />
+            }
           >
-            <img
-              loading="lazy"
-              width="20"
-              height="20"
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-              alt="Google"
-              className="h-4 w-4 sm:h-5 sm:w-5 shrink-0"
-            />
-            <span>Continue with Google</span>
-          </Button>
+            Continue with Google
+          </DynamicButton>
 
-          <p className="pt-1 text-center text-xs sm:text-sm text-muted leading-relaxed">
+          <p className="pt-1 text-center text-xs leading-relaxed text-muted sm:text-sm">
             Don&apos;t have an account?{" "}
-            <Link
-              to={AUTH_ROUTES.register}
-              className="font-semibold text-gold underline-offset-4 transition-colors duration-200 hover:text-gold-dark hover:underline"
+            <DynamicButton
+              variant="link"
+              onClick={() => navigate(AUTH_ROUTES.register)}
+              className="inline-flex items-center gap-1 p-0 font-semibold text-gold hover:text-gold-dark"
             >
               Create Account
-            </Link>
+            
+            </DynamicButton>
           </p>
         </form>
       </AuthCard>

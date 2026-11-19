@@ -1,5 +1,4 @@
 import React from "react";
-import { ChevronDown } from "lucide-react";
 
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
@@ -10,7 +9,7 @@ import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPreset
 import { useNotifications } from "../controllers/useNotifications";
 import { NotificationCard } from "../components/NotificationCard";
 import { NotificationFilterBar } from "../components/NotificationFilterBar";
-import { ContinueShoppingButton } from "../../../components/ui/button/static";
+import { LoadMoreButton } from "../../../components/ui/button";
 const BREADCRUMB_ITEMS = [
   { label: "Home", href: "/" },
   { label: "Notifications", href: "/notifications" },
@@ -81,31 +80,15 @@ export function NotificationsPage() {
 
                 {totalPages > 1 && (
                   <div className="flex justify-center py-4">
-                    <ContinueShoppingButton
-                      type="button"
+                    <LoadMoreButton
                       onClick={
                         page >= totalPages ? handleShowLess : handleLoadMore
                       }
+                      loading={loading}
                       disabled={loading}
-                      rightIcon={
-                        loading ? undefined : (
-                          <ChevronDown
-                            size={14}
-                            strokeWidth={2.5}
-                            className={`transition-transform duration-200 ${
-                              page >= totalPages ? "rotate-180" : ""
-                            }`}
-                          />
-                        )
-                      }
-                      className="min-h-[42px] px-6 text-sm lg:text-base"
-                    >
-                      {loading
-                        ? "Loading..."
-                        : page >= totalPages
-                          ? "Show Less"
-                          : "Load More"}
-                    </ContinueShoppingButton>
+                      isExpanded={page >= totalPages}
+                      label={page >= totalPages ? "Show Less" : "Load More"}
+                    />
                   </div>
                 )}
               </div>

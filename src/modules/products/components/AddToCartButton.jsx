@@ -1,8 +1,7 @@
 import { ShoppingCart } from "lucide-react";
 import { cn } from "../../../utils/common";
 
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
 export default function AddToCartButton({
   label = "Add to cart",
   disabled = false,
@@ -12,13 +11,15 @@ export default function AddToCartButton({
 }) {
   return (
     <DynamicButton
-      type="button"
       disabled={disabled}
       title={label}
       aria-label={label}
       onClick={onClick}
+      variant={compact ? "iconGhost" : "primary"}
+      size={compact ? "iconSm" : "md"}
+      shape={compact ? "circle" : "rounded"}
       className={cn(
-        compact ? "icon-button primary" : "button primary inline-flex items-center justify-center gap-2",
+        compact ? "" : "inline-flex items-center justify-center gap-2",
         disabled && "cursor-not-allowed opacity-60",
         className,
       )}

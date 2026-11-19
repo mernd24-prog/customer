@@ -175,8 +175,9 @@ export default function ReviewImageUploader({
               </span>
             )}
             <DynamicButton
-              type="button"
-              className="absolute right-1 top-1 grid size-6 place-items-center rounded-full bg-white text-[#1B1D60] shadow-sm disabled:opacity-60"
+              variant="iconNeutral"
+              shape="circle"
+              className="absolute right-1 top-1 grid size-6 place-items-center shadow-sm"
               onClick={() => removeImage(index)}
               disabled={disabled || uploading}
               aria-label="Remove Image"
@@ -188,8 +189,6 @@ export default function ReviewImageUploader({
 
         {value.length < MAX_REVIEW_IMAGES && (
           <DynamicButton
-            type="button"
-            variant="unstyled"
             className="flex h-full w-full aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-[#CE9F2D] bg-[#CE9F2D0D] px-2 py-3 text-[#1B1D60] transition hover:bg-[#CE9F2D1A] disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => inputRef.current?.click()}
             disabled={uploadDisabled}

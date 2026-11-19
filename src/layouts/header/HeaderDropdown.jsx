@@ -46,8 +46,6 @@ export default function HeaderDropdown({
       {hasDropdown ? (
         <DynamicButton
           as="button"
-          type="button"
-          variant="unstyled"
           className={cn(
             "flex items-center justify-start gap-1.5 text-left text-white/85 transition-all duration-300 ease-in-out hover:text-white",
             className,
@@ -122,8 +120,6 @@ export default function HeaderDropdown({
       ) : (
         <DynamicButton
           as="button"
-          type="button"
-          variant="unstyled"
           className={cn(
             "flex items-center justify-start gap-1.5 text-left text-white/85 transition-all duration-300 ease-in-out hover:text-white",
             className,

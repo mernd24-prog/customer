@@ -376,8 +376,8 @@ export default function SupportTicketDetailsPage() {
             skeletonContainerClass="mt-6"
           >
             {ticket && (
-              <div className="mt-4 sm:mt-6 grid gap-4 sm:gap-5 lg:h-[calc(100vh-210px)] lg:min-h-[520px] lg:grid-cols-[minmax(0,1fr)_360px]">
-                <section className="flex h-[calc(100vh-220px)] min-h-[450px] flex-col overflow-hidden rounded-lg border border-[#E3DCCE] bg-white shadow-sm lg:h-auto lg:min-h-0">
+              <div className="mt-4 sm:mt-6 grid gap-4 sm:gap-5 lg:h-[calc(100vh-210px)] lg:min-h-[520px] lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-0">
+                <section className="flex h-[calc(100vh-220px)] min-h-[450px] flex-col overflow-hidden rounded-lg border border-[#E3DCCE] bg-white shadow-sm lg:h-auto lg:min-h-0 lg:rounded-r-none lg:border-r-[#CE9F2D]/50">
                   <div className="flex items-center gap-2.5 border-b border-white/10 bg-gradient-to-r from-[#111538] via-[#1B1D60] to-[#252875] px-3.5 py-3.5 text-white sm:gap-3 sm:px-5 sm:py-4">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 backdrop-blur-xs text-[#F5C451] shadow-2xs sm:h-11 sm:w-11">
                       <Headphones size={20} className="sm:hidden" />
@@ -400,7 +400,6 @@ export default function SupportTicketDetailsPage() {
                       </p>
                     </div>
                     <DynamicButton
-                      type="button"
                       onClick={() => navigate("/support")}
                       className="hidden h-9 rounded-[10px] border border-white/25 bg-white/10 px-3.5 text-xs font-semibold text-white transition hover:bg-white/20 active:scale-95 sm:block"
                     >
@@ -410,7 +409,7 @@ export default function SupportTicketDetailsPage() {
 
                   <div
                     ref={chatContainerRef}
-                    className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[#F8F7F4] px-3 py-4 sm:space-y-5 sm:px-5 sm:py-6 custom-scrollbar"
+                    className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[linear-gradient(180deg,#FAF8F2_0%,#F5F3ED_100%)] px-3 py-4 sm:space-y-5 sm:px-5 sm:py-6 custom-scrollbar"
                   >
                     {conversationItems.map((item, index) => (
                       <ChatBubble
@@ -458,7 +457,7 @@ export default function SupportTicketDetailsPage() {
                   </form>
                 </section>
 
-                <aside className="hidden min-h-0 flex-col overflow-hidden rounded-lg border border-[#E3DCCE] bg-white shadow-sm lg:flex">
+                <aside className="hidden min-h-0 flex-col overflow-hidden rounded-r-lg border border-l-2 border-l-[#CE9F2D]/60 border-[#E3DCCE] bg-[#FCFAF5] shadow-sm lg:flex">
                   <div className="border-b border-[#E3DCCE] bg-gradient-to-r from-[#FAF6ED] to-[#F3EAD7] px-4 py-4">
                     <div className="flex items-center justify-between gap-3">
                       <div>
@@ -480,7 +479,7 @@ export default function SupportTicketDetailsPage() {
                     </div>
                   </div>
 
-                  <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto p-2.5 custom-scrollbar">
+                  <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-2.5 custom-scrollbar">
                     {ticketsLoading ? (
                       <div className="space-y-2 p-2">
                         {[1, 2, 3].map((item) => (
@@ -499,8 +498,8 @@ export default function SupportTicketDetailsPage() {
                             to={`/support/tickets/${encodeURIComponent(item.id)}`}
                             className={`block rounded-lg border px-3.5 py-3 transition-all ${
                               active
-                                ? "border-[#E3DCCE] bg-[#FFFBF3] shadow-xs"
-                                : "border-transparent bg-transparent hover:bg-[#F9F7F1]"
+                                ? "border-[#CE9F2D]/50 bg-white shadow-sm"
+                                : "border-[#EEE7D8] bg-white hover:border-[#CE9F2D]/40 hover:bg-[#FFF9EA]"
                             }`}
                           >
                             <div className="flex items-start justify-between gap-3">

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { ArrowLeft, Package, RotateCcw } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
-import Button from "../../../components/ui/buttons/Button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 import ShowMoreText from "../../../utils/showMore";
 import useReturnRequest from "../controllers/useReturnRequest";
@@ -156,7 +156,6 @@ function ReturnRequestPage({ orderId }) {
                     return (
                       <DynamicButton
                         key={lineKey || title}
-                        type="button"
                         onClick={() => handleItemSelect(item)}
                         disabled={disabled}
                         className={`grid w-full min-w-0 grid-cols-[52px_minmax(0,1fr)_20px] items-start gap-2.5 rounded-lg border p-2.5 text-left transition-all duration-200 sm:grid-cols-[80px_minmax(0,1fr)_20px] sm:items-center sm:gap-3.5 sm:p-3.5 ${
@@ -428,7 +427,8 @@ function ReturnRequestPage({ orderId }) {
                     </div>
                   )}
 
-                  <Button
+                  <PillButton
+                  size="md"
                     type="submit"
                     loading={loading}
                     disabled={
@@ -436,10 +436,11 @@ function ReturnRequestPage({ orderId }) {
                       quantityExceedsRemaining ||
                       selectedReturnableQuantity <= 0
                     }
-                    className="w-full h-12 bg-[#CE9F2D] text-white hover:bg-[#B68A22] font-bold rounded-lg shadow-sm transition hover:shadow-md flex items-center justify-center gap-2"
+                    className="w-full"
                   >
-                    <RotateCcw size={18} /> Submit Return Request
-                  </Button>
+                    <RotateCcw size={18} />
+                    Submit Return Request
+                  </PillButton>
                 </>
               )}
             </form>

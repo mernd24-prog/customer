@@ -31,6 +31,7 @@ import { fetchFullList } from "../../../utils/pages/checkoutUtils";
 
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
+import { GoldOutlineButton } from "../../../components/ui/button/buttonSpecialized";
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
 const addressLabels = ADDRESS_LABEL_OPTIONS;
@@ -297,7 +298,6 @@ export default function AddressSelection({
       bodyClassName="flex flex-col w-full max-w-full gap-3 px-3 py-3 sm:px-5 sm:py-3"
       headerContent={
         <DynamicButton
-          type="button"
           onClick={onAddNewAddress}
           className="inline-flex shrink-0 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-[#3E4093] text-xs font-semibold leading-5 transition hover:bg-[#3E4093]/10 sm:text-sm sm:px-3 sm:py-2"
         >
@@ -416,8 +416,10 @@ export default function AddressSelection({
                   )}
                 </div>
                 <DynamicButton
-                  type="button"
                   onClick={() => startEdit(addr)}
+                  variant="unstyled"
+                  size="none"
+                  shape="none"
                   className="inline-flex lg:h-10 lg:w-10 h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-[#1B1D60] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
                 >
                   <SquarePen size={14} />
@@ -448,10 +450,10 @@ export default function AddressSelection({
 
         {displayAddresses.length > 2 && (
           <div className="flex justify-center w-full mt-2 mb-4">
-            <DynamicButton
-              type="button"
+            <GoldOutlineButton
               onClick={() => setShowAllAddresses(!showAllAddresses)}
-              className="flex w-[90%] sm:w-[60%] max-w-[350px] items-center justify-center gap-2 rounded-full border border-gold px-6 py-2.5 text-sm font-semibold text-gold transition-colors hover:bg-gold-soft hover:text-gold-dark"
+              shape="pill"
+              className="flex w-[90%] sm:w-[60%] max-w-[350px] items-center justify-center gap-2"
             >
               {showAllAddresses ? (
                 <>
@@ -462,7 +464,7 @@ export default function AddressSelection({
                   Show More Addresses <ChevronDown size={16} />
                 </>
               )}
-            </DynamicButton>
+            </GoldOutlineButton>
           </div>
         )}
       </div>

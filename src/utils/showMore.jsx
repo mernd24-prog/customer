@@ -346,8 +346,6 @@ export function ShowMoreText({
       {isTruncated && (
         <DynamicButton
           as="button"
-          type="button"
-          variant="unstyled"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

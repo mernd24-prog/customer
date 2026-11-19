@@ -1,16 +1,12 @@
 import { Navigate } from "react-router-dom";
 import { AUTH_ROUTES } from "../routes/apiRoutes";
+import { DynamicButton } from "../../../components/ui/button";
+import { PillButton } from "../../../components/ui/button/buttonSpecialized";
+import { Smartphone } from "lucide-react";
 
 export default function RegisterOtpPage() {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    isValid,
-    loading,
-    error,
-    submit
-  } = useRegisterOtp();
+  const { register, handleSubmit, errors, isValid, loading, error, submit } =
+    useRegisterOtp();
 
   return (
     <>
@@ -24,11 +20,7 @@ export default function RegisterOtpPage() {
         maxWidth="max-w-[1000px]"
         maxHeight="h-[440px]"
       >
-        <form
-          className="grid gap-3"
-          onSubmit={handleSubmit(submit)}
-          noValidate
-        >
+        <form className="grid gap-3" onSubmit={handleSubmit(submit)} noValidate>
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               placeholder="Enter First Name"
@@ -116,33 +108,38 @@ export default function RegisterOtpPage() {
             </div>
           )}
 
-          <Button
+          <PillButton
             type="submit"
+            size="md"
+            shape="rounded"
             loading={loading}
-            className="h-11 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!isValid || loading}
+            className="w-full"
           >
-            <Smartphone size={18} /> Send OTP &amp; register
-          </Button>
+            <Smartphone size={18} />
+            Send OTP &amp; register
+          </PillButton>
 
           <p className="text-center text-sm leading-[20px] text-muted">
             Already Have an Account?{" "}
-            <Link
-              to={AUTH_ROUTES.login}
-              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
+            <DynamicButton
+              variant="link"
+              onClick={() => navigate(AUTH_ROUTES.login)}
+              className="inline p-0 font-semibold text-gold underline-offset-4 hover:text-gold-dark hover:underline"
             >
               Login
-            </Link>
+            </DynamicButton>
           </p>
 
           <p className="text-center text-[0.8rem] text-muted">
             Prefer Password?{" "}
-            <Link
-              to={AUTH_ROUTES.register}
-              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
+            <DynamicButton
+              variant="link"
+              onClick={() => navigate(AUTH_ROUTES.register)}
+              className="inline p-0 font-semibold text-gold underline-offset-4 hover:text-gold-dark hover:underline"
             >
               Register with Password
-            </Link>
+            </DynamicButton>
           </p>
         </form>
       </AuthCard>

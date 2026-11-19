@@ -2,8 +2,12 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut } from "lucide-react";
+import {
+  PillButton,
+  GoldButton,
+} from "../../components/ui/button/buttonSpecialized";
 
-import { SolidLargeButton } from "../../components/ui/button/static";
+import { DynamicButton } from "../../components/ui/button";
 import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
 
 import { logout } from "../../modules/auth/slices/authSlice";
@@ -86,13 +90,16 @@ export const TopHeader = () => {
             </Link>
 
             {currentUser ? (
-              <SolidLargeButton
+              <PillButton
+                size="xs"
+                shape="square"
                 leftIcon={<LogOut size={14} />}
-                className="h-[30px] min-w-[90px] px-3 py-0 text-xs leading-none whitespace-nowrap lg:h-[32px] lg:min-w-[100px] lg:text-sm"
                 onClick={() => setShowLogoutModal(true)}
+                className="ml-1 !text-[#03014D] hover:!text-[#03014D] !font-bold"
+
               >
                 Sign Out
-              </SolidLargeButton>
+              </PillButton>
             ) : null}
           </div>
         </div>

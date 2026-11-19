@@ -8,8 +8,8 @@ import { X } from "lucide-react";
 
 import { LockIcon } from "../../../components/ui/icons";
 
-
-import DynamicButton from "../button/button.jsx";
+import { DynamicButton } from "../button";
+import { PillButton } from "../button/buttonSpecialized";
 export default function AuthModal({ open, onClose }) {
   const navigate = useNavigate();
   const loginBtnRef = useRef(null);
@@ -97,16 +97,14 @@ export default function AuthModal({ open, onClose }) {
         {/* Close button */}
         <DynamicButton
           ref={firstFocusableRef}
+          variant="iconGhost"
+          size="iconSm"
+          shape="circle"
           onClick={onClose}
-          className={cn(
-            "absolute right-4 top-4 flex h-8 w-8 items-center justify-center",
-            "rounded-full text-muted transition-all duration-500 ease-in-out",
-            "hover:bg-cream hover:text-ink",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1",
-          )}
+          className="absolute right-4 top-4 text-muted hover:bg-cream hover:text-ink"
           aria-label="Close Login Prompt"
         >
-          <X size={14} strokeWidth={1.8} />
+          <X size={18} strokeWidth={2} />
         </DynamicButton>
 
         {/* Body */}
@@ -129,7 +127,7 @@ export default function AuthModal({ open, onClose }) {
           {/* Title */}
           <h2
             id="auth-modal-title"
-            className="text-center  text-[1.25rem] font-semibold leading-snug text-ink"
+            className="text-center text-[1.25rem] font-semibold leading-snug text-ink"
           >
             Login Required
           </h2>
@@ -137,7 +135,7 @@ export default function AuthModal({ open, onClose }) {
           {/* Description */}
           <p
             id="auth-modal-desc"
-            className="mt-2.5 text-center  text-[0.825rem] leading-relaxed text-muted"
+            className="mt-2.5 text-center text-[0.825rem] leading-relaxed text-muted"
           >
             Please Login to Continue. You Need to Be Authenticated to Access
             This Feature and Continue Your Shopping Experience.
@@ -148,46 +146,34 @@ export default function AuthModal({ open, onClose }) {
 
           {/* CTA buttons */}
           <div className="flex flex-col gap-3">
-            <DynamicButton
+            <PillButton
+              size="md"
               ref={loginBtnRef}
+              shape="rounded"
               onClick={handleGoToLogin}
-              className={cn(
-                "w-full rounded-[8px] py-3 px-6",
-                " text-[0.9rem] font-semibold tracking-normal text-white",
-                "bg-gradient-to-r from-gold to-gold-dark",
-                "shadow-sm hover:shadow-md",
-                "transition-all duration-500 ease-in-out hover:brightness-105 active:brightness-95",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2",
-              )}
+              className="w-full"
             >
               Go to Login
-            </DynamicButton>
+            </PillButton>
 
             <DynamicButton
+              variant="outlineSecondary"
+              size="md"
+              shape="rounded"
               onClick={onClose}
-              className={cn(
-                "w-full rounded-[8px] py-3 px-6",
-                " text-[0.9rem] font-semibold tracking-normal",
-                "border border-border text-ink",
-                "hover:bg-cream hover:border-gold hover:text-gold",
-                "transition-all duration-500 ease-in-out",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2",
-              )}
+              className="w-full"
             >
               Cancel
             </DynamicButton>
           </div>
 
           {/* Register nudge */}
-          <p className="mt-5 text-center  text-[0.75rem] text-muted">
+          <p className="mt-5 text-center text-[0.75rem] text-muted">
             New Here?{" "}
             <DynamicButton
+              variant="link"
               onClick={handleGoToRegister}
-              className={cn(
-                "font-semibold text-gold",
-                "transition-all duration-500 ease-in-out hover:text-gold-dark",
-                "focus:outline-none focus-visible:underline",
-              )}
+              className="font-semibold text-gold hover:text-gold-dark"
             >
               Create a Free Account
             </DynamicButton>

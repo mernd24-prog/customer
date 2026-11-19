@@ -251,8 +251,6 @@ export default function CartItemCard({
         {/* Save for later */}
         <DynamicButton
           as="button"
-          type="button"
-          variant="unstyled"
           onClick={handleSaveForLater}
           disabled={isWishlistAction && (isWishlisted || isSaving)}
           aria-label={isWishlisted ? "Wishlisted" : saveForLaterLabel}
@@ -271,8 +269,6 @@ export default function CartItemCard({
         {/* Remove */}
         <DynamicButton
           as="button"
-          type="button"
-          variant="unstyled"
           onClick={() => onRemove?.(item?.id)}
           aria-label={removeLabel}
           className="flex min-w-0 min-h-[52px] flex-col items-center justify-center gap-1 px-1 py-1.5 text-[10px] font-semibold text-[#51545A] transition-colors hover:bg-[#F5F0E7] hover:text-[#1B1D60] sm:min-h-[36px] sm:flex-row sm:gap-2 sm:px-2 sm:py-1 sm:text-xs"
@@ -284,8 +280,6 @@ export default function CartItemCard({
         {/* Buy Now */}
         <DynamicButton
           as="button"
-          type="button"
-          variant="unstyled"
           onClick={() => onBuyNow?.(item?.id)}
           disabled={!onBuyNow || isOutOfStock}
           aria-label="Buy this now"

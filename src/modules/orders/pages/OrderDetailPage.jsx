@@ -13,13 +13,13 @@ import CancelOrderModal from "../components/CancelOrderModal";
 import ApiState from "../../../components/ui/ApiState";
 import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
 import Seo from "../../../components/ui/Seo";
-import Button from "../../../components/ui/buttons/Button";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import OrderItemsSection from "../components/OrderItemsSection";
 import OrderPaymentSummary from "../components/OrderPaymentSummary";
 import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
 import { useOrderDetail } from "../controllers/useOrderDetail";
+import { DynamicButton } from "../../../components/ui/button";
 
 import {
   getItemImage,
@@ -270,10 +270,13 @@ export default function OrderDetailPage({ orderId }) {
                                     {document.title}
                                   </span>
                                 </div>
-                                <Button
-                                  variant="secondary"
+                                <DynamicButton
+                                  variant="outlineSecondary"
                                   size="sm"
-                                  disabled={document.pending || !document.downloadPath}
+                                  shape="rounded"
+                                  disabled={
+                                    document.pending || !document.downloadPath
+                                  }
                                   loading={
                                     downloadingId === document.downloadPath
                                   }
@@ -283,10 +286,11 @@ export default function OrderDetailPage({ orderId }) {
                                       document.filename,
                                     )
                                   }
-                                  className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
+                                  className="shrink-0"
                                 >
-                                  <Download size={12} /> {document.pending ? "Pending" : "Download"}
-                                </Button>
+                                  <Download size={14} />
+                                  {document.pending ? "Pending" : "Download"}
+                                </DynamicButton>
                               </div>
                             ))}
                           </div>

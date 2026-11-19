@@ -1,19 +1,12 @@
 import { memo } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import CustomSwiper, { SwiperSlide } from "../components/swiper/CustomSwiper";
 import { Sparkles } from "lucide-react";
 
 import Label from "../components/ui/label/Label";
-import {
-  OutlineLightButton,
-  SolidLargeButton,
-} from "../components/ui/button/static";
+import { DynamicButton } from "../components/ui/button";
+import { PillButton } from "../components/ui/button/buttonSpecialized";
 
-import "swiper/css";
-
-const SWIPER_MODULES = [Autoplay, Pagination];
 const AUTOPLAY_CONFIG = { delay: 3000, disableOnInteraction: false };
-const PAGINATION_CONFIG = { clickable: true };
 
 const HeroSwiper = memo(({ slides }) => {
   const slideList = Array.isArray(slides) ? slides : [];
@@ -21,16 +14,17 @@ const HeroSwiper = memo(({ slides }) => {
   if (slideList.length === 0) return null;
 
   return (
-    <Swiper
-      key="hero-swiper"
+    <CustomSwiper
       spaceBetween={0}
       centeredSlides={false}
       loop
       speed={1000}
       autoplay={AUTOPLAY_CONFIG}
-      pagination={PAGINATION_CONFIG}
-      modules={SWIPER_MODULES}
-      className="seller-experience-swiper h-full w-full"
+      showNavigation={false}
+      showPagination
+      containerClassName="h-full w-full"
+      className="h-full w-full"
+      paginationClassName="hero-banner-pagination"
     >
       {slideList.map((slide, index) => (
         <SwiperSlide
@@ -69,12 +63,12 @@ const HeroSwiper = memo(({ slides }) => {
                   </Label>
                 )}
 
-               <h2 className="banner-heading mt-1 max-w-[300px] text-[18px] font-bold leading-[1.2] min-[375px]:text-[20px] sm:mt-0 sm:max-w-[550px] sm:text-[32px] sm:leading-tight md:text-[38px] lg:max-w-[800px] lg:text-[48px] xl:text-[62px]">
-  {slide.title} {slide.highlight && <br />}{" "}
-  {slide.highlight && (
-    <span className="text-[#CE9F2D]">{slide.highlight}</span>
-  )}
-</h2>
+                <h2 className="banner-heading mt-1 max-w-[300px] text-[18px] font-bold leading-[1.2] min-[375px]:text-[20px] sm:mt-0 sm:max-w-[550px] sm:text-[32px] sm:leading-tight md:text-[38px] lg:max-w-[800px] lg:text-[48px] xl:text-[62px]">
+                  {slide.title} {slide.highlight && <br />}{" "}
+                  {slide.highlight && (
+                    <span className="text-[#CE9F2D]">{slide.highlight}</span>
+                  )}
+                </h2>
               </div>
 
               {slide.description && (
@@ -85,21 +79,25 @@ const HeroSwiper = memo(({ slides }) => {
 
               <div className="relative z-30 flex w-full shrink-0 flex-wrap items-center justify-center gap-2.5 pt-1 pb-1 sm:gap-3 sm:pt-2 md:pt-3 lg:w-auto lg:justify-start">
                 {slide.primaryButton && (
-                  <SolidLargeButton
+                  <PillButton
+                    size="md"
+                    shape="square"
                     to={slide.primaryLink || "/products"}
-                    className="h-[40px] min-w-[145px] px-3 text-xs shadow-none min-[375px]:min-w-[155px] min-[375px]:text-sm sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0"
+                    className="ml-1 !text-[#03014D] hover:!text-[#03014D] px-12 sm:px-12"
                   >
                     {slide.primaryButton}
-                  </SolidLargeButton>
+                  </PillButton>
                 )}
 
                 {slide.secondaryButton && (
-                  <OutlineLightButton
+                  <DynamicButton
+                    variant="outlineLight"
+                    size="md"
+                    shape="square"
                     to={slide.secondaryLink || "/categories"}
-                    className="hero-outline-btn h-[40px] min-w-[145px] rounded-lg px-3 text-xs min-[375px]:min-w-[155px] min-[375px]:text-sm sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0"
                   >
                     {slide.secondaryButton}
-                  </OutlineLightButton>
+                  </DynamicButton>
                 )}
               </div>
             </div>
@@ -108,7 +106,7 @@ const HeroSwiper = memo(({ slides }) => {
           </div>
         </SwiperSlide>
       ))}
-    </Swiper>
+    </CustomSwiper>
   );
 });
 

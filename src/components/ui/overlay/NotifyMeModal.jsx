@@ -1,9 +1,7 @@
-import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { CheckCircle2, BellRing } from "lucide-react";
-import BaseModal from "./BaseModal";
-import Button from "../buttons/Button";
+import ConfirmModal from "./ConfirmModal";
 import {
   getProductImage,
   getProductTitle,
@@ -79,9 +77,6 @@ export default function NotifyMeModal({
     }
   }, [open, user]);
 
-  const { present, exiting } = useAnimatedPresence(open);
-  if (!present) return null;
-
   const productTitle =
     getProductTitle({ ...product, selectedVariant }) ||
     product?.title ||
@@ -121,9 +116,11 @@ export default function NotifyMeModal({
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const isFormValid = isFullNameValid && isEmailValid;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!isFormValid || submitting) return;
+  const handleSubmit = async () => {
+    if (!isFormValid || submitting) {
+      setTouched({ fullName: true, email: true });
+      return;
+    }
 
     const payload = {
       userId: resolvedUserId,
@@ -155,61 +152,40 @@ export default function NotifyMeModal({
   };
 
   return (
-    <BaseModal exiting={exiting}
+    <ConfirmModal
+      open={open}
+      title={submitted ? "You’re on the list!" : "Get Notified When Available"}
+      description={
+        submitted
+          ? `We’ll notify you at ${email} when this product is back in stock.`
+          : "This product is currently out of stock. Enter your details and we’ll notify you when it becomes available."
+      }
+      icon={submitted ? CheckCircle2 : BellRing}
+      iconBgClassName={submitted ? "bg-[#CE9F2D]/15" : "bg-[#3E4093]/10"}
+      iconClassName={submitted ? "text-[#CE9F2D]" : "text-[#3E4093]"}
+      confirmLabel={submitted ? "Done" : "Notify Me"}
+      confirmLoading={submitting}
+      confirmDisabled={!submitted && (!isFormValid || submitting)}
+      cancelLabel={submitted ? "" : "Cancel"}
+      onConfirm={submitted ? onClose : handleSubmit}
+      onCancel={onClose}
       maxWidth="max-w-md"
-      onClose={onClose}
-      className="rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] p-6 shadow-xl"
+      modalClassName="border border-[#EEDFB9] bg-[#FFFDF8]"
     >
       {submitted ? (
-        <div className="flex flex-col items-center justify-center py-4 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#CE9F2D]/15 text-[#CE9F2D]">
-            <CheckCircle2 size={36} className="text-[#CE9F2D]" />
-          </div>
-
-          <h3 className="mb-2 text-2xl font-bold tracking-tight text-[#2D347D]">
-            You’re on the list!
-          </h3>
-
-          <p className="mb-6 max-w-xs text-sm font-medium text-[#6F7480]">
-            We’ll notify you at <span className="font-semibold text-[#2D347D]">{email}</span> when this product is back in stock.
+        <div className="rounded-lg border border-[#EEDFB9] bg-white p-4 text-center">
+          <p className="text-sm font-medium text-[#6F7480]">
+            You’ll receive an email when this product is available again.
           </p>
-
-          <Button
-            type="button"
-            variant="primary"
-            size="lg"
-            fullWidth
-            onClick={onClose}
-            className="max-w-xs rounded-[10px] bg-[#CE9F2D] text-white hover:bg-[#b88c22]"
-          >
-            Done
-          </Button>
         </div>
       ) : (
-        <div>
-          {/* Header */}
-          <div className="mb-4 flex items-start gap-3 pr-6">
-            <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#3E4093]/10 text-[#3E4093]">
-              <BellRing size={20} />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-[#2D347D]">
-                Get Notified When Available
-              </h2>
-              <p className="mt-1 text-xs text-[#6F7480] sm:text-sm">
-                This product is currently out of stock. Enter your details and
-                we’ll notify you when it becomes available.
-              </p>
-            </div>
-          </div>
-
-          {/* Product Preview Box */}
-          <div className="mb-5 flex items-center gap-3 rounded-lg border border-[#EEDFB9] bg-white p-3 shadow-sm">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 rounded-lg border border-[#EEDFB9] bg-white p-3 shadow-sm">
             {productImage ? (
               <img
                 src={productImage}
                 alt={productTitle}
-                className="h-16 w-16 shrink-0  object-contain "
+                className="h-16 w-16 shrink-0 object-contain"
               />
             ) : (
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-xs text-gray-400">
@@ -236,96 +212,65 @@ export default function NotifyMeModal({
             </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Full Name */}
-            <div>
-              <label
-                htmlFor="notify-full-name"
-                className="mb-1.5 block text-base font-medium  text-black/90"
-              >
-                Full Name <span className="text-black">*</span>
-              </label>
-              <input
-                id="notify-full-name"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                onBlur={() =>
-                  setTouched((prev) => ({ ...prev, fullName: true }))
-                }
-                placeholder="Enter your full name"
-                className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
-                  touched.fullName && !isFullNameValid
-                    ? "border-red-500 focus:border-red-500"
-                    : "border-[#EEDFB9] focus:outline-none"
-                }`}
-              />
-              {touched.fullName && !isFullNameValid && (
-                <p className="mt-1 text-xs font-medium text-red-600">
-                  Please enter your full name (at least 2 characters).
-                </p>
-              )}
-            </div>
+          <div>
+            <label
+              htmlFor="notify-full-name"
+              className="mb-1.5 block text-sm font-medium text-black/90"
+            >
+              Full Name <span className="text-black">*</span>
+            </label>
+            <input
+              id="notify-full-name"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, fullName: true }))
+              }
+              placeholder="Enter your full name"
+              className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
+                touched.fullName && !isFullNameValid
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-[#EEDFB9] focus:border-[#CE9F2D]"
+              }`}
+            />
+            {touched.fullName && !isFullNameValid && (
+              <p className="mt-1 text-xs font-medium text-red-600">
+                Please enter your full name (at least 2 characters).
+              </p>
+            )}
+          </div>
 
-            {/* Email Address */}
-            <div>
-              <label
-                htmlFor="notify-email"
-                className="mb-1.5 block text-base font-medium text-black/90"
-              >
-                Email Address <span className="text-black">*</span>
-              </label>
-              <input
-                id="notify-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onBlur={() =>
-                  setTouched((prev) => ({ ...prev, email: true }))
-                }
-                placeholder="Enter your email address"
-                className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
-                  touched.email && !isEmailValid
-                    ? "border-red-500 focus:border-red-500"
-                    : "border-[#EEDFB9] focus:outline-none"
-                }`}
-              />
-              {touched.email && !isEmailValid && (
-                <p className="mt-1 text-xs font-medium text-red-600">
-                  Please enter a valid email address.
-                </p>
-              )}
-            </div>
-
-            {/* Actions */}
-            <div className="mt-6 flex items-center gap-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                fullWidth
-                onClick={onClose}
-                className="h-11 rounded-[10px]"
-              >
-                Cancel
-              </Button>
-
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                fullWidth
-                loading={submitting}
-                disabled={!isFormValid || submitting}
-                className="h-11 rounded-[10px] bg-[#CE9F2D] text-white hover:bg-[#b88c22]"
-              >
-                Notify Me
-              </Button>
-            </div>
-          </form>
+          <div>
+            <label
+              htmlFor="notify-email"
+              className="mb-1.5 block text-sm font-medium text-black/90"
+            >
+              Email Address <span className="text-black">*</span>
+            </label>
+            <input
+              id="notify-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, email: true }))
+              }
+              placeholder="Enter your email address"
+              className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
+                touched.email && !isEmailValid
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-[#EEDFB9] focus:border-[#CE9F2D]"
+              }`}
+            />
+            {touched.email && !isEmailValid && (
+              <p className="mt-1 text-xs font-medium text-red-600">
+                Please enter a valid email address.
+              </p>
+            )}
+          </div>
         </div>
       )}
-    </BaseModal>
+    </ConfirmModal>
   );
 }

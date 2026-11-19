@@ -365,7 +365,7 @@ export default function SupportHelpCenter() {
               )}
 
               {/* Recent Tickets */}
-              <section className="rounded-lg border border-[#E7D9B8] bg-white">
+              <section className="overflow-hidden rounded-lg border border-[#E7D9B8] bg-white shadow-sm">
                 <div className="flex items-center justify-between gap-3 rounded-t-lg bg-[#F7EED8] px-5 py-4">
                   <h2 className="text-lg font-bold text-[#2E2E2E]">
                     Recent Tickets
@@ -384,7 +384,7 @@ export default function SupportHelpCenter() {
                   />
                 </div>
 
-                <div className="custom-scrollbar max-h-[225px] divide-y divide-[#EFE5D2] overflow-y-auto px-5">
+                <div className="custom-scrollbar max-h-[225px] space-y-2 overflow-y-auto bg-[#FCFAF5] px-2.5 py-2.5">
                   {supportLoading && (
                     <div className="py-5">
                       <SkeletonLoader
@@ -429,9 +429,9 @@ export default function SupportHelpCenter() {
                       <Link
                         key={ticket.id}
                         to={`/support/tickets/${encodeURIComponent(ticket.id)}`}
-                        className="w-full cursor-pointer rounded-lg px-2 py-4 text-left transition-colors"
+                        className="block w-full cursor-pointer rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-left transition-all hover:border-[#CE9F2D] hover:bg-[#FFF9EA] hover:shadow-xs"
                       >
-                        <div className="d flex items-start justify-between gap-3">
+                        <div className=" flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <p className="truncate text-sm font-bold text-[#1B1D60]">
                               {ticket.subject}

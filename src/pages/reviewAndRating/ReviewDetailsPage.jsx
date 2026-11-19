@@ -10,6 +10,10 @@ import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { useAuthModal } from "../../modules/auth/context/AuthModalContext";
 import ShowMoreText from "../../utils/showMore";
 import StarRating from "../../components/ui/display/StarRating";
+import {
+  GoldOutlineButton,
+  PillButton,
+} from "../../components/ui/button/buttonSpecialized";
 
 import {
   fetchProductReviews,
@@ -172,9 +176,6 @@ function RatingSummary({
           {STAR_VALUES.map((star) => (
             <DynamicButton
               key={star}
-              type="button"
-              variant="unstyled"
-              size="none"
               onClick={() => onFilter(star)}
               className={`block w-full text-left transition-opacity ${
                 ratingFilter === star
@@ -310,9 +311,6 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         <div className="mt-3 flex flex-wrap gap-2">
           {media.slice(0, 5).map((url, index) => (
             <DynamicButton
-              type="button"
-              variant="unstyled"
-              size="none"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
               className="block h-20 w-20 overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
@@ -329,37 +327,39 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
           ))}
         </div>
       )}
-
       {/* Reviewer Details and Helpful Button */}
       <div className="mt-4 flex items-center justify-between gap-4">
-        <p className="text-sm sm:text-base font-medium text-black/70">
+        <p className="text-sm font-medium text-black/70 sm:text-base">
           {name}
           {dateStr && (
             <span className="font-normal text-muted"> | {dateStr}</span>
           )}
         </p>
 
-        <DynamicButton
-          type="button"
-          variant="unstyled"
-          size="none"
-          onClick={() => onHelpful(reviewId)}
-          disabled={!reviewId || isOwn}
-          className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
-            alreadyVoted
-              ? "border-gold bg-gold/15 text-ink"
-              : "border-border text-muted hover:border-gold hover:bg-cream/60 hover:text-ink"
-          }`}
-        >
-          <ThumbsUp
-            size={14}
-            className={alreadyVoted ? "fill-gold text-gold" : ""}
-          />
-          <span>{helpfulVotes}</span>
-        </DynamicButton>
+        {alreadyVoted ? (
+          <PillButton
+            size="xs"
+            shape="square"
+            onClick={() => onHelpful(reviewId)}
+            disabled={!reviewId || isOwn}
+            className="gap-1.5"
+          >
+            <ThumbsUp size={14} className="fill-current" />
+            <span>{helpfulVotes}</span>
+          </PillButton>
+        ) : (
+          <GoldOutlineButton
+            size="xs"
+            shape="square"
+            onClick={() => onHelpful(reviewId)}
+            disabled={!reviewId || isOwn}
+            className="gap-1.5"
+          >
+            <ThumbsUp size={14} />
+            <span>{helpfulVotes}</span>
+          </GoldOutlineButton>
+        )}
       </div>
-
-      {/* Review Image Lightbox */}
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
           images={media}
@@ -458,9 +458,6 @@ function ReviewPagination({ page, totalPages, onPrev, onNext }) {
   return (
     <div className="mt-6 flex items-center justify-between gap-4">
       <DynamicButton
-        type="button"
-        variant="unstyled"
-        size="none"
         disabled={page <= 1}
         onClick={onPrev}
         className="rounded-[6px] border border-border px-4 py-2 text-sm font-semibold text-ink disabled:opacity-40 hover:enabled:bg-cream"
@@ -473,9 +470,6 @@ function ReviewPagination({ page, totalPages, onPrev, onNext }) {
       </span>
 
       <DynamicButton
-        type="button"
-        variant="unstyled"
-        size="none"
         disabled={page >= totalPages}
         onClick={onNext}
         className="rounded-[6px] border border-border px-4 py-2 text-sm font-semibold text-ink disabled:opacity-40 hover:enabled:bg-cream"

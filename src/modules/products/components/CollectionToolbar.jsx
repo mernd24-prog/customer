@@ -63,7 +63,6 @@ export default function CollectionToolbar({
         {/* Mobile View Sidebar Toggle Link */}
         {onOpenFilters && (
           <DynamicButton
-            type="button"
             onClick={onOpenFilters}
             className={`flex h-[44px] min-h-[44px] ${mobileEqualWidthClass} items-center justify-start gap-1.5 rounded-lg border border-[#E7D9B8] bg-white px-3 text-xs font-semibold text-[#03014D] shadow-xs transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] focus:outline-none sm:h-11 sm:w-[180px] sm:flex-none sm:gap-2 sm:px-4 sm:text-sm lg:hidden`}
           >

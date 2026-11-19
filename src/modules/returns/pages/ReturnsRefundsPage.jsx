@@ -7,7 +7,6 @@ import { disputeReturnQc, fetchMyReturns } from "../slices/returnsSlice";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
 import { notify } from "../../../utils/notify";
 import {
-  ChevronDown,
   Clock,
   CheckCircle2,
   XCircle,
@@ -36,7 +35,7 @@ import useReturnsRefunds from "../controllers/useReturnsRefunds";
 import { PageContainer } from "../../../components/ui/layout";
 import EmptyState from "../../../components/ui/feedback/EmptyState";
 
-import { ContinueShoppingButton } from "../../../components/ui/button/static";
+import { DynamicButton, LoadMoreButton } from "../../../components/ui/button";
 const STATUS_FILTERS = [
   { value: "all", label: "All Returns" },
   { value: "requested", label: "Return Requested" },
@@ -416,7 +415,6 @@ function ReturnsRefundsPage() {
                         />
                         <div className="flex gap-2">
                           <DynamicButton
-                            type="button"
                             disabled={qcDispute.submitting}
                             onClick={submitQcDispute}
                             className="rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
@@ -424,7 +422,6 @@ function ReturnsRefundsPage() {
                             Submit Dispute
                           </DynamicButton>
                           <DynamicButton
-                            type="button"
                             onClick={() =>
                               setQcDispute({
                                 returnId: null,
@@ -441,7 +438,6 @@ function ReturnsRefundsPage() {
                       </div>
                     ) : (
                       <DynamicButton
-                        type="button"
                         onClick={() =>
                           setQcDispute({
                             returnId,
@@ -558,14 +554,9 @@ function ReturnsRefundsPage() {
               {renderReturnsList(visibleReturns)}
               {hasMoreReturns && (
                 <div className="mt-8 flex justify-center">
-                  <ContinueShoppingButton
-                    type="button"
+                  <LoadMoreButton
                     onClick={() => setVisibleCount((prev) => prev + 3)}
-                    className="min-h-[42px] px-6 text-sm lg:text-base"
-                    rightIcon={<ChevronDown size={14} strokeWidth={2.5} />}
-                  >
-                    Load More
-                  </ContinueShoppingButton>
+                  />
                 </div>
               )}
             </>

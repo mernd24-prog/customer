@@ -1,0 +1,165 @@
+.carousel-nav-button {
+  position: absolute;
+  top: 50%;
+  z-index: 30;
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid #e8d9b7;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1b1d60;
+  box-shadow: 0 4px 12px rgba(24, 21, 109, 0.14);
+  backdrop-filter: blur(6px);
+  transform: translateY(-50%);
+  transition: opacity 200ms ease, border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+}
+
+.carousel-nav-button svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+.carousel-nav-button:hover {
+  border-color: #ce9f2d;
+  background: #fff8e8;
+  box-shadow: 0 6px 16px rgba(24, 21, 109, 0.18);
+}
+
+.carousel-nav-button:active {
+  background: #f7ebcf;
+}
+
+.carousel-nav-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ce9f2d;
+}
+
+.carousel-nav-hidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.carousel-nav-prev {
+  left: 12px;
+}
+
+.carousel-nav-next {
+  right: 12px;
+}
+
+.carousel-card-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.carousel-card-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.carousel-card {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(24, 21, 109, 0.08);
+  transition: transform 500ms ease, box-shadow 500ms ease, border-color 200ms ease;
+}
+
+.carousel-card-link:hover .carousel-card,
+.carousel-card-link:focus-visible .carousel-card {
+  box-shadow: 0 12px 28px rgba(24, 21, 109, 0.16);
+}
+
+.carousel-card-active {
+  box-shadow: 0 0 0 2px #3e4093, 0 0 0 4px #fff;
+}
+
+.carousel-card-image-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.carousel-card-image-wrap-relative {
+  position: relative;
+  width: 100%;
+  min-height: 220px;
+}
+
+.carousel-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 700ms ease;
+  backface-visibility: hidden;
+}
+
+.carousel-card-link:hover .carousel-card-image {
+  transform: scale(1.045);
+}
+
+.carousel-card-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: flex-end;
+}
+
+.carousel-nav-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.carousel-nav-inline .carousel-nav-button {
+  position: static;
+  transform: none;
+}
+
+@media (max-width: 639px) {
+  .carousel-nav-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .carousel-nav-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .carousel-nav-prev {
+    left: 8px;
+  }
+
+  .carousel-nav-next {
+    right: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-nav-button,
+  .carousel-card,
+  .carousel-card-image {
+    transition: none;
+  }
+}

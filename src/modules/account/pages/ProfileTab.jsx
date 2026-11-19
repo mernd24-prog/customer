@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Mail, Phone, UserRound, Pencil, X ,SquarePen} from "lucide-react";
+import { Camera, Mail, Phone, UserRound, SquarePen } from "lucide-react";
 
-import Button from "../../../components/ui/buttons/Button";
 import OtpInput from "../../../components/ui/OtpInput";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { fetchMe, updateMe } from "../../../features/user/userSlice";
@@ -20,9 +19,11 @@ import {
   useProfileImageState,
   invalidateProfileImageCache,
 } from "../../../hooks/useProfileImage";
+import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
+import { AccountFormActions } from "../components";
 
-
-import DynamicButton from "../../../components/ui/button/button.jsx";
+import { DynamicButton } from "../../../components/ui/button";
+import { GoldButton } from "../../../components/ui/button/buttonSpecialized";
 const FALLBACK_AVATAR = "/image/png/person.png";
 const isSyntheticMobileEmail = (value = "") =>
   String(value).toLowerCase().endsWith("@mobile.samglobal.local");
@@ -411,15 +412,16 @@ export default function ProfileTab({ user }) {
             {isEditing && (
               <>
                 <DynamicButton
-                  type="button"
+                  variant="primary"
+                  size="xs"
+                  shape="circle"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isAvatarUploading || isAvatarFetching || loading}
                   aria-label="Change profile photo"
-                  className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border-2 border-white bg-[#1B1D60] text-white transition hover:bg-[#343B91] disabled:opacity-60"
+                  className="absolute bottom-0 right-0 z-10 size-8"
                 >
-                  <Camera size={14} />
+                  <Camera />
                 </DynamicButton>
-
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -451,14 +453,13 @@ export default function ProfileTab({ user }) {
 
         {/* Edit Profile button */}
         {!isEditing && (
-          <DynamicButton
-            type="button"
+          <GoldButton
             onClick={handleEdit}
-            className="inline-flex min-h-10 w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-md bg-gold px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-2xs transition-colors hover:bg-gold-dark focus-visible:outline-none"
+            leftIcon={<SquarePen size={15} />}
+            className="w-full sm:w-auto"
           >
-            <SquarePen size={15} />
             <span>Edit Profile</span>
-          </DynamicButton>
+          </GoldButton>
         )}
       </section>
 
@@ -572,17 +573,23 @@ export default function ProfileTab({ user }) {
                   />
                 </div>
                 <DynamicButton
-                  type="button"
+                  variant="primary"
+                  size="sm"
+                  shape="rounded"
                   onClick={handleSendEmailOtp}
                   disabled={emailBusy || !isEmailFormatValid}
-                  className="min-h-11 shrink-0 rounded-md bg-[#1B1D60] px-3.5 text-xs font-semibold text-white transition hover:bg-[#2C3080] disabled:opacity-50"
+                  className="min-h-11 shrink-0 px-3.5 text-xs font-semibold"
                 >
                   {emailOtpSent ? "Resend OTP" : "Verify email"}
                 </DynamicButton>
               </div>
 
               <p
-                role={email.trim() && !isEmailFormatValid && !emailError ? "alert" : undefined}
+                role={
+                  email.trim() && !isEmailFormatValid && !emailError
+                    ? "alert"
+                    : undefined
+                }
                 className={`min-h-4 text-xs font-normal ${email.trim() && !isEmailFormatValid && !emailError ? "text-red-600" : "invisible"}`}
               >
                 Enter a valid email address, for example name@example.com.
@@ -610,92 +617,76 @@ export default function ProfileTab({ user }) {
 
       {/* Editing Action Buttons */}
       {isEditing && (
-        <div className="flex flex-row justify-end gap-2 border-t border-[#E7D9B8]/60 pt-4 sm:gap-3">
-          <DynamicButton
-            type="button"
-            onClick={handleCancel}
-            disabled={loading || isAvatarUploading}
-            className="min-h-10 min-w-0 flex-1 sm:flex-none sm:w-auto rounded-md border border-[#D9DCE5] px-3 sm:px-5 text-xs sm:text-sm font-semibold text-[#171A3A] transition hover:bg-[#F7F7F9] disabled:opacity-60"
-          >
-            Cancel
-          </DynamicButton>
-
-          <Button
-            type="submit"
-            loading={loading}
-            disabled={!isValid || loading || isAvatarUploading}
-            className="rounded-md flex-1 sm:flex-none sm:w-auto px-3 sm:px-6 text-xs sm:text-sm font-semibold text-white min-w-0 sm:min-w-[130px]"
-            size="md"
-          >
-            Save Profile
-          </Button>
-        </div>
+        <AccountFormActions
+          borderTop
+          onCancel={handleCancel}
+          cancelDisabled={loading || isAvatarUploading}
+          submitLabel="Save Profile"
+          loading={loading}
+          disabled={!isValid || loading || isAvatarUploading}
+        />
       )}
 
-      {emailOtpSent && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#171A3A]/55 p-4 backdrop-blur-[2px]">
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="profile-email-otp-title"
-            className="w-full max-w-md rounded-md border border-[#E7D9B8] bg-white p-5 shadow-2xl sm:p-6"
-          >
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <h2 id="profile-email-otp-title" className="text-lg font-bold text-[#171A3A]">
-                  Verify your email
-                </h2>
-                <p className="mt-1 text-sm text-[#64708A]">
-                  Enter the 6-digit code sent to <strong className="break-all">{email}</strong>.
-                </p>
-              </div>
-              <DynamicButton
-                type="button"
-                onClick={() => {
-                  setEmailOtpSent(false);
-                  setEmailOtp("");
-                }}
-                aria-label="Close email verification"
-                className="rounded-full p-2 text-[#64708A] transition hover:bg-[#F2F4F8]"
-              >
-                <X size={18} />
-              </DynamicButton>
+      <ConfirmModal
+        open={emailOtpSent}
+        title="Verify your email"
+        icon={Mail}
+        iconBgClassName="bg-blue-50"
+        iconClassName="text-blue-700"
+        iconSize={22}
+        description={`Enter the 6-digit code sent to ${email}.`}
+        cancelLabel="Close"
+        confirmLabel="Verify email"
+        confirmDisabled={emailBusy || emailOtp.length !== 6}
+        confirmLoading={emailBusy}
+        onCancel={() => {
+          setEmailOtpSent(false);
+          setEmailOtp("");
+          setEmailError("");
+        }}
+        onConfirm={handleVerifyEmailOtp}
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-4">
+          <div className="text-center">
+            <p className="mb-3 text-sm font-semibold text-[#2D2D2D]">
+              Enter the 6-digit verification code
+            </p>
+            <div className="mx-auto w-full max-w-[320px]">
+              <OtpInput
+                value={emailOtp}
+                length={6}
+                onChange={(value) =>
+                  setEmailOtp(
+                    String(value || "")
+                      .replace(/\D/g, "")
+                      .slice(0, 6),
+                  )
+                }
+                error=""
+              />
             </div>
-            <OtpInput
-              value={emailOtp}
-              length={6}
-              onChange={(value) =>
-                setEmailOtp(String(value || "").replace(/\D/g, "").slice(0, 6))
-              }
-              error=""
-            />
-            {emailError && (
-              <p role="alert" className="mt-2 text-sm text-red-600">{emailError}</p>
-            )}
-            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <Button
-                onClick={handleSendEmailOtp}
-                disabled={emailBusy}
-                variant="secondary"
-                size="md"
-                className="min-h-11 rounded-md px-4 text-sm"
-              >
-                Resend code
-              </Button>
-              <Button
-                onClick={handleVerifyEmailOtp}
-                disabled={emailBusy || emailOtp.length !== 6}
-                loading={emailBusy}
-                variant="primary"
-                size="md"
-                className="min-h-11 rounded-md px-5 text-sm"
-              >
-                Verify email
-              </Button>
-            </div>
-          </section>
+          </div>
+
+          {emailError && (
+            <p role="alert" className="text-sm text-red-600">
+              {emailError}
+            </p>
+          )}
+
+          <div className="flex justify-end">
+            <DynamicButton
+              variant="link"
+              size="sm"
+              onClick={handleSendEmailOtp}
+              disabled={emailBusy}
+              className="text-sm font-semibold text-[#1B1D60] underline-offset-4 hover:underline disabled:opacity-50"
+            >
+              Resend code
+            </DynamicButton>
+          </div>
         </div>
-      )}
+      </ConfirmModal>
     </form>
   );
 }

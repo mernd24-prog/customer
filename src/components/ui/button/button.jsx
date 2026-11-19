@@ -2,15 +2,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../utils/common";
 import { SpinnerIcon } from "../icons";
+import { buttonSizes } from "./buttonSizes";
+import { buttonVariants } from "./buttonVariants";
+import { buttonShapes, resolveButtonClasses } from "./buttonConfig";
+
+export { buttonSizes, buttonVariants, buttonShapes };
 
 export const DynamicButton = React.forwardRef(
   (
     {
       as: Component = "button",
-      variant = "primary",
-      size = "md",
-      shape = "rounded",
+      variant = "unstyled",
+      size,
+      shape,
+      rounded,
+      roundedFull,
       isLoading = false,
+      loading,
       leftIcon,
       rightIcon,
       className,
@@ -26,51 +34,32 @@ export const DynamicButton = React.forwardRef(
     },
     ref,
   ) => {
-    const baseStyles =
-      "group inline-flex items-center justify-center font-medium transition-all duration-300 ease-in-out outline-none focus:outline-none focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none";
+    const isSpinnerLoading = Boolean(isLoading || loading);
+    const isDisabled = Boolean(disabled || isSpinnerLoading);
+    const isUnstyled = !variant || variant === "unstyled";
+    const isLink = variant === "link";
+    const isTextVariant = isLink || variant === "textGold" || variant === "textWhite";
 
-    const variants = {
-      unstyled: "",
-      primary:
-        "bg-gradient-to-l from-gold-dark to-gold text-navy rounded-full shadow-sm hover:shadow-md",
-      secondary:
-        "bg-cream text-navy hover:bg-gold-soft focus-visible:ring-gold",
-      outline: "border border-gold-dark text-navy",
-      danger:
-        "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600",
-    };
+    const resolvedShape = roundedFull
+      ? "circle"
+      : rounded === false
+        ? "square"
+        : rounded
+          ? "rounded"
+          : (shape ?? (isUnstyled || isTextVariant ? "none" : "rounded"));
 
-    const sizes = {
-      sm: "h-8 px-3 text-sm",
-      md: "h-10 px-4 text-base",
-      lg: "h-12 px-6 text-lg",
-      xl: "h-12 px-12 text-xl",
-      icon: "h-10 w-10 px-0 text-base",
-    };
-
-    const shapes = {
-      square: "rounded-none",
-      rounded: "rounded-[var(--customer-radius)]",
-      circle: "rounded-full",
-    };
-
-    const hasExplicitSizing = /(?:^|\s)(?:h-|w-|min-h-|min-w-|p-|px-|py-|pt-|pr-|pb-|pl-)/.test(
-      className ?? "",
-    );
-    const isIconOnlyButton = size === "icon" || (!children && Boolean(leftIcon || rightIcon));
-    const shouldApplyDefaultSize = !hasExplicitSizing && (variant !== "unstyled" || isIconOnlyButton);
-
-    const classes = cn(
-      baseStyles,
-      variants[variant],
-      shouldApplyDefaultSize ? sizes[size] : "",
-      shapes[shape],
+    const classes = resolveButtonClasses({
+      variant,
+      size,
+      shape,
       className,
-    );
+      buttonVariants,
+      buttonSizes,
+      resolvedShape,
+    });
 
     const isRouterLink = Component === Link || props.to !== undefined;
     const ComponentToUse = isRouterLink ? Link : Component;
-    const isDisabled = disabled || isLoading;
 
     const dynamicStyles = {
       ...(customWidth && { width: customWidth }),
@@ -96,25 +85,25 @@ export const DynamicButton = React.forwardRef(
 
     const content = (
       <>
-        {isLoading && (
-          <SpinnerIcon className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" />
+        {isSpinnerLoading && (
+          <SpinnerIcon className="animate-spin -ml-1 mr-2 h-4 w-4 text-current shrink-0" />
         )}
-        {!isLoading && leftIcon && (
+        {!isSpinnerLoading && leftIcon && (
           <span
             className={cn(
               "inline-flex items-center justify-center shrink-0 self-center",
-              isIconOnlyContent ? "mr-0" : "mr-2",
+              isIconOnlyContent ? "mr-0" : "",
             )}
           >
             {leftIcon}
           </span>
         )}
         {children}
-        {!isLoading && rightIcon && (
+        {!isSpinnerLoading && rightIcon && (
           <span
             className={cn(
               "inline-flex items-center justify-center shrink-0 self-center transition-transform duration-300",
-              isIconOnlyContent ? "ml-0" : "ml-2",
+              isIconOnlyContent ? "ml-0" : "",
             )}
           >
             {rightIcon}

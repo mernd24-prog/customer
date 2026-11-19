@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { applyImageFallback, getImageFallbackSrc } from "../../utils/ecommerce";
 import { cn } from "../../utils/common";
-import { LinkButton } from "../ui/button/static";
-
-
 import DynamicButton from "../ui/button/button.jsx";
+import CarouselCard from "../ui/carousel/CarouselCard";
+
 export default function CategoryCard({
   image,
   title,
@@ -15,61 +14,30 @@ export default function CategoryCard({
   className = "",
   index = 0,
 }) {
-  const cardImage = image || getImageFallbackSrc(title, "category");
-
-  const cardContent = (
-    <article
-      className={cn(
-        "group relative flex flex-col h-full min-h-[300px] sm:min-h-[360px] w-full overflow-hidden rounded-lg select-none transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-black/10",
-        active && "ring-2 ring-indigo-500 ring-offset-2",
-        className,
-      )}
+  return (
+    <CarouselCard
+      image={image}
+      alt={title}
+      fallbackType="category"
+      href={href}
+      onClick={href ? undefined : onClick}
+      active={active}
+      className={className}
+      articleClassName="min-h-[300px] flex-col sm:min-h-[360px]"
+      overlay={
+        <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-black/80 to-transparent opacity-80 transition-opacity duration-500 group-hover/card:opacity-100" />
+      }
     >
-      {/* Background Image Container */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden bg-gray-100">
-        <img
-          src={cardImage}
-          alt={title || "Category"}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out "
-          loading="lazy"
-          decoding="async"
-          onError={(event) => applyImageFallback(event, title, "category")}
-        />
-        {/* Top Gradient Overlay for Text Readability */}
-        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-black/80 to-transparent transition-opacity duration-500 opacity-80 group-hover:opacity-100" />
-      </div>
-
-      {/* Content Overlay */}
-      <div className="relative flex flex-col justify-between h-full p-5 sm:p-6 z-10 text-white drop-shadow-md">
+      <div className="flex h-full flex-col justify-between p-5 text-white drop-shadow-md sm:p-6">
         <div className="flex flex-col">
-          <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-2 drop-shadow-lg">
+          <h3 className="mb-2 text-xl font-bold tracking-tight drop-shadow-lg sm:text-2xl">
             {title}
           </h3>
-
-          {/* Shop Now CTA */}
-          <LinkButton className="text-white">
+          <span className="text-sm font-semibold text-white">
             {ctaLabel}
-          </LinkButton>
+          </span>
         </div>
       </div>
-    </article>
-  );
-
-  if (href) {
-    return (
-      <Link to={href} onClick={onClick} className="block h-full w-full group">
-        {cardContent}
-      </Link>
-    );
-  }
-
-  return (
-    <DynamicButton
-      type="button"
-      onClick={onClick}
-      className="block h-full w-full text-left focus:outline-none group"
-    >
-      {cardContent}
-    </DynamicButton>
+    </CarouselCard>
   );
 }

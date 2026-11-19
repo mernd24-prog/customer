@@ -65,9 +65,8 @@ export default function PriceRangeInput({
       </Button>
       {(initialMin || initialMax) && (
         <DynamicButton
-          type="button"
           onClick={clear}
-          className=" text-xs text-red-500 underline-offset-2 hover:underline"
+          variant="link"
         >
           Clear Price Filter
         </DynamicButton>
