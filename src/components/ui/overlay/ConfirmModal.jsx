@@ -88,7 +88,7 @@ import { useAnimatedPresence } from "../../../hooks/useAnimatedPresence";
             </div>
           )}
 
-          <div className="mt-5 flex flex-col-reverse gap-2.5 sm:mt-6 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+          <div className=" mt-5 flex flex-col-reverse gap-2.5 sm:mt-6 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
             {cancelLabel && (
               <GoldOutlineButton
                 onClick={onCancel}

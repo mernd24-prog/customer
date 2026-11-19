@@ -10,6 +10,10 @@ import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { useAuthModal } from "../../modules/auth/context/AuthModalContext";
 import ShowMoreText from "../../utils/showMore";
 import StarRating from "../../components/ui/display/StarRating";
+import {
+  GoldOutlineButton,
+  PillButton,
+} from "../../components/ui/button/buttonSpecialized";
 
 import {
   fetchProductReviews,
@@ -323,34 +327,39 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
           ))}
         </div>
       )}
-
       {/* Reviewer Details and Helpful Button */}
       <div className="mt-4 flex items-center justify-between gap-4">
-        <p className="text-sm sm:text-base font-medium text-black/70">
+        <p className="text-sm font-medium text-black/70 sm:text-base">
           {name}
           {dateStr && (
             <span className="font-normal text-muted"> | {dateStr}</span>
           )}
         </p>
 
-        <DynamicButton
-          onClick={() => onHelpful(reviewId)}
-          disabled={!reviewId || isOwn}
-          className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
-            alreadyVoted
-              ? "border-gold bg-gold/15 text-ink"
-              : "border-border text-muted hover:border-gold hover:bg-cream/60 hover:text-ink"
-          }`}
-        >
-          <ThumbsUp
-            size={14}
-            className={alreadyVoted ? "fill-gold text-gold" : ""}
-          />
-          <span>{helpfulVotes}</span>
-        </DynamicButton>
+        {alreadyVoted ? (
+          <PillButton
+            size="xs"
+            shape="square"
+            onClick={() => onHelpful(reviewId)}
+            disabled={!reviewId || isOwn}
+            className="gap-1.5"
+          >
+            <ThumbsUp size={14} className="fill-current" />
+            <span>{helpfulVotes}</span>
+          </PillButton>
+        ) : (
+          <GoldOutlineButton
+            size="xs"
+            shape="square"
+            onClick={() => onHelpful(reviewId)}
+            disabled={!reviewId || isOwn}
+            className="gap-1.5"
+          >
+            <ThumbsUp size={14} />
+            <span>{helpfulVotes}</span>
+          </GoldOutlineButton>
+        )}
       </div>
-
-      {/* Review Image Lightbox */}
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
           images={media}

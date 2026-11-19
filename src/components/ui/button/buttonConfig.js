@@ -31,16 +31,19 @@ export const resolveButtonClasses = ({
   resolvedShape,
 }) => {
   const isUnstyled = !variant || variant === "unstyled";
-  const isTextVariant = variant === "textGold" || variant === "textWhite";
-  const effectiveSize = isTextVariant ? "none" : (size ?? "md");
+  const isLink = variant === "link";
+  const isTextVariant = isLink || variant === "textGold" || variant === "textWhite";
+  const effectiveSize = isTextVariant ? (size ?? "none") : (size ?? "md");
   const effectiveShape = isTextVariant
-    ? "none"
+    ? (shape ?? "none")
     : (resolvedShape ?? shape ?? (isUnstyled ? "none" : "rounded"));
   const shouldApplySize = effectiveSize !== "none" && !isUnstyled;
 
   return cn(
-    !isUnstyled && buttonBaseClasses,
-    !isUnstyled && buttonInteractionClasses,
+    !isUnstyled && !isTextVariant && buttonBaseClasses,
+    !isUnstyled && !isTextVariant && buttonInteractionClasses,
+    isTextVariant &&
+      "inline-flex items-center cursor-pointer transition-colors outline-none focus:outline-none disabled:pointer-events-none disabled:opacity-50",
     isUnstyled ? "" : (buttonVariants[variant] ?? ""),
     shouldApplySize ? (buttonSizes[effectiveSize] ?? "") : "",
     effectiveShape !== "none" ? (buttonShapes[effectiveShape] ?? "") : "",

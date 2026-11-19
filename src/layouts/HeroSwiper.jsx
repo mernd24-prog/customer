@@ -1,17 +1,12 @@
 import { memo } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import CustomSwiper, { SwiperSlide } from "../components/swiper/CustomSwiper";
 import { Sparkles } from "lucide-react";
 
 import Label from "../components/ui/label/Label";
 import { DynamicButton } from "../components/ui/button";
 import { PillButton } from "../components/ui/button/buttonSpecialized";
 
-import "swiper/css";
-
-const SWIPER_MODULES = [Autoplay, Pagination];
 const AUTOPLAY_CONFIG = { delay: 3000, disableOnInteraction: false };
-const PAGINATION_CONFIG = { clickable: true };
 
 const HeroSwiper = memo(({ slides }) => {
   const slideList = Array.isArray(slides) ? slides : [];
@@ -19,16 +14,17 @@ const HeroSwiper = memo(({ slides }) => {
   if (slideList.length === 0) return null;
 
   return (
-    <Swiper
-      key="hero-swiper"
+    <CustomSwiper
       spaceBetween={0}
       centeredSlides={false}
       loop
       speed={1000}
       autoplay={AUTOPLAY_CONFIG}
-      pagination={PAGINATION_CONFIG}
-      modules={SWIPER_MODULES}
-      className="seller-experience-swiper h-full w-full"
+      showNavigation={false}
+      showPagination
+      containerClassName="h-full w-full"
+      className="h-full w-full"
+      paginationClassName="hero-banner-pagination"
     >
       {slideList.map((slide, index) => (
         <SwiperSlide
@@ -110,7 +106,7 @@ const HeroSwiper = memo(({ slides }) => {
           </div>
         </SwiperSlide>
       ))}
-    </Swiper>
+    </CustomSwiper>
   );
 });
 

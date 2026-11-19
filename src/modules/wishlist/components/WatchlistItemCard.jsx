@@ -206,16 +206,13 @@ export function WatchlistItemCard({
     );
   }
 
-  // Full Watchlist Card - Reuses Existing ProductCard
   return (
-    <div className="wishlist-product-card relative min-w-0 h-full rounded-lg">
+    <div className="relative min-w-0 h-full rounded-lg transition-[transform,box-shadow] duration-300 ease-in-out">
       <ProductCard
         product={product}
         showActions={false}
         className="h-full pb-12"
       />
-
-      {/* Wishlist Remove Button */}
       <DynamicButton
         variant="iconNeutral"
          size="iconSm"
@@ -225,11 +222,11 @@ export function WatchlistItemCard({
           e.stopPropagation();
           onRemove?.(product);
         }}
-        className="wishlist-remove-button absolute right-2 top-2 z-30"
+        className=" absolute right-2 top-2 z-30"
         aria-label={`Remove ${title} from wishlist`}
         title={`Remove ${title} from wishlist`}
       >
-        <X size={11} strokeWidth={1.8} />
+         <X />
       </DynamicButton>
 
       {/* Wishlist Move to Cart Button */}
@@ -249,7 +246,7 @@ export function WatchlistItemCard({
               className="shrink-0"
             />
           }
-          className="wishlist-cart-button w-full !bg-none !bg-[#CE9F2D] hover:!bg-[#bd9025] hover:shadow-md active:scale-[0.98] transition-[background-color,box-shadow,transform] duration-300 ease-in-out disabled:transform-none disabled:hover:shadow-none motion-reduce:transition-none"
+          className="w-full"
         >
           <span className="truncate">Move to Cart</span>
         </PillButton>

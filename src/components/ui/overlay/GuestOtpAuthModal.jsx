@@ -263,7 +263,7 @@ export default function GuestOtpAuthModal({
       <div
         className={cn(
           "customer-overlay-panel relative max-h-[calc(100vh-24px)] w-full max-w-[820px] overflow-y-auto",
-          "rounded-[16px] sm:max-h-[calc(100vh-32px)] sm:rounded-[18px] lg:rounded-[20px]",
+         
         )}
         onClick={(event) => event.stopPropagation()}
       >
@@ -279,7 +279,7 @@ export default function GuestOtpAuthModal({
           <X size={14} strokeWidth={1.8} />
         </DynamicButton>
 
-        <div className="overflow-hidden rounded-[16px] bg-[#F7F8FC] sm:rounded-[18px] lg:rounded-[20px]">
+        <div className="overflow-hidden">
           <AuthCard
             topSpacing={false}
             image={image}
@@ -405,7 +405,6 @@ export default function GuestOtpAuthModal({
                       variant="link"
                       onClick={handleChangeMobile}
                       disabled={isSubmitting}
-                      className="text-sm font-semibold text-gold transition hover:underline disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Change number
                     </DynamicButton>
@@ -440,7 +439,6 @@ export default function GuestOtpAuthModal({
                       variant="link"
                       onClick={handleSendOtp}
                       disabled={isSubmitting}
-                      className="font-semibold text-gold transition hover:underline disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Resend OTP
                     </DynamicButton>
@@ -448,6 +446,7 @@ export default function GuestOtpAuthModal({
                 </div>
 
                 <PillButton
+                 type="submit"
                   size="md"
                   disabled={isSubmitting || otp.length !== 6}
                 >

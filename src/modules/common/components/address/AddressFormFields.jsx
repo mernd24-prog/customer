@@ -93,16 +93,17 @@ export default function AddressFormFields({
               return (
                 <DynamicButton
                   key={optionValue}
-                  type="button"
-                  variant="outlineSecondary"
+                  variant={isSelected ? "secondary" : "outlineSecondary"}
                   size="sm"
-                  shape="rounded"
                   onClick={() =>
-                    setValue("label", optionValue, { shouldValidate: true })
+                    setValue("label", optionValue, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
                   }
                   aria-pressed={isSelected}
                 >
-                  <Icon size={16} />
+                  <Icon />
                   {label}
                 </DynamicButton>
               );

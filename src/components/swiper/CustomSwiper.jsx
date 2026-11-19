@@ -1,16 +1,22 @@
-import { useRef, useState, useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "../../utils/common";
+import "./customSwiper.css";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-
-import DynamicButton from "../ui/button/button.jsx";
 export { SwiperSlide };
+
+function resolveEl(el) {
+  if (!el) return el;
+  if (typeof el === "string") return el;
+  if (typeof el === "object" && "current" in el) return el.current;
+  return el;
+}
 
 export default function CustomSwiper({
   children,
@@ -21,176 +27,91 @@ export default function CustomSwiper({
   nextEl,
   className = "",
   paginationClassName = "category-custom-pagination",
-  navigationPrevClassName = "",
-  navigationNextClassName = "",
   containerClassName = "",
   onInit,
   onSlideChange,
   onBeforeInit,
+  onNavigationStateChange,
   ...swiperProps
 }) {
   const [swiperInstance, setSwiperInstance] = useState(null);
   const [paginationEl, setPaginationEl] = useState(null);
 
-  const internalPrevRef = useRef(null);
-  const internalNextRef = useRef(null);
-
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
-  const effectivePrevEl = prevEl || internalPrevRef.current;
-  const effectiveNextEl = nextEl || internalNextRef.current;
-
-  // Dynamically initialize pagination when Swiper instance and DOM element are ready
   useEffect(() => {
-    if (swiperInstance && paginationEl && showPagination) {
-      try {
-        swiperInstance.params.pagination.el = paginationEl;
-        swiperInstance.params.pagination.clickable = true;
-        if (swiperInstance.pagination) {
-          swiperInstance.pagination.destroy();
-          swiperInstance.pagination.init();
-          swiperInstance.pagination.render();
-          swiperInstance.pagination.update();
-        }
-      } catch (e) {
-        // Safe fallback
-      }
-    }
+    if (!swiperInstance || !paginationEl || !showPagination) return;
+
+    swiperInstance.params.pagination.el = paginationEl;
+    swiperInstance.params.pagination.clickable = true;
+
+    swiperInstance.pagination?.destroy();
+    swiperInstance.pagination?.init();
+    swiperInstance.pagination?.render();
+    swiperInstance.pagination?.update();
   }, [swiperInstance, paginationEl, showPagination]);
 
+  const handleNavState = (swiper) => {
+    if (!swiper) return;
+    onNavigationStateChange?.(swiper.isBeginning, swiper.isEnd);
+  };
+
+  useEffect(() => {
+    if (!swiperInstance || !showNavigation) return;
+    const prev = resolveEl(prevEl);
+    const next = resolveEl(nextEl);
+    if (!prev || !next) return;
+
+    swiperInstance.params.navigation.prevEl = prev;
+    swiperInstance.params.navigation.nextEl = next;
+
+    swiperInstance.navigation?.destroy();
+    swiperInstance.navigation?.init();
+    swiperInstance.navigation?.update();
+    handleNavState(swiperInstance);
+  }, [swiperInstance, showNavigation, prevEl, nextEl]);
+
   return (
-    <div className={cn("relative group/custom-swiper w-full", containerClassName)}>
-      {/* Built-in Navigation Previous Button */}
-      {showNavigation && !prevEl && (
-        <DynamicButton
-          ref={internalPrevRef}
-          aria-label="Previous slide"
-          className={cn(
-            `
-              hidden sm:flex
-              absolute
-              left-2 lg:left-4
-              top-1/2
-              -translate-y-1/2
-              z-30
-              h-11 w-11
-              rounded-full
-              bg-white/90
-              backdrop-blur-md
-              shadow-xl
-              border border-black/5
-              items-center justify-center
-              text-gray-800
-              transition-all
-              hover:bg-white
-
-              active:scale-95
-              focus:outline-none
-            `,
-            isBeginning && "opacity-0 pointer-events-none",
-            navigationPrevClassName
-          )}
-        >
-          <ChevronLeft className="h-6 w-6 stroke-[2]" />
-        </DynamicButton>
-      )}
-
+    <div className={cn("relative w-full", containerClassName)}>
       <Swiper
         modules={modules}
-        onSwiper={(swiper) => {
-          setSwiperInstance(swiper);
-        }}
+        onSwiper={setSwiperInstance}
         onBeforeInit={(swiper) => {
           if (showNavigation) {
-            if (typeof prevEl === "string") {
-              swiper.params.navigation.prevEl = prevEl;
-            } else if (effectivePrevEl) {
-              swiper.params.navigation.prevEl = effectivePrevEl;
-            }
-
-            if (typeof nextEl === "string") {
-              swiper.params.navigation.nextEl = nextEl;
-            } else if (effectiveNextEl) {
-              swiper.params.navigation.nextEl = effectiveNextEl;
-            }
+            swiper.params.navigation.prevEl = resolveEl(prevEl);
+            swiper.params.navigation.nextEl = resolveEl(nextEl);
           }
 
-          if (onBeforeInit) onBeforeInit(swiper);
+          onBeforeInit?.(swiper);
         }}
         onInit={(swiper) => {
-          setIsBeginning(swiper.isBeginning);
-          setIsEnd(swiper.isEnd);
-          if (onInit) onInit(swiper);
+          handleNavState(swiper);
+          onInit?.(swiper);
         }}
         onSlideChange={(swiper) => {
-          setIsBeginning(swiper.isBeginning);
-          setIsEnd(swiper.isEnd);
-          if (onSlideChange) onSlideChange(swiper);
+          handleNavState(swiper);
+          onSlideChange?.(swiper);
         }}
+        onReachBeginning={handleNavState}
+        onReachEnd={handleNavState}
+        onFromEdge={handleNavState}
+        onUpdate={handleNavState}
         navigation={
-          showNavigation || prevEl || nextEl
-            ? {
-                prevEl: typeof prevEl === "string" ? prevEl : effectivePrevEl,
-                nextEl: typeof nextEl === "string" ? nextEl : effectiveNextEl,
-              }
+          showNavigation
+            ? { prevEl: resolveEl(prevEl), nextEl: resolveEl(nextEl) }
             : false
         }
-        pagination={
-          showPagination
-            ? {
-                clickable: true,
-              }
-            : false
-        }
+        pagination={showPagination ? { clickable: true } : false}
         className={cn("w-full", className)}
         {...swiperProps}
       >
         {children}
       </Swiper>
 
-      {/* Built-in Navigation Next Button */}
-      {showNavigation && !nextEl && (
-        <DynamicButton
-          ref={internalNextRef}
-          aria-label="Next slide"
-          className={cn(
-            `
-              hidden sm:flex
-              absolute
-              right-2 lg:right-4
-              top-1/2
-              -translate-y-1/2
-              z-30
-              h-11 w-11
-              rounded-full
-              bg-white/90
-              backdrop-blur-md
-              shadow-xl
-              border border-black/5
-              items-center justify-center
-              text-gray-800
-              transition-all
-              hover:bg-white
-
-              active:scale-95
-              focus:outline-none
-            `,
-            isEnd && "opacity-0 pointer-events-none",
-            navigationNextClassName
-          )}
-        >
-          <ChevronRight className="h-6 w-6 stroke-[2]" />
-        </DynamicButton>
-      )}
-
-      {/* Custom Pagination Container */}
       {showPagination && (
         <div
-          ref={(node) => setPaginationEl(node)}
+          ref={setPaginationEl}
           className={cn(
-            "category-custom-pagination flex justify-center w-full mt-4 gap-1",
-            paginationClassName
+            "mt-4 flex w-full justify-center gap-1",
+            paginationClassName,
           )}
         />
       )}

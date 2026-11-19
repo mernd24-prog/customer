@@ -96,7 +96,8 @@ export default function ProductInfoSection({
   useLayoutEffect(() => {
     const content = contentRef.current;
     if (!content) return;
-    const measure = () => setContentHeight(content.getBoundingClientRect().height);
+    const measure = () =>
+      setContentHeight(content.getBoundingClientRect().height);
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(content);
@@ -126,9 +127,11 @@ export default function ProductInfoSection({
   const hasWarranty =
     effectiveWarranty.enabled !== false &&
     hasValidPeriod &&
-    [effectiveWarranty.periodUnit, effectiveWarranty.type, effectiveWarranty.provider].every(
-      (v) => Boolean(String(v || "").trim()),
-    );
+    [
+      effectiveWarranty.periodUnit,
+      effectiveWarranty.type,
+      effectiveWarranty.provider,
+    ].every((v) => Boolean(String(v || "").trim()));
 
   const warrantyPeriod = hasValidPeriod
     ? [effectiveWarranty.period, effectiveWarranty.periodUnit]
@@ -146,8 +149,8 @@ export default function ProductInfoSection({
 
   const hasDescription = Boolean(
     effectiveDescription ||
-      selectedVariant?.description ||
-      product?.description,
+    selectedVariant?.description ||
+    product?.description,
   );
   const hasDetails = detailRows.length > 0;
   const hasCatalogueImages = Boolean(product?.commonImages?.length);
@@ -162,7 +165,13 @@ export default function ProductInfoSection({
     if (product.seller || product.sellerName)
       list.push({ key: "seller", label: "Seller Information" });
     return list;
-  }, [hasDetails, hasDescription, product.seller, product.sellerName, hasCatalogueImages]);
+  }, [
+    hasDetails,
+    hasDescription,
+    product.seller,
+    product.sellerName,
+    hasCatalogueImages,
+  ]);
 
   // Set default active tab
   useEffect(() => {
@@ -174,8 +183,11 @@ export default function ProductInfoSection({
   const visibleSpecs = detailRows;
 
   return (
-    <div className="product-details-accordion min-w-0 border border-border rounded-lg overflow-hidden bg-white shadow-xs">
-      {/* ── Flipkart-style Header: Title + Subtitle + Square Chevron Button ── */}
+    <div
+      className="min-w-0 border border-border rounded-lg overflow-hidden bg-white shadow-xs"
+      style={{ overflowAnchor: "none" }}
+    >
+      {" "}
       <DynamicButton
         onClick={() => setCardOpen((prev) => !prev)}
         variant="unstyled"
@@ -197,13 +209,14 @@ export default function ProductInfoSection({
         >
           <ChevronDown
             size={20}
-            className={`product-details-chevron ${cardOpen ? "rotate-180" : "rotate-0"}`}
+            className={`transition-transform duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              cardOpen ? "rotate-180" : "rotate-0"
+            }`}
           />
         </DynamicButton>
       </DynamicButton>
-
       <div
-        className="product-details-content overflow-hidden"
+        className="overflow-hidden transition-[height] duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
         style={{
           height: cardOpen ? (contentHeight ?? "auto") : 0,
         }}
@@ -211,206 +224,242 @@ export default function ProductInfoSection({
         inert={cardOpen ? undefined : ""}
       >
         <div ref={contentRef} className="min-h-0 min-w-0 overflow-hidden">
-        <div className="min-w-0 p-2 sm:p-3 border-t border-border">
-          {/* Keep tabs on one row; use the shared scroll controls on overflow. */}
-          <HorizontalScrollControls
-            className="min-w-0 border-b border-border pb-2"
-            viewportClassName="gap-2.5 py-1"
-            showButtons={false}
-            wheelToScroll
-            dragToScroll
-            scrollSelectedToCenter
-            resetKey={activeTab}
-          >
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.key;
-              return (
-                <DynamicButton
-                  key={tab.key}
-                  data-scroll-selected={isActive ? "true" : undefined}
-                  onClick={() => setActiveTab(tab.key)}
-                  variant={isActive ? "navy" : "secondaryOutline"}
-                  size="sm"
-                  className="shrink-0 whitespace-nowrap"
-                >
-                  {tab.label}
-                </DynamicButton>
-              );
-            })}
-          </HorizontalScrollControls>
-
-          {/* ── Tab 1: Specifications (Highlighted Cards Grid) ── */}
-          {activeTab === "specs" && (
-            <div className="pt-2">
-              <div className="flex flex-wrap items-center justify-end gap-2 mb-2">
-                <span className="text-xs font-medium text-muted">
-                  {detailRows.length} {detailRows.length === 1 ? "detail" : "details"} listed
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1">
-                {visibleSpecs.map(([key, value]) => (
-                  <div
-                    key={key}
-                    className="flex min-w-0 items-baseline justify-between gap-4 border-b border-border/70 py-2 last:border-b-0"
+          <div className="min-w-0 p-2 sm:p-3 border-t border-border">
+            {/* Keep tabs on one row; use the shared scroll controls on overflow. */}
+            <HorizontalScrollControls
+              className="min-w-0 border-b border-border pb-2"
+              viewportClassName="gap-2.5 py-1"
+              showButtons={false}
+              wheelToScroll
+              dragToScroll
+              scrollSelectedToCenter
+              resetKey={activeTab}
+            >
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.key;
+                return (
+                  <DynamicButton
+                    key={tab.key}
+                    data-scroll-selected={isActive ? "true" : undefined}
+                    onClick={() => setActiveTab(tab.key)}
+                    variant={isActive ? "navy" : "secondaryOutline"}
+                    size="sm"
+                    className="shrink-0 whitespace-nowrap"
                   >
-                    <span className="shrink-0 text-xs font-medium text-muted sm:text-sm">
-                      {formatPageTitle(key)}
-                    </span>
-                    <span className="min-w-0 break-words text-right text-sm font-semibold text-navy sm:text-base">
-                      {Array.isArray(value) ? value.join(", ") : String(value)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                    {tab.label}
+                  </DynamicButton>
+                );
+              })}
+            </HorizontalScrollControls>
 
-            </div>
-          )}
-
-          {/* ── Tab 2: Description ── */}
-          {activeTab === "desc" && (
-            <div className="pt-2">
-              <div className="border-0 bg-transparent p-0">
-                <ProductDescription
-                  content={decodeHtml(
-                    effectiveDescription ||
-                      selectedVariant?.description ||
-                      product.description,
-                  )}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* ── Tab 3: Warranty & Returns ── */}
-          {activeTab === "warranty" && (
-            <div className="pt-2 space-y-3">
-              <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
-                <div className="flex min-w-0 flex-col gap-1 border-b border-border/70 py-3">
+            {/* ── Tab 1: Specifications (Highlighted Cards Grid) ── */}
+            {activeTab === "specs" && (
+              <div className="pt-2">
+                <div className="flex flex-wrap items-center justify-end gap-2 mb-2">
                   <span className="text-xs font-medium text-muted">
-                    Warranty Period
+                    {detailRows.length}{" "}
+                    {detailRows.length === 1 ? "detail" : "details"} listed
                   </span>
-                  <span className="text-sm font-semibold text-navy break-words sm:text-base">
-                    {hasWarranty
-                      ? capitalizeFirst(warrantyPeriod || "Standard Warranty")
-                      : "No Warranty"}
-                  </span>
-              {hasWarranty && effectiveWarranty.type && (
-                    <span className="text-xs text-muted">
-                      Type: {capitalizeFirst(effectiveWarranty.type.replace(/_/g, " "))}
-                    </span>
-                  )}
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-1 border-b border-border/70 py-3">
-                  <span className="text-xs font-medium text-muted">
-                    Return Window
-                  </span>
-                  <span className="text-sm font-semibold text-navy break-words sm:text-base">
-                    {returnPolicy.returnable === false
-                      ? "Non-Returnable"
-                      : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7} Days Return Policy`}
-                  </span>
-                  <span className="text-xs text-muted">
-                    {returnPolicy.inspectionRequired !== false
-                      ? "Physical inspection required upon return"
-                      : "Direct easy return"}
-                  </span>
+                <div className="grid grid-cols-1">
+                  {visibleSpecs.map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex min-w-0 items-baseline justify-between gap-4 border-b border-border/70 py-2 last:border-b-0"
+                    >
+                      <span className="shrink-0 text-xs font-medium text-muted sm:text-sm">
+                        {formatPageTitle(key)}
+                      </span>
+                      <span className="min-w-0 break-words text-right text-sm font-semibold text-navy sm:text-base">
+                        {Array.isArray(value)
+                          ? value.join(", ")
+                          : String(value)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
+            )}
 
-              {hasWarranty && warrantyDescription && (
-                <div className="border-t border-border/70 pt-3">
-                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">
-                    Warranty Description
-                  </span>
-                  <div
-                    className="text-sm leading-relaxed text-ink"
-                    dangerouslySetInnerHTML={{
-                      __html: decodeHtml(warrantyDescription),
-                    }}
+            {/* ── Tab 2: Description ── */}
+            {activeTab === "desc" && (
+              <div className="pt-2">
+                <div className="border-0 bg-transparent p-0">
+                  <ProductDescription
+                    content={decodeHtml(
+                      effectiveDescription ||
+                        selectedVariant?.description ||
+                        product.description,
+                    )}
                   />
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
 
-          {/* ── Tab 4: Manufacturer / Seller Info ── */}
-          {activeTab === "seller" && (
-            <div className="pt-2">
-              <section className="overflow-hidden rounded-lg border border-[#E7D9B8] bg-white">
-                <h4 className="bg-[#EAD8B3] px-4 py-3 text-base font-bold text-ink sm:px-5">
-                  Seller Information
-                </h4>
-
-                <div className="grid grid-cols-1 divide-y divide-[#E9E1D3] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-                  <div className="px-4 py-4 sm:px-5 sm:py-5">
-                    <span className="block text-xs font-medium text-muted">Store Name</span>
-                    <span className="mt-1.5 block break-words text-sm font-bold text-ink sm:text-base">
-                      {sellerDisplayName
-                        .toLocaleLowerCase("en-IN")
-                        .replace(/(^|\s)\p{L}/gu, (letter) => letter.toLocaleUpperCase("en-IN"))}
+            {/* ── Tab 3: Warranty & Returns ── */}
+            {activeTab === "warranty" && (
+              <div className="pt-2 space-y-3">
+                <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+                  <div className="flex min-w-0 flex-col gap-1 border-b border-border/70 py-3">
+                    <span className="text-xs font-medium text-muted">
+                      Warranty Period
                     </span>
+                    <span className="text-sm font-semibold text-navy break-words sm:text-base">
+                      {hasWarranty
+                        ? capitalizeFirst(warrantyPeriod || "Standard Warranty")
+                        : "No Warranty"}
+                    </span>
+                    {hasWarranty && effectiveWarranty.type && (
+                      <span className="text-xs text-muted">
+                        Type:{" "}
+                        {capitalizeFirst(
+                          effectiveWarranty.type.replace(/_/g, " "),
+                        )}
+                      </span>
+                    )}
                   </div>
 
-                  <div className="px-4 py-4 sm:px-5 sm:py-5">
-                    <span className="block text-xs font-medium text-muted">Seller Rating</span>
-                    <span className="mt-1.5 block text-sm font-bold text-ink sm:text-base">
-                      {Number.isFinite(Number(product.seller?.rating ?? product.seller?.averageRating)) &&
-                      Number(product.seller?.rating ?? product.seller?.averageRating) > 0
-                        ? `${Number(product.seller?.rating ?? product.seller?.averageRating).toFixed(1)} ★`
-                        : "No Rating"}
+                  <div className="flex min-w-0 flex-col gap-1 border-b border-border/70 py-3">
+                    <span className="text-xs font-medium text-muted">
+                      Return Window
                     </span>
-                  </div>
-
-                  <div className="px-4 py-4 sm:px-5 sm:py-5">
-                    <span className="block text-xs font-medium text-muted">Joined SamGlobal</span>
-                    <span className="mt-1.5 block text-sm font-bold text-ink sm:text-base">
-                      {product.seller?.joinAt && !Number.isNaN(Date.parse(product.seller.joinAt))
-                        ? new Date(product.seller.joinAt).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
-                        : "Seller on SamGlobal"}
+                    <span className="text-sm font-semibold text-navy break-words sm:text-base">
+                      {returnPolicy.returnable === false
+                        ? "Non-Returnable"
+                        : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7} Days Return Policy`}
+                    </span>
+                    <span className="text-xs text-muted">
+                      {returnPolicy.inspectionRequired !== false
+                        ? "Physical inspection required upon return"
+                        : "Direct easy return"}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[#E9E1D3] bg-[#FAFCFA] px-4 py-3 text-sm sm:px-5">
-                  <ShieldCheck size={19} className="shrink-0 text-[#16833B]" />
-                  <span className="font-bold text-[#16833B]">Trusted &amp; Verified Seller</span>
-                  <span className="hidden text-[#C8C8C8] sm:inline" aria-hidden="true">•</span>
-                  <span className="text-muted">100% Genuine Products &amp; Quality Assured on SamGlobal</span>
-                </div>
-              </section>
-            </div>
-          )}
-
-          {/* ── Tab 5: Catalogue ── */}
-          {activeTab === "catalogue" && hasCatalogueImages && (
-            <div className="pt-2">
-              <div className="grid grid-cols-4 gap-3">
-                {product.commonImages.map((img, i) => (
-                  <div
-                    key={i}
-                    onClick={() => setIsModalOpen(true)}
-                    className="relative aspect-square min-w-0 rounded-lg border border-border bg-white p-1.5 cursor-pointer hover:border-gold hover:shadow-sm transition-all"
-                  >
-                    <img
-                      src={getImageUrlFromValue(img)}
-                      alt="Catalogue"
-                      className="w-full h-full object-contain"
+                {hasWarranty && warrantyDescription && (
+                  <div className="border-t border-border/70 pt-3">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">
+                      Warranty Description
+                    </span>
+                    <div
+                      className="text-sm leading-relaxed text-ink"
+                      dangerouslySetInnerHTML={{
+                        __html: decodeHtml(warrantyDescription),
+                      }}
                     />
                   </div>
-                ))}
+                )}
               </div>
-            </div>
-          )}
-        </div>
+            )}
+
+            {/* ── Tab 4: Manufacturer / Seller Info ── */}
+            {activeTab === "seller" && (
+              <div className="pt-2">
+                <section className="overflow-hidden rounded-lg border border-[#E7D9B8] bg-white">
+                  <h4 className="bg-[#EAD8B3] px-4 py-3 text-base font-bold text-ink sm:px-5">
+                    Seller Information
+                  </h4>
+
+                  <div className="grid grid-cols-1 divide-y divide-[#E9E1D3] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                    <div className="px-4 py-4 sm:px-5 sm:py-5">
+                      <span className="block text-xs font-medium text-muted">
+                        Store Name
+                      </span>
+                      <span className="mt-1.5 block break-words text-sm font-bold text-ink sm:text-base">
+                        {sellerDisplayName
+                          .toLocaleLowerCase("en-IN")
+                          .replace(/(^|\s)\p{L}/gu, (letter) =>
+                            letter.toLocaleUpperCase("en-IN"),
+                          )}
+                      </span>
+                    </div>
+
+                    <div className="px-4 py-4 sm:px-5 sm:py-5">
+                      <span className="block text-xs font-medium text-muted">
+                        Seller Rating
+                      </span>
+                      <span className="mt-1.5 block text-sm font-bold text-ink sm:text-base">
+                        {Number.isFinite(
+                          Number(
+                            product.seller?.rating ??
+                              product.seller?.averageRating,
+                          ),
+                        ) &&
+                        Number(
+                          product.seller?.rating ??
+                            product.seller?.averageRating,
+                        ) > 0
+                          ? `${Number(product.seller?.rating ?? product.seller?.averageRating).toFixed(1)} ★`
+                          : "No Rating"}
+                      </span>
+                    </div>
+
+                    <div className="px-4 py-4 sm:px-5 sm:py-5">
+                      <span className="block text-xs font-medium text-muted">
+                        Joined SamGlobal
+                      </span>
+                      <span className="mt-1.5 block text-sm font-bold text-ink sm:text-base">
+                        {product.seller?.joinAt &&
+                        !Number.isNaN(Date.parse(product.seller.joinAt))
+                          ? new Date(product.seller.joinAt).toLocaleDateString(
+                              "en-IN",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )
+                          : "Seller on SamGlobal"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[#E9E1D3] bg-[#FAFCFA] px-4 py-3 text-sm sm:px-5">
+                    <ShieldCheck
+                      size={19}
+                      className="shrink-0 text-[#16833B]"
+                    />
+                    <span className="font-bold text-[#16833B]">
+                      Trusted &amp; Verified Seller
+                    </span>
+                    <span
+                      className="hidden text-[#C8C8C8] sm:inline"
+                      aria-hidden="true"
+                    >
+                      •
+                    </span>
+                    <span className="text-muted">
+                      100% Genuine Products &amp; Quality Assured on SamGlobal
+                    </span>
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ── Tab 5: Catalogue ── */}
+            {activeTab === "catalogue" && hasCatalogueImages && (
+              <div className="pt-2">
+                <div className="grid grid-cols-4 gap-3">
+                  {product.commonImages.map((img, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setIsModalOpen(true)}
+                      className="relative aspect-square min-w-0 rounded-lg border border-border bg-white p-1.5 cursor-pointer hover:border-gold hover:shadow-sm transition-all"
+                    >
+                      <img
+                        src={getImageUrlFromValue(img)}
+                        alt="Catalogue"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
       {isModalOpen &&
         createPortal(
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4">
@@ -425,7 +474,9 @@ export default function ProductInfoSection({
             </DynamicButton>
             <div className="flex h-[85vh] w-full max-w-[1000px] items-center justify-center">
               <ProductGallery
-                images={product.commonImages.map((img) => getImageUrlFromValue(img))}
+                images={product.commonImages.map((img) =>
+                  getImageUrlFromValue(img),
+                )}
                 isModal={true}
                 fallbackLabel={getProductTitle(product)}
               />

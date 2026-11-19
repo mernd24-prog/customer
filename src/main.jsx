@@ -4,6 +4,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { store } from "./app/store";
 import App from "./App";
 import LazyToast from "./components/ui/LazyToast";
+import { BrowserRouter } from "react-router-dom";
+import { AuthModalProvider } from "./modules/auth/context/AuthModalContext";
 import "./styles.css";
 
 // Remove passwords retained by older versions; never persist credentials here.
@@ -36,8 +38,12 @@ if (import.meta.env.PROD) {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <HelmetProvider>
-      <App />
-      <LazyToast />
+      <BrowserRouter>
+        <AuthModalProvider>
+          <App />
+          <LazyToast />
+        </AuthModalProvider>
+      </BrowserRouter>
     </HelmetProvider>
   </Provider>,
 );

@@ -413,15 +413,15 @@ export default function ProfileTab({ user }) {
               <>
                 <DynamicButton
                   variant="primary"
+                  size="xs"
                   shape="circle"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isAvatarUploading || isAvatarFetching || loading}
                   aria-label="Change profile photo"
-                  className="absolute bottom-0 right-0 flex size-7 items-center justify-center border-2 border-white disabled:opacity-60"
+                  className="absolute bottom-0 right-0 z-10 size-8"
                 >
-                  <Camera size={14} />
+                  <Camera />
                 </DynamicButton>
-
                 <input
                   ref={fileInputRef}
                   type="file"

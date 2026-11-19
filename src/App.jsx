@@ -1,10 +1,6 @@
 import AppRoutes from "./routing/AppRoutes";
-import {
-  BrowserRouter,
-} from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthModalProvider } from "./modules/auth/context/AuthModalContext";
 import { checkAuthStatus, logout } from "./modules/auth/slices/authSlice";
 import { fetchCart, setGuestCart } from "./modules/cart/slices/cartSlice";
 import { readGuestCart } from "./utils/ecommerce/cart";
@@ -102,15 +98,13 @@ export default function  App() {
   }, [currentUser, dispatch]);
 
   return (
-    <BrowserRouter>
-      <AuthModalProvider>
-        <ScrollToTop />
-        <AppRoutes />
-        <AiSupportChatWidget />
-        <RaiseTicketModal />
-        <TicketSuccessModal />
-        <ServiceUnavailableDialog />
-      </AuthModalProvider>
-    </BrowserRouter>
+    <>
+      <ScrollToTop />
+      <AppRoutes />
+      <AiSupportChatWidget />
+      <RaiseTicketModal />
+      <TicketSuccessModal />
+      <ServiceUnavailableDialog />
+    </>
   );
 }

@@ -50,12 +50,7 @@ export default function FeaturedProductsSection({
     lg:pb-0
   `;
 
-  const headerClassName = `
-  px-0
-  pb-2
-  md:px-0
-  lg:px-2
-`;
+ const headerClassName = "px-0 pb-2 lg:-mr-5";
   const sectionStyle = {
     "--featured-gradient": "linear-gradient(180deg, #FAF8F5 0%, #F5EEE2 100%)",
   };
@@ -65,7 +60,7 @@ export default function FeaturedProductsSection({
     actionLabel,
     actionHref,
     actionStyle: "icon",
-    mobileActionStyle: "button",
+     mobileActionStyle: "button",
     mobileActionFullWidth: true,
     className: sectionClassName,
     style: sectionStyle,

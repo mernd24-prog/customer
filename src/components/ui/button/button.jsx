@@ -13,8 +13,8 @@ export const DynamicButton = React.forwardRef(
     {
       as: Component = "button",
       variant = "unstyled",
-      size = "md",
-      shape = "rounded",
+      size,
+      shape,
       rounded,
       roundedFull,
       isLoading = false,
@@ -37,6 +37,8 @@ export const DynamicButton = React.forwardRef(
     const isSpinnerLoading = Boolean(isLoading || loading);
     const isDisabled = Boolean(disabled || isSpinnerLoading);
     const isUnstyled = !variant || variant === "unstyled";
+    const isLink = variant === "link";
+    const isTextVariant = isLink || variant === "textGold" || variant === "textWhite";
 
     const resolvedShape = roundedFull
       ? "circle"
@@ -44,7 +46,7 @@ export const DynamicButton = React.forwardRef(
         ? "square"
         : rounded
           ? "rounded"
-          : (shape ?? (isUnstyled ? "none" : "rounded"));
+          : (shape ?? (isUnstyled || isTextVariant ? "none" : "rounded"));
 
     const classes = resolveButtonClasses({
       variant,

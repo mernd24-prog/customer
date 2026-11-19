@@ -16,6 +16,7 @@ import { Download } from "lucide-react";
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
 import { resolveInputClasses } from "../../../components/ui/inputs/inputStyles";
+
 export default function DeliveryChecker({
   productId: initialProductId,
   onResultChange,
@@ -197,14 +198,14 @@ export default function DeliveryChecker({
                 </DynamicButton>
                 <DynamicButton
                   variant="primary"
-                  size="none"
+                  size="iconSm"
                   shape="circle"
                   onClick={() => setIsModalOpen(true)}
                   disabled={loading}
                   aria-label="Open delivery checker"
-                  className="!h-8 !w-8 shrink-0"
+                  
                 >
-                  <ArrowRight size={14} aria-hidden="true" />
+                  <ArrowRight/>
                 </DynamicButton>
               </div>
             </div>

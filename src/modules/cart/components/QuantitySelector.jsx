@@ -74,7 +74,7 @@ export default function QuantitySelector({
             (disableIncrease ? `Max ${max} items per order` : undefined)
           }
         >
-          <Plus size={16} strokeWidth={2.5} className="block shrink-0" />
+          <Plus/>
         </DynamicButton>
       </div>
     </div>

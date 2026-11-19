@@ -50,10 +50,10 @@ export default function BaseModal({
             size="iconSm"
             shape="circle"
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 hover:bg-[var(--customer-gold-soft)]"
+            className="absolute right-4 top-4 z-10 "
             aria-label="Close"
           >
-            <X size={17} strokeWidth={2.5} className="block shrink-0" />
+            <X />
           </DynamicButton>
         ) : null}
       </div>

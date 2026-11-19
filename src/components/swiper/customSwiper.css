@@ -1,0 +1,194 @@
+
+
+.custom-swiper {
+  --swiper-nav-size: 36px;
+  --swiper-icon-size: 18px;
+  --swiper-dot-size: 6px;
+  --swiper-active-dot-width: 18px;
+  --swiper-dot-gap: 6px;
+  --swiper-pagination-color: #3e4093;
+  --swiper-pagination-inactive: #b9b5d8;
+}
+.custom-swiper-sm {
+  --swiper-nav-size: 30px;
+  --swiper-icon-size: 15px;
+  --swiper-dot-size: 5px;
+  --swiper-active-dot-width: 14px;
+  --swiper-dot-gap: 5px;
+}
+
+.custom-swiper-md {
+  --swiper-nav-size: 36px;
+  --swiper-icon-size: 18px;
+  --swiper-dot-size: 6px;
+  --swiper-active-dot-width: 18px;
+  --swiper-dot-gap: 6px;
+}
+
+.custom-swiper-lg {
+  --swiper-nav-size: 44px;
+  --swiper-icon-size: 22px;
+  --swiper-dot-size: 7px;
+  --swiper-active-dot-width: 22px;
+  --swiper-dot-gap: 8px;
+}
+
+/* Navigation buttons */
+
+.custom-swiper-prev,
+.custom-swiper-next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--swiper-nav-size);
+  height: var(--swiper-nav-size);
+  min-width: var(--swiper-nav-size);
+  min-height: var(--swiper-nav-size);
+  padding: 0;
+}
+
+.custom-swiper-prev svg,
+.custom-swiper-next svg {
+  width: var(--swiper-icon-size);
+  height: var(--swiper-icon-size);
+  flex-shrink: 0;
+}
+
+
+.custom-swiper-pagination {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--swiper-dot-gap);
+  width: 100%;
+  margin-top: 16px;
+}
+
+.custom-swiper-pagination .swiper-pagination-bullet {
+  flex: 0 0 auto;
+  width: var(--swiper-dot-size);
+  height: var(--swiper-dot-size);
+  margin: 0;
+  border-radius: 999px;
+  background-color: var(--swiper-pagination-inactive);
+  opacity: 1;
+  transition:
+    width 200ms ease,
+    background-color 200ms ease;
+}
+
+.custom-swiper-pagination .swiper-pagination-bullet-active {
+  width: var(--swiper-active-dot-width);
+  background-color: var(--swiper-pagination-color);
+}
+
+
+.custom-swiper .swiper-button-disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.category-custom-pagination .swiper-pagination-bullet {
+  width: 8px !important;
+  height: 8px !important;
+  background-color: #1b1d60 !important;
+  opacity: 0.25 !important;
+  margin: 0 4px !important;
+  border-radius: 50% !important;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-block !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.category-custom-pagination .swiper-pagination-bullet-active {
+  width: 24px !important;
+  border-radius: 4px !important;
+  background-color: #1b1d60 !important;
+  opacity: 1 !important;
+}
+
+.category-custom-pagination .swiper-pagination-bullet:hover {
+  opacity: 0.8 !important;
+}
+
+.category-custom-pagination.swiper-pagination {
+  position: relative !important;
+  bottom: auto !important;
+  z-index: 10;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* ─── Hero Banner Pagination (HeroSwiper) ────────────────────────────────── */
+
+.hero-banner-pagination,
+.seller-experience-swiper .swiper-pagination {
+  position: absolute !important;
+  bottom: 14px !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 30;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.hero-banner-pagination .swiper-pagination-bullet,
+.seller-experience-swiper .swiper-pagination-bullet {
+  width: 26px;
+  height: 8px;
+  background: transparent;
+  opacity: 1;
+  position: relative;
+  display: inline-block;
+  margin: 0 3px !important;
+  cursor: pointer;
+}
+
+.hero-banner-pagination .swiper-pagination-bullet::after,
+.seller-experience-swiper .swiper-pagination-bullet::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: #b9b5d8;
+  transform: scaleX(0.3076);
+  transition:
+    transform 200ms ease,
+    background-color 200ms ease;
+}
+
+.hero-banner-pagination .swiper-pagination-bullet-active::after,
+.seller-experience-swiper .swiper-pagination-bullet-active::after {
+  transform: scaleX(1);
+  background: #3e4093;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-swiper-pagination .swiper-pagination-bullet,
+  .category-custom-pagination .swiper-pagination-bullet,
+  .hero-banner-pagination .swiper-pagination-bullet::after,
+  .seller-experience-swiper .swiper-pagination-bullet::after {
+    transition: none;
+  }
+}
+

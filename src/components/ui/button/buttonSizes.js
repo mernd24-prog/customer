@@ -13,9 +13,10 @@ export const buttonSizes = {
 
   icon: "h-8 w-8 min-h-[32px] min-w-[32px] sm:h-9 sm:w-9 sm:min-h-[36px] sm:min-w-[36px] md:h-10 md:w-10 md:min-h-[40px] md:min-w-[40px] p-0 text-base leading-none gap-0 [&_svg]:h-4 sm:[&_svg]:h-4.5 md:[&_svg]:h-5 [&_svg]:w-4 sm:[&_svg]:w-4.5 md:[&_svg]:w-5 [&_svg]:shrink-0",
 
-  iconSm: "h-8 w-8 min-h-[32px] min-w-[32px] p-0 text-base leading-none gap-0 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
+iconSm:
+  "h-[26px] w-[26px] min-h-[26px] min-w-[26px] sm:h-8 sm:w-8 sm:min-h-8 sm:min-w-8 p-0 text-sm leading-none gap-0 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
 
   tile: "min-h-[92px] w-full flex-col px-2 py-3 text-center whitespace-normal gap-2",
-};
+}; 
 
 export default buttonSizes;

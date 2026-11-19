@@ -1,7 +1,6 @@
 
 import { ArrowRight } from "lucide-react";
 import DynamicButton from "./button/button";
-import { Link } from "react-router-dom";
 
 export default function SectionContainer({
   title,
@@ -23,17 +22,12 @@ export default function SectionContainer({
   headerSpacingClassName = "my-3 sm:my-4",
 }) {
   const finalMobileActionStyle = mobileActionStyle || actionStyle;
+
   const hasHeader = Boolean(title || subtitle || actionLabel);
 
   const hasAction =
     Boolean(actionLabel && (actionHref || onAction)) ||
     Boolean(actionStyle === "icon" && actionHref);
-
-  const iconButtonClass =
-    "group inline-flex h-7 w-9 sm:h-8 sm:w-10 md:h-8 md:w-[52px] shrink-0 items-center justify-center rounded-lg !bg-[#3E4093] !text-white shadow-none outline-none transition-none hover:!bg-[#3E4093] hover:shadow-none focus:!bg-[#3E4093] focus:shadow-none focus:outline-none focus-visible:!bg-[#3E4093] focus-visible:outline-none active:!bg-[#3E4093] active:shadow-none";
-
-  const arrowIconClass =
-    "h-4 w-4 sm:h-4 sm:w-4 md:h-5 md:w-5 !text-white transition-none group-hover:!text-white group-focus:!text-white group-active:!text-white";
 
   return (
     <section className={className || "bg-white"} style={style}>
@@ -55,47 +49,35 @@ export default function SectionContainer({
                 </h2>
               )}
             </div>
+            {hasAction && actionStyle === "icon" && actionHref && (
+              <DynamicButton
+                variant="primary"
+                size="xs"
+                shape="square"
+                to={actionHref}
+                className="shrink-0 "
+                aria-label={`Go to ${title}`}
+              >
+                <ArrowRight className="!size-5" />
+              </DynamicButton>
+            )}
 
-            {/* Mobile Icon */}
+            {/* Desktop Text Action */}
             {hasAction &&
-              actionHref &&
-              actionStyle === "icon" &&
-              finalMobileActionStyle === "icon" && (
-                <Link
-                  to={actionHref}
-                  className="group flex h-8 w-8 shrink-0 items-center justify-center rounded-full !bg-[#3E4093] !text-white"
-                  aria-label={`Go to ${title}`}
-                >
-                  <ArrowRight className="h-4 w-4 !text-white" />
-                </Link>
-              )}
-
-            {/* Desktop Action */}
-            {hasAction && (actionHref || onAction) ? (
-              actionStyle === "icon" && actionHref ? (
-                <Link
-                  to={actionHref}
-                  className={`${iconButtonClass} inline-flex`}
-                  aria-label={`Go to ${title}`}
-                >
-                  <ArrowRight className={arrowIconClass} strokeWidth={2} />
-                </Link>
-              ) : (
+              (actionHref || onAction) &&
+              actionStyle !== "icon" && (
                 <DynamicButton
                   variant="outlineSmall"
-                  size="sm"
+                  size="xs"
                   to={actionHref}
                   onClick={onAction}
-                  rightIcon={
-                    <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
-                  }
+                  rightIcon={<ArrowRight />}
                   className="my-2 hidden self-center md:inline-flex"
                   aria-label={`${actionLabel} ${title || ""}`}
                 >
                   {actionLabel}
                 </DynamicButton>
-              )
-            ) : null}
+              )}
           </div>
         </header>
       )}
@@ -109,8 +91,8 @@ export default function SectionContainer({
         {children}
       </div>
 
-      {/* Mobile Button */}
-      {finalMobileActionStyle === "button" && hasAction && actionHref ? (
+      {/* Mobile Text Action */}
+      {finalMobileActionStyle === "button" && hasAction && actionHref && (
         <div
           className={`my-8 flex md:hidden ${
             mobileActionFullWidth ? "w-full px-3" : "justify-center"
@@ -120,18 +102,14 @@ export default function SectionContainer({
             variant="outlineSmall"
             size="sm"
             to={actionHref}
-            rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={2.2} />}
-            className={
-              mobileActionFullWidth
-                ? "flex w-full justify-center"
-                : "inline-flex"
-            }
+            rightIcon={<ArrowRight />}
+            className={mobileActionFullWidth ? "w-full" : ""}
             aria-label={`${actionLabel} ${title || ""}`}
           >
             {actionLabel}
           </DynamicButton>
         </div>
-      ) : null}
+      )}
     </section>
   );
 }

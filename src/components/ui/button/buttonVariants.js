@@ -1,8 +1,7 @@
 export const buttonVariants = {
   unstyled: "",
   primary:
-    "border border-[var(--customer-navy)] bg-[var(--customer-navy)] text-white shadow-sm hover:bg-[var(--customer-navy-dark)] hover:border-[var(--customer-navy-dark)]",
-
+  "border border-[#3E4093] bg-[#3E4093] text-white shadow-sm hover:border-[#3E4093] hover:bg-[#3E4093] hover:text-white [&_svg]:text-white hover:[&_svg]:text-white",
   secondary:
     "border border-[var(--customer-gold)] bg-[var(--customer-gold)] text-[var(--customer-navy)] shadow-[0_4px_12px_rgba(212,161,47,0.2)] hover:bg-[var(--customer-gold-dark)] hover:border-[var(--customer-gold-dark)]",
 
@@ -24,7 +23,7 @@ export const buttonVariants = {
     "border border-white/25 bg-white/10 text-white hover:bg-white/20 active:scale-[0.98]",
 
   iconNeutral:
-    "border border-black/5 bg-white/90 text-[var(--customer-navy)] shadow-xs hover:bg-white hover:text-red-500",
+    "border border-black/5 bg-white/90 text-[var(--customer-navy)] shadow-xs hover:bg-white hover:text-red-500 hover:bg-[var(--customer-gold-soft)]",
 
   iconGhost:
     "border border-transparent bg-transparent text-gray hover:text-red-500 focus-visible:ring-gold/30",
@@ -36,7 +35,7 @@ export const buttonVariants = {
     "border border-transparent bg-[#DCDAD2] text-white cursor-not-allowed",
 
   link:
-    "border border-transparent bg-transparent p-0 text-[var(--customer-gold-dark)] hover:text-[var(--customer-gold-dark)] hover:underline",
+    "border-0 bg-transparent p-0 m-0 h-auto min-h-0 w-auto shadow-none text-[var(--customer-gold-dark)] hover:text-[var(--customer-gold-dark)] hover:underline",
 
   google:
     "border border-border bg-white text-ink hover:border-border-strong hover:bg-gray-50 active:scale-[0.99]",
