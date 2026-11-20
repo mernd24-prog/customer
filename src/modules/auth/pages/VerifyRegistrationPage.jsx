@@ -6,6 +6,7 @@ import Seo from "../../../components/ui/Seo";
 import useVerifyRegistration from "../controllers/useVerifyRegistration";
 import { DynamicButton } from "../../../components/ui/button";
 import { PillButton } from "../../../components/ui/button/buttonSpecialized";
+import DynamicInput from "../../../components/ui/input/input";
 
 export default function VerifyRegistrationPage() {
   const {
@@ -46,7 +47,12 @@ export default function VerifyRegistrationPage() {
           </p>
           {registrationEmail ? (
             <>
-              <input type="hidden" {...register("email")} />
+              <DynamicInput
+                unwrapped
+                variant="uiHidden"
+                type="hidden"
+                registration={register("email")}
+              />
             </>
           ) : (
             <FormField
@@ -64,7 +70,7 @@ export default function VerifyRegistrationPage() {
           <label className="text-sm font-semibold text-ink">
             OTP Code<span className="ml-0.5 text-red-500">*</span>
           </label>
-          <input type="hidden" {...register("otp")} />
+          <DynamicInput unwrapped variant="uiHidden" type="hidden" registration={register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
             onChange={(otp) =>
@@ -87,8 +93,8 @@ export default function VerifyRegistrationPage() {
           <p className="text-center text-[0.8rem] text-muted">
             Didn&apos;t receive the code?{" "}
             <DynamicButton
+              type="button"
               variant="link"
-              className="inline p-0 font-semibold text-gold underline-offset-4 hover:text-gold-dark hover:underline"
               onClick={handleResendOtp}
               disabled={loading || resending}
             >

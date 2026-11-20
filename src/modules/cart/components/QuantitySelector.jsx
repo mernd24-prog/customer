@@ -1,6 +1,6 @@
 import { Plus, Minus } from "lucide-react";
 import { DynamicButton } from "../../../components/ui/button";
-import { resolveInputClasses } from "../../../components/ui/inputs/inputStyles";
+import { resolveInputClasses } from "../../../components/ui/input";
 
 export default function QuantitySelector({
   quantity,
@@ -12,11 +12,11 @@ export default function QuantitySelector({
   increaseDisabledLabel,
   fullWidth = false,
   fluid = false,
-  variant = "product",
 }) {
-  const isCart = variant === "cart";
   const atMax = max != null && quantity >= max;
   const disableIncrease = disabled || increaseDisabled || atMax;
+  const message = String(increaseDisabledLabel || "").trim();
+  const isMaximumMessage = /^max\b/i.test(message);
 
   return (
     <div
@@ -24,27 +24,23 @@ export default function QuantitySelector({
         fluid
           ? "w-full"
           : fullWidth
-            ? isCart
-              ? "w-full sm:w-[128px]"
-              : "w-full sm:w-[170px]"
-            : isCart
-              ? "w-[128px]"
-              : "w-[150px] sm:w-[170px]"
+            ? "w-full sm:w-[128px]"
+            : "w-[150px] sm:w-[170px]"
       }`}
     >
       <div
         className={[
           "flex w-full items-center justify-between",
-          isCart ? "h-10 p-0.5" : "h-10 p-1",
+          "h-10 p-1",
           resolveInputClasses({
-            variant: isCart ? "cart" : "quantity",
+            variant: "quantity",
           }),
         ].join(" ")}
       >
         <DynamicButton
-          variant={isCart ? "qtySoft" : "qtyWhite"}
+          variant="qtyWhite"
           size="iconSm"
-          shape={isCart ? "md" : "circle"}
+          shape="circle"
           onClick={onDecrease}
           disabled={disabled || quantity <= 1}
           aria-label="Decrease Quantity"
@@ -60,7 +56,7 @@ export default function QuantitySelector({
         <DynamicButton
           variant="primary"
           size="iconSm"
-          shape={isCart ? "md" : "circle"}
+          shape="circle"
           onClick={() => {
             if (!disableIncrease) onIncrease?.();
           }}
@@ -77,6 +73,15 @@ export default function QuantitySelector({
           <Plus/>
         </DynamicButton>
       </div>
+      {message && (
+        <p
+          className={`mt-1 text-center text-xs font-semibold leading-4 ${
+            isMaximumMessage ? "text-red-600" : "text-amber-600"
+          }`}
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }

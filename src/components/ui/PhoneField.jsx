@@ -29,14 +29,12 @@ export default function PhoneField({
 
       <div
         className={`relative flex h-11 w-full min-w-0 overflow-hidden rounded-lg border bg-transparent shadow-sm transition-colors duration-200 ease-out focus-within:border-[var(--customer-gold)]/70 ${
-          error
-            ? "border-red-500"
-            : "border-[var(--customer-border)]"
+          error ? "border-red-500" : "border-[var(--customer-border)]"
         }`}
       >
-       <div className=" flex h-full w-[45px] shrink-0 items-center justify-center px-2 text-lg  font-normal leading-5 text-[var(--customer-ink)]">
-  <span>{FIXED_INDIAN_DIAL_CODE}</span>
-</div>
+        <div className=" flex h-full w-[45px] shrink-0 items-center justify-center px-2 text-lg  font-normal leading-5 text-[var(--customer-ink)]">
+          <span>{FIXED_INDIAN_DIAL_CODE}</span>
+        </div>
 
         <input
           type="hidden"

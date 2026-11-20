@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogIn, Smartphone } from "lucide-react";
 import { DynamicButton } from "../../../components/ui/button";
 import {
@@ -13,6 +13,7 @@ import { AUTH_ROUTES } from "../routes/apiRoutes";
 import useLogin from "../controllers/useLogin";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -77,11 +78,11 @@ export default function LoginPage() {
 
               <div className="mt-2 flex justify-end">
                 <DynamicButton
+                  type="button"
                   variant="link"
-                  onClick={() => navigate(AUTH_ROUTES.forgotPassword)}
-                  className=" text-muted "
+                  to={AUTH_ROUTES.forgotPassword}
+                  className="text-muted"
                 >
-            
                   Forgot Password?
                 </DynamicButton>
               </div>
@@ -147,12 +148,12 @@ export default function LoginPage() {
           <p className="pt-1 text-center text-xs leading-relaxed text-muted sm:text-sm">
             Don&apos;t have an account?{" "}
             <DynamicButton
+              type="button"
               variant="link"
-              onClick={() => navigate(AUTH_ROUTES.register)}
+              to={AUTH_ROUTES.register}
               className="inline-flex items-center gap-1 p-0 font-semibold text-gold hover:text-gold-dark"
             >
               Create Account
-            
             </DynamicButton>
           </p>
         </form>

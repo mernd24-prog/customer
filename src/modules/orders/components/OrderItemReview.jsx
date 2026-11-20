@@ -12,6 +12,7 @@ import StarRating, {
 
 import { submitProductReview } from "../../../features/review/reviewSlice";
 import { notify } from "../../../utils/notify";
+import { DynamicInput } from "../../../components/ui/input";
 import { getReviewProductId, getReviewOrderItemId } from "../utils/orderItems";
 
 
@@ -313,7 +314,7 @@ function ReviewModal({
 
         <label className="grid gap-1 text-[13px] font-semibold leading-5 text-[#2E2E2E]">
           Title
-          <input
+          <DynamicInput
             type="text"
             value={form.title}
             onChange={(event) =>
@@ -323,7 +324,8 @@ function ReviewModal({
               }))
             }
             maxLength={200}
-            className="h-9 rounded-lg border border-[#CE9F2D66] px-3 text-[13px] font-medium outline-none focus:border-[#CE9F2D]"
+            variant="cream"
+            size="sm"
             placeholder="Summarise your experience"
           />
         </label>

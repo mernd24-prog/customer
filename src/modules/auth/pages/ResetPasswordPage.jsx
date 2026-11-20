@@ -9,6 +9,8 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DynamicButton } from "../../../components/ui/button";
 import { PillButton } from "../../../components/ui/button/buttonSpecialized";
+import { DynamicInput } from "../../../components/ui/input";
+
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const {
@@ -49,7 +51,12 @@ export default function ResetPasswordPage() {
           <label className="text-sm font-semibold text-ink">
             Otp Code<span className="ml-0.5 text-red-500">*</span>
           </label>
-          <input type="hidden" {...register("otp")} />
+          <DynamicInput
+            unwrapped
+            variant="uiHidden"
+            type="hidden"
+            registration={register("otp")}
+          />
           <OtpInput
             value={watch("otp") || ""}
             onChange={(otp) =>
@@ -66,6 +73,17 @@ export default function ResetPasswordPage() {
             error={errors.newPassword}
             autoComplete="new-password"
             placeholder="Enter a Strong New Password"
+            required
+          />
+
+          <DynamicInput
+            id="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            registration={register("confirmPassword")}
+            error={errors.confirmPassword}
+            autoComplete="new-password"
+            placeholder="Confirm Your New Password"
             required
           />
 
@@ -92,20 +110,21 @@ export default function ResetPasswordPage() {
           <p className="text-center text-[0.8rem] text-muted">
             Didn&apos;t receive the OTP?{" "}
             <DynamicButton
+              type="button"
               variant="link"
               onClick={handleResendOtp}
             >
-              
               Resend OTP
             </DynamicButton>
           </p>
 
           <p className="text-center text-[0.8rem] text-muted">
             <DynamicButton
+              type="button"
               variant="link"
-              onClick={() => navigate(AUTH_ROUTES.login)}
+              to={AUTH_ROUTES.login}
             >
-              <ArrowLeft/>
+              <ArrowLeft />
               Back to Login
             </DynamicButton>
           </p>

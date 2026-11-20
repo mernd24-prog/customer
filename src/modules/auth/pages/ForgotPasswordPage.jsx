@@ -57,6 +57,7 @@ export default function ForgotPasswordPage() {
           <p className="text-center  text-[0.8rem] text-muted">
             Remember Your Password?{" "}
             <DynamicButton 
+            type="button"
             size="xs"
             variant="link"
              to={AUTH_ROUTES.login}>

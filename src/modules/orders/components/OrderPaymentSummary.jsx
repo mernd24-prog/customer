@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 
 
 import { PillButton } from "../../../components/ui/button/buttonSpecialized";
+import { DynamicInput } from "../../../components/ui/input";
 function SummaryRow({
   label,
   value,
@@ -384,13 +385,14 @@ function OrderPaymentSummary({
                     : "cursor-pointer hover:border-[#CE9F2D]"
                 }`}
               >
-                <input
+                <DynamicInput
+                  unwrapped
+                  variant="uiRadio"
                   type="radio"
                   value={option.provider}
                   checked={selectedPaymentProvider === option.provider}
                   disabled={option.enabled === false}
                   onChange={(e) => onPaymentProviderChange?.(e.target.value)}
-                  className="mt-1 h-[18px] w-[18px] accent-[#3E4093]"
                 />
 
                 <span className="min-w-0 flex-1">
@@ -449,6 +451,8 @@ function OrderPaymentSummary({
       {/* Cart Checkout Button */}
       {variant === "cart" && buttonText && (
         <PillButton
+          size="md"
+        
           onClick={onCheckout}
           disabled={disabled || loading}
           className=" mt-6 "
@@ -462,6 +466,7 @@ function OrderPaymentSummary({
       {variant === "checkout" && buttonText && (
         <>
           <PillButton
+          size="md"
             type="submit"
             disabled={loading || disabled}
             className="mt-4 "

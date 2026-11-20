@@ -525,7 +525,7 @@ export const FALLBACK_ABOUT = {
       "Retail is evolving. Consumers are seeking more than just products—they seek experience, authenticity, and choice.",
     cta: {
       label: "Explore Our Platform",
-      href: "#who-we-are",
+      href: "/products",
     },
     highlights: [],
   },
@@ -1608,18 +1608,25 @@ export const FALLBACK_FOOTER = {
     {
       title: "About SAM",
       links: [
-       
+        {
+          label: "About Us",
+          href: "/about-us",
+        },
         {
           label: "Our Story",
-          href: "/about-us#who-we-are",
+          href: "/about-us#our-story",
         },
         {
           label: "Our Philosophy",
-          href: "/about-us#our-values",
+          href: "/about-us#our-philosophy",
         },
         {
           label: "What We Are Building",
           href: "/about-us#what-we-are-building",
+        },
+        {
+          label: "Our Commitment",
+          href: "/about-us#our-commitment",
         },
         {
           label: "Privacy Policy",

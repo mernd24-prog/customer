@@ -220,23 +220,25 @@ export default function AddressFormFields({
           required
         />
       </div>
-      <FormField
-        id={`${idPrefix}-line1`}
-        label="Address Line 1"
-        registration={register("line1")}
-        error={errors.line1}
-        reserveErrorSpace={false}
-        autoComplete="address-line1"
-        required
-      />
-      <FormField
-        id={`${idPrefix}-line2`}
-        label="Address Line 2 (optional)"
-        registration={register("line2")}
-        error={errors.line2}
-        reserveErrorSpace={false}
-        autoComplete="address-line2"
-      />
+      <div className="grid items-start gap-3.5">
+        <FormField
+          id={`${idPrefix}-line1`}
+          label="Address Line 1"
+          registration={register("line1")}
+          error={errors.line1}
+          reserveErrorSpace={false}
+          autoComplete="address-line1"
+          required
+        />
+        <FormField
+          id={`${idPrefix}-line2`}
+          label="Address Line 2 (optional)"
+          registration={register("line2")}
+          error={errors.line2}
+          reserveErrorSpace={false}
+          autoComplete="address-line2"
+        />
+      </div>
       {showDefault && (
         <label
           htmlFor={`${idPrefix}-isDefault`}

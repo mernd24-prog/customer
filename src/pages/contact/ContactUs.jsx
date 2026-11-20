@@ -26,7 +26,7 @@ import CustomDropdown from "../../components/ui/CustomDropdown";
 import BaseModal from "../../components/ui/overlay/BaseModal";
 import PageContainer from "../../components/ui/layout/PageContainer";
 import Loader from "../../components/ui/Loader";
-import { TextInput } from "../../components/ui/inputs";
+import { TextInput, TextareaInput } from "../../components/ui/input";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import { FALLBACK_CONTACT_PAGE } from "../../data/fallbackCmsData";
 import { contactSchema } from "../../validations/validationSchemas";
@@ -54,10 +54,6 @@ const inquiryTypes = [
   { label: "Seller Support", icon: Store, subject: "Seller Support" },
   { label: "Customer Support", icon: Headset, subject: "Customer Support" },
 ];
-
-
-const fieldClass =
-  "h-10 w-full rounded-lg border border-[#D8DCE8] bg-white px-3.5 text-sm text-[#171B3F] outline-none transition-colors duration-200 placeholder:text-[#9298AA] hover:border-[#B9A36B] focus:border-[#D4A12F] focus:ring-2 focus:ring-[#D4A12F]/15";
 
 export default function ContactUs() {
   const { page: cmsPage, loading } = useCmsRecord("contact-us");
@@ -325,7 +321,6 @@ export default function ContactUs() {
                         placeholder="Enter your full name"
                         registration={register("name")}
                         error={errors.name}
-                        inputClassName={`${fieldClass} ${errors.name ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
                       />
 
                       <TextInput
@@ -337,7 +332,6 @@ export default function ContactUs() {
                         placeholder="Enter your email address"
                         registration={register("email")}
                         error={errors.email}
-                        inputClassName={`${fieldClass} ${errors.email ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
                       />
 
                       <TextInput
@@ -359,7 +353,6 @@ export default function ContactUs() {
                           },
                         }}
                         error={errors.phone}
-                        inputClassName={`${fieldClass} ${errors.phone ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
                       />
 
                       <div>
@@ -381,25 +374,16 @@ export default function ContactUs() {
                         />
                       </div>
 
-                      <div className="sm:col-span-2">
-                        <label
-                          htmlFor="contact-message"
-                          className="mb-1.5 block text-sm font-semibold text-[#171B3F]"
-                        >
-                          Message <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                          id="contact-message"
-                          rows={4}
-                          {...register("message")}
-                          placeholder="Describe your query in detail..."
-                          aria-invalid={Boolean(errors.message)}
-                          className={`min-h-[104px] w-full resize-y rounded-lg border border-[#D8DCE8] bg-white px-3.5 py-3 text-sm text-[#171B3F] outline-none transition-colors duration-200 placeholder:text-[#9298AA] hover:border-[#B9A36B] focus:border-[#D4A12F] focus:ring-2 focus:ring-[#D4A12F]/15 ${errors.message ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
-                        />
-                        {errors.message && (
-                          <p className="mt-1 text-xs text-red-600">{errors.message.message}</p>
-                        )}
-                      </div>
+                      <TextareaInput
+                        id="contact-message"
+                        label="Message"
+                        required
+                        rows={4}
+                        placeholder="Describe your query in detail..."
+                        registration={register("message")}
+                        error={errors.message}
+                        className="sm:col-span-2"
+                      />
                     </div>
 
                     <div className=" flex flex-col gap-3 border-t border-[#EEF0F5] pt-4 sm:flex-row sm:items-center sm:justify-between">

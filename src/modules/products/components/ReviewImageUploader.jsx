@@ -7,6 +7,8 @@ import { notify } from "../../../utils/notify";
 
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
+import DynamicInput from "../../../components/ui/input/input";
+
 const MAX_REVIEW_IMAGES = 5;
 const MAX_REVIEW_IMAGE_BYTES = 10 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -211,12 +213,13 @@ export default function ReviewImageUploader({
      
       </p>
 
-      <input
+      <DynamicInput
+        unwrapped
+        variant="uiHidden"
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp,image/gif"
         multiple
-        className="hidden"
         onChange={handleFiles}
         disabled={uploadDisabled}
       />

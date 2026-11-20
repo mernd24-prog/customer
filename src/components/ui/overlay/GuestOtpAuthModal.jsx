@@ -15,6 +15,7 @@ import { fetchCart, updateCart } from "../../../modules/cart/slices/cartSlice";
 import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
 import DynamicButton from "../../../components/ui/button/button.jsx";
+import DynamicInput from "../../ui/input/input";
 
 import { PillButton } from "../../ui/button/buttonSpecialized.jsx";
 
@@ -327,7 +328,9 @@ export default function GuestOtpAuthModal({
 
                     <div className="my-auto h-5 w-px shrink-0 bg-[#D6D9DE]" />
 
-                    <input
+                    <DynamicInput
+                      unwrapped
+                      variant="uiGuestPhone"
                       id="guest-mobile"
                       ref={mobileInputRef}
                       type="tel"
@@ -355,7 +358,6 @@ export default function GuestOtpAuthModal({
                         }
                       }}
                       placeholder="Mobile Number"
-                      className="h-full min-w-0 flex-1 rounded-r-md border-0 bg-transparent px-3 text-sm font-medium text-[#2E2E2E] placeholder:font-normal placeholder:text-muted focus:border-0 focus:outline-none focus:ring-0 autofill:[-webkit-box-shadow:0_0_0_1000px_transparent_inset] autofill:[-webkit-text-fill-color:#2E2E2E]"
                       required
                     />
                   </div>

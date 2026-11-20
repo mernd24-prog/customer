@@ -7,6 +7,7 @@ import { ShieldCheck } from "lucide-react";
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
 import { PillButton } from "../../components/ui/button/buttonSpecialized";
+import { TextInput } from "../../components/ui/input";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   fetchWarrantyById,
@@ -65,10 +66,10 @@ export function WarrantyPage({ detail = false }) {
               Look Up by Order Id
             </h2>
             <div className="flex gap-3">
-              <input
+              <TextInput
                 placeholder="Enter Order ID"
-                {...lookupForm.register("orderId", { required: true })}
-                className="flex-1 rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
+                registration={lookupForm.register("orderId", { required: true })}
+                className="flex-1"
               />
               <PillButton
                 type="submit"
@@ -204,20 +205,17 @@ export function WarrantyPage({ detail = false }) {
               Register a Warranty
             </h2>
             <div className="grid gap-3 sm:grid-cols-3">
-              <input
+              <TextInput
                 placeholder="Order ID"
-                {...registerForm.register("orderId", { required: true })}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
+                registration={registerForm.register("orderId", { required: true })}
               />
-              <input
+              <TextInput
                 placeholder="Product ID"
-                {...registerForm.register("productId", { required: true })}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
+                registration={registerForm.register("productId", { required: true })}
               />
-              <input
+              <TextInput
                 placeholder="Variant Id (Optional)"
-                {...registerForm.register("variantId")}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
+                registration={registerForm.register("variantId")}
               />
             </div>
             <div className="mt-4">

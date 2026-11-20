@@ -14,6 +14,8 @@ import { useAuthModal } from "../../auth/context/AuthModalContext";
 
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
+import DynamicInput from "../../../components/ui/input/input";
+
 const QUICK_PROMPTS = [
   "Where is my recent order?",
   "Return or refund",
@@ -523,15 +525,13 @@ export default function AiSupportChatWidget() {
           {/* Input */}
           <div className="border-t border-slate-100 bg-white p-3">
             <div className="flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-slate-50 pl-4 pr-1.5 transition-all focus-within:border-[#1B1D60] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#1B1D60]/10">
-              <input
+              <DynamicInput
+                unwrapped
+                variant="uiChat"
                 ref={inputRef}
                 type="text"
                 value={inputText}
-                onChange={(e) =>
-                  setInputText(
-                    e.target.value,
-                  )
-                }
+                onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={
                   isTyping
@@ -539,7 +539,6 @@ export default function AiSupportChatWidget() {
                     : "Type your message..."
                 }
                 disabled={isTyping}
-                className="h-full w-full min-w-0 flex-1 !border-0 !border-none !bg-transparent !p-0 text-sm text-slate-800 placeholder:text-slate-400 !outline-none !ring-0 !shadow-none focus:!border-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 disabled:opacity-50"
               />
 
               <DynamicButton

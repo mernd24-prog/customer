@@ -1,6 +1,6 @@
 // Sub-directory exports (canonical locations)
-export * from "./buttons";
-export * from "./inputs";
+export * from "./button";
+export * from "./input";
 export * from "./layout";
 export * from "./feedback";
 export * from "./overlay";

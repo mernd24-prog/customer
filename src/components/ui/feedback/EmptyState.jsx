@@ -4,6 +4,7 @@ import { PageContainer } from "../layout";
 import EmptyStateIllustration from "./EmptyStateIllustration";
 import ReviewEmptyIllustration from "./ReviewEmptyIllustration";
 import { cn } from "../../../utils/common";
+
 export default function EmptyState({
   icon: Icon,
   imageSrc,
@@ -17,6 +18,7 @@ export default function EmptyState({
   onButtonClick,
   className = "",
   buttonClassName = "",
+  buttonSize = "md",
   children,
   bordered = true,
 }) {
@@ -66,7 +68,8 @@ export default function EmptyState({
         {resolvedActionLabel && resolvedAction && (
           <div className="mt-4 flex justify-center">
             <PillButton
-              size="md"
+              shape="square"
+              size={buttonSize}
               onClick={resolvedAction}
               className={`gap-2 ${buttonClassName}`}
             >

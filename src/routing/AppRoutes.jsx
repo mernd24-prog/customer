@@ -353,6 +353,7 @@ export default function AppRoutes() {
             />
 
             <Route path="/about-us" element={<AboutPage />} />
+            <Route path="/about" element={<Navigate to="/about-us" replace />} />
 
             <Route path="/categories/brand" element={<BrandOutletPage />} />
 

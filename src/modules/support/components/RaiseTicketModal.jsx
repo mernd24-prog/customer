@@ -4,6 +4,7 @@ import { Ticket, Sparkles, Info } from "lucide-react";
 
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
+import { TextInput, TextareaInput } from "../../../components/ui/input";
 import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { useSupportController } from "../controllers/useSupportController";
 
@@ -125,32 +126,22 @@ export function RaiseTicketModal() {
           placeholder="Select Category"
         />
 
-        <label className="block">
-          <span className="mb-1.5 block text-xs font-bold text-slate-700 uppercase tracking-wide">
-            Subject
-          </span>
-          <input
-            name="subject"
-            value={form.subject}
-            onChange={handleChange}
-            placeholder="e.g. Order #1234 Delivery Delay"
-            className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 focus:outline-none transition"
-          />
-        </label>
+        <TextInput
+          name="subject"
+          label="Subject"
+          value={form.subject}
+          onChange={handleChange}
+          placeholder="e.g. Order #1234 Delivery Delay"
+        />
 
-        <label className="block">
-          <span className="mb-1.5 block text-xs font-bold text-slate-700 uppercase tracking-wide">
-            Detailed Description
-          </span>
-          <textarea
-            name="message"
-            value={form.message}
-            onChange={handleChange}
-            rows={4}
-            placeholder="Describe your issue with order numbers, items, or screenshots..."
-            className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3.5 py-3 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 focus:outline-none transition"
-          />
-        </label>
+        <TextareaInput
+          name="message"
+          label="Detailed Description"
+          value={form.message}
+          onChange={handleChange}
+          rows={4}
+          placeholder="Describe your issue with order numbers, items, or screenshots..."
+        />
 
         {!isSignedIn && (
           <p className="text-center text-xs font-medium text-slate-500 flex items-center justify-center gap-1.5">

@@ -15,7 +15,7 @@ import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import { Download } from "lucide-react";
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
-import { resolveInputClasses } from "../../../components/ui/inputs/inputStyles";
+import { DynamicInput, resolveInputClasses } from "../../../components/ui/input";
 
 export default function DeliveryChecker({
   productId: initialProductId,
@@ -298,7 +298,7 @@ export default function DeliveryChecker({
       >
         <div className="grid min-w-0 gap-4">
           <div className="grid min-w-0 gap-2">
-            <input
+            <DynamicInput
               id="delivery-pincode"
               type="text"
               inputMode="numeric"
@@ -317,15 +317,8 @@ export default function DeliveryChecker({
                 }
               }}
               placeholder="Enter 6-digit Pincode"
-              className={cn(
-                resolveInputClasses({ variant: "default" }),
-                "h-11 w-full min-w-0 px-4 text-sm font-medium text-[#1B1D60] placeholder:text-[#8C8E9E] bg-white",
-              )}
+              error={error}
             />
-
-            {error && (
-              <p className="text-xs font-semibold text-red-600">{error}</p>
-            )}
           </div>
 
           {/* Delivery Result */}
