@@ -9,6 +9,7 @@ import {
 } from "../utils/orderItems";
 import { DynamicButton } from "../../../components/ui/button";
 import { OrderItemReviewAction } from "./OrderItemReview";
+import { getCustomerItemLineTotal } from "../../../utils/orderHelpers";
 
 const formatDeliveryDateTime = (value) => {
   if (!value) return null;
@@ -33,7 +34,6 @@ export function OrderItemCard({
   getItemImage,
   getProductTitle,
   getItemProductPath,
-  getItemLineTotal,
   getOrderItemColor,
   formatMoney,
   cancelledQuantity: cancelledQuantityProp,
@@ -483,7 +483,7 @@ export function OrderItemCard({
             <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-2 text-xs font-semibold text-[#1F2430] sm:mt-2">
               {" "}
               <p className="text-lg font-bold text-[#1F2430]">
-                {formatMoney(getItemLineTotal(item), currency)}
+                {formatMoney(getCustomerItemLineTotal(item), currency)}
               </p>
               <span className="inline-flex items-center gap-1 rounded-full border border-[#E4DDCF]/80 bg-[#FAF6EE] px-2.5 py-0.5">
                 <span className="font-normal text-[#6F7480]">Qty:</span>{" "}
@@ -555,7 +555,7 @@ export function OrderItemCard({
 
           <div className="mt-2">
             <p className="text-lg font-extrabold text-[#1F2430] sm:text-xl">
-              {formatMoney(getItemLineTotal(item), currency)}
+              {formatMoney(getCustomerItemLineTotal(item), currency)}
             </p>
             <p className="mt-0.5 text-xs font-base text-[#6F7480]">
               Inclusive of all taxes

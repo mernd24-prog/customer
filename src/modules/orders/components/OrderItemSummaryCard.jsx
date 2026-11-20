@@ -18,6 +18,7 @@ import {
   humanize,
   getOrderItemColor,
   getOrderItemId,
+  getCustomerItemLineTotal,
   resolveOrderItemDisplayStatus,
   getOrderCardImage,
 } from "../../../utils/pages/orderUtils";
@@ -61,11 +62,7 @@ export default function OrderItemSummaryCard({
 
   const orderedQuantity = Math.max(Number(item.quantity || 0), 0);
 
-  const itemTotal =
-    item?.line_total ??
-    item?.lineTotal ??
-    Number(item?.unit_price || item?.unitPrice || 0) *
-      Number(item?.quantity || 0);
+  const itemTotal = getCustomerItemLineTotal(item);
 
   const itemDetailPath = getOpaqueOrderPath(id, {
     query: itemId ? `?orderItemId=${encodeURIComponent(itemId)}` : "",

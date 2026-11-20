@@ -109,6 +109,39 @@ export const getItemLineTotal = (item) =>
   item?.totalPrice ??
   asNumber(getItemUnitPrice(item)) * asNumber(item?.quantity || 1);
 
+const getItemPricingSnapshot = (item = {}) => {
+  const value = item.pricing_snapshot ?? item.pricingSnapshot;
+  if (!value) return {};
+  if (typeof value === "object") return value;
+  try {
+    return JSON.parse(value);
+  } catch (_error) {
+    return {};
+  }
+};
+
+export const getItemDiscountAmount = (item = {}) =>
+  Math.max(
+    0,
+    asNumber(
+      item.discount_amount ??
+        item.discountAmount ??
+        getItemPricingSnapshot(item).discountAmount ??
+        0,
+    ),
+  );
+
+/**
+ * Product amount charged to the customer after the item's allocated discount.
+ * Separate order charges such as platform, delivery, and COD fees stay in the
+ * payment summary and must not be presented as part of a product's price.
+ */
+export const getCustomerItemLineTotal = (item = {}) =>
+  Math.max(
+    0,
+    asNumber(getItemLineTotal(item)) - getItemDiscountAmount(item),
+  );
+
 export const getOrderProductTitle = (item) =>
   composeProductVariantTitle(
     getItemProduct(item)?.title ||
