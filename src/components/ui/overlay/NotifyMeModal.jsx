@@ -10,6 +10,7 @@ import {
 } from "../../../utils/ecommerce";
 import { apiRequest } from "../../../api/client";
 import { endpoints } from "../../../api/endpoints";
+import { DynamicInput } from "../input";
 
 export default function NotifyMeModal({
   open,
@@ -213,61 +214,33 @@ export default function NotifyMeModal({
           </div>
 
           <div>
-            <label
-              htmlFor="notify-full-name"
-              className="mb-1.5 block text-sm font-medium text-black/90"
-            >
-              Full Name <span className="text-black">*</span>
-            </label>
-            <input
+            <DynamicInput
               id="notify-full-name"
               type="text"
+              label={<>Full Name <span className="text-black">*</span></>}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              onBlur={() =>
-                setTouched((prev) => ({ ...prev, fullName: true }))
-              }
+              onBlur={() => setTouched((prev) => ({ ...prev, fullName: true }))}
               placeholder="Enter your full name"
-              className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
-                touched.fullName && !isFullNameValid
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-[#EEDFB9] focus:border-[#CE9F2D]"
-              }`}
+              variant="cream"
+              size="lg"
+              error={touched.fullName && !isFullNameValid ? { message: "Please enter your full name (at least 2 characters)." } : null}
             />
-            {touched.fullName && !isFullNameValid && (
-              <p className="mt-1 text-xs font-medium text-red-600">
-                Please enter your full name (at least 2 characters).
-              </p>
-            )}
           </div>
 
           <div>
-            <label
-              htmlFor="notify-email"
-              className="mb-1.5 block text-sm font-medium text-black/90"
-            >
-              Email Address <span className="text-black">*</span>
-            </label>
-            <input
+            <DynamicInput
               id="notify-email"
               type="email"
+              label={<>Email Address <span className="text-black">*</span></>}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onBlur={() =>
-                setTouched((prev) => ({ ...prev, email: true }))
-              }
+              onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
               placeholder="Enter your email address"
-              className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
-                touched.email && !isEmailValid
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-[#EEDFB9] focus:border-[#CE9F2D]"
-              }`}
+              variant="cream"
+              size="lg"
+              error={touched.email && !isEmailValid ? { message: "Please enter a valid email address." } : null}
             />
-            {touched.email && !isEmailValid && (
-              <p className="mt-1 text-xs font-medium text-red-600">
-                Please enter a valid email address.
-              </p>
-            )}
           </div>
         </div>
       )}

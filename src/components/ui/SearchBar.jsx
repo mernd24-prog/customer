@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { Search, ChevronDown, X } from "lucide-react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import DynamicButton from "./button/button";
+import DynamicInput from "./input/input";
 import { useDispatch, useSelector } from "react-redux";
 import { sanitizeSearchQuery } from "../../validations";
 import { getImageUrlFromValue } from "../../utils/ecommerce/product";
@@ -591,7 +592,9 @@ const SearchBar = ({
           ) : null}
 
           {/* Input field */}
-          <input
+          <DynamicInput
+            unwrapped
+            variant="uiHeaderSearch"
             type="text"
             value={searchQuery}
             onChange={handleChange}
@@ -617,7 +620,6 @@ const SearchBar = ({
             aria-controls={
               enableAutocomplete ? "search-suggestions" : undefined
             }
-            className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-base font-medium leading-6 tracking-normal text-[#2E2E2E] outline-none ring-0 text-ellipsis overflow-hidden whitespace-nowrap placeholder:text-[#6e6d6d] placeholder:text-ellipsis focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-base min-[425px]:text-base sm:px-4 xl:text-[15px]"
           />
 
           {/* Clear Button */}

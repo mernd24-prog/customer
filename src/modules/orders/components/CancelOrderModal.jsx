@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Download } from "lucide-react";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
+import { DynamicInput } from "../../../components/ui/input";
 
 import {
   getItemImage,
@@ -120,12 +121,14 @@ export default function CancelOrderModal({
                   className="flex min-w-0 items-center gap-2.5 rounded-lg bg-white p-1.5 sm:gap-3"
                 >
                   {!selectedOrderItem && (
-                    <input
+                    <DynamicInput
+                      unwrapped
+                      variant="uiCheckbox"
                       type="checkbox"
                       checked={selected}
                       disabled={remaining <= 0 || state.loading}
                       aria-label={`Select ${getProductTitle(item)} for cancellation`}
-                      className="h-4 w-4 shrink-0 accent-[#CE9F2D]"
+                      inputClassName="h-4 w-4 shrink-0 accent-[#CE9F2D]"
                       onChange={(event) =>
                         setCancelItems((current) => {
                           const next = { ...current };
@@ -220,17 +223,21 @@ export default function CancelOrderModal({
             Additional details
           </label>
 
-          <textarea
+          <DynamicInput
+            as="textarea"
+            unwrapped
+            variant="uiCancelTextarea"
             id="cancel-additional-details"
-            className={`min-h-20 w-full resize-y rounded-lg border p-3 text-sm font-medium text-[#1B1D60] transition placeholder:text-[#8C8E9E] focus:outline-none ${
+            inputClassName={
               cancelReasonError ? "border-red-600" : "border-[#DCDDE5]"
-            }`}
+            }
             value={cancelReason}
             onChange={(event) => {
               setCancelReason(event.target.value);
               if (cancelReasonError) setCancelReasonError(false);
             }}
             maxLength={500}
+            rows={3}
             placeholder="Tell us why you are cancelling *"
           />
 

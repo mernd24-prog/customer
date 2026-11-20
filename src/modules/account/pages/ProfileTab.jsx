@@ -24,6 +24,7 @@ import { AccountFormActions } from "../components";
 
 import { DynamicButton } from "../../../components/ui/button";
 import { GoldButton } from "../../../components/ui/button/buttonSpecialized";
+import { DynamicInput } from "../../../components/ui/input";
 const FALLBACK_AVATAR = "/image/png/person.png";
 const isSyntheticMobileEmail = (value = "") =>
   String(value).toLowerCase().endsWith("@mobile.samglobal.local");
@@ -368,7 +369,6 @@ export default function ProfileTab({ user }) {
     "flex h-11 min-h-[44px] min-w-0 items-center gap-2.5 rounded-md border border-[#E7D9B8]/70 bg-[#FAFAFC] px-3.5 text-sm sm:text-base font-normal text-[#171A3A]";
   const inputClass =
     "h-11 min-h-[44px] w-full rounded-md border border-[#04258633] bg-white px-3.5 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold";
-
   return (
     <form
       onSubmit={handleSubmit(submit)}
@@ -422,13 +422,14 @@ export default function ProfileTab({ user }) {
                 >
                   <Camera />
                 </DynamicButton>
-                <input
+                <DynamicInput
+                  unwrapped
+                  variant="uiHidden"
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   onChange={handleAvatarChange}
                   disabled={isAvatarUploading || loading}
-                  className="hidden"
                 />
               </>
             )}
@@ -471,22 +472,16 @@ export default function ProfileTab({ user }) {
           </label>
 
           {isEditing ? (
-            <div>
-              <input
-                id="firstName"
-                type="text"
-                autoComplete="given-name"
-                placeholder="Enter first name"
-                disabled={loading}
-                className={inputClass}
-                {...register("firstName")}
-              />
-              {errors.firstName?.message && (
-                <p className="mt-1 text-xs font-normal text-red-600">
-                  {errors.firstName.message}
-                </p>
-              )}
-            </div>
+            <DynamicInput
+              id="firstName"
+              type="text"
+              autoComplete="given-name"
+              placeholder="Enter first name"
+              disabled={loading}
+              registration={register("firstName")}
+              error={errors.firstName}
+              size="lg"
+            />
           ) : (
             <div className={readonlyBoxClass}>
               <UserRound size={17} className="shrink-0 text-[#8D92A3]" />
@@ -503,22 +498,16 @@ export default function ProfileTab({ user }) {
           </label>
 
           {isEditing ? (
-            <div>
-              <input
-                id="lastName"
-                type="text"
-                autoComplete="family-name"
-                placeholder="Enter last name"
-                disabled={loading}
-                className={inputClass}
-                {...register("lastName")}
-              />
-              {errors.lastName?.message && (
-                <p className="mt-1 text-xs font-normal text-red-600">
-                  {errors.lastName.message}
-                </p>
-              )}
-            </div>
+            <DynamicInput
+              id="lastName"
+              type="text"
+              autoComplete="family-name"
+              placeholder="Enter last name"
+              disabled={loading}
+              registration={register("lastName")}
+              error={errors.lastName}
+              size="lg"
+            />
           ) : (
             <div className={readonlyBoxClass}>
               <UserRound size={17} className="shrink-0 text-[#8D92A3]" />
@@ -552,12 +541,8 @@ export default function ProfileTab({ user }) {
           ) : (
             <div className="grid gap-2">
               <div className="flex gap-2">
-                <div className="relative min-w-0 flex-1">
-                  <Mail
-                    size={17}
-                    className="absolute left-3 top-3 text-[#8D92A3]"
-                  />
-                  <input
+                <div className="min-w-0 flex-1">
+                  <DynamicInput
                     id="profile-email"
                     type="email"
                     value={email}
@@ -569,7 +554,8 @@ export default function ProfileTab({ user }) {
                     }}
                     disabled={emailBusy}
                     placeholder="Add your email address"
-                    className="h-11 min-h-[44px] w-full rounded-md border border-[#04258633] bg-white py-2 pl-10 pr-3 text-sm sm:text-base font-normal text-[#171A3A] outline-none transition-colors focus:border-gold"
+                    leftIcon={<Mail size={17} />}
+                    size="lg"
                   />
                 </div>
                 <DynamicButton

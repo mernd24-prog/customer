@@ -2,6 +2,7 @@ import FormField from "../../../components/ui/FormField";
 import { formatMoney } from "../../../utils/ecommerce";
 import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import { Wallet } from "lucide-react";
+import { DynamicInput } from "../../../components/ui/input";
 
 export default function DiscountsSection({
   register,
@@ -45,10 +46,10 @@ export default function DiscountsSection({
           <div className="grid gap-1.5 text-sm lg:text-base font-medium text-[var(--customer-ink)]">
             <span>Pay from Wallet</span>
             <label
-              className={`customer-input relative flex items-center justify-between transition-all cursor-pointer !px-3 ${
+              className={`min-h-[42px] w-full rounded-md border border-[var(--customer-border-strong)] bg-white relative flex items-center justify-between transition-all cursor-pointer px-3 ${
                 isWalletApplied
                   ? "!border-[#CE9F2D] !bg-[#CE9F2D]/5"
-                  : "hover:!border-[#CE9F2D]/50 hover:bg-gray-50"
+                  : "hover:border-[#CE9F2D]/50 hover:bg-gray-50"
               } ${!walletBalance ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <div className="flex items-center gap-2.5">
@@ -61,9 +62,11 @@ export default function DiscountsSection({
                   Available: {formatMoney(walletBalance, "INR")}
                 </span>
               </div>
-              <input
+              <DynamicInput
+                unwrapped
+                variant="uiCheckbox"
                 type="checkbox"
-                className="h-[18px] w-[18px] rounded border-gray-300 text-[#CE9F2D] focus:ring-[#CE9F2D] cursor-pointer"
+                inputClassName="h-[18px] w-[18px] rounded border-gray-300 text-[#CE9F2D] focus:ring-[#CE9F2D] cursor-pointer"
                 checked={isWalletApplied}
                 onChange={handleWalletToggle}
                 disabled={!walletBalance}
@@ -73,7 +76,12 @@ export default function DiscountsSection({
               {errors.walletAmount?.message}
             </span>
           </div>
-          <input type="hidden" {...register("walletAmount")} />
+          <DynamicInput
+            unwrapped
+            variant="uiHidden"
+            type="hidden"
+            registration={register("walletAmount")}
+          />
         </div>
       </div>
     </DetailSectionCard>

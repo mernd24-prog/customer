@@ -5,7 +5,6 @@ import { store } from "./app/store";
 import App from "./App";
 import LazyToast from "./components/ui/LazyToast";
 import { BrowserRouter } from "react-router-dom";
-import { AuthModalProvider } from "./modules/auth/context/AuthModalContext";
 import "./styles.css";
 
 // Remove passwords retained by older versions; never persist credentials here.
@@ -39,10 +38,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <HelmetProvider>
       <BrowserRouter>
-        <AuthModalProvider>
-          <App />
-          <LazyToast />
-        </AuthModalProvider>
+        <App />
+        <LazyToast />
       </BrowserRouter>
     </HelmetProvider>
   </Provider>,

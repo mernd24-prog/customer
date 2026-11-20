@@ -1,3 +1,5 @@
+import DynamicInput from "./input/input";
+
 export default function SelectField({
   id,
   label,
@@ -57,11 +59,15 @@ export default function SelectField({
     >
       <span>{label}</span>
       {showSelect ? (
-        <select
+        <DynamicInput
+          unwrapped
+          as="select"
+          variant="auth"
           id={id}
           disabled={disabled}
-          className={`customer-input cursor-pointer disabled:cursor-not-allowed disabled:bg-[var(--customer-cream)] ${className}`}
-          {...registration}
+          inputClassName={className}
+          error={error?.message}
+          registration={registration}
           {...props}
         >
           <option value="">{placeholder}</option>
@@ -71,14 +77,17 @@ export default function SelectField({
             </option>
           ))}
           {hasCurrentValue && <option value={value}>{value}</option>}
-        </select>
+        </DynamicInput>
       ) : (
-        <input
+        <DynamicInput
+          unwrapped
+          variant="auth"
           id={id}
           type="text"
           placeholder={placeholder || label}
-          className={`customer-input ${className}`}
-          {...registration}
+          inputClassName={className}
+          error={error?.message}
+          registration={registration}
           {...props}
         />
       )}

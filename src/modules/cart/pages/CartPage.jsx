@@ -13,6 +13,7 @@ import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal"
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";
 import { DynamicButton } from "../../../components/ui/button";
 import { PillButton } from "../../../components/ui/button/buttonSpecialized";
+import { DynamicInput } from "../../../components/ui/input";
 
 import { ArrowRight, CircleAlert, X } from "lucide-react";
 import { CART_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
@@ -257,7 +258,9 @@ export default function CartPage() {
                     <div className="flex min-h-[46px] w-full items-center justify-between gap-3 rounded-lg border border-[#D5D9E2] bg-white px-3 py-1.5 sm:min-h-[44px] sm:px-5 sm:py-1">
                       <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                         <label className="flex min-w-0 cursor-pointer items-center gap-2 text-sm font-semibold text-[#252936] sm:gap-3 sm:text-base">
-                          <input
+                          <DynamicInput
+                            unwrapped
+                            variant="uiCheckbox"
                             type="checkbox"
                             checked={
                               selectedItems.length === items.length &&
@@ -267,7 +270,7 @@ export default function CartPage() {
                               handleSelectAll(event.target.checked)
                             }
                             aria-label="Select all cart items"
-                            className="m-0 h-3 w-3 shrink-0 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095] sm:h-[15px] sm:w-[15px]"
+                            inputClassName="m-0 h-3 w-3 shrink-0 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095] sm:h-[15px] sm:w-[15px]"
                           />
                           <span className="whitespace-nowrap leading-5">
                             Select All

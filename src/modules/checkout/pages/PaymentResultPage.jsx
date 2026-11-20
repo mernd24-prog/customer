@@ -19,8 +19,6 @@ import {
   getOrderNumber,
 } from "../../../utils/orderHelpers";
 
-import { FailedIcon } from "../../../components/ui/icons";
-
 import {
   decodeRouteToken,
   getOpaqueOrderPath,
@@ -28,6 +26,7 @@ import {
 } from "../../../utils/routeTokens";
 
 import PageContainer from "../../../components/ui/layout/PageContainer";
+import PaymentStatusCard from "../components/PaymentStatusCard";
 
 export function PaymentResultPage() {
   const dispatch = useDispatch();
@@ -40,9 +39,7 @@ export function PaymentResultPage() {
   const [searchParams] = useSearchParams();
 
   const orderTokenPayload = decodeRouteToken(searchParams.get("o"), "order");
-
   const orderId = orderTokenPayload?.id || searchParams.get("orderId");
-
   const reason = searchParams.get("reason") || "";
 
   useEffect(() => {
@@ -58,9 +55,7 @@ export function PaymentResultPage() {
   }, [location.pathname, navigate, orderId, reason, searchParams]);
 
   const order = findFetchedOrder(orderState, orderId);
-
   const displayOrderRef = getOrderNumber(order) || orderId;
-
   const currentUser = userState.current || userState.data || {};
 
   const orderStatus = String(
@@ -101,7 +96,6 @@ export function PaymentResultPage() {
 
   useEffect(() => {
     if (!orderId) return;
-
     dispatch(fetchOrderById({ orderId }));
   }, [dispatch, orderId]);
 
@@ -128,6 +122,12 @@ export function PaymentResultPage() {
     }
   }, [currentUser?._id, currentUser?.id, dispatch, userState.loading]);
 
+  const status = isConfirmed
+    ? "success"
+    : isActuallyFailed
+      ? "failed"
+      : "pending";
+
   const breadcrumbItems = [
     {
       label: "Home",
@@ -141,92 +141,14 @@ export function PaymentResultPage() {
       label: "Checkout",
     },
     {
-      label: isConfirmed
-        ? "Order Placed"
-        : isActuallyFailed
-          ? "Payment Failed"
-          : "Payment Pending",
+      label:
+        status === "success"
+          ? "Order Placed"
+          : status === "failed"
+            ? "Payment Failed"
+            : "Payment Pending",
     },
   ];
-
-  const resultCard = (
-    <PageContainer>
-      <Breadcrumbs items={breadcrumbItems} />
-
-      <div className="mx-auto flex w-full justify-center">
-        <div className="w-full max-w-3xl">
-          <section
-            className={`overflow-hidden rounded-lg border bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)] ${
-              isActuallyFailed ? "border-red-200" : "border-amber-200"
-            }`}
-          >
-            <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 text-center sm:px-10">
-              <div className="flex flex-col items-center justify-center gap-4 sm:gap-5">
-                <div
-                  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full sm:h-20 sm:w-20 ${
-                    isActuallyFailed
-                      ? "bg-red-100 text-red-500"
-                      : "bg-amber-100 text-amber-600"
-                  }`}
-                >
-                  {isActuallyFailed ? (
-                    <FailedIcon className="h-8 w-8 sm:h-10 sm:w-10" />
-                  ) : (
-                    <span className="text-3xl sm:text-4xl" aria-hidden="true">
-                      ⌛
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <h1 className="text-2xl font-bold leading-tight text-[#3E4093] sm:text-[32px]">
-                    {isActuallyFailed
-                      ? "Payment Failed"
-                      : reason === "dismissed"
-                        ? "Payment Not Completed"
-                        : "Payment Confirmation Pending"}
-                  </h1>
-
-                  <p className="mt-2 max-w-2xl text-xs leading-relaxed text-[#2E2E2E] sm:text-sm sm:leading-6">
-                    {isActuallyFailed
-                      ? "Razorpay could not complete this payment. Your order is saved; retry safely from its order page."
-                      : reason === "dismissed"
-                        ? "You closed Razorpay before payment completed. Your order is saved and will not be shipped until payment is confirmed."
-                        : "We have not received final payment confirmation yet. This page checks automatically; please do not pay twice."}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col justify-center gap-3 border-t border-red-100 px-6 py-5 sm:flex-row sm:px-10">
-              <PillButton
-                size="md"
-                rightIcon={<ArrowRight size={16} />}
-                onClick={() => {
-                  if (orderId) {
-                    if (isActuallyFailed || reason === "dismissed") {
-                      navigate("/orders");
-                    } else {
-                      dispatch(fetchOrderById({ orderId }))
-                        .unwrap()
-                        .finally(() => navigate(getOpaqueOrderPath(orderId)));
-                    }
-                  } else {
-                    navigate("/orders");
-                  }
-                }}
-                className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
-              >
-                {isActuallyFailed || reason === "dismissed"
-                  ? "All pending orders"
-                  : "View order status"}
-              </PillButton>
-            </div>
-          </section>
-        </div>
-      </div>
-    </PageContainer>
-  );
 
   if (!orderId) {
     return (
@@ -254,32 +176,74 @@ export function PaymentResultPage() {
     );
   }
 
-  if (
-    (!order && !orderState.loading && orderState.error) ||
-    (order && !isConfirmed)
-  ) {
-    return (
+  const title =
+    status === "success"
+      ? "Order Placed Successfully!"
+      : status === "failed"
+        ? "Payment Failed"
+        : reason === "dismissed"
+          ? "Payment Not Completed"
+          : "Payment Confirmation Pending";
+
+  const description =
+    status === "success" ? (
       <>
-        <Seo title="Payment Status | Sam Global" />
-        {resultCard}
+        Thank You for Shopping with Sam Global.
+        <br className="hidden sm:block" />
+        Your order has been received and is being prepared for shipment.
       </>
+    ) : status === "failed" ? (
+      "Razorpay could not complete this payment. Your order is saved; retry safely from its order page."
+    ) : reason === "dismissed" ? (
+      "You closed Razorpay before payment completed. Your order is saved and will not be shipped until payment is confirmed."
+    ) : (
+      "We have not received final payment confirmation yet. This page checks automatically; please do not pay twice."
     );
-  }
+
+  const actionButton = (
+    <GoldOutlineButton
+      shape="circle"
+      size="sm"
+      rightIcon={<ArrowRight />}
+      onClick={() => {
+        if (orderId) {
+          if (status === "failed" || reason === "dismissed") {
+            navigate("/orders");
+          } else {
+            dispatch(fetchOrderById({ orderId }))
+              .unwrap()
+              .finally(() => navigate(getOpaqueOrderPath(orderId)));
+          }
+        } else {
+          navigate("/orders");
+        }
+      }}
+      className=" !text-[#17145f] hover:!text-[#17145f]"
+    >
+      {status === "success"
+        ? "View order details"
+        : status === "failed" || reason === "dismissed"
+          ? "All pending orders"
+          : "View order status"}
+    </GoldOutlineButton>
+  );
 
   return (
     <>
       <Seo
         title={
-          isConfirmed
+          status === "success"
             ? "Payment Successful | Sam Global"
-            : "Payment Status | Sam Global"
+            : status === "failed"
+              ? "Payment Failed | Sam Global"
+              : "Payment Status | Sam Global"
         }
       />
 
       <PageContainer>
         <ApiState
           loading={orderState.loading && !order}
-          error={orderState.error}
+          error={orderState.error && !order}
           empty={!order}
         >
           <div className="grid gap-6 xl:gap-12">
@@ -292,63 +256,19 @@ export function PaymentResultPage() {
 
             <div className="mx-auto flex w-full justify-center">
               <div className="w-full max-w-3xl">
-                <section className="flex w-full flex-col overflow-hidden rounded-lg border border-[#CE9F2D]/40 bg-[#fffcf6] shadow-sm sm:rounded-lg">
-                  <div className="flex flex-col gap-4 px-5 py-6 text-center sm:px-8 sm:py-8">
-                    <div className="flex flex-col items-center justify-center gap-3 sm:gap-4">
-                      <div className="shrink-0">
-                        <img
-                          loading="lazy"
-                          width="400"
-                          height="400"
-                          src="/image/png/Group.png"
-                          alt="Order Placed Successfully"
-                          className="size-16 object-contain sm:size-20"
-                        />
-                      </div>
-
-                      <div className="flex flex-col items-center">
-                        <h1 className="break-words text-xl font-bold text-[#3E4093] sm:text-2xl">
-                          Order Placed Successfully!
-                        </h1>
-
-                        <p className="my-2 max-w-xl text-xs font-medium leading-relaxed text-[#2E2E2E] sm:text-sm">
-                          Thank You for Shopping with Sam Global.
-                          <br className="hidden sm:block" />
-                          Your order has been received and is being prepared for
-                          shipment.
-                        </p>
-
-                        <div className="mt-3 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
-                          <GoldOutlineButton
-                            shape="circle"
-                            size="sm"
-                            rightIcon={<ArrowRight/>}
-                            onClick={() => {
-                              dispatch(fetchOrderById({ orderId }))
-                                .unwrap()
-                                .finally(() =>
-                                  navigate(getOpaqueOrderPath(orderId)),
-                                );
-                            }}
-                            className=" !text-[#17145f] hover:!text-[#17145f]"
-                          >
-                            View order details
-                          </GoldOutlineButton>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-5 py-3 text-xs font-semibold text-[#1B1D60] sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-3.5 sm:text-sm">
-                    <span className="break-words">
-                      Order : #{displayOrderRef}
-                    </span>
-
-                    <span className="break-words">
-                      Estimated Delivery : {deliveryLabel}
-                    </span>
-                  </div>
-                </section>
+                <PaymentStatusCard
+                  status={status}
+                  title={title}
+                  description={description}
+                  action={actionButton}
+                  orderRef={displayOrderRef}
+                  deliveryLabel={
+                    status === "success" ||
+                    (deliveryLabel && deliveryLabel !== "To be confirmed")
+                      ? deliveryLabel
+                      : null
+                  }
+                />
               </div>
             </div>
           </div>

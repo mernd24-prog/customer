@@ -14,6 +14,7 @@ import ProductPriceBlock from "../../products/components/ProductPriceBlock";
 import ProductStockStatus from "../../products/components/ProductStockStatus";
 import StarRating from "../../../components/ui/display/StarRating";
 import DynamicButton from "../../../components/ui/button/button";
+import DynamicInput from "../../../components/ui/input/input";
 
 export default function CartItemCard({
   item,
@@ -106,12 +107,14 @@ export default function CartItemCard({
         {/* Selection checkbox */}
         {showCheckbox && (
           <label className="flex cursor-pointer items-start justify-center pt-1">
-            <input
+            <DynamicInput
+              unwrapped
+              variant="uiCheckbox"
               type="checkbox"
               checked={selected}
               onChange={(event) => onSelect?.(item?.id, event.target.checked)}
               aria-label={`Select ${item?.title} for checkout`}
-              className="m-0 h-3 w-3 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095]  sm:h-[15px] sm:w-[15px]"
+              inputClassName="m-0 h-3 w-3 cursor-pointer rounded-[4px] border border-[#C9CDD6] accent-[#3F4095] sm:h-[15px] sm:w-[15px]"
             />
           </label>
         )}
@@ -216,13 +219,6 @@ export default function CartItemCard({
             />
           </div>
 
-          {/* Maximum quantity */}
-          {atMaxQty && !isOutOfStock && (
-            <p className="text-[10px] font-medium text-[var(--customer-muted)] sm:text-xs">
-              Max {maxQty} Per Order
-            </p>
-          )}
-
           {/* Quantity selector */}
           {showQuantitySelector && (
             <div className="flex min-w-0 flex-col items-start gap-1">
@@ -233,14 +229,8 @@ export default function CartItemCard({
                 max={quantityMax}
                 increaseDisabled={item.increaseDisabled}
                 increaseDisabledLabel={item.stockMessage || undefined}
-                variant="cart"
+               
               />
-
-              {item.stockMessage && (
-                <p className="text-[10px] font-semibold leading-4 text-red-600 sm:text-xs">
-                  {item.stockMessage}
-                </p>
-              )}
             </div>
           )}
         </div>

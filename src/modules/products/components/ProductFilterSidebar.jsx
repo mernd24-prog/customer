@@ -10,6 +10,7 @@ import { ChevronDown, Search, Star, X } from "lucide-react";
 import { Check } from "lucide-react";
 import { DynamicButton } from "../../../components/ui/button";
 import { capitalizeFirst } from "../../../utils/stringUtils";
+import { DynamicInput } from "../../../components/ui/input";
 
 const FILTER_ROW_CLASS =
   "flex min-w-0 cursor-pointer items-center gap-2.5 py-0.5 text-[14px] font-medium leading-none text-[#434343] transition-colors duration-200 sm:text-[15px]";
@@ -77,8 +78,10 @@ export function FilterSection({
       {searchOpen ? (
         <div className="flex h-8 w-full items-center gap-2 rounded-full bg-[#F4F4F6] px-3">
           <Search size={15} className="shrink-0 text-[#6F7480]" />
-          <input
+          <DynamicInput
             ref={searchInputRef}
+            unwrapped
+            variant="filterSearch"
             type="text"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -89,7 +92,7 @@ export function FilterSection({
               const p = `Search ${title.toLowerCase()}`;
               return p.length > 13 ? p.slice(0, 12) + "…" : p;
             })()}
-            className="min-w-0 flex-1 border-none bg-transparent text-[13px] font-medium text-[#2E2E2E] outline-none placeholder:text-[#8D8F98]"
+            inputClassName="min-w-0 flex-1 border-none bg-transparent text-[13px] font-medium text-[#2E2E2E] outline-none placeholder:text-[#8D8F98]"
           />
           <DynamicButton
             onClick={closeSearch}
@@ -328,7 +331,6 @@ export function PriceRangeFilter({
           onPointerUp={stopRangePointer}
           onPointerCancel={stopRangePointer}
         >
-          {/* Background Track */}
           <div className="absolute left-[9px] right-[9px] top-1/2 -translate-y-1/2">
             <div className="h-[3px] rounded-full bg-[#E6E1D8]" />
 
@@ -342,8 +344,10 @@ export function PriceRangeFilter({
             />
           </div>
 
-          {/* Hidden Inputs */}
-          <input
+          {/* Shared DynamicInput Controls */}
+          <DynamicInput
+            unwrapped
+            variant="filterRange"
             type="range"
             min={minLimit}
             max={maxLimit}
@@ -351,10 +355,11 @@ export function PriceRangeFilter({
             value={localMin}
             onChange={handleMinChange}
             data-price-thumb="min"
-            className="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0 pointer-events-none focus:outline-none"
           />
 
-          <input
+          <DynamicInput
+            unwrapped
+            variant="filterRange"
             type="range"
             min={minLimit}
             max={maxLimit}
@@ -362,7 +367,6 @@ export function PriceRangeFilter({
             value={localMax}
             onChange={handleMaxChange}
             data-price-thumb="max"
-            className="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0 pointer-events-none focus:outline-none"
           />
 
           {/* Left Thumb */}
@@ -513,7 +517,9 @@ function FilterOptionGroup({
                 key={value}
                 className={FILTER_ROW_CLASS}
               >
-                <input
+                <DynamicInput
+                  unwrapped
+                  variant="filterCheckbox"
                   type="checkbox"
                   name={name}
                   value={value}
@@ -536,7 +542,6 @@ function FilterOptionGroup({
                         ];
                     onChange?.(nextValues);
                   }}
-                  className="sr-only"
                 />
                 <FilterTick checked={checked} />
                 <span className=" min-w-0 flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
@@ -693,7 +698,9 @@ export function OptionFilter({
               key={value}
               className={FILTER_ROW_CLASS}
             >
-              <input
+              <DynamicInput
+                unwrapped
+                variant="filterCheckbox"
                 type="checkbox"
                 name={name}
                 value={value}
@@ -777,7 +784,9 @@ export function CheckboxListFilter({
             key={value}
             className={FILTER_ROW_CLASS}
           >
-            <input
+            <DynamicInput
+              unwrapped
+              variant="filterCheckbox"
               type="checkbox"
               name={name}
               value={value}
@@ -840,7 +849,9 @@ export function RatingFilter({
               key={stars}
               className={FILTER_ROW_CLASS}
             >
-              <input
+              <DynamicInput
+                unwrapped
+                variant="filterCheckbox"
                 type="checkbox"
                 name="rating"
                 value={stars}
@@ -856,7 +867,6 @@ export function RatingFilter({
                     : [...selectedValues, value];
                   onChange?.(nextValues);
                 }}
-                className="sr-only"
               />
 
               <FilterTick checked={isSelected} />

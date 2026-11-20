@@ -4,7 +4,7 @@ import { useSearchParams ,useNavigate} from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import Seo from "../../../components/ui/Seo";
-import SearchBar from "../../../components/ui/inputs/SearchBar";
+import SearchBar from "../../../components/ui/input/SearchBar";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { EmptyState } from "../../../components/ui/feedback";
 import { PageContainer } from "../../../components/ui/layout";

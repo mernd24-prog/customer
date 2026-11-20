@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 import Seo from "../../../components/ui/Seo";
-import SearchBar from "../../../components/ui/inputs/SearchBar";
+import SearchBar from "../../../components/ui/input/SearchBar";
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import CatalogTile from "../../../components/ui/CatalogTile";
 import { EmptyState } from "../../../components/ui";
@@ -79,8 +79,6 @@ export default function BrandOutletPage() {
         const list = filterBrandList(rawList, search);
 
         setBrandList(list);
-
-        // Backend pagination
         const backendPagination =
           res?.pagination ||
           res?.meta?.pagination ||

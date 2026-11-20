@@ -1,7 +1,7 @@
 
 import React from "react";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
-import SearchBar from "../../../components/ui/inputs/SearchBar";
+import SearchBar from "../../../components/ui/input/SearchBar";
 
 export function NotificationFilterBar({
   query,

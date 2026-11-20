@@ -32,6 +32,8 @@ import { fetchFullList } from "../../../utils/pages/checkoutUtils";
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
 import { GoldOutlineButton } from "../../../components/ui/button/buttonSpecialized";
+import { DynamicInput } from "../../../components/ui/input";
+
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
 const addressLabels = ADDRESS_LABEL_OPTIONS;
@@ -369,7 +371,9 @@ export default function AddressSelection({
                   ) : (
                     /* Multiple addresses: radio selection */
                     <label className="my-2 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
-                      <input
+                      <DynamicInput
+                        unwrapped
+                        variant="uiAddressRadio"
                         type="radio"
                         name="addressSelect"
                         value={addrId}
@@ -382,7 +386,6 @@ export default function AddressSelection({
                             shouldValidate: true,
                           });
                         }}
-                        className="mt-1 h-fit w-[18px] shrink-0 accent-[#3E4093] sm:h-5 sm:w-5"
                       />
                       <span className="min-w-0">
                         <span className="block font-bold text-base leading-6 text-[#2E2E2E] sm:text-lg sm:leading-7">

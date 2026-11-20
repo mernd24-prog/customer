@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
-import SearchBar from "../../../components/ui/inputs/SearchBar";
+import SearchBar from "../../../components/ui/input/SearchBar";
 import FilterDropdown from "../../../components/ui/FilterDropdown";
 import { AllOrdersIcon } from "../../../components/ui/icons";
 import { PageContainer } from "../../../components/ui/layout";

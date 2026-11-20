@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "../../../utils/common";
 import { sanitizeSearchQuery } from "../../../validations";
 import DynamicButton from "../button/button";
+import DynamicInput from "./input";
 
 const SIZE_CLASSES = {
   sm: "h-9",
@@ -19,20 +19,15 @@ export default function SearchBar({
   onChange,
   onSearch,
   onClear,
-
   className = "",
   inputClassName = "",
   iconClassName = "",
   clearButtonClassName = "",
-
   size = "md",
-
   showButton = true,
   buttonLabel = "Search",
-
   navigateTo = "/search",
   queryParam = "q",
-
   autoFocus = false,
   ariaLabel = "Search",
 }) {
@@ -104,7 +99,9 @@ export default function SearchBar({
           )}
         />
 
-        <input
+        <DynamicInput
+          unwrapped
+          variant="uiCompactSearch"
           type="text"
           value={query}
           onChange={handleChange}
@@ -112,10 +109,7 @@ export default function SearchBar({
           placeholder={placeholder}
           autoFocus={autoFocus}
           aria-label={ariaLabel}
-          className={cn(
-            "h-full min-w-0 w-full flex-1 border-none bg-transparent text-sm font-medium text-[#1F2430] outline-none ring-0 placeholder:text-[#6F7480] focus:outline-none focus:ring-0",
-            inputClassName,
-          )}
+          inputClassName={inputClassName}
         />
 
         {Boolean(query) && (
@@ -146,3 +140,4 @@ export default function SearchBar({
     </div>
   );
 }
+

@@ -24,6 +24,7 @@ import useProfileImage from "../../../hooks/useProfileImage";
 
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
+import DynamicInput from "../../../components/ui/input/input";
 const SUPPORT_BREADCRUMBS = [
   { label: "Home", href: "/" },
   { label: "Help & Support", href: "/support" },
@@ -433,13 +434,14 @@ export default function SupportTicketDetailsPage() {
                     className="sticky bottom-0 z-10 border-t border-[#E3DCCE] bg-white p-2.5 sm:p-4"
                   >
                     <div className="flex items-center gap-2 rounded-full border border-[#DDD8C9] bg-[#F5F4F0] px-3.5 py-2 transition-all focus-within:border-[#CE9F2D] focus-within:bg-white focus-within:ring-3 focus-within:ring-[#CE9F2D]/15">
-                      <input
+                      <DynamicInput
+                        unwrapped
+                        variant="uiSupportReply"
                         type="text"
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder="Type your message to support..."
                         disabled={sendingReply}
-                        className="min-w-0 flex-1 border-none bg-transparent px-1.5 text-xs text-[#1E2338] placeholder-[#8A8F9C] outline-none shadow-none focus:border-none focus:outline-none focus:ring-0 sm:text-sm disabled:opacity-60"
                       />
                       <DynamicButton
                         type="submit"

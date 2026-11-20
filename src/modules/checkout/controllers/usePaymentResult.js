@@ -7,7 +7,12 @@ import {
   findFetchedOrder,
   getDeliveryDateRange,
   formatOrderDate,
+  getOrderNumber,
 } from "../../../utils/orderHelpers";
+import {
+  decodeRouteToken,
+  getOpaqueOrderPath,
+} from "../../../utils/routeTokens";
 
 export default function usePaymentResult() {
   const dispatch = useDispatch();
@@ -17,10 +22,12 @@ export default function usePaymentResult() {
   const [searchParams] = useSearchParams();
   const [pageReady, setPageReady] = useState(false);
 
-  const orderId = searchParams.get("orderId");
+  const orderTokenPayload = decodeRouteToken(searchParams.get("o"), "order");
+  const orderId = orderTokenPayload?.id || searchParams.get("orderId");
   const reason = searchParams.get("reason") || "";
 
   const order = findFetchedOrder(orderState, orderId);
+  const displayOrderRef = getOrderNumber(order) || orderId;
   const currentUser = userState.current || userState.data || {};
   const orderStatus = String(order?.status || order?.orderStatus || "").toLowerCase();
   const paymentStatus = String(
@@ -73,9 +80,11 @@ export default function usePaymentResult() {
 
   const handleViewOrder = () => {
     if (orderId) {
-      dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
-        navigate(`/orders/${encodeURIComponent(orderId)}`);
-      });
+      dispatch(fetchOrderById({ orderId }))
+        .unwrap()
+        .finally(() => {
+          navigate(getOpaqueOrderPath(orderId));
+        });
     } else {
       navigate("/orders");
     }
@@ -85,12 +94,14 @@ export default function usePaymentResult() {
     orderId,
     reason,
     order,
+    displayOrderRef,
     orderState,
     isConfirmed,
     isActuallyFailed,
     isPending,
     deliveryLabel,
     handleViewOrder,
-    navigate
+    navigate,
+    pageReady,
   };
 }

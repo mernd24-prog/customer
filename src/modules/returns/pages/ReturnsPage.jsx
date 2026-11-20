@@ -30,6 +30,7 @@ import {
 
 
 import DynamicButton from "../../../components/ui/button/button.jsx";
+import DynamicInput from "../../../components/ui/input/input";
 function ReturnRequestPage({ orderId }) {
   const {
     loading,
@@ -111,8 +112,8 @@ function ReturnRequestPage({ orderId }) {
               noValidate
             >
               {/* Hidden productId & orderItemId fields */}
-              <input type="hidden" {...register("productId")} />
-              <input type="hidden" {...register("orderItemId")} />
+              <DynamicInput unwrapped variant="uiHidden" type="hidden" registration={register("productId")} />
+              <DynamicInput unwrapped variant="uiHidden" type="hidden" registration={register("orderItemId")} />
 
               {/* Item selector */}
               <div className="grid min-w-0 gap-2">
@@ -278,7 +279,9 @@ function ReturnRequestPage({ orderId }) {
                     >
                       Quantity <span className="text-red-500">*</span>
                     </label>
-                    <input
+                    <DynamicInput
+                      unwrapped
+                      variant="uiQuantity"
                       id="quantity"
                       type="number"
                       min="1"
@@ -287,8 +290,7 @@ function ReturnRequestPage({ orderId }) {
                         selectedItem?.quantity ||
                         99
                       }
-                      {...register("quantity", { valueAsNumber: true })}
-                      className="min-h-11 w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2E2E2E] outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none"
+                      registration={register("quantity", { valueAsNumber: true })}
                     />
                     <p className="text-xs text-[#5E6472]">
                       You can return up to {selectedReturnableQuantity} unit
@@ -338,12 +340,14 @@ function ReturnRequestPage({ orderId }) {
                     >
                       Description <span className="text-red-500">*</span>
                     </label>
-                    <textarea
+                    <DynamicInput
+                      unwrapped
+                      variant="uiTextarea"
+                      as="textarea"
                       id="description"
-                      {...register("description")}
                       rows={4}
                       placeholder="Describe the issue in detail…"
-                      className="min-h-28 w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2E2E2E] outline-none transition hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:outline-none placeholder:text-stone-400 resize-none"
+                      registration={register("description")}
                     />
                     {errors.description && (
                       <span className="text-xs font-medium text-rose-600">

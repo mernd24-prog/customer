@@ -372,12 +372,6 @@ export default function ProductDetailPage() {
                           }
                         />
                       </div>
-
-                      {quantityStockMessage && (
-                        <p className="text-xs font-semibold text-amber-600">
-                          {quantityStockMessage}
-                        </p>
-                      )}
                     </div>
 
                     {/* Delivery Checker */}

@@ -1,8 +1,8 @@
 
 import { FALLBACK_ABOUT } from "../../../data/fallbackCmsData";
 import FallbackImage from "../../../components/ui/FallbackImage";
+import { ArrowRightIcon } from "lucide-react";
 import { DynamicButton } from "../../../components/ui/button";
-
 export default function AboutBanner({ image, data }) {
   const fallbackImage = FALLBACK_ABOUT.banner.image;
   const banner = data || FALLBACK_ABOUT.banner;
@@ -23,8 +23,6 @@ export default function AboutBanner({ image, data }) {
 
         {/* Image Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-black/30" />
-
-        {/* Banner Content */}
         <div className="absolute inset-0 flex items-center justify-center px-4 py-6 sm:px-6 md:px-8">
           <div className="customer-container flex w-full justify-center">
             <div className="w-full max-w-[850px] px-2 py-4 text-center sm:px-5 sm:py-6 md:px-8 md:py-8 lg:px-12 lg:py-10">
@@ -44,11 +42,27 @@ export default function AboutBanner({ image, data }) {
               {banner?.cta?.label && (
                 <div className="mt-4 sm:mt-5 md:mt-7">
                   <DynamicButton
-                    as="a"
-                    variant="bannerAction"
+                    variant="outlineSecondary"
                     size="md"
                     shape="circle"
-                    href={banner.cta.href || "#who-we-are"}
+                    rightIcon={<ArrowRightIcon />}
+                    to={
+                      banner.cta.href && !banner.cta.href.startsWith("#")
+                        ? banner.cta.href
+                        : "/products"
+                    }
+                    href={banner.cta.href?.startsWith("#") ? banner.cta.href : undefined}
+                    onClick={
+                      banner.cta.href?.startsWith("#")
+                        ? (e) => {
+                            e.preventDefault();
+                            const targetId = banner.cta.href.slice(1);
+                            document.getElementById(targetId)?.scrollIntoView({
+                              behavior: "smooth",
+                            });
+                          }
+                        : undefined
+                    }
                   >
                     {banner.cta.label}
                   </DynamicButton>

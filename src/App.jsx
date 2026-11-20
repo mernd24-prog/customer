@@ -21,6 +21,7 @@ import { RaiseTicketModal } from "./modules/support/components/RaiseTicketModal"
 import { TicketSuccessModal } from "./modules/support/components/TicketSuccessModal";
 import ServiceUnavailableDialog from "./components/ui/ServiceUnavailableDialog";
 import { getServiceFailureKind, isServiceUnavailable } from "./api/client";
+import { AuthModalProvider } from "./modules/auth/context/AuthModalContext";
 
 const CART_STORAGE_KEYS = [
   "sam_global_saved_for_later_items", // localStorage
@@ -98,13 +99,15 @@ export default function  App() {
   }, [currentUser, dispatch]);
 
   return (
-    <>
-      <ScrollToTop />
-      <AppRoutes />
-      <AiSupportChatWidget />
-      <RaiseTicketModal />
-      <TicketSuccessModal />
-      <ServiceUnavailableDialog />
-    </>
+    <AuthModalProvider>
+      <>
+        <ScrollToTop />
+        <AppRoutes />
+        <AiSupportChatWidget />
+        <RaiseTicketModal />
+        <TicketSuccessModal />
+        <ServiceUnavailableDialog />
+      </>
+    </AuthModalProvider>
   );
 }

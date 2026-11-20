@@ -2,13 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronDown,
-  Sparkles,
-  MessageSquare,
   Phone,
   Mail,
   Ticket,
 } from "lucide-react";
 import { useSelector } from "react-redux";
+import { EmptyState } from "../../../components/ui";
 
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 import Seo from "../../../components/ui/Seo";
@@ -24,6 +23,8 @@ import { SkeletonLoader } from "../../../components/ui/skeleton";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { useAuthModal } from "../../auth/context/AuthModalContext";
 import FAQContentSection from "../../../components/faq/FAQContentSection";
+import { cn } from "../../../utils/common";
+
 import {
   FALLBACK_SUPPORT,
   FALLBACK_CMS_DATA,
@@ -194,7 +195,7 @@ export default function SupportHelpCenter() {
         {/* Mobile Quick Actions - Vertical List */}
         {quickActions.length > 0 && (
           <section className="mb-5  md:hidden ">
-           <div className="mb-2 pt-3 pb-1 lg:mb-3 lg:py-2">
+            <div className="mb-2 pt-3 pb-1 lg:mb-3 lg:py-2">
               <h2 className="text-base font-bold text-[#1B1D60]">
                 Quick Actions
               </h2>
@@ -381,6 +382,7 @@ export default function SupportHelpCenter() {
                     value={selectedSupportCategory}
                     onChange={setSelectedSupportCategory}
                     placeholder="All"
+                    portal
                   />
                 </div>
 
@@ -416,13 +418,31 @@ export default function SupportHelpCenter() {
                   {!supportLoading &&
                     !supportError &&
                     supportQueries.length === 0 && (
-                      <p className="py-5 text-sm font-medium text-[#666666]">
-                        {isSignedIn
-                          ? "No support tickets found."
-                          : "Login to view your tickets."}
-                      </p>
+                      <EmptyState
+                        title={
+                          isSignedIn
+                            ? "No Tickets Yet"
+                            : "Login to View Your Tickets"
+                        }
+                        description={
+                          isSignedIn
+                            ? "Your support requests will appear here."
+                            : "Sign in to track your support requests."
+                        }
+                        actionLabel={!isSignedIn ? "Login Now" : undefined}
+                        onAction={!isSignedIn ? openAuthModal : undefined}
+                        buttonSize="sm"
+                        buttonClassName="!h-8 !px-4 !text-xs"
+                        className={cn(
+                          "[&>*:first-child]:hidden",
+                          "!min-h-0 !px-1 !py-1",
+                          "!rounded-none !border-0 !bg-transparent",
+                          "[&>h2]:!mt-0",
+                          "[&>p]:!mt-0",
+                          "[&>div]:!mt-2",
+                        )}
+                      />
                     )}
-
                   {!supportLoading &&
                     !supportError &&
                     supportQueries.map((ticket) => (
@@ -441,7 +461,6 @@ export default function SupportHelpCenter() {
                               {ticket.categoryLabel} · {ticket.updatedAt}
                             </p>
                           </div>
-
                           <SupportStatusBadge status={ticket.status} />
                         </div>
                       </Link>

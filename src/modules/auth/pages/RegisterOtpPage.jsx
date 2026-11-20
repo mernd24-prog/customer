@@ -123,8 +123,9 @@ export default function RegisterOtpPage() {
           <p className="text-center text-sm leading-[20px] text-muted">
             Already Have an Account?{" "}
             <DynamicButton
+              type="button"
               variant="link"
-              onClick={() => navigate(AUTH_ROUTES.login)}
+              to={AUTH_ROUTES.login}
               className="inline p-0 font-semibold text-gold underline-offset-4 hover:text-gold-dark hover:underline"
             >
               Login
@@ -134,8 +135,9 @@ export default function RegisterOtpPage() {
           <p className="text-center text-[0.8rem] text-muted">
             Prefer Password?{" "}
             <DynamicButton
+              type="button"
               variant="link"
-              onClick={() => navigate(AUTH_ROUTES.register)}
+              to={AUTH_ROUTES.register}
               className="inline p-0 font-semibold text-gold underline-offset-4 hover:text-gold-dark hover:underline"
             >
               Register with Password

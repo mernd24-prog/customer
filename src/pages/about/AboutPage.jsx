@@ -36,67 +36,71 @@ missionPage?.sections?.[0] || FALLBACK_ABOUT.mission;
 const chooseSection =
 choosePage?.sections?.[0] || FALLBACK_ABOUT.whyChoose;
 
-useEffect(() => {
-if (!location.hash) return;
+  useEffect(() => {
+    if (!location.hash) return;
 
+    const id = location.hash.slice(1);
 
-const id = location.hash.slice(1);
+    const scrollToElement = () => {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: "smooth",
+      });
+    };
 
-const scrollToElement = () => {
-  document.getElementById(id)?.scrollIntoView({
-    behavior: "smooth",
-  });
-};
+    const t1 = setTimeout(scrollToElement, 100);
+    const t2 = setTimeout(scrollToElement, 700);
 
-const t1 = setTimeout(scrollToElement, 100);
-const t2 = setTimeout(scrollToElement, 700);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [
+    location.hash,
+    location.key,
+    aboutSamGlobalSection,
+    valuesSection,
+    missionSection,
+    chooseSection,
+  ]);
 
-return () => {
-  clearTimeout(t1);
-  clearTimeout(t2);
-};
+  return (
+    <>
+      <Seo
+        title="About Us - Sam Global"
+        metaDescription="Learn more about Sam Global, our story, our values, and our mission."
+      />
 
+      <AboutBanner
+        data={bannerSection}
+        image={
+          bannerSection?.image?.url ||
+          FALLBACK_ABOUT.banner.image
+        }
+      />
 
-}, [
-location.hash,
-location.key,
-aboutSamGlobalSection,
-valuesSection,
-chooseSection,
-]);
+      <div id="our-story" style={{ scrollMarginTop: "160px" }}>
+        <div id="who-we-are" style={{ scrollMarginTop: "160px" }}>
+          <OurStory data={aboutSamGlobalSection} />
+        </div>
+      </div>
 
-return (
-<> <Seo
-     title="About Us - Sam Global"
-     metaDescription="Learn more about Sam Global, our story, our values, and our mission."
-   />
+      <div id="our-philosophy" style={{ scrollMarginTop: "160px" }}>
+        <div id="our-values" style={{ scrollMarginTop: "160px" }}>
+          <ValuesSection data={valuesSection} />
+        </div>
+      </div>
 
+      <div id="what-we-are-building" style={{ scrollMarginTop: "160px" }}>
+        <div id="our-mission" style={{ scrollMarginTop: "160px" }}>
+          <InfoSection data={missionSection} />
+        </div>
+      </div>
 
-  <AboutBanner
-    data={bannerSection}
-    image={
-      bannerSection?.image?.url ||
-      FALLBACK_ABOUT.banner.image
-    }
-  />
-
-  <div id="who-we-are" style={{ scrollMarginTop: "160px" }}>
-    <OurStory data={aboutSamGlobalSection} />
-  </div>
-
-  <div id="our-values" style={{ scrollMarginTop: "160px" }}>
-    <ValuesSection data={valuesSection} />
-  </div>
-
-  <div id="what-we-are-building" style={{ scrollMarginTop: "160px" }}>
-    <InfoSection data={missionSection} />
-  </div>
-
-  <div id="why-choose-us" style={{ scrollMarginTop: "160px" }}>
-    <WhyChooseSection data={chooseSection} />
-  </div>
-</>
-
-
-);
+      <div id="our-commitment" style={{ scrollMarginTop: "160px" }}>
+        <div id="why-choose-us" style={{ scrollMarginTop: "160px" }}>
+          <WhyChooseSection data={chooseSection} />
+        </div>
+      </div>
+    </>
+  );
 }

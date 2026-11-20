@@ -17,10 +17,10 @@ import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal"
 import Loader from "../../../components/ui/Loader";
 import { CHECKOUT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { PageContainer } from "../../../components/ui/layout";
-
-
 import { DynamicButton } from "../../../components/ui/button";
 import { GoldButton } from "../../../components/ui/button/buttonSpecialized";
+import { DynamicInput } from "../../../components/ui/input";
+
 export default function CheckoutPage() {
   const {
     navigate,
@@ -167,22 +167,25 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            <input
+            <DynamicInput
+              unwrapped
+              variant="uiHidden"
               type="hidden"
               value={String(useNewAddress)}
-              {...register("useNewAddress")}
+              registration={register("useNewAddress")}
             />
 
-            <input
+            <DynamicInput
+              unwrapped
+              variant="uiHidden"
               type="hidden"
               value={selectedAddressId || ""}
-              {...register("selectedAddressId")}
+              registration={register("selectedAddressId")}
             />
 
             <OrderDetailLayout>
               <div className="flex min-w-0 flex-col">
                 <Breadcrumbs
-                
                   items={[
                     { label: "Home", href: "/" },
                     { label: "Cart", href: "/cart" },

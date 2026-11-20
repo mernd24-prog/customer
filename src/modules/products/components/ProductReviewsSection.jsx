@@ -19,6 +19,7 @@ import ReviewMediaLightbox from "./ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 import EmptyState from "../../../components/ui/feedback/EmptyState";
+import { DynamicInput } from "../../../components/ui/input";
 import StarRating, {
   RatingStars,
 } from "../../../components/ui/display/StarRating";
@@ -267,117 +268,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
     );
   };
 
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full min-w-0 rounded-lg border border-[#E7D9B8] bg-white p-3 sm:p-5 lg:p-6 flex flex-col gap-3 sm:gap-4 shadow-xs"
-    >
-      <h3 className="text-sm sm:text-base font-bold text-[#1B1D60]">
-        Write a Review
-      </h3>
-
-      {deliveredOrders.length > 1 && (
-        <div>
-          <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
-            Select Order
-          </label>
-          <select
-            value={form.orderId}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, orderId: e.target.value }))
-            }
-            className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-[#CE9F2D] outline-none"
-          >
-            {deliveredOrders.map((o) => {
-              const id = o.id || o.orderId;
-              return (
-                <option key={id} value={id}>
-                  Order #{o.orderNumber || id?.slice(-8)}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-      )}
-
-      <div>
-        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1.5 block">
-          Your Rating <span className="text-red-500">*</span>
-        </label>
-        <StarInput
-          value={form.rating}
-          onChange={(r) => setForm((f) => ({ ...f, rating: r }))}
-          size={22}
-        />
-      </div>
-
-      <div>
-        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
-          Title
-        </label>
-        <input
-          type="text"
-          value={form.title}
-          onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-          maxLength={200}
-          required
-          placeholder="Summarize your review in a few words"
-          className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-[#CE9F2D] outline-none"
-        />
-      </div>
-
-      <div>
-        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
-          Review
-        </label>
-        <textarea
-          rows={3}
-          value={form.reviewText}
-          onChange={(e) =>
-            setForm((f) => ({ ...f, reviewText: e.target.value }))
-          }
-          maxLength={2000}
-          required
-          placeholder="Share your experience with this product…"
-          className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm resize-none focus:border-[#CE9F2D] outline-none"
-        />
-        <p className="text-xs text-[#737373] text-right mt-1">
-          {form.reviewText.length}/2000
-        </p>
-      </div>
-
-      <ReviewImageUploader
-        value={reviewImages}
-        onChange={setReviewImages}
-        disabled={submitting}
-      />
-
-      {submitError && (
-        <p className="text-xs text-red-600 rounded-lg bg-red-50 px-3 py-2 border border-red-200">
-          {submitError}
-        </p>
-      )}
-
-      <DynamicButton
-        type="submit"
-        disabled={
-          submitting ||
-          isUploadingImages ||
-          !form.rating ||
-          !form.orderId ||
-          !form.title.trim() ||
-          !form.reviewText.trim()
-        }
-        className="w-full h-10 rounded-lg bg-[#CE9F2D] text-white font-bold text-xs sm:text-sm hover:bg-[#A96F14] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
-      >
-        {submitting
-          ? "Submitting…"
-          : isUploadingImages
-            ? "Uploading…"
-            : "Submit Review"}
-      </DynamicButton>
-    </form>
-  );
+  
 }
 
 // ── Main section ──────────────────────────────────────────────────────────────
@@ -600,10 +491,10 @@ export default function ProductReviewsSection({ productId, product }) {
   const displayRatingBreakdown = getRatingBreakdown(stats);
   const hasReviewSummary = displayReviewCount > 0 || displayTotal > 0;
   return (
-    <section id="reviews" className="mt-8 w-full min-w-0 lg:mt-12">
+    <section id="reviews" className="mt-4 w-full min-w-0 lg:mt-6">
       <div
-        className={`flex min-w-0 flex-col gap-5 sm:gap-6 ${
-          hasReviewSummary ? "lg:flex-row lg:items-start lg:gap-6 xl:gap-8" : ""
+        className={`flex min-w-0 flex-col gap-3 sm:gap-4 ${
+          hasReviewSummary ? "lg:flex-row lg:items-start lg:gap-5 xl:gap-6" : ""
         }`}
       >
         {/* Left Sidebar */}
@@ -641,7 +532,6 @@ export default function ProductReviewsSection({ productId, product }) {
                   </div>
                 </div>
 
-                {/* Rating Distribution */}
                 <div className="w-full min-w-0 space-y-2">
                   {displayRatingBreakdown.map((item, index) => {
                     const rating = item.rating || 5 - index;
@@ -690,7 +580,7 @@ export default function ProductReviewsSection({ productId, product }) {
         )}
 
         {/* Right Section */}
-        <div className="flex w-full min-w-0 flex-1 flex-col gap-1">
+        <div className="flex w-full min-w-0 flex-1 flex-col gap-0">
           {/* Top Bar: Heading + Actions */}
           <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -709,19 +599,7 @@ export default function ProductReviewsSection({ productId, product }) {
               )}
             </div>
 
-            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
-              {canWriteReview && (
-                <DynamicButton
-                  variant="primary"
-                  size="sm"
-                  shape="rounded"
-                  onClick={() => setShowForm((prev) => !prev)}
-                  className="w-full sm:w-auto"
-                >
-                  {showForm ? "Cancel Review" : "Write a Review"}
-                </DynamicButton>
-              )}
-            </div>
+           
           </div>
 
           {/* Form */}
@@ -777,7 +655,7 @@ export default function ProductReviewsSection({ productId, product }) {
                   ? "Your feedback can help other shoppers choose with confidence."
                   : "Verified customer reviews will appear here. Check back after shoppers share their experience."
               }
-              className="!border-solid lg:!min-h-[350px] [&_p]:!max-w-[400px]"
+              className="!border-solid !min-h-[220px] lg:!min-h-[220px] [&_h2]:!mt-1 [&_p]:!max-w-[400px] [&_p]:!mt-1"
             />
           )}
 

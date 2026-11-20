@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import DynamicInput from "./input/input";
 
 export default function OtpInput({
   value = "",
@@ -51,8 +52,12 @@ export default function OtpInput({
     <div>
       <div className="grid grid-cols-6 gap-2">
         {digits.map((digit, index) => (
-          <input
+          <DynamicInput
             key={index}
+            unwrapped
+            variant="auth"
+            size="none"
+            shape="rounded"
             ref={(el) => {
               inputRefs.current[index] = el;
             }}
@@ -64,7 +69,8 @@ export default function OtpInput({
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             onPaste={handlePaste}
-            className="h-12 w-full rounded-[8px] border border-border-strong bg-white text-center  text-lg font-semibold text-ink outline-none transition-all duration-300 ease-in-out focus:outline-none"
+            inputClassName="h-12 w-full text-center text-lg font-semibold"
+            error={error}
           />
         ))}
       </div>
