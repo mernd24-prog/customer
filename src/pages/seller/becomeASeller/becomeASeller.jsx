@@ -318,8 +318,8 @@ export default function BecomeASeller() {
                   {mappedExperiences.length > storySlidesPerView && (
                     <div className="hidden sm:block md:shrink-0">
                       <CarouselNavigation
-                        prevRef=".seller-story-prev"
-                        nextRef=".seller-story-next"
+                        // prevRef=".seller-story-prev"
+                        // nextRef=".seller-story-next"
                         prevLabel="Previous seller story"
                         nextLabel="Next seller story"
                         alwaysVisible
