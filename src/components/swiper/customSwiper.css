@@ -1,5 +1,3 @@
-
-
 .custom-swiper {
   --swiper-nav-size: 36px;
   --swiper-icon-size: 18px;
@@ -90,41 +88,57 @@
   opacity: 0.4;
 }
 
-.category-custom-pagination .swiper-pagination-bullet {
-  width: 8px !important;
-  height: 8px !important;
-  background-color: #1b1d60 !important;
-  opacity: 0.25 !important;
-  margin: 0 4px !important;
-  border-radius: 50% !important;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: inline-block !important;
-  outline: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-.category-custom-pagination .swiper-pagination-bullet-active {
-  width: 24px !important;
-  border-radius: 4px !important;
-  background-color: #1b1d60 !important;
-  opacity: 1 !important;
-}
-
-.category-custom-pagination .swiper-pagination-bullet:hover {
-  opacity: 0.8 !important;
-}
-
-.category-custom-pagination.swiper-pagination {
-  position: relative !important;
-  bottom: auto !important;
-  z-index: 10;
-  display: flex !important;
-  justify-content: center;
+/* Shared pagination visual for every carousel in the application. */
+.shared-carousel-pagination,
+.category-custom-pagination,
+.custom-swiper-pagination,
+.hero-banner-pagination,
+.seller-experience-swiper .swiper-pagination {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  right: auto;
+  z-index: 30;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.shared-carousel-pagination .swiper-pagination-bullet,
+.category-custom-pagination .swiper-pagination-bullet,
+.custom-swiper-pagination .swiper-pagination-bullet,
+.hero-banner-pagination .swiper-pagination-bullet,
+.seller-experience-swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  margin: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #b9b5d8;
+  opacity: 1;
+  transition: width 200ms ease, background-color 200ms ease;
+}
+
+.shared-carousel-pagination .swiper-pagination-bullet-active,
+.category-custom-pagination .swiper-pagination-bullet-active,
+.custom-swiper-pagination .swiper-pagination-bullet-active,
+.hero-banner-pagination .swiper-pagination-bullet-active,
+.seller-experience-swiper .swiper-pagination-bullet-active {
+  width: 24px;
+  background: #3e4093;
+}
+
+.hero-banner-pagination,
+.seller-experience-swiper .swiper-pagination {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  margin: 0;
 }
 
 .swiper-slide img {
@@ -162,26 +176,16 @@
 
 .hero-banner-pagination .swiper-pagination-bullet::after,
 .seller-experience-swiper .swiper-pagination-bullet::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 999px;
-  background: #b9b5d8;
-  transform: scaleX(0.3076);
-  transition:
-    transform 200ms ease,
-    background-color 200ms ease;
+  display: none;
 }
 
-.hero-banner-pagination .swiper-pagination-bullet-active::after,
-.seller-experience-swiper .swiper-pagination-bullet-active::after {
-  transform: scaleX(1);
-  background: #3e4093;
+.category-custom-pagination .swiper-pagination-bullet,
+.category-custom-pagination .swiper-pagination-bullet-active {
+  display: inline-block;
+  margin: 0;
+  border: 0;
+  box-shadow: none;
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   .custom-swiper-pagination .swiper-pagination-bullet,

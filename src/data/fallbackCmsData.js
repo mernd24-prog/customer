@@ -1,8 +1,4 @@
 import { SELLER_LOGIN_URL } from "../config/seller";
-import {
-  CANONICAL_FAQ_DATA,
-  CANONICAL_POLICY_DATA,
-} from "./canonicalLegalContent";
 
 const image = (url, alt = "") => ({ url, alt });
 
@@ -78,24 +74,7 @@ export const FALLBACK_HERO_SLIDES = [
   secondaryLink: "/categories",
 }));
 export const FALLBACK_PROMO_CARDS = [
-  [
-    "diwali.webp",
-    "Diwali Special Collection",
-    "Celebrate the Festival of Lights with beautiful festive décor, traditional diyas, and special gifts for every occasion",
-    "Explore now",
-  ],
-  [
-    "diwali.webp",
-    "Diwali Special Collection",
-    "Celebrate the Festival of Lights with beautiful festive décor, traditional diyas, and special gifts for every occasion",
-    "Explore now",
-  ],
-  [
-    "diwali.webp",
-    "Diwali Special Collection",
-    "Celebrate the Festival of Lights with beautiful festive décor, traditional diyas, and special gifts for every occasion",
-    "Explore now",
-  ],
+
   [
     "diwali.webp",
     "Diwali Special Collection",
@@ -439,82 +418,82 @@ export const FALLBACK_SELLER_PAGE = {
   ],
 };
 /* -------------------------------------------------------------------------- */ /* Seller Policy                                                              */ /* -------------------------------------------------------------------------- */ export const FALLBACK_SELLER_POLICY =
-  {
-    title: "Seller Policy",
-    excerpt: "Seller Guidelines",
-    description:
-      "Our Seller Policy defines the standards and responsibilities that create a trusted experience for sellers and customers.",
-    image: image("/image/png/fallback/sellerPolicy.webp", "Seller Policy"),
-    cta: { label: "Become a Seller", url: "/become-a-seller" },
-    sections: [
+{
+  title: "Seller Policy",
+  excerpt: "Seller Guidelines",
+  description:
+    "Our Seller Policy defines the standards and responsibilities that create a trusted experience for sellers and customers.",
+  image: image("/image/png/fallback/sellerPolicy.webp", "Seller Policy"),
+  cta: { label: "Become a Seller", url: "/become-a-seller" },
+  sections: [
+    [
+      "policy-highlights",
+      "Everything You Need To Sell Confidently",
+      "Our marketplace policies protect sellers and strengthen customer confidence.",
       [
-        "policy-highlights",
-        "Everything You Need To Sell Confidently",
-        "Our marketplace policies protect sellers and strengthen customer confidence.",
         [
-          [
-            "Genuine Products",
-            "Sell only authentic and legally sourced products.",
-          ],
-          [
-            "Accurate Listings",
-            "Provide correct titles, images, pricing and specifications.",
-          ],
-          ["Timely Shipping", "Dispatch orders within the promised timeline."],
+          "Genuine Products",
+          "Sell only authentic and legally sourced products.",
+        ],
+        [
+          "Accurate Listings",
+          "Provide correct titles, images, pricing and specifications.",
+        ],
+        ["Timely Shipping", "Dispatch orders within the promised timeline."],
+      ],
+    ],
+    [
+      "seller-responsibilities",
+      "Your Commitment Matters",
+      "Follow these responsibilities to provide a trusted shopping experience.",
+      [
+        [
+          "List Authentic Products",
+          "Upload only original products with complete details.",
+        ],
+        [
+          "Maintain Accurate Listings",
+          "Keep pricing, stock, and information updated.",
+        ],
+        [
+          "Process Orders Quickly",
+          "Accept, pack and dispatch every order on time.",
+        ],
+        [
+          "Support Customers",
+          "Respond professionally to customer queries and returns.",
         ],
       ],
+    ],
+    [
+      "account-compliance",
+      "Maintain a Healthy Seller Account",
+      "We monitor seller performance to ensure reliable service.",
       [
-        "seller-responsibilities",
-        "Your Commitment Matters",
-        "Follow these responsibilities to provide a trusted shopping experience.",
         [
-          [
-            "List Authentic Products",
-            "Upload only original products with complete details.",
-          ],
-          [
-            "Maintain Accurate Listings",
-            "Keep pricing, stock, and information updated.",
-          ],
-          [
-            "Process Orders Quickly",
-            "Accept, pack and dispatch every order on time.",
-          ],
-          [
-            "Support Customers",
-            "Respond professionally to customer queries and returns.",
-          ],
+          "Good Standing",
+          "Maintain accurate listings, timely shipping, and quality service.",
+        ],
+        [
+          "Performance Review",
+          "Accounts are reviewed using fulfillment and satisfaction data.",
+        ],
+        [
+          "Policy Violations",
+          "Repeated violations can lead to account restrictions.",
         ],
       ],
-      [
-        "account-compliance",
-        "Maintain a Healthy Seller Account",
-        "We monitor seller performance to ensure reliable service.",
-        [
-          [
-            "Good Standing",
-            "Maintain accurate listings, timely shipping, and quality service.",
-          ],
-          [
-            "Performance Review",
-            "Accounts are reviewed using fulfillment and satisfaction data.",
-          ],
-          [
-            "Policy Violations",
-            "Repeated violations can lead to account restrictions.",
-          ],
-        ],
-      ],
-    ].map(([type, title, description, points]) => ({
-      type,
-      title,
-      description,
-      points: points.map(([pointTitle, pointDescription]) => ({
-        title: pointTitle,
-        description: pointDescription,
-      })),
+    ],
+  ].map(([type, title, description, points]) => ({
+    type,
+    title,
+    description,
+    points: points.map(([pointTitle, pointDescription]) => ({
+      title: pointTitle,
+      description: pointDescription,
     })),
-  };
+  })),
+};
 /* -------------------------------------------------------------------------- */ /* About                                                                      */ /* -------------------------------------------------------------------------- */
 export const FALLBACK_ABOUT = {
   banner: {
@@ -1227,7 +1206,7 @@ export const FALLBACK_POLICY_DATA = {
     ],
   },
 };
-Object.assign(FALLBACK_POLICY_DATA, CANONICAL_POLICY_DATA);
+
 export const FALLBACK_CMS_PAGE_CONTENT = {
   "privacy-policy": {
     slug: "privacy-policy",
@@ -1239,7 +1218,6 @@ export const FALLBACK_CMS_PAGE_CONTENT = {
       PRIVACY POLICY – SAM GLOBAL
       Your Privacy Matters
       At Sam Global, we are committed to protecting your personal information and ensuring transparency in how your data is collected, used, and safeguarded.
-
       1. Information We Collect
       We may collect the following types of information:
       Personal Information
@@ -1546,10 +1524,7 @@ export const FALLBACK_CMS_DATA = {
     },
   },
 };
-FALLBACK_CMS_DATA.faq = CANONICAL_FAQ_DATA;
-/* -------------------------------------------------------------------------- */
-/* Footer                                                                     */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */ /* Footer                                                                     */ /* -------------------------------------------------------------------------- */
 
 const footerImage = (url, alt = "") => ({
   url,
@@ -1661,14 +1636,6 @@ export const FALLBACK_FOOTER = {
           label: "Terms of Use",
           href: "/terms-of-use",
         },
-        // {
-        //   label: "Privacy Policy",
-        //   href: "/privacy-policy",
-        // },
-        // {
-        //   label: "Cookie Policy",
-        //   href: "/cookie-policy",
-        // },
         {
           label: "FAQ",
           href: "/faq",

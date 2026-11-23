@@ -44,7 +44,6 @@ const GuestOtpAuthModal = lazy(
   () => import("../../../components/ui/overlay/GuestOtpAuthModal"),
 );
 const SizeChartSidebar = lazy(() => import("../components/SizeChartSidebar"));
-import { capitalizeFirst } from "../../../utils/stringUtils";
 
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import ApiState from "../../../components/ui/ApiState";
@@ -255,9 +254,9 @@ export default function ProductDetailPage() {
                           variant="textGold"
                           to={`/brands/${encodeURIComponent(brand)}`}
                           title={brand}
-                          className="max-w-full break-words text-sm font-bold tracking-wide uppercase"
+                          className="capitalize max-w-full break-words text-sm font-bold tracking-wide uppercase"
                         >
-                          {capitalizeFirst(brand)}
+                          {brand}
                         </DynamicButton>
                       ) : (
                         <span className="font-medium text-muted">Not specified</span>
@@ -267,15 +266,15 @@ export default function ProductDetailPage() {
                     <h1
                       className={`break-words leading-snug ${
                         brand
-                          ? "text-base font-semibold text-[#1B1D60] sm:text-lg"
-                          : "text-lg font-bold text-[#1B1D60] sm:text-xl"
+                          ? "capitalize text-base font-semibold text-[#1B1D60] sm:text-lg"
+                          : "capitalize text-lg font-bold text-[#1B1D60] sm:text-xl"
                       }`}
                     >
                       <ShowMoreText
                         text={productTitle}
                         mode="lines"
                         limit={1}
-                        buttonClassName="ml-1 border-0 bg-transparent p-0 text-xs font-semibold text-[#CE9F2D] shadow-none outline-none"
+                        buttonClassName=" ml-1 border-0 bg-transparent p-0 text-xs font-semibold text-[#CE9F2D] shadow-none outline-none"
                       />
                     </h1>
 

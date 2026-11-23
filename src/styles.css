@@ -347,7 +347,9 @@ select:-webkit-autofill {
   outline: none !important;
   outline-offset: 0 !important;
 }
-
+.d {
+  border: 1px solid var(--customer-danger) !important;
+} 
 .product-variant-option:focus,
 .product-variant-option:focus-visible,
 .product-variant-option:focus-within,

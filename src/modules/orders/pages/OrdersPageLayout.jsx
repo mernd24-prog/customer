@@ -4,7 +4,6 @@ import Seo from "../../../components/ui/Seo";
 import OrderDetailPage from "./OrderDetailPage";
 import OrderListPage from "./OrderListPage";
 import { decodeRouteToken, getOpaqueOrderPath } from "../../../utils/routeTokens";
-import { RETURNS_ROUTES } from "../../returns/routes/apiRoutes";
 
 /**
  * Wrapper/layout page – decides whether to show Order List or Order Detail.
@@ -17,11 +16,7 @@ export default function OrdersPageLayout({ detail = false, track = false, return
   const tokenPayload = decodeRouteToken(orderToken, "order");
   const resolvedOrderId = tokenPayload?.id || orderId;
 
-  const isReturnOnly = Boolean(
-    returnOnly ||
-    location.pathname === "/returns-refunds" ||
-    location.pathname === RETURNS_ROUTES?.returnsRefunds,
-  );
+  const isReturnOnly = Boolean(returnOnly);
 
   useEffect(() => {
     if (!orderId || !resolvedOrderId) return;

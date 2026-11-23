@@ -1,7 +1,6 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import DynamicButton from "../button/button.jsx";
+
+import CarouselNavButton from "../buttons/CarouselNavButton";
 import { cn } from "../../../utils/common";
-import "./carousel.css";
 
 export default function CarouselNavigation({
   prevRef,
@@ -21,35 +20,33 @@ export default function CarouselNavigation({
   inline = false,
 }) {
   const previousButton = !hidePrev ? (
-    <DynamicButton
+    <CarouselNavButton
       ref={prevRef}
-      type="button"
-      aria-label={prevLabel}
+      direction="prev"
+      ariaLabel={prevLabel}
       onClick={onPrev}
+      disabled={isBeginning && !alwaysVisible}
       className={cn(
-        "carousel-nav-button carousel-nav-prev",
-        !alwaysVisible && isBeginning && "carousel-nav-hidden",
+        "carousel-nav-position carousel-nav-prev",
+        !alwaysVisible && isBeginning && "opacity-0 pointer-events-none",
         prevClassName,
       )}
-    >
-      <ChevronLeft aria-hidden="true" />
-    </DynamicButton>
+    />
   ) : null;
 
   const nextButton = !hideNext ? (
-    <DynamicButton
+    <CarouselNavButton
       ref={nextRef}
-      type="button"
-      aria-label={nextLabel}
+      direction="next"
+      ariaLabel={nextLabel}
       onClick={onNext}
+      disabled={isEnd && !alwaysVisible}
       className={cn(
-        "carousel-nav-button carousel-nav-next",
-        !alwaysVisible && isEnd && "carousel-nav-hidden",
+        "carousel-nav-position carousel-nav-next",
+        !alwaysVisible && isEnd && "opacity-0 pointer-events-none",
         nextClassName,
       )}
-    >
-      <ChevronRight aria-hidden="true" />
-    </DynamicButton>
+    />
   ) : null;
 
   if (inline) {
@@ -62,9 +59,9 @@ export default function CarouselNavigation({
   }
 
   return (
-    <>
+    <div className={cn("contents", className)}>
       {previousButton}
       {nextButton}
-    </>
+    </div>
   );
 }

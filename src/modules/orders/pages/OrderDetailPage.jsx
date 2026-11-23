@@ -1,14 +1,3 @@
-import { Link } from "react-router-dom";
-import { MdOutlineShoppingCart } from "react-icons/md";
-import {
-  IndianRupee,
-  RotateCcw,
-  ReceiptText,
-  RefreshCw,
-  XCircle,
-  FileText,
-  Download,
-} from "lucide-react";
 import CancelOrderModal from "../components/CancelOrderModal";
 import ApiState from "../../../components/ui/ApiState";
 import { SKELETON_PRESETS } from "../../../components/ui/skeleton/skeletonPresets";
@@ -17,15 +6,14 @@ import Breadcrumbs from "../../common/components/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import OrderItemsSection from "../components/OrderItemsSection";
 import OrderPaymentSummary from "../components/OrderPaymentSummary";
-import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
 import { useOrderDetail } from "../controllers/useOrderDetail";
 import { DynamicButton } from "../../../components/ui/button";
+import { FileText, Download } from "lucide-react";
 
 import {
   getItemImage,
   getProductTitle,
   getItemProductPath,
-  formatOrderDate,
   getOrderItemColor,
   getOrderItemId,
   getItemLineTotal,
@@ -106,60 +94,6 @@ export default function OrderDetailPage({ orderId }) {
                 copyLastItem
                 copyValue={orderNumber}
               />
-              {/* <OrderDetailInfoGrid
-                items={[
-                  {
-                    icon: <MdOutlineShoppingCart size={20} />,
-                    label: "Placed on",
-                    value: formatOrderDate(
-                      order?.created_at || order?.createdAt,
-                    ),
-                    tone: "blue",
-                  },
-
-                  {
-                    icon: <IndianRupee size={20} />,
-                    label: selectedOrderItem
-                      ? "Selected item amount"
-                      : "Order amount",
-                    value: formatMoney(
-                      selectedOrderItem ? selectedItemAmount : customerAmount,
-                      currency,
-                    ),
-                    tone: "yellow",
-                  },
-                  ...((
-                    selectedOrderItem
-                      ? selectedItemReturnDeadline
-                      : returnEligibleUntil
-                  )
-                    ? [
-                        {
-                          icon: <RotateCcw size={20} />,
-                          label: selectedOrderItem
-                            ? selectedItemReturnWindowOpen
-                              ? "Selected item return deadline"
-                              : "Selected item return closed"
-                            : returnWindowOpen
-                              ? "Latest item return deadline"
-                              : "All return windows closed",
-                          value: formatOrderDate(
-                            selectedOrderItem
-                              ? selectedItemReturnDeadline
-                              : returnEligibleUntil,
-                          ),
-                          tone: (
-                            selectedOrderItem
-                              ? selectedItemReturnWindowOpen
-                              : returnWindowOpen
-                          )
-                            ? "blue"
-                            : "yellow",
-                        },
-                      ]
-                    : []),
-                ]}
-              /> */}
             </section>
 
             <StickySidebarLayout

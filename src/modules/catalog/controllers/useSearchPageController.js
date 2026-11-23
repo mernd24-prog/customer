@@ -9,7 +9,6 @@ import {
 } from "../../../features/search/searchSlice";
 import { sanitizeSearchQuery } from "../../../validations";
 import { parseMultiValue, serializeMultiValue, flattenCategoryList, getClearFiltersAction, getFacetList, normalizeFacetOption, getNormalizedAttributeFacets, formatCategoryOptionsForTree } from "../../../utils/filterUtils";
-import { capitalizeFirst } from "../../../utils/stringUtils";
 import { buildRatingCountMap, getAvailabilityCounts, sortProducts } from "../../../utils/ecommerce";
 import { scrollToTop } from "../../../utils/common";
 import { getFilterSections } from "../../../modules/products/controllers/getFilterSections";

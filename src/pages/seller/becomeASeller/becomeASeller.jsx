@@ -24,10 +24,12 @@ import { DynamicButton } from "../../../components/ui/button";
 import { PillButton } from "../../../components/ui/button/buttonSpecialized";
 import CarouselNavigation from "../../../components/ui/carousel/CarouselNavigation";
 import CarouselCard from "../../../components/ui/carousel/CarouselCard";
+import ShowMoreText from "../../../utils/showMore";
 
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { FALLBACK_SELLER_PAGE } from "../../../data/fallbackCmsData";
 import { SELLER_LOGIN_URL } from "../../../config/seller";
+import { sellerStorySlug } from "./SellerStoryDetailPage";
 
 const benefitIcons = [
   CircleDollarSign,
@@ -109,22 +111,28 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
 function SellerStoryCard({ story, featured = false }) {
   return (
     <CarouselCard
+      href={`/seller-stories/${story.slug}`}
       image={story.photo}
       alt={`${story.name} at their business`}
       fallbackType="seller"
       articleClassName={
         featured
-          ? "min-h-[220px] grid-cols-1 bg-white md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] md:min-h-[360px]"
-          : "h-full flex-col bg-white p-2.5"
+          ? "grid min-h-0 grid-cols-1 overflow-hidden bg-white md:min-h-[320px] md:grid-cols-2"
+          : "flex h-full flex-col bg-white p-3"
       }
-      imageClassName="object-top"
+      imageClassName={
+        featured
+          ? "!h-[220px] !min-h-[220px] w-full shrink-0 object-cover object-center md:!h-full md:!min-h-[320px]"
+          : "!h-[190px] !min-h-[190px] w-full shrink-0 object-cover object-center"
+      }
+      contentClassName="!flex !h-full !min-h-0 !flex-1 !flex-col !items-start"
       relativeImage
     >
       <div
-        className={`flex flex-col ${
+        className={`flex h-full flex-1 flex-col ${
           featured
-            ? "justify-center p-4 sm:p-7 lg:p-9"
-            : "flex-1 px-1 pt-3 sm:px-2 sm:pt-6"
+            ? "justify-center p-4 sm:p-6 lg:p-8"
+            : "w-full px-1 pt-2 sm:px-2 sm:pt-2"
         }`}
       >
         <h3 className="text-base font-bold leading-tight text-[#181928] sm:text-xl">
@@ -132,23 +140,31 @@ function SellerStoryCard({ story, featured = false }) {
         </h3>
 
         {story.role && (
-          <p className="mt-1.5 text-xs font-medium text-[#3e4093] sm:mt-2 sm:text-sm">
+          <p className="mt-1.5 text-xs font-medium text-[#3e4093] sm:text-sm">
             {story.role}
           </p>
         )}
 
-        <div className="mt-2.5 h-px bg-[#eee9df] sm:mt-4" />
+        <div className="mt-3 h-px w-full bg-[#eee9df]" />
 
         {story.quote && (
-          <p className="mt-2.5 text-xs leading-5 text-[#50545e] sm:mt-4 sm:text-[15px] sm:leading-6">
+          <p
+            className={`mt-3 text-xs leading-5 text-[#50545e] sm:text-[15px] sm:leading-6 ${
+              featured ? "" : "line-clamp-2 min-h-[40px]"
+            }`}
+          >
             {story.quote}
           </p>
         )}
 
         {story.result && (
-          <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-[#f7f2e7] px-2.5 py-1.5 text-[11px] font-bold text-[#8d610d] sm:mt-5 sm:px-3 sm:text-xs">
-            <BarChart3 size={14} />
-            {story.result}
+          <div
+            className={`inline-flex w-fit max-w-full items-center gap-2 rounded-full bg-[#f7f2e7] px-3 py-2  text-[11px] font-bold text-[#8d610d] sm:text-xs ${
+              featured ? "mt-4" : "mt-4"
+            }`}
+          >
+            <BarChart3 size={14} className="shrink-0" />
+            <span>{story.result}</span>
           </div>
         )}
       </div>
@@ -158,6 +174,8 @@ function SellerStoryCard({ story, featured = false }) {
 
 export default function BecomeASeller() {
   const storySlidesPerView = useStorySlidesPerView();
+  const storyPrevRef = useRef(null);
+  const storyNextRef = useRef(null);
   const { page: cmsPage, loading } = useCmsRecord("become-a-seller");
 
   const cmsPayload = getCmsPayload(cmsPage);
@@ -192,6 +210,7 @@ export default function BecomeASeller() {
       role: point?.metadata?.role || fallbackPoint?.metadata?.role || "",
       result: point?.cta?.label || fallbackPoint?.cta?.label || "",
       photo: image,
+      slug: sellerStorySlug(point?.title || fallbackPoint?.title || ""),
       initials: (point?.title || fallbackPoint?.title || "")
         .substring(0, 2)
         .toUpperCase(),
@@ -293,9 +312,9 @@ export default function BecomeASeller() {
                         : "text-center md:text-left"
                     }`}
                   >
-                    <span className="inline-flex items-center gap-2 rounded-lg bg-[#f1e5c9] px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#8d5d08] sm:px-4 sm:py-2">
-                      <Sparkles size={14} />
-                      Real Seller Stories
+                    <span className="inline-flex w-fit max-w-full items-center justify-center gap-1.5 rounded-md bg-[#f1e5c9] px-2.5 py-1.5 text-[10px] font-bold uppercase leading-tight tracking-[0.12em] text-[#8d5d08] sm:gap-2 sm:rounded-lg sm:px-3.5 sm:py-2 sm:text-xs sm:tracking-[0.16em]">
+                      <Sparkles className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" />
+                      <span>Real Seller Stories</span>
                     </span>
 
                     <h2 className="mt-3 text-h2 font-bold leading-tight text-[#201b78] sm:mt-5">
@@ -318,8 +337,8 @@ export default function BecomeASeller() {
                   {mappedExperiences.length > storySlidesPerView && (
                     <div className="hidden sm:block md:shrink-0">
                       <CarouselNavigation
-                        prevRef=".seller-story-prev"
-                        nextRef=".seller-story-next"
+                        prevRef={storyPrevRef}
+                        nextRef={storyNextRef}
                         prevLabel="Previous seller story"
                         nextLabel="Next seller story"
                         alwaysVisible
@@ -339,6 +358,7 @@ export default function BecomeASeller() {
 
                 {mappedExperiences.length === 2 && (
                   <div className="mx-auto grid max-w-5xl grid-cols-1 items-stretch gap-5 sm:gap-6 md:grid-cols-2">
+                    {" "}
                     {mappedExperiences.map((story, index) => (
                       <SellerStoryCard
                         key={story.name || index}
@@ -361,8 +381,8 @@ export default function BecomeASeller() {
 
                     <div className="mt-8 hidden sm:block sm:mt-10">
                       <CustomSwiper
-                        prevEl=".seller-story-prev"
-                        nextEl=".seller-story-next"
+                        prevEl={storyPrevRef}
+                        nextEl={storyNextRef}
                         showNavigation
                         showPagination={
                           mappedExperiences.length > storySlidesPerView

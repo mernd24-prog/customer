@@ -14,8 +14,13 @@ export default function OrderDocuments({
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:gap-3">
-        {loading
+<div
+  className={`grid w-full min-w-0 grid-cols-1 gap-2 sm:gap-3 ${
+    documents.length === 4
+      ? "sm:grid-cols-2"
+      : "sm:grid-cols-3"
+  }`}
+>        {loading
           ? [1, 2].map((item) => (
               <div
                 key={`skeleton-${item}`}

@@ -8,7 +8,6 @@ import { SocialIcons } from "../components/ui";
 import SkeletonBox from "../components/ui/skeleton/SkeletonBox";
 import { FALLBACK_FOOTER } from "../data/fallbackCmsData";
 import { useFooterData } from "./footer/useFooterData";
-import { capitalizeFirst } from "../utils/stringUtils";
 
 const normalizePath = (path = "/") => {
   const pathname = String(path).split(/[?#]/, 1)[0] || "/";
@@ -73,9 +72,9 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
                               href={toPath}
                               target={link?.target || "_blank"}
                               rel="noopener noreferrer"
-                              className="text-[0.95rem] font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-[1.05rem]"
+                              className="capitalize text-[0.95rem] font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-white md:text-[1.05rem]"
                             >
-                            {capitalizeFirst(link?.label)}
+                            {link?.label}
                             </a>
                           ) : (
                             <Link
@@ -90,9 +89,9 @@ function FooterLinkGroups({ groups = [], socialLinks = [], hasDynamicGroups = fa
                                   window.scrollTo({ top: 0, behavior: "smooth" });
                                 }
                               }}
-                              className="text-[0.95rem] font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D] md:text-[1.05rem]"
+                              className="capitalize text-[0.95rem] font-medium text-white/70 transition-all duration-300 ease-in-out hover:text-[#CE9F2D] aria-[current=page]:!text-[#CE9F2D] md:text-[1.05rem]"
                             >
-                              {capitalizeFirst(link?.label)}
+                              {link?.label}
                             </Link>
                           )}
                         </li>

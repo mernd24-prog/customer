@@ -1,6 +1,5 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import CustomSwiper, { SwiperSlide } from "../swiper/CustomSwiper";
-import CarouselNavigation from "../ui/carousel/CarouselNavigation";
 import CategoryCard from "./CategoryCard";
 import SectionContainer from "../ui/SectionContainer";
 import CUSTOMER_ROUTES from "../../constants/routes";
@@ -9,7 +8,7 @@ import { getRootCategories } from "../../utils/pages/categoryUtils";
 
 const CATEGORY_SWIPER_CLASS = "category-grid-swiper w-full !px-0.5 !pt-1 !pb-0";
 
-const CATEGORY_PAGINATION_CLASS = "shared-carousel-pagination";
+const CATEGORY_PAGINATION_CLASS = "category-custom-pagination";
 
 export default function HomeCategoryGrid({
   categories = [],
@@ -22,11 +21,6 @@ export default function HomeCategoryGrid({
   ctaLabel = "Shop Now",
 }) {
   const [activeId, setActiveId] = useState(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
-  const prevRef = useRef(null);
-  const nextRef = useRef(null);
 
   const displayCategories = useMemo(() => {
     const rawList = Array.isArray(categories) ? categories : [];
@@ -90,24 +84,9 @@ export default function HomeCategoryGrid({
       className="mt-5"
     >
       <div className="group/carousel relative my-3 sm:my-4">
-        <CarouselNavigation
-          prevRef={prevRef}
-          nextRef={nextRef}
-          isBeginning={isBeginning}
-          isEnd={isEnd}
-          prevLabel="Previous categories"
-          nextLabel="Next categories"
-        />
-
         <CustomSwiper
-          prevEl={prevRef}
-          nextEl={nextRef}
           showNavigation
           showPagination
-          onNavigationStateChange={(beginning, end) => {
-            setIsBeginning(beginning);
-            setIsEnd(end);
-          }}
           autoplay={{
             delay: 3000,
             disableOnInteraction: false,

@@ -36,7 +36,6 @@ import {
   getCategoryKey,
 } from "../../../utils/pages/categoryUtils";
 import { getClearFiltersAction } from "../../../utils/filterUtils";
-import { capitalizeFirst } from "../../../utils/stringUtils";
 import { getFilterSections } from "../../../modules/products/controllers/getFilterSections";
 
 const findCategoryInTree = (categories = [], targetKey = "") => {

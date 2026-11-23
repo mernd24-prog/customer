@@ -130,7 +130,6 @@ export default function ReviewMediaLightbox({
             </GoldOutlineButton>
           )}
 
-          {/* Main Image */}
           <div className="relative flex min-h-0 w-full flex-1 items-center justify-center px-12 py-5">
             {showNavigation && (
               <CarouselNavigation

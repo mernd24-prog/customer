@@ -1,4 +1,3 @@
-
 import { useMemo } from "react";
 import OrderActions from "./OrderActions";
 import OrderDocuments from "./OrderDocuments";
@@ -103,8 +102,7 @@ export function OrderPackageCard({
           (groupItem) =>
             String(groupItem.id || groupItem._id) ===
             String(
-              cancellationItem.orderItemId ||
-                cancellationItem.order_item_id,
+              cancellationItem.orderItemId || cancellationItem.order_item_id,
             ),
         ),
       ),
@@ -132,8 +130,7 @@ export function OrderPackageCard({
 
     const cancelledGroupQuantity = items.reduce(
       (sum, item) =>
-        sum +
-        Number(item?.cancelled_quantity || item?.cancelledQuantity || 0),
+        sum + Number(item?.cancelled_quantity || item?.cancelledQuantity || 0),
       0,
     );
 
@@ -207,8 +204,7 @@ export function OrderPackageCard({
     const packageDocuments = (itemProps.downloadableDocuments || []).filter(
       (document) => {
         const isTaxOrReceipt =
-          document.type === "tax_invoice" ||
-          document.type === "order_receipt";
+          document.type === "tax_invoice" || document.type === "order_receipt";
 
         if (isTaxOrReceipt && !isDelivered) {
           return false;
@@ -270,15 +266,11 @@ export function OrderPackageCard({
         }
 
         if (document.type === "cancellation_reverse") {
-          const cancellationItemIds = (
-            document.cancellation?.items || []
-          ).map((item) =>
-            String(item.orderItemId || item.order_item_id),
+          const cancellationItemIds = (document.cancellation?.items || []).map(
+            (item) => String(item.orderItemId || item.order_item_id),
           );
 
-          return packageItemIds.some((id) =>
-            cancellationItemIds.includes(id),
-          );
+          return packageItemIds.some((id) => cancellationItemIds.includes(id));
         }
 
         return false;
@@ -335,8 +327,8 @@ export function OrderPackageCard({
 
             const hasExistingReview = Boolean(
               existingReview &&
-                typeof existingReview === "object" &&
-                !existingReview.alreadyReviewed,
+              typeof existingReview === "object" &&
+              !existingReview.alreadyReviewed,
             );
 
             const canShowExistingReview =
@@ -402,38 +394,35 @@ export function OrderPackageCard({
         </div>
       </div>
 
-    {/* Package footer */}
-<div className="flex min-w-0 flex-col">
+      {/* Package footer */}
+      <div className="flex min-w-0 flex-col">
+        {(itemProps.invoicesLoading || packageDocuments.length > 0) && (
+          <div className="p-3    sm:p-4 ">
+            <OrderDocuments
+              documents={packageDocuments}
+              loading={itemProps.invoicesLoading}
+              downloadingId={itemProps.downloadingId}
+              handleDownload={itemProps.handleDownload}
+            />
+          </div>
+        )}
 
-  {(itemProps.invoicesLoading || packageDocuments.length > 0) && (
-    <div className="p-3    sm:p-4 ">
-      <OrderDocuments
-        documents={packageDocuments}
-        loading={itemProps.invoicesLoading}
-        downloadingId={itemProps.downloadingId}
-        handleDownload={itemProps.handleDownload}
-      />
-    </div>
-  )}
-
-  {/* Full-width bottom action bar */}
-  <OrderActions
-    order={order}
-    orderId={orderId}
-    status={status || orderStatus}
-    canCancelOrder={canCancelOrder}
-    retrying={retrying}
-    handleRetryPayment={handleRetryPayment}
-    openCancellation={openCancellation}
-    selectedOrderItem={selectedOrderItem}
-    hasCancellableQuantity={hasCancellableQuantity}
-    canRequestReturn={canRequestReturn}
-    selectedItemCanReturn={selectedItemCanReturn}
-    getOrderItemId={getOrderItemId}
-  />
-
-</div>
-
+        {/* Full-width bottom action bar */}
+        <OrderActions
+          order={order}
+          orderId={orderId}
+          status={status || orderStatus}
+          canCancelOrder={canCancelOrder}
+          retrying={retrying}
+          handleRetryPayment={handleRetryPayment}
+          openCancellation={openCancellation}
+          selectedOrderItem={selectedOrderItem}
+          hasCancellableQuantity={hasCancellableQuantity}
+          canRequestReturn={canRequestReturn}
+          selectedItemCanReturn={selectedItemCanReturn}
+          getOrderItemId={getOrderItemId}
+        />
+      </div>
     </div>
   );
 }

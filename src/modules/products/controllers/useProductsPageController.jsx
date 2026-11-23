@@ -18,7 +18,6 @@ import {
   formatCategoryOptionsForTree,
   getPagination,
 } from "../../../utils/filterUtils";
-import { capitalizeFirst } from "../../../utils/stringUtils";
 import { getFilterSections } from "./getFilterSections";
 import { decodeProductFilterToken } from "../utils/productFilterToken";
 import { useCatalogFilters } from "./useCatalogFilters";
