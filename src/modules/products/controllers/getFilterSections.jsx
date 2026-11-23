@@ -9,7 +9,6 @@ import {
   parseMultiValue,
   serializeMultiValue,
 } from "../../../utils/filterUtils";
-import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export function getFilterSections({
   categoryOptions = [],

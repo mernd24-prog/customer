@@ -7,7 +7,6 @@ import { PRODUCT_ROUTES } from "../modules/products/routes/apiRoutes";
 import { ORDER_ROUTES } from "../modules/orders/routes/apiRoutes";
 import { CHECKOUT_ROUTES } from "../modules/checkout/routes/apiRoutes";
 import { CART_ROUTES } from "../modules/cart/routes/apiRoutes";
-import { RETURNS_ROUTES } from "../modules/returns/routes/apiRoutes";
 import Loader from "../components/ui/Loader";
 import { HomePage } from "../modules/home/pages/HomePage";
 
@@ -25,6 +24,9 @@ const SellerPolicy = lazy(
 );
 const BecomeASeller = lazy(
   () => import("../pages/seller/becomeASeller/becomeASeller.jsx"),
+);
+const SellerStoryDetailPage = lazy(
+  () => import("../pages/seller/becomeASeller/SellerStoryDetailPage.jsx"),
 );
 
 import DealsPage from "../modules/catalog/pages/DealsPage.jsx";
@@ -135,12 +137,6 @@ const PaymentResultPage = lazyNamed(
 const OrdersPageLayout = lazy(
   () => import("../modules/orders/pages/OrdersPageLayout"),
 );
-
-// Temporarily kept commented out.
-// Old Returns & Refunds UI is not removed yet.
-// const ReturnsRefundsPage = lazy(
-//   () => import("../modules/returns/pages/ReturnsRefundsPage.jsx"),
-// );
 
 const WalletPage = lazyNamed(
   () => import("../modules/wallet/pages/WalletPage"),
@@ -278,16 +274,12 @@ export default function AppRoutes() {
           />
 
           <Route
-            path="/cookie-policy"
-            element={<PolicyPage slugOverride="cookie-policy" />}
+            path="/seller-stories/:storySlug"
+            element={<SellerStoryDetailPage />}
           />
 
-          <Route path="/become-a-seller" element={<BecomeASeller />} />
-
           <Route path="/seller-policies" element={<SellerPolicy />} />
-
           <Route path="/seller-policy" element={<SellerPolicy />} />
-
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
             <Route index element={<HomePage />} />
@@ -452,21 +444,13 @@ export default function AppRoutes() {
               />
 
               {/* Returns */}
-              <Route path={RETURNS_ROUTES.returns} element={<ReturnsPage />} />
+              <Route path="/returns/request/i/:orderToken" element={<ReturnsPage request />} />
 
-              <Route
-                path="/returns/request/i/:orderToken"
-                element={<ReturnsPage request />}
-              />
-
-              <Route
-                path="/returns/request/:orderId"
-                element={<ReturnsPage request />}
-              />
+              <Route path="/returns/request/:orderId" element={<ReturnsPage request />} />
 
               {/* Returns & Refunds */}
               <Route
-                path={RETURNS_ROUTES.returnsRefunds}
+                path="/returns-refunds"
                 element={<OrdersPageLayout returnOnly />}
               />
 

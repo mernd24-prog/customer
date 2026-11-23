@@ -9,7 +9,6 @@ import {
 import { ChevronDown, Search, Star, X } from "lucide-react";
 import { Check } from "lucide-react";
 import { DynamicButton } from "../../../components/ui/button";
-import { capitalizeFirst } from "../../../utils/stringUtils";
 import { DynamicInput } from "../../../components/ui/input";
 
 const FILTER_ROW_CLASS =
@@ -544,8 +543,8 @@ function FilterOptionGroup({
                   }}
                 />
                 <FilterTick checked={checked} />
-                <span className=" min-w-0 flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
-                  {capitalizeFirst(label)}
+                <span className=" capitalize min-w-0 flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
+                  {label}
                 </span>
 
                 {count != null && (
@@ -720,8 +719,8 @@ export function OptionFilter({
 
               <FilterTick checked={checked} className="" />
 
-              <span className="min-w-0 flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
-                {capitalizeFirst(label)}
+              <span className="capitalize min-w-0 flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
+                {label}
               </span>
 
               {count != null && (
@@ -802,8 +801,8 @@ export function CheckboxListFilter({
 
             <FilterTick checked={checked} />
 
-            <span className="min-w-0  flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
-              {capitalizeFirst(label)}
+            <span className="capitalize min-w-0  flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
+              {label}
             </span>
 
             {count != null && (

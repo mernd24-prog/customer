@@ -12,7 +12,6 @@ import { DynamicButton } from "../../../components/ui/button";
 import Price from "./Price";
 import Rating from "./Rating";
 import WishlistButton from "../../wishlist/components/WishlistButton";
-import { capitalizeFirst } from "../../../utils/stringUtils";
 
 import {
   getProductPublicPath,
@@ -442,9 +441,9 @@ export default function ProductCard({
               <DynamicButton
                 onClick={handleBrandClick}
                 title={brand}
-                className="text-left text-xs font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
+                className="capitalize text-left text-xs font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
-                {capitalizeFirst(brand)}
+                {brand}
               </DynamicButton>
             )}
 
@@ -688,9 +687,9 @@ export default function ProductCard({
                 variant="textGold"
                 onClick={handleBrandClick}
                 title={brand}
-                className="max-w-full break-words font-bold tracking-wide uppercase"
+                className="capitalize max-w-full break-words font-bold tracking-wide uppercase"
               >
-                {capitalizeFirst(brand)}
+                {brand}
               </DynamicButton>
             )}
           </div>

@@ -97,6 +97,7 @@ export function useOrderDetail({ orderId, track }) {
     },
   );
 
+  
   const shipments = Array.isArray(order?.relations?.shipments)
     ? order.relations.shipments
     : [];

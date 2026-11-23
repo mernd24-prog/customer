@@ -15,7 +15,7 @@ import {
   formatOrderDate,
   getOrderCurrency,
   getProductTitle,
-  humanize,
+  humanizeOrderStatus,
   getOrderItemColor,
   getOrderItemId,
   getCustomerItemLineTotal,
@@ -117,7 +117,7 @@ export default function OrderItemSummaryCard({
   const isUnreviewed =
     !locallyReviewedProducts.has(productId) && !hasMyReview;
 
-  const statusLabel = humanize(itemStatus, "Processing");
+  const statusLabel = humanizeOrderStatus(itemStatus, "Processing");
   const orderDate = formatOrderDate(createdAt);
 
   const statusDescription =

@@ -278,13 +278,7 @@ export function OrderItemCard({
       {" "}
       {!isCancelled && !isReturned && (
         <>
-          {/* <p className="flex min-w-0 flex-wrap items-center gap-x-1">
-            <span>Courier:</span>
-            <span className="font-semibold text-[#1B1D60]">
-              {capitalizeFirst(shipment?.courier_name || "Seller Delivery")}
-            </span>
-          </p> */}
-
+          
           <p className="flex min-w-0 flex-wrap items-center gap-x-1">
             <span>Tracking ID:</span>
             <span

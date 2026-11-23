@@ -38,24 +38,31 @@ export default function SectionContainer({
           } ${headerSpacingClassName}`}
         >
           <div
-            className={`mt-0 flex w-full items-center justify-between gap-3 ${
+            className={`mt-0 flex w-full items-center justify-between gap-2 sm:gap-3 ${
               !disablePadding ? "px-4 sm:px-6 lg:px-8" : ""
             } ${headerClassName}`}
           >
             <div className="min-w-0 flex-1">
               {title && (
-                <h2 className="text-[20px] font-bold leading-tight text-[#3E4093] sm:text-[22px] md:text-[24px]">
+                <h2 className="text-base font-bold leading-5 text-[#3E4093] sm:text-xl sm:leading-tight md:text-[22px] lg:text-2xl">
                   {title}
                 </h2>
               )}
+
+              {subtitle && (
+                <p className="mt-1 text-xs leading-relaxed text-gray-500 sm:text-sm">
+                  {subtitle}
+                </p>
+              )}
             </div>
+
             {hasAction && actionStyle === "icon" && actionHref && (
               <DynamicButton
                 variant="primary"
                 size="xs"
                 shape="square"
                 to={actionHref}
-                className="shrink-0 "
+                className="shrink-0"
                 aria-label={`Go to ${title}`}
               >
                 <ArrowRight className="!size-5" />
@@ -72,7 +79,7 @@ export default function SectionContainer({
                   to={actionHref}
                   onClick={onAction}
                   rightIcon={<ArrowRight />}
-                  className="my-2 hidden self-center md:inline-flex"
+                  className="my-2 hidden shrink-0 self-center md:inline-flex"
                   aria-label={`${actionLabel} ${title || ""}`}
                 >
                   {actionLabel}

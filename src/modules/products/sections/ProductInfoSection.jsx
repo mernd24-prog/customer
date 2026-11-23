@@ -7,7 +7,6 @@ import {
   getProductTitle,
   getImageUrlFromValue,
 } from "../../../utils/ecommerce";
-import { capitalizeFirst } from "../../../utils/stringUtils";
 import { ProductGallery } from "../components/ImageGallery";
 import HorizontalScrollControls from "../../../components/ui/HorizontalScrollControls";
 import { DynamicButton } from "../../../components/ui/button";
@@ -304,17 +303,17 @@ export default function ProductInfoSection({
                     <span className="text-xs font-medium text-muted">
                       Warranty Period
                     </span>
-                    <span className="text-sm font-semibold text-navy break-words sm:text-base">
+                    <span className="capitalize text-sm font-semibold text-navy break-words sm:text-base">
                       {hasWarranty
-                        ? capitalizeFirst(warrantyPeriod || "Standard Warranty")
+                        ?warrantyPeriod || "Standard Warranty"
                         : "No Warranty"}
                     </span>
                     {hasWarranty && effectiveWarranty.type && (
-                      <span className="text-xs text-muted">
+                      <span className="capitalize text-xs text-muted">
                         Type:{" "}
-                        {capitalizeFirst(
-                          effectiveWarranty.type.replace(/_/g, " "),
-                        )}
+                        
+                          {effectiveWarranty.type.replace(/_/g, " ")}
+                        
                       </span>
                     )}
                   </div>

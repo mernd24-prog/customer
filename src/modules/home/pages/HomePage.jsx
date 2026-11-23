@@ -88,21 +88,21 @@ export function HomePage() {
       <Banner />
       <CategoryBar loading={!categoryRequestComplete && !categories.length} />
 
-      {/* {categories.length > 0 && (
+      {categories.length > 0 && (
         <HomeCategoryGrid
           categories={categories}
           loading={!categoryRequestComplete && !categories.length}
           title="Time for a Spring Refresh"
           subtitle=""
         />
-      )}  */}
+      )} 
 {/*        
    <LazySection minHeight="280px">
          <FeaturedCollectionsSection />
        </LazySection> */}
-       {/* <LazySection minHeight="380px">
+       <LazySection minHeight="380px">
         <PromoCampaignCarousel data={promoCampaignPage} />
-      </LazySection>  */}
+      </LazySection> 
 
       <LazySection minHeight="150px">
         <ShoppingMadeEasyBanner data={shoppingBannerPage} />

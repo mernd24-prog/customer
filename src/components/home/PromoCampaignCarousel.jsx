@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+
 import CustomSwiper, { SwiperSlide } from "../swiper/CustomSwiper";
-import CarouselNavigation from "../ui/carousel/CarouselNavigation";
 import CarouselCard from "../ui/carousel/CarouselCard";
 import { FALLBACK_PROMO_CARDS } from "../../data/fallbackCmsData";
 import { PillButton } from "../ui/button/buttonSpecialized";
+import { ArrowRight } from "lucide-react";
+
 function normalizeCards(data) {
   let rawList = [];
 
@@ -47,7 +48,8 @@ function normalizeCards(data) {
         image: imageUrl,
         title: item?.title || item?.name || item?.image?.title || "",
         description: item?.description || item?.subtitle || "",
-        link: item?.cta?.url || item?.link || item?.href || item?.targetUrl || "",
+        link:
+          item?.cta?.url || item?.link || item?.href || item?.targetUrl || "",
         ctaLabel: item?.cta?.label || "",
         ctaTarget: item?.cta?.target || "_self",
       };
@@ -61,35 +63,16 @@ export default function PromoCampaignCarousel({
 }) {
   const cmsCards = normalizeCards(data);
   const cards = cmsCards.length ? cmsCards : FALLBACK_PROMO_CARDS;
-  const prevRef = useRef(null);
-  const nextRef = useRef(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
 
   if (!cards.length) return null;
 
   return (
     <section
-      className={`full-banner relative w-full overflow-hidden ${className}`}
-      style={{
-        background:
-          "linear-gradient(135deg, #FFF4D6 0%, #FAF6EE 50%, #F2EADC 100%)",
-      }}
+      className={`full-banner relative w-full overflow-hidden bg-transparent sm:bg-[linear-gradient(135deg,_#FFF4D6_0%,_#FAF6EE_50%,_#F2EADC_100%)] ${className}`}
     >
-      <div className="relative z-10 customer-container py-6 sm:py-8 lg:py-10">
+      <div className="relative z-10 customer-container !px-0 !py-0 sm:!px-4 sm:!py-4 lg:!py-5">
         <div className="group/carousel relative">
-          <CarouselNavigation
-            prevRef={prevRef}
-            nextRef={nextRef}
-            isBeginning={isBeginning}
-            isEnd={isEnd}
-            prevLabel="Previous campaigns"
-            nextLabel="Next campaigns"
-          />
-
           <CustomSwiper
-            prevEl={prevRef}
-            nextEl={nextRef}
             showNavigation
             showPagination
             paginationClassName="shared-carousel-pagination"
@@ -98,10 +81,6 @@ export default function PromoCampaignCarousel({
               delay: 4000,
               disableOnInteraction: false,
               pauseOnMouseEnter: true,
-            }}
-            onNavigationStateChange={(beginning, end) => {
-              setIsBeginning(beginning);
-              setIsEnd(end);
             }}
             breakpoints={{
               320: { slidesPerView: 1.15, spaceBetween: 12 },
@@ -112,7 +91,12 @@ export default function PromoCampaignCarousel({
               1024: { slidesPerView: 3.25, spaceBetween: 20 },
               1280: { slidesPerView: 4, spaceBetween: 20 },
             }}
-            className="!pb-2"
+            className="
+              !m-0 !px-0.5 !pb-2
+              [&_.swiper-slide>a]:!my-0
+              sm:[&_.swiper-slide>a]:!my-3
+              md:[&_.swiper-slide>a]:!my-4
+            "
           >
             {cards.map((card, index) => (
               <SwiperSlide key={`${card.title || "campaign"}-${index}`}>
@@ -141,17 +125,22 @@ export default function PromoCampaignCarousel({
                         {card.title}
                       </h3>
                     )}
+
                     {card.description && (
                       <p className="mb-1 line-clamp-2 text-xs leading-relaxed drop-shadow sm:text-sm">
                         {card.description}
                       </p>
                     )}
+
                     {card.ctaLabel && (
-                      
-                    <PillButton
-                    size="xs"
-                    shape="square"
-                    >{card.ctaLabel}</PillButton>
+                      <PillButton
+                        size="xs"
+                        shape="square"
+                        rightIcon={<ArrowRight size={14} />}
+                        className="!inline-flex !w-fit !self-start"
+                      >
+                        {card.ctaLabel}
+                      </PillButton>
                     )}
                   </div>
                 </CarouselCard>

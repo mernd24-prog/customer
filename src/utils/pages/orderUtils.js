@@ -28,7 +28,7 @@ import {
   getReturnableQuantityForItem,
   getCancelledQuantityForItem,
 } from "../../utils/orderHelpers";
-
+import { humanize } from "../../utils/stringUtils";
 export {
   getOrderId,
   getOrderNumber,
@@ -128,9 +128,9 @@ export const hasDeliveredSellerPackage = (order = {}) => {
       ["delivered", "fulfilled", "completed"].includes(
         String(
           group.deliveryStatus ||
-            group.delivery_status ||
-            group.shipmentStatus ||
-            "",
+          group.delivery_status ||
+          group.shipmentStatus ||
+          "",
         ).toLowerCase(),
       ),
     )
@@ -256,27 +256,27 @@ export const getAmount = (order, key) => {
 export const getTaxIncludedAmount = (order, taxBreakup = {}) =>
   asNumber(
     order?.summary?.taxIncludedAmount ??
-      taxBreakup?.taxIncludedAmount ??
-      taxBreakup?.tax_included_amount ??
-      0,
+    taxBreakup?.taxIncludedAmount ??
+    taxBreakup?.tax_included_amount ??
+    0,
   );
 export const getTaxPayableAmount = (order, taxBreakup = {}) =>
   asNumber(
     order?.summary?.taxPayableAmount ??
-      taxBreakup?.taxPayableAmount ??
-      taxBreakup?.tax_payable_amount ??
-      0,
+    taxBreakup?.taxPayableAmount ??
+    taxBreakup?.tax_payable_amount ??
+    0,
   );
 export const getCustomerPlatformFeeAmount = (order) => {
   const customerSpecificFee = asNumber(
     order?.summary?.customerPlatformFeeAmount ??
-      order?.summary?.customer_platform_fee_amount ??
-      order?.amounts?.customerPlatformFeeAmount ??
-      order?.amounts?.customer_platform_fee_amount ??
-      order?.customerPlatformFeeAmount ??
-      order?.customer_platform_fee_amount ??
-      order?.metadata?.pricingSummary?.customerPlatformFeeAmount ??
-      order?.metadata?.pricing_summary?.customer_platform_fee_amount,
+    order?.summary?.customer_platform_fee_amount ??
+    order?.amounts?.customerPlatformFeeAmount ??
+    order?.amounts?.customer_platform_fee_amount ??
+    order?.customerPlatformFeeAmount ??
+    order?.customer_platform_fee_amount ??
+    order?.metadata?.pricingSummary?.customerPlatformFeeAmount ??
+    order?.metadata?.pricing_summary?.customer_platform_fee_amount,
   );
   const platformFee = asNumber(getAmount(order, "platformFee"));
   return customerSpecificFee > 0 ? customerSpecificFee : platformFee;
@@ -284,25 +284,25 @@ export const getCustomerPlatformFeeAmount = (order) => {
 export const getCustomerPlatformFeeTaxAmount = (order) =>
   asNumber(
     order?.summary?.customerPlatformFeeTaxAmount ??
-      order?.summary?.customer_platform_fee_tax_amount ??
-      order?.amounts?.customerPlatformFeeTaxAmount ??
-      order?.amounts?.customer_platform_fee_tax_amount ??
-      order?.customerPlatformFeeTaxAmount ??
-      order?.customer_platform_fee_tax_amount ??
-      order?.metadata?.pricingSummary?.customerPlatformFeeTaxAmount ??
-      order?.metadata?.pricingSummary?.customerPlatformFeeGST ??
-      order?.metadata?.pricing_summary?.customer_platform_fee_tax_amount,
+    order?.summary?.customer_platform_fee_tax_amount ??
+    order?.amounts?.customerPlatformFeeTaxAmount ??
+    order?.amounts?.customer_platform_fee_tax_amount ??
+    order?.customerPlatformFeeTaxAmount ??
+    order?.customer_platform_fee_tax_amount ??
+    order?.metadata?.pricingSummary?.customerPlatformFeeTaxAmount ??
+    order?.metadata?.pricingSummary?.customerPlatformFeeGST ??
+    order?.metadata?.pricing_summary?.customer_platform_fee_tax_amount,
   );
 export const getCustomerPlatformFeeTaxRate = (order) =>
   asNumber(
     order?.summary?.platformFeeTaxRate ??
-      order?.summary?.platform_fee_tax_rate ??
-      order?.amounts?.platformFeeTaxRate ??
-      order?.amounts?.platform_fee_tax_rate ??
-      order?.metadata?.pricingSummary?.platformFeeTaxRate ??
-      order?.metadata?.pricingSummary?.customerPlatformFeeTaxRate ??
-      order?.metadata?.pricing_summary?.platform_fee_tax_rate ??
-      18,
+    order?.summary?.platform_fee_tax_rate ??
+    order?.amounts?.platformFeeTaxRate ??
+    order?.amounts?.platform_fee_tax_rate ??
+    order?.metadata?.pricingSummary?.platformFeeTaxRate ??
+    order?.metadata?.pricingSummary?.customerPlatformFeeTaxRate ??
+    order?.metadata?.pricing_summary?.platform_fee_tax_rate ??
+    18,
   );
 export const splitInclusivePlatformFee = (fee, taxAmount, taxRate = 18) => {
   const gross = asNumber(fee);
@@ -370,15 +370,12 @@ export const STATUS_LABELS = {
   cancellation_processing: "Cancellation Processing",
   cancellation_rejected: "Cancellation Rejected",
 };
-
-export const humanize = (value, fallback = "N/A") => {
-  if (!value) return fallback;
+export const humanizeOrderStatus = (value, fallback = "N/A") => {
+  if (value == null || value === "") return fallback;
   const normalized = String(value).toLowerCase();
-  if (STATUS_LABELS[normalized]) return STATUS_LABELS[normalized];
-  return String(value)
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase());
+  return STATUS_LABELS[normalized] || humanize(value, fallback);
 };
+
 
 export const getCancellationDisplayStatus = (cancellation = {}, item = {}) => {
   const status = String(cancellation?.status || "").toLowerCase();
@@ -450,12 +447,12 @@ export const returnItemMatchesOrderItem = (returnItem = {}, item = {}) => {
   const itemId = String(getOrderItemId(item) || "");
   const returnOrderItemId = String(
     returnItem.orderItemId ||
-      returnItem.order_item_id ||
-      returnItem.itemId ||
-      returnItem.item_id ||
-      returnItem.orderLineItemId ||
-      returnItem.order_line_item_id ||
-      "",
+    returnItem.order_item_id ||
+    returnItem.itemId ||
+    returnItem.item_id ||
+    returnItem.orderLineItemId ||
+    returnItem.order_line_item_id ||
+    "",
   );
   if (itemId && returnOrderItemId) return returnOrderItemId === itemId;
 
@@ -481,15 +478,15 @@ export const getSellerGroupKey = (sellerId, organizationId = null) =>
 export const getOrderItemSellerGroupKey = (item = {}) =>
   getSellerGroupKey(
     item.seller_id ||
-      item.sellerId ||
-      item.seller?.id ||
-      item.seller?._id ||
-      "platform",
+    item.sellerId ||
+    item.seller?.id ||
+    item.seller?._id ||
+    "platform",
     item.organization_id ||
-      item.organizationId ||
-      item.organization?.id ||
-      item.organization?._id ||
-      null,
+    item.organizationId ||
+    item.organization?.id ||
+    item.organization?._id ||
+    null,
   );
 
 const shipmentJson = (value) => {
@@ -585,7 +582,7 @@ export const resolveOrderItemDisplayStatus = (
     item.payout_status || item.payoutStatus || "",
   ).toLowerCase();
   const fallback = String(fallbackStatus || "").toLowerCase();
-  
+
   if (["pending_payment", "payment_failed"].includes(fallback)) {
     return fallback;
   }
@@ -652,16 +649,16 @@ export const resolveOrderItemDisplayStatus = (
   if (matchingReturn) {
     const retStatus = String(
       matchingReturn.status ||
-        matchingReturn.returnStatus ||
-        matchingReturn.return_status ||
-        "",
+      matchingReturn.returnStatus ||
+      matchingReturn.return_status ||
+      "",
     ).toLowerCase();
 
     const refundStatus = String(
       matchingReturn.refund?.status ||
-        matchingReturn.refundStatus ||
-        matchingReturn.refund_status ||
-        "",
+      matchingReturn.refundStatus ||
+      matchingReturn.refund_status ||
+      "",
     ).toLowerCase();
 
     if (["rejected", "qc_failure_upheld", "replaced"].includes(retStatus) || (retStatus === "closed" && refundStatus !== "completed")) {
@@ -721,25 +718,25 @@ export const resolveOrderItemDisplayStatus = (
   const isFullyCancelled =
     Number(item.quantity || 0) > 0 &&
     Number(item.quantity || 0) <=
-      Number(item.cancelled_quantity || item.cancelledQuantity || 0);
+    Number(item.cancelled_quantity || item.cancelledQuantity || 0);
 
   return cancellation?.status
     ? getCancellationDisplayStatus(cancellation, item)
     : item.cancellation_status ||
-          item.cancellationStatus ||
-          timelineCancellationStatus ||
-          (isFullyCancelled ? "cancelled" : "") ||
-          resolvedReturnStatus ||
-          item.return_status ||
-          item.returnStatus ||
-          fulfillmentReturnStatus ||
-          (payoutStatus === "refunded" ? "refunded" : "") ||
-          (payoutStatus === "held" && fallback.includes("return")
-            ? fallback
-            : "") ||
-          forwardItemStatus ||
-          fallbackStatus ||
-          "processing";
+    item.cancellationStatus ||
+    timelineCancellationStatus ||
+    (isFullyCancelled ? "cancelled" : "") ||
+    resolvedReturnStatus ||
+    item.return_status ||
+    item.returnStatus ||
+    fulfillmentReturnStatus ||
+    (payoutStatus === "refunded" ? "refunded" : "") ||
+    (payoutStatus === "held" && fallback.includes("return")
+      ? fallback
+      : "") ||
+    forwardItemStatus ||
+    fallbackStatus ||
+    "processing";
 };
 
 export const getOrderCardImage = (item) => {
