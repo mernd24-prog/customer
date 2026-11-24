@@ -41,6 +41,7 @@ function ReturnRequestPage({ orderId }) {
     orderItems,
     existingReturns,
     selectedItem,
+    resolutionOptions,
     register,
     handleSubmit,
     watch,
@@ -259,10 +260,7 @@ function ReturnRequestPage({ orderId }) {
                   <CustomDropdown
                     label="Preferred Resolution"
                     required
-                    options={[
-                      { value: "refund", label: "Return for Refund" },
-                      { value: "replacement", label: "Replace This Item" },
-                    ]}
+                    options={resolutionOptions}
                     value={watch("resolution")}
                     onChange={(val) =>
                       setValue("resolution", val, { shouldValidate: true })
@@ -357,7 +355,7 @@ function ReturnRequestPage({ orderId }) {
                   </div>
 
                   {/* Re-themed Estimated Refund Card */}
-                  {estimatedRefund.total > 0 && (
+                  {watch("resolution") === "refund" && estimatedRefund.total > 0 && (
                     <div className="min-w-0 rounded-lg border border-[#E7D9B8] bg-[#FFFBF0] p-3 sm:p-4 shadow-xs">
                       <div className="flex items-center justify-between">
                         <p className="text-xs font-bold uppercase tracking-wider text-[#9A7A27]">

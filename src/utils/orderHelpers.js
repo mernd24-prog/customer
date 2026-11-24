@@ -165,29 +165,33 @@ export const getOrderItemColor = (item) => {
   return found?.[1] || item?.color || item?.selectedColor || "N/A";
 };
 
+export const getAllowedReturnResolutions = (policy = {}) => {
+  if (policy.returnable === false || policy.eligible === false || policy.type === "non_returnable") return [];
+  if (policy.type === "replacement_only" || policy.resolution === "replacement") return ["replacement"];
+  if (policy.resolution === "refund") return ["refund"];
+  if (Array.isArray(policy.allowedResolutions)) return policy.allowedResolutions;
+  return ["refund", "replacement"];
+};
+
 export const getItemReturnPolicy = (item = {}) => {
-  const snapshot = item.product_snapshot || item.productSnapshot || {};
-  const policy =
-    item.return_policy_snapshot ||
-    item.returnPolicySnapshot ||
-    snapshot.returnPolicy ||
-    snapshot.return_policy ||
-    snapshot.commercialPolicy?.returnPolicy ||
-    {};
+  const parse = value => {
+    if (value && typeof value === "object") return value;
+    try { return JSON.parse(value || "{}"); } catch { return {}; }
+  };
+  const snapshot = parse(item.product_snapshot || item.productSnapshot);
+  const policy = {
+    ...(snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || {}),
+    ...parse(item.return_policy_snapshot || item.returnPolicySnapshot),
+  };
+  const returnable = policy.type !== "non_returnable" &&
+    (item.returnable ?? policy.returnable ?? policy.eligible ?? true);
   return {
-    returnable: item.returnable ?? policy.returnable ?? policy.eligible ?? true,
-    days: Number(
-      item.return_window_days ??
-        policy.returnWindowDays ??
-        policy.windowDays ??
-        policy.days ??
-        0,
-    ),
-    eligibleUntil:
-      item.return_eligible_until ||
-      item.returnEligibleUntil ||
-      policy.eligibleUntil ||
-      null,
+    ...policy,
+    returnable,
+    allowedResolutions: getAllowedReturnResolutions({ ...policy, returnable }),
+    inspectionRequired: policy.inspectionRequired ?? policy.requiresQc ?? true,
+    days: Number(item.return_window_days ?? policy.returnWindowDays ?? policy.windowDays ?? policy.days ?? 0),
+    eligibleUntil: item.return_eligible_until || item.returnEligibleUntil || policy.eligibleUntil || null,
   };
 };
 

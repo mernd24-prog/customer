@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -106,6 +106,19 @@ export default function useReturnRequest(orderId) {
     },
   });
 
+  const allowedResolutions = useMemo(() =>
+    selectedItem ? getItemReturnPolicy(selectedItem).allowedResolutions : [], [selectedItem]);
+  const resolutionOptions = [
+    { value: "refund", label: "Return for Refund" },
+    { value: "replacement", label: "Replace This Item" },
+  ].filter(option => allowedResolutions.includes(option.value));
+  const selectedResolution = watch("resolution");
+  useEffect(() => {
+    if (selectedItem && !allowedResolutions.includes(selectedResolution)) {
+      setValue("resolution", allowedResolutions[0] || "", { shouldValidate: true });
+    }
+  }, [selectedItem, selectedResolution, allowedResolutions, setValue]);
+
   const watchedQty = watch("quantity");
   const estimatedRefund = calculateEstimatedRefundBreakup(
     order,
@@ -185,6 +198,10 @@ export default function useReturnRequest(orderId) {
       orderItems.find(
         (i) => String(getItemId(i)) === String(values.orderItemId),
       );
+    if (item && !getItemReturnPolicy(item).allowedResolutions.includes(values.resolution)) {
+      notify.error("Select a resolution allowed by this product's return policy.");
+      return;
+    }
     const unitPrice = item ? getItemUnitPrice(item) : 0;
     const returnableQuantity = item
       ? getReturnableQuantityForItem(existingReturns, item)
@@ -265,6 +282,7 @@ export default function useReturnRequest(orderId) {
     embeddedReturns,
     existingReturns,
     selectedItem,
+    resolutionOptions,
     register,
     handleSubmit,
     watch,

@@ -1,3 +1,4 @@
+import { getAllowedReturnResolutions } from "../../../utils/orderHelpers";
 import { formatReturnDuration } from "../../../utils/returnDuration";
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -255,27 +256,24 @@ export default function ProductInfoSection({
             {/* ── Tab 1: Specifications (Highlighted Cards Grid) ── */}
             {activeTab === "specs" && (
               <div className="pt-2">
-                <div className="flex flex-wrap items-center justify-end gap-2 mb-2">
-                  <span className="text-xs font-medium text-muted">
-                    {detailRows.length}{" "}
-                    {detailRows.length === 1 ? "detail" : "details"} listed
-                  </span>
-                </div>
+               
 
-                <div className="flex min-w-0 flex-col gap-1 border-b border-border/70 py-3">
-                  <span className="text-xs font-medium text-muted">
-                    Return Window
-                  </span>
-                  <span className="text-sm font-semibold text-navy break-words sm:text-base">
-                    {returnPolicy.returnable === false
-                      ? "Non-Returnable"
-                      : `${formatReturnDuration(returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7)} Return Policy`}
-                  </span>
-                  <span className="text-xs text-muted">
-                    {returnPolicy.inspectionRequired !== false
-                      ? "Physical inspection required upon return"
-                      : "Direct easy return"}
-                  </span>
+                <div className="grid grid-cols-1">
+                  {visibleSpecs.map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex min-w-0 items-baseline justify-between gap-4 border-b border-border/70 py-2 last:border-b-0"
+                    >
+                      <span className="shrink-0 text-xs font-medium text-muted sm:text-sm">
+                        {formatPageTitle(key)}
+                      </span>
+                      <span className="min-w-0 break-words text-right text-sm font-semibold text-navy sm:text-base">
+                        {Array.isArray(value)
+                          ? value.join(", ")
+                          : String(value)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -325,12 +323,17 @@ export default function ProductInfoSection({
                     <span className="text-sm font-semibold text-navy break-words sm:text-base">
                       {returnPolicy.returnable === false
                         ? "Non-Returnable"
-                        : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7} Days Return Policy`}
+                        : `${formatReturnDuration(returnPolicy.returnWindowDays ?? returnPolicy.days ?? 7)} Return Policy`}
                     </span>
                     <span className="text-xs text-muted">
                       {returnPolicy.inspectionRequired !== false
                         ? "Physical inspection required upon return"
                         : "Direct easy return"}
+                    </span>
+                    <span className="text-xs text-muted">
+                      {getAllowedReturnResolutions(returnPolicy).map(value =>
+                        value === "refund" ? "Refund" : "Replacement"
+                      ).join(" or ") || "Non-returnable"}
                     </span>
                   </div>
                 </div>
@@ -359,7 +362,7 @@ export default function ProductInfoSection({
                     Seller Information
                   </h4>
 
-                  <div className="grid grid-cols-1 divide-y divide-[#E9E1D3] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                  <div className="grid grid-cols-1 divide-y divide-[#E9E1D3] sm:grid-cols-2 sm:divide-x sm:divide-y-0">
                     <div className="px-4 py-4 sm:px-5 sm:py-5">
                       <span className="block text-xs font-medium text-muted">
                         Store Name
@@ -373,8 +376,8 @@ export default function ProductInfoSection({
                       </span>
                     </div>
 
-                    <div className="px-4 py-4 sm:px-5 sm:py-5">
-                      <span className="block text-xs font-medium text-muted">
+                    {/* <div className="px-4 py-4 sm:px-5 sm:py-5"> */}
+                      {/* <span className="block text-xs font-medium text-muted">
                         Seller Rating
                       </span>
                       <span className="mt-1.5 block text-sm font-bold text-ink sm:text-base">
@@ -390,8 +393,8 @@ export default function ProductInfoSection({
                         ) > 0
                           ? `${Number(product.seller?.rating ?? product.seller?.averageRating).toFixed(1)} ★`
                           : "No Rating"}
-                      </span>
-                    </div>
+                      </span> */}
+                    {/* </div> */}
 
                     <div className="px-4 py-4 sm:px-5 sm:py-5">
                       <span className="block text-xs font-medium text-muted">

@@ -59,6 +59,7 @@ export function ReturnStatus({
 
   const refundAmount = getRefundAmount();
   const requestId = getRequestId();
+  const replacement = isReturned && ["replacement", "exchange"].includes(groupReturn?.resolution);
 
   return (
     <div className="mt-3">
@@ -72,9 +73,9 @@ export function ReturnStatus({
           </p>
         </div>
         <div className="min-w-0">
-          <p className="text-xs text-[#8A5A00]">Refund Amount</p>
+          <p className="text-xs text-[#8A5A00]">{replacement ? "Resolution" : "Refund Amount"}</p>
           <p className="text-sm font-bold text-[#1B1D60] truncate">
-            {formatMoney ? formatMoney(refundAmount, currency) : "N/A"}
+            {replacement ? "Replacement" : formatMoney ? formatMoney(refundAmount, currency) : "N/A"}
           </p>
         </div>
       </div>
