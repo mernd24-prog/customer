@@ -92,7 +92,8 @@ export default function PoliciesPages({ slugOverride }) {
     : null;
 
   const policy = useMemo(() => {
-    const cmsData = getCmsPayload(page);
+    const payload = getCmsPayload(page);
+    const cmsData = typeof payload === "string" ? { body: payload } : payload;
 
     if (!cmsData) {
       return fallbackPolicy;
@@ -100,6 +101,7 @@ export default function PoliciesPages({ slugOverride }) {
 
     return {
       ...fallbackPolicy,
+      ...page,
       ...cmsData,
       sections:
         Array.isArray(cmsData.sections) && cmsData.sections.length > 0
@@ -116,6 +118,7 @@ export default function PoliciesPages({ slugOverride }) {
   const title = cleanPolicyText(
     policy?.title || fallbackPolicy?.title || "Policy"
   );
+  const body = typeof policy?.body === "string" ? policy.body.trim() : "";
 
   const description = cleanPolicyText(
     policy?.description ||
@@ -174,7 +177,12 @@ export default function PoliciesPages({ slugOverride }) {
                   />
                 )}
 
-                {sections.length > 0 ? (
+                {body ? (
+                  <div
+                    className="cms-content break-words text-[14px] leading-[1.75] text-muted sm:text-[15px] md:text-[16px] [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-ink [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-ink [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_a]:text-gold [&_a]:underline"
+                    dangerouslySetInnerHTML={{ __html: body }}
+                  />
+                ) : sections.length > 0 ? (
                   <div className="space-y-5 sm:space-y-6 md:space-y-8">
                     {sections.map((section, index) => (
                       <PolicySection

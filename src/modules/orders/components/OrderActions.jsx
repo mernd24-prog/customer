@@ -1,3 +1,4 @@
+import { canRetryOrderPayment } from "../utils/paymentRetry";
 import { Link } from "react-router-dom";
 import {
   RefreshCw,
@@ -25,11 +26,7 @@ export default function OrderActions({
   getOrderItemId,
 }) {
   const { handleOpenRaiseTicketModal } = useSupportController();
-  const normalizedStatus = String(status || "").toLowerCase();
-
-  const hasRetryPayment = ["pending_payment", "payment_failed"].includes(
-    normalizedStatus,
-  );
+  const hasRetryPayment = canRetryOrderPayment(order, status);
 
   const hasCancelAction =
     typeof canCancelOrder === "function" &&

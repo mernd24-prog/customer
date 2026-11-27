@@ -1,3 +1,4 @@
+import { canRetryOrderPayment } from "../utils/paymentRetry";
 import { useMemo } from "react";
 import OrderActions from "./OrderActions";
 import OrderDocuments from "./OrderDocuments";
@@ -407,6 +408,11 @@ export function OrderPackageCard({
           </div>
         )}
 
+        {canRetryOrderPayment(order, status || orderStatus) && (
+          <div role="status" className="mx-3 mb-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 sm:mx-4">
+            Payment is not confirmed. Use Retry Payment below to pay for this existing order. If money was deducted, check the payment status before trying again.
+          </div>
+        )}
         {/* Full-width bottom action bar */}
         <OrderActions
           order={order}

@@ -214,6 +214,13 @@ export const getDoorstepReturnSteps = (request = {}) => {
       : "The item remains with you. View the inspection findings below. If you disagree, request platform review before the displayed deadline."
       : qc.status === "partially_passed" ? "Only the accepted quantities qualify for collection and refund. Rejected units remain with you." : null,
   });
+  if (replacement && qc.sameVisitExchange) {
+    const completed = status === "replaced" || !!qc.exchangeCompletedAt;
+    steps.push({ label: completed ? "Exchange completed" : "Doorstep exchange", status: "replacement_delivered", completed,
+      time: qc.exchangeCompletedAt || request.replacement?.deliveredAt,
+      notice: qc.exchangeFailure && !completed ? "The exchange was not completed. Your old item remains with you. The seller will resolve the issue before arranging another visit." : null });
+    return steps;
+  }
   steps.push({ label: replacement ? "Old item collected" : "Return item collected", status: "doorstep_collected", completed: !!qc.collectedAt, time: qc.collectedAt });
   if (replacement) {
     const delivered = ["replacement_delivered", "replaced"].includes(status) ||

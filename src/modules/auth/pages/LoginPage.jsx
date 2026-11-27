@@ -110,7 +110,7 @@ export default function LoginPage() {
             <hr className="flex-1 border-border" />
           </div>
 
-          <GoldOutlineButton
+          {/* <GoldOutlineButton
   
             size="md"
             onClick={handleMobileOtpLogin}
@@ -121,7 +121,7 @@ export default function LoginPage() {
             }
           >
             Login or Register with Mobile OTP
-          </GoldOutlineButton>
+          </GoldOutlineButton> */}
 
           <DynamicButton
             type="button"

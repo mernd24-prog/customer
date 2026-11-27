@@ -67,3 +67,9 @@ const refundedSteps = getReturnSteps({ ...collected, resolution: 'refund', statu
 assert.equal(refundedSteps.at(-1).completed, true);
 assert.equal(refundedSteps.at(-1).label, 'Refund completed');
 console.log('PASS: collection, refund failure and completed payment are distinct customer states.');
+
+const sameVisit = getReturnSteps({ ...collected, resolution: 'replacement', status: 'replaced', collectionQc: { ...collected.collectionQc, sameVisitExchange: true, exchangeCompletedAt: 'now' } }, {}, 'INR', String, false);
+assert.equal(sameVisit.at(-1).label, 'Exchange completed');
+assert.equal(sameVisit.at(-1).completed, true);
+assert.equal(sameVisit.some(step => step.label === 'Old item collected'), false);
+console.log('PASS: same-visit exchange has a single customer completion step.');

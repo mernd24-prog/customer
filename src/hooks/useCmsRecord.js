@@ -39,6 +39,7 @@ export function getCmsPayload(page, fallback) {
     page?.data ||
     page?.content ||
     page?.sections ||
+    page?.body||
     page
   );
 }

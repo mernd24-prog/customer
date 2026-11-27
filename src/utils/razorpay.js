@@ -5,6 +5,7 @@ export const RAZORPAY_ERROR_CODES = Object.freeze({
   DISMISSED: "PAYMENT_DISMISSED",
   FAILED: "PAYMENT_GATEWAY_FAILED",
   CONFIRMATION_PENDING: "PAYMENT_CONFIRMATION_PENDING",
+  CHECKOUT_UNAVAILABLE: "PAYMENT_CHECKOUT_UNAVAILABLE",
 });
 
 const paymentError = (code, message, cause) => {
@@ -13,7 +14,7 @@ const paymentError = (code, message, cause) => {
   return error;
 };
 
-const paymentPayload = (result = {}) =>
+export const paymentPayload = (result = {}) =>
   result?.data?.payment || result?.data?.data?.payment || result?.data?.data ||
   result?.payment || result?.data || result;
 
@@ -36,20 +37,23 @@ export const loadRazorpayCheckout = () => {
     script.src = RAZORPAY_CHECKOUT_SCRIPT;
     script.async = true;
     script.onload = handleLoad;
-    script.onerror = () => reject(new Error("Razorpay checkout could not be loaded."));
+    script.onerror = () => { script.remove(); reject(new Error("Razorpay checkout could not be loaded.")); };
     document.body.appendChild(script);
-  });
+  }).catch(error => { razorpayScriptPromise = undefined; throw error; });
 
   return razorpayScriptPromise;
 };
 
 export const openRazorpayCheckout = async ({ dispatch, run, order, orderId, payment, user, verifyPayment, onPaymentSuccess }) => {
+  payment = paymentPayload(payment);
   const checkout = payment?.checkout || {};
   if (!checkout.keyId || !checkout.orderId || !checkout.amount) {
-    throw new Error("Razorpay checkout details are missing. Please try again.");
+    throw paymentError(RAZORPAY_ERROR_CODES.CHECKOUT_UNAVAILABLE, "Payment window could not be opened. No payment was submitted. Please try again.");
   }
 
-  const Razorpay = await loadRazorpayCheckout();
+  let Razorpay;
+  try { Razorpay = await loadRazorpayCheckout(); }
+  catch (error) { throw paymentError(RAZORPAY_ERROR_CODES.CHECKOUT_UNAVAILABLE, "Unable to load the payment window. Check your connection and try again.", error); }
 
   return new Promise((resolve, reject) => {
     let settled = false;
