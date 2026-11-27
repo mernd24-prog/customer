@@ -144,6 +144,7 @@ export default function OrderDetailPage({ orderId }) {
                   <div className="flex flex-col gap-4">
                     <OrderPaymentSummary
                       variant="order"
+                      cancellations={visibleCancellations}
                       subtotal={subtotal}
                       discount={discount}
                       discountFundingType={pricingSummary.discountFundingType}

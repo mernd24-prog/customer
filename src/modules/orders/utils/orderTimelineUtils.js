@@ -177,6 +177,58 @@ export const getCancellationSteps = (
   return steps;
 };
 
+export const getDoorstepReturnSteps = (request = {}) => {
+  const qc = request.collectionQc || {};
+  const status = String(request.status || "");
+  const replacement = ["replacement", "exchange"].includes(request.resolution);
+  const timeline = request.timeline || [];
+  const at = state => [...timeline].reverse().find(event => event.status === state)?.at || null;
+  const createdAt = request.createdAt || request.created_at || at("requested");
+  const approvedAt = request.approvedAt || request.approved_at || at("approved");
+  const approved = !!approvedAt || !["requested", "rejected", "cancelled"].includes(status);
+  const steps = [{ label: "Return requested", status: "requested", completed: true, time: createdAt }];
+  if (["rejected", "cancelled"].includes(status)) {
+    return [...steps, { label: `Return ${status}`, status, completed: true, time: at(status) }];
+  }
+  steps.push({ label: "Return approved", status: "approved", completed: approved, time: approvedAt });
+  if (replacement) steps.push({
+    label: "Replacement dispatched", status: "replacement_dispatched",
+    completed: !!request.replacement?.shippedAt, time: request.replacement?.shippedAt,
+  });
+  const failedPickup = ["pickup_failed", "return_pickup_failed"].includes(status);
+  steps.push({
+    label: failedPickup ? "Pickup failed" : replacement ? "Exchange visit scheduled" : "Pickup scheduled",
+    status: failedPickup ? "pickup_failed" : "pickup_scheduled",
+    completed: failedPickup || !!request.reverseShipment?.pickupScheduledAt || !!qc.inspectedAt,
+    time: failedPickup ? at("pickup_failed") : request.reverseShipment?.pickupScheduledAt,
+    exception: failedPickup,
+    notice: failedPickup ? "Pickup could not be completed. The seller will need to arrange another visit." : null,
+  });
+  const failedQc = status === "qc_failed" || status === "qc_failure_upheld";
+  steps.push({
+    label: failedQc ? "Doorstep QC failed" : qc.status === "partially_passed" ? "Doorstep QC partially passed" : "Doorstep QC",
+    status: "doorstep_qc", completed: !!qc.inspectedAt, time: qc.inspectedAt,
+    exception: failedQc,
+    notice: failedQc ? status === "qc_failure_upheld"
+      ? "The item was not collected because it did not meet the return checks. The rejection was confirmed after review."
+      : "The item remains with you. View the inspection findings below. If you disagree, request platform review before the displayed deadline."
+      : qc.status === "partially_passed" ? "Only the accepted quantities qualify for collection and refund. Rejected units remain with you." : null,
+  });
+  steps.push({ label: replacement ? "Old item collected" : "Return item collected", status: "doorstep_collected", completed: !!qc.collectedAt, time: qc.collectedAt });
+  if (replacement) {
+    const delivered = ["replacement_delivered", "replaced"].includes(status) ||
+      ["delivered", "completed"].includes(request.replacement?.status);
+    steps.push({ label: "Replacement handed over", status: "replacement_delivered", completed: delivered, time: delivered ? request.replacement?.deliveredAt : null });
+  } else {
+    const refunded = request.refund?.status === "completed" || status === "refunded";
+    const failed = status === "refund_failed" || request.refund?.status === "failed";
+    steps.push({ label: failed ? "Refund needs attention" : refunded ? "Refund completed" : failedQc && !qc.collectedAt ? "Refund awaiting review" : qc.collectedAt ? "Collected — refund pending" : "Refund pending", status: "refund_processed", completed: refunded,
+      time: request.refund?.processedAt || request.refundedAt, exception: failed,
+      notice: failed ? "Your item was collected. The refund needs attention from the platform; contact support for an update." : null });
+  }
+  return steps;
+};
+
 export const getReturnSteps = (
   returnRequest,
   group,
@@ -184,6 +236,9 @@ export const getReturnSteps = (
   formatMoney,
   isCodOrder,
 ) => {
+  if (returnRequest?.collectionQc?.required && returnRequest?.reverseShipment?.provider !== "customer_manual") {
+    return getDoorstepReturnSteps(returnRequest);
+  }
   const steps = [];
   const requestTime =
     returnRequest?.created_at ||
@@ -226,7 +281,14 @@ export const getReturnSteps = (
       ""
   ).toLowerCase();
 
+  const pickupFailed = ["pickup_failed", "return_pickup_failed"].includes(currentStatus);
+  const failureEvent = [...(returnRequest?.timeline || [])].reverse().find(
+    event => ["pickup_failed", "return_pickup_failed"].includes(event.status),
+  );
+
   const isApproved = [
+    "pickup_failed",
+    "return_pickup_failed",
     "approved",
     "return_approved",
     "reverse_pickup_scheduled",
@@ -262,6 +324,8 @@ export const getReturnSteps = (
   });
 
   const isPickupScheduled = [
+    "pickup_failed",
+    "return_pickup_failed",
     "reverse_pickup_scheduled",
     "pickup_scheduled",
     "in_reverse_transit",
@@ -304,10 +368,16 @@ export const getReturnSteps = (
   ].includes(currentStatus);
 
   steps.push({
-    label: "Picked up",
-    completed: isPickedUp,
-    status: "picked_up",
-    time: isPickedUp
+    label: pickupFailed ? "Pickup failed" : "Picked up",
+    completed: pickupFailed || isPickedUp,
+    status: pickupFailed ? "pickup_failed" : "picked_up",
+    exception: pickupFailed,
+    notice: pickupFailed
+      ? "Pickup could not be completed. The seller can arrange another pickup or provide ship-back instructions."
+      : null,
+    time: pickupFailed
+      ? failureEvent?.at || returnRequest?.updatedAt || returnRequest?.updated_at || null
+      : isPickedUp
       ? returnRequest?.metadata?.pickedUpAt ||
         returnRequest?.reverseShipment?.pickedUpAt ||
         returnRequest?.updated_at

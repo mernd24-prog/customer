@@ -132,6 +132,7 @@ function OrderPaymentSummary({
   customerPlatformFee,
   customerPlatformFeeTax,
   customerAmount,
+  cancellations = [],
   tax,
   taxBreakup,
   taxIncluded,
@@ -368,6 +369,32 @@ function OrderPaymentSummary({
           value={formatMoney(customerAmount || 0, currency)}
         />
       </div>
+
+      {variant === "order" && cancellations.map((cancellation) => {
+        const status = cancellation.refund_status || cancellation.refundStatus;
+        const amount = Number(cancellation.refund_amount ?? cancellation.refundAmount ?? 0);
+        if (!status || status === "not_required" || amount <= 0 ||
+          ["rejected", "cancelled"].includes(cancellation.status)) return null;
+        const metadata = cancellation.metadata || {};
+        const fee = Number(metadata.platformFeeRefundAmount || 0);
+        const label = status === "completed" ? "Cancellation Refund Completed"
+          : status === "failed" ? "Cancellation Refund Failed"
+          : status === "manual_review" ? "Cancellation Refund Under Review"
+          : "Cancellation Refund Pending";
+        return (
+          <div key={cancellation.id} className="border-t border-[#04258626] pt-2">
+            <SummaryRow label={label} value={formatMoney(amount, currency)} />
+            {fee > 0 && (
+              <p className="mt-1 text-xs leading-5 text-[#65718b]">
+                Includes {formatMoney(fee, currency)} in platform fees (including applicable GST).
+              </p>
+            )}
+            <p className="mt-1 text-xs leading-5 text-[#65718b]">
+              Order Amount shows the original purchase total.
+            </p>
+          </div>
+        );
+      })}
 
       {variant === "checkout" && visiblePaymentMethods.length > 0 && (
         <div className="pt-4">

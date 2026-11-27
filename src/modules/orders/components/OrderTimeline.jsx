@@ -1,5 +1,6 @@
+import ReturnQcReview from "./ReturnQcReview";
 
-import { Check, X } from "lucide-react";
+import { AlertTriangle, Check, X } from "lucide-react";
 import { useMemo } from "react";
 
 import {
@@ -62,13 +63,14 @@ export function OrderTimeline({
   // Cancelled and returned order timeline
   if (stepsToRender) {
     return (
+      <div className="min-w-0">
       <div className="flex min-w-0 flex-col md:flex-row md:items-start md:justify-center">
         {stepsToRender.map((step, stepIndex) => {
           const isCompleted = step.completed;
 
           const isCancelledStep =
             step.status === "cancelled" ||
-            step.status === "cancellation_requested";
+            step.status === "cancellation_requested" || step.exception;
 
           const isLast = stepIndex === stepsToRender.length - 1;
           const lineDelay = `${stepIndex * 0.35}s`;
@@ -119,7 +121,9 @@ export function OrderTimeline({
                   } md:left-1/2 md:top-0 md:-translate-x-1/2`}
                   style={{ animationDelay: ballDelay }}
                 >
-                  {isCancelledStep ? (
+                  {step.exception ? (
+                    <AlertTriangle className="h-2.5 w-2.5 stroke-[3] text-current" />
+                  ) : isCancelledStep ? (
                     <X className="h-2.5 w-2.5 stroke-[3] text-current" />
                   ) : (
                     <Check className="h-2.5 w-2.5 stroke-[3] text-current" />
@@ -153,6 +157,21 @@ export function OrderTimeline({
             </div>
           );
         })}
+      </div>
+      {stepsToRender.filter(step => step.exception && step.notice).map(step => (
+        <div
+          key={`${step.status}-notice`}
+          role="status"
+          className="mt-5 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-left"
+        >
+          <AlertTriangle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-amber-900">{step.status === "pickup_failed" ? "Awaiting pickup arrangements" : step.status === "doorstep_qc" ? "Inspection update" : "Refund update"}</p>
+            <p className="mt-1 text-xs leading-5 text-amber-900">{step.notice}</p>
+          </div>
+        </div>
+      ))}
+      {isReturned && ["qc_failed", "qc_failure_upheld"].includes(resolvedGroupReturn?.status) && <ReturnQcReview request={resolvedGroupReturn} />}
       </div>
     );
   }

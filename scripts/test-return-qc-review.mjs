@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { qcReviewEligibility, validateQcReviewReason } from '../src/modules/orders/utils/returnQcReview.js';
+const now = Date.parse('2026-11-26T09:00:00Z');
+assert.equal(qcReviewEligibility({ status: 'qc_failed', qcReview: { disputeDeadline: '2026-11-27T09:00:00Z' } }, now).allowed, true);
+assert.equal(qcReviewEligibility({ status: 'qc_failed', qcReview: { disputeDeadline: '2026-11-25T09:00:00Z' } }, now).allowed, false);
+assert.equal(qcReviewEligibility({ status: 'qc_failed', qcReview: { customerDispute: { reason: 'Wrong inspection' } } }, now).allowed, false);
+for (const status of ['requested', 'approved', 'qc_passed', 'qc_failure_upheld', 'refunded', 'closed']) assert.equal(qcReviewEligibility({ status }, now).allowed, false);
+for (const reason of ['', ' ', 'short', 'a'.repeat(2001)]) assert.ok(validateQcReviewReason(reason));
+assert.equal(validateQcReviewReason('The serial number was checked incorrectly.'), '');
+console.log('PASS: QC review respects open state, deadline, submitted reviews and required reason length.');

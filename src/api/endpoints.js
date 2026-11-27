@@ -104,7 +104,7 @@ export const endpoints = {
     create: `${API_PREFIX}/returns`,
     mine: `${API_PREFIX}/returns/my-returns`,
     byOrder: (orderId) => `${API_PREFIX}/returns/order/${orderId}`,
-    detail: (returnId) => `${API_PREFIX}/returns/${returnId}`,
+    detail: (returnId) => `${API_PREFIX}/returns/my-returns/${returnId}`,
     approve: (returnId) => `${API_PREFIX}/returns/${returnId}/approve`,
     reject: (returnId) => `${API_PREFIX}/returns/${returnId}/reject`,
     schedule: (returnId) => `${API_PREFIX}/returns/${returnId}/schedule`,

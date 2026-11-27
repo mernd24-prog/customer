@@ -346,9 +346,9 @@ export function OrderItemCard({
 
               {refundAmount != null && (
                 <p className="break-words">
-                  <span>Refund Amount:</span>{" "}
+                  <span>{["replacement", "exchange"].includes(returnDetails?.resolution) ? "Resolution:" : "Refund Amount:"}</span>{" "}
                   <span className="font-semibold text-[#1B1D60]">
-                    {formatMoney
+                    {["replacement", "exchange"].includes(returnDetails?.resolution) ? "Replacement" : formatMoney
                       ? formatMoney(refundAmount, currency)
                       : `₹${Number(refundAmount).toLocaleString("en-IN")}`}
                   </span>
